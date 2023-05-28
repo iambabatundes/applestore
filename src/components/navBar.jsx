@@ -9,9 +9,16 @@ import Search from "./search";
 
 function NavBar() {
   const [showNavbar, setShowNavbar] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
 
   const handleToggle = () => {
     setShowNavbar(!showNavbar);
+    setShowOverlay(!showOverlay);
+  };
+
+  const handleClose = () => {
+    setShowNavbar(false);
+    setShowOverlay(false);
   };
 
   return (
@@ -36,7 +43,7 @@ function NavBar() {
           <Search />
         </div>
         <nav>
-          <div className={`navbar-links ${showNavbar ? "show" : ""}`}>
+          <div className={`navbar-links`}>
             <Link to="/">Home</Link>
             <Link to="/shop">Shop</Link>
             <Link to="/product">Product</Link>
@@ -66,6 +73,26 @@ function NavBar() {
           </div>
         </nav>
       </section>
+
+      {showOverlay && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <div className="toggle-menu-logo">
+              <img src={logo} alt="logo" className="mobile-App-logo" />
+              <span className="close-icon" onClick={handleClose}>
+                X
+              </span>
+            </div>
+            <div className="nav-links">
+              <Link to="/">Home</Link>
+              <Link to="/shop">Shop</Link>
+              <Link to="/product">Product</Link>
+              <Link to="/about">About</Link>
+              <Link to="/contact">Contact</Link>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
