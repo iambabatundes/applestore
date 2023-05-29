@@ -14,7 +14,7 @@ function HomeSlider() {
     },
     {
       id: 2,
-      image: "/apple.png",
+      image: "/apple6.jpg",
       title: "Online Shopping Made Simple: Find, Click, Enjoy!",
       subtitle:
         "Where Shopping Meets Seamless Delight: Unleash the Thrill of Online Retail Therapy!",
@@ -23,7 +23,7 @@ function HomeSlider() {
     {
       id: 3,
       image: "/apple1.jpg",
-      title: "Your One-Stop Online Shop: Unleash Retail Bliss!",
+      title: "Your One-Stop Online Shop: Unleash Retail...",
       subtitle:
         "Transforming the Way You Shop: Elevate Your Online Retail Experience to New Heights!",
       buttonText: "Shop Now",
