@@ -22,7 +22,7 @@ function NavBar() {
   };
 
   return (
-    <header>
+    <header className="navbar__main">
       <header className="header__contact">
         <span>applestore@gmail.com | </span>
         <span> +2348162366357</span>

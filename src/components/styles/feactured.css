@@ -1,0 +1,95 @@
+.feactured__main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1142px;
+    margin: 0 auto;
+    box-shadow: 0 0 15px rgba(195, 195, 195, 0.6);
+    /* padding: 28px; */
+}
+
+.feactured__main img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+.feactured__content {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.feactured__content h2 {
+    text-align: center;
+    font-size: 2em;
+    text-transform: uppercase;
+    font-weight: 900;
+    line-height: 29px;
+}
+
+.feactured__content p {
+    text-align: center;
+    font-size: 1.3em;
+}
+
+/* Button section */
+.btn__card {
+    padding: 10px 40px;
+    background-color: #920300;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 1.1em;
+    font-family: "Poppins";
+    text-transform: uppercase;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    width: fit-content;
+    /* Add this property to adjust the button width based on content */
+    margin-left: auto;
+    /* Add this property to center the button horizontally on mobile */
+    margin-right: auto;
+    /* Add this property to center the button horizontally on mobile */
+}
+
+.btn__card:hover {
+    background: #651211;
+}
+
+@media (min-width: 768px) {
+    .feactured__main {
+        flex-direction: row;
+        margin: 0 auto;
+    }
+
+    .feactured__main img {
+        max-width: 45%;
+    }
+
+    .feactured__content h2 {
+        text-align: left;
+    }
+
+    .feactured__content p {
+        text-align: justify;
+    }
+
+    .btn__card {
+        justify-content: flex-start;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .feactured__content {
+        padding: 45px;
+    }
+
+
+}

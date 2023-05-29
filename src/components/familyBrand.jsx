@@ -1,6 +1,6 @@
 import React from "react";
 import "../components/styles/familyBrand.css";
-import "@fontsource/poppins";
+import "@fontsource/poppins/500.css";
 import ButtonSmall from "./buttonSmall";
 
 function FamilyBrand() {
@@ -34,7 +34,7 @@ function FamilyBrand() {
           <div key={card.id} className="card">
             <img src={card.image} alt={`Card ${card.id}`} />
             <h2>{card.title}</h2>
-            <ButtonSmall children={card.buttonText} className="btn__card" />
+            <ButtonSmall children={card.buttonText} className="btn__cards" />
           </div>
         ))}
       </section>
