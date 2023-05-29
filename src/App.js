@@ -1,5 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
+import "./fonts/MacanPanWeb-Medium.ttf";
+import "@fontsource/poppins";
+import "@fontsource/poppins/500.css";
 import NavBar from "./components/navBar";
 import Home from "./components/Home";
 import Shop from "./components/Shop";

@@ -23,6 +23,10 @@ function NavBar() {
 
   return (
     <header>
+      <header className="header__contact">
+        <span>applestore@gmail.com | </span>
+        <span> +2348162366357</span>
+      </header>
       <section className="container-menu">
         <div className="mobile-menu">
           <span className="toggle-icon" onClick={handleToggle}>
@@ -44,7 +48,9 @@ function NavBar() {
         </div>
         <nav>
           <div className={`navbar-links`}>
-            <Link to="/">Home</Link>
+            <Link to="/" className="active">
+              Home
+            </Link>
             <Link to="/shop">Shop</Link>
             <Link to="/product">Product</Link>
             <Link to="/about">About</Link>

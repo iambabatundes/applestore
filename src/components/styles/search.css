@@ -59,7 +59,7 @@
     }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1024px) {
 
     .toggle-icon {
         display: none;
@@ -72,7 +72,7 @@
     }
 
     .nav-search {
-        width: 358px;
+        width: 284px;
         height: 43px;
     }
 }
