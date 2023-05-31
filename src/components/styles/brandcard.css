@@ -1,0 +1,55 @@
+h1 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    font-weight: 600;
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+}
+
+h4 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    font-weight: 400;
+}
+
+.brandcard {
+    /* border: 1px solid #000; */
+    border-radius: 5px;
+    cursor: pointer;
+    height: 350px;
+    margin: 0rem 0rem;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    margin-right: 25px;
+}
+
+.brandcard__image {
+    height: 100%;
+    background-size: cover;
+    background-position: right;
+}
+
+.brandcard__content {
+    font-family: Macan, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #ffffff;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    padding: 15px;
+}
+
+.brandcard__title {
+    font-size: 25px;
+    padding-top: 4px;
+}
+
+.brandcard__subtitle {
+    padding-bottom: 0px;
+}

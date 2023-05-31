@@ -3,12 +3,14 @@ import HomeSlider from "./HomeSlider";
 import FamilyBrand from "./familyBrand";
 import Feactured from "./feactured";
 import Products from "./products";
+import BrandProduct from "./brandProduct";
 
 function Home() {
   return (
     <section>
       <HomeSlider />
-      <FamilyBrand />
+      <BrandProduct />
+      {/* <FamilyBrand /> */}
       <Feactured />
       <Products />
     </section>
