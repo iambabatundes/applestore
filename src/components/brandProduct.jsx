@@ -34,7 +34,7 @@ export default function BrandProduct() {
 
       <div className="slides__card">
         {cardsToDisplay.map((card) => (
-          <Card item={card} key={card._id} />
+          <Card item={card} key={card._id} className={card.className} />
         ))}
       </div>
 
