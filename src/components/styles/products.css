@@ -1,0 +1,29 @@
+.product__main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.chevron-button {
+    display: flex;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #333;
+}
+
+@media (min-width: 768px) {
+    .product__main {
+        flex-direction: row;
+        overflow-x: hidden;
+    }
+
+    .chevron-button {
+        display: inline-block;
+        /* Show the chevron buttons on desktop */
+    }
+}

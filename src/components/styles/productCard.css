@@ -1,0 +1,111 @@
+/* Mobile Styles */
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 40px;
+}
+
+.product-card__image {
+    width: 100%;
+    max-width: 1500px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.product-card__title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.product-card__description {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.product-card__rating {
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.product-card__price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.product-card__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 200px;
+    padding: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.product-card__user-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-top: 10px;
+}
+
+/* Desktop Styles */
+@media (min-width: 768px) {
+    .product-card {
+        /* flex-direction: row;
+      align-items: flex-start; */
+        padding: 30px;
+        height: auto;
+        height: 300px;
+        max-width: 200px;
+        margin-right: 30px;
+
+    }
+
+    .product-card__image {
+        width: 100%;
+        /* max-width: 150px; */
+        margin-bottom: 0;
+        margin-right: 20px;
+        object-fit: contain;
+    }
+
+    .product-card__title {
+        text-align: center;
+        font-size: 1.1rem;
+        line-height: 25px;
+
+    }
+
+    .product-card__description {
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .product-card__rating,
+    .product-card__price {
+        text-align: left;
+    }
+
+    .product-card__button {
+        width: auto;
+        padding: 8px 15px;
+        margin-bottom: 0;
+    }
+}

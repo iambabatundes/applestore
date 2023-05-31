@@ -7,7 +7,7 @@
     max-width: 1142px;
     margin: 0 auto;
     box-shadow: 0 0 15px rgba(195, 195, 195, 0.6);
-    /* padding: 28px; */
+    padding: 20px auto;
 }
 
 .feactured__main img {
@@ -50,7 +50,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
+    margin: 30px auto;
     width: fit-content;
     /* Add this property to adjust the button width based on content */
     margin-left: auto;
@@ -66,11 +66,12 @@
 @media (min-width: 768px) {
     .feactured__main {
         flex-direction: row;
-        margin: 0 auto;
+        margin: 50px auto;
+        padding: 20px auto;
     }
 
     .feactured__main img {
-        max-width: 45%;
+        max-width: 40%;
     }
 
     .feactured__content h2 {
