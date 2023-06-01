@@ -91,9 +91,11 @@ const cards = [
 
   {
     _id: "54432GHDE2319081011",
-    title: "Video Editor",
-    subTitle: "Engage your audience",
+    title: "Apple",
+    header: "Epicurean's Dream Unfolds",
+    subTitle: "The Epicurean's Dream Unfolds",
     image: "/brand11.webp",
+    className: "brand11",
   },
 ];
 

@@ -12,8 +12,8 @@ export default function BrandCard({ item, className }) {
           {item.header}
         </h2>
         <h4 className={`${className} brandcard__subtitle`}>{item.subTitle}</h4>
+        <button className="brandcard__btn">Learn More</button>
       </div>
-      <button className="brandcard__btn">Learn More</button>
     </section>
   );
 }

@@ -96,3 +96,13 @@ h4 {
 .brandcard__btn:hover {
     background: #651211;
 }
+
+@media (min-width: 768px) {
+    .brandcard {
+        width: 100%;
+    }
+
+    .slides-button {
+        top: 60%;
+    }
+}
