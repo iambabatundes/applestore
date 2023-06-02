@@ -27,7 +27,7 @@ h4 {
     position: relative;
     width: 100%;
     overflow: hidden;
-    margin-right: 25px;
+    /* margin-right: 25px; */
 }
 
 .brandcard__image {

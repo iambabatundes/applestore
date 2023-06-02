@@ -10,12 +10,14 @@
 .slides__card {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     flex-wrap: nowrap;
     transition: transform 0.5s;
-    /* gap: 35px; */
-    margin: 1.5rem 0;
+    margin: 1.8rem 0;
     overflow: hidden;
     width: 100%;
+    margin-left: 5px;
+
 }
 
 .slides__title {
@@ -23,6 +25,7 @@
     font-family: Macan, Helvetica Neue, Helvetica, Arial, sans-serif;
     font-size: 32px;
     font-weight: 700;
+    line-height: 40px;
 }
 
 /* Brand11 section */
@@ -32,6 +35,7 @@
     font-weight: 700;
     text-transform: uppercase;
     line-height: 20px;
+    /* width: 100%; */
 }
 
 .brand11 h2 {
@@ -302,6 +306,8 @@
 @media (min-width: 768px) {
     .slides__card {
         flex-direction: row;
+        gap: 25px;
+        margin-left: 0;
     }
 
     .slides-button {
@@ -309,7 +315,7 @@
     }
 
     .slider-button-next {
-        right: -3px;
+        right: -27px;
 
     }
 }

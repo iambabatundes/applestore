@@ -4,15 +4,17 @@ import FamilyBrand from "./familyBrand";
 import Feactured from "./feactured";
 import Products from "./products";
 import BrandProduct from "./brandProduct";
+import FaqSection from "./faqSection";
 
 function Home() {
   return (
     <section>
-      <HomeSlider />
-      <BrandProduct />
+      {/* <HomeSlider /> */}
+      {/* <BrandProduct /> */}
       {/* <FamilyBrand /> */}
-      <Feactured />
-      <Products />
+      {/* <Feactured /> */}
+      {/* <Products /> */}
+      <FaqSection />
     </section>
   );
 }
