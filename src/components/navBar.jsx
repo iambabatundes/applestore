@@ -41,7 +41,9 @@ function NavBar() {
               <rect y="8" width="23" height="3" rx="1.5" fill="#555"></rect>
             </svg>
           </span>
-          <img src={logo} alt="logo" className="App-logo" />
+          <Link to="/">
+            <img src={logo} alt="logo" className="App-logo" />
+          </Link>
         </div>
         <div className="search-section">
           <Search />
@@ -57,14 +59,14 @@ function NavBar() {
             <Link to="/contact">Contact</Link>
           </div>
 
-          <NavLink to="/cart" activeClassName="active">
+          <NavLink to="/cart">
             <div className="icon">
               <img src={message} alt="Message Icon" />
               <span className="badge-nav">10</span>
             </div>
           </NavLink>
 
-          <NavLink to="/cart" activeClassName="active">
+          <NavLink to="/cart">
             <div className="icon">
               <img src={notification} alt="Notification Icon" />
               <span className="badge-nav">10</span>

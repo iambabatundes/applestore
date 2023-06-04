@@ -5,6 +5,7 @@ import Feactured from "./feactured";
 import Products from "./products";
 import BrandProduct from "./brandProduct";
 import FaqSection from "./faqSection";
+import Blog from "./blog";
 
 function Home() {
   return (
@@ -14,7 +15,8 @@ function Home() {
       {/* <FamilyBrand /> */}
       {/* <Feactured /> */}
       {/* <Products /> */}
-      <FaqSection />
+      {/* <FaqSection /> */}
+      <Blog />
     </section>
   );
 }

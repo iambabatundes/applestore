@@ -9,6 +9,7 @@ import Shop from "./components/Shop";
 import Product from "./components/Product";
 import Contact from "./components/Contact";
 import About from "./components/About";
+import SinglePost from "./components/singlePost";
 
 // const Home = () => <h1>Home Page</h1>;
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" exact element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product" element={<Product />} />
+          <Route path="/:title" element={<SinglePost />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           {/* <Route path="/cart" component={<Cart />} /> */}

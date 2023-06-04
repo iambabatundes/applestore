@@ -12,7 +12,7 @@ function Search({ className, userNav__search }) {
       />
       <div className="btn-nav">
         <Button>
-          <i class="fa fa-search" aria-hidden="true"></i>
+          <i className="fa fa-search" aria-hidden="true"></i>
         </Button>
       </div>
     </div>
