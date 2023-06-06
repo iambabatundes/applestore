@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getBlogPost } from "./blogPosts";
 import "../components/styles/singleBlog.css";
+import CommentSection from "./commentSection";
 
 export default function SinglePost() {
   const [blogPost, setBlogPost] = useState([]);
@@ -10,9 +11,96 @@ export default function SinglePost() {
   const [website, setWebsite] = useState("");
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [isReplyMode, setIsReplyMode] = useState(false);
+  const [replyToComment, setReplyToComment] = useState(null);
+  const [isReplySubmitted, setIsReplySubmitted] = useState(false);
+  const [editCommentId, setEditCommentId] = useState(null);
+  const [editedComment, setEditedComment] = useState("");
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+
   const { title } = useParams();
 
-  const defaultUserIcon = "/path/to/default-user-icon.png";
+  const defaultUserIcon = "/user.png";
+
+  // const handleEdit = () => {
+  //   setEditCommentId(comment.id);
+  // };
+
+  const handleDelete = (commentId) => {
+    // Find the comment with the specified commentId and delete it
+    const updatedComments = comments.filter(
+      (comment) => comment.id !== commentId
+    );
+
+    // Update the comments state with the updated comments
+    setComments(updatedComments);
+  };
+
+  // const handleEditCommentClick = (comment) => {
+  //   setEditCommentId(comment.id);
+  //   setEditedComment(comment.comment);
+  //   setIsUpdateMode(true);
+  //   setIsReplyMode(false);
+  //   setEditedComment(comment.comment);
+  //   setSelectedCommentId(comment.id);
+  // };
+
+  const handleCancelEdit = () => {
+    setIsUpdateMode(false);
+    setEditedComment("");
+    setSelectedCommentId(null);
+  };
+
+  // const handleReply = (commentId) => {
+  //   if (isUpdateMode) {
+  //     setIsUpdateMode(false);
+  //     setEditedComment("");
+  //     setSelectedCommentId(null);
+  //   }
+  //   // Your existing logic for handling the reply action
+  // };
+
+  const handleEdit = () => {
+    if (isReplyMode) {
+      handleCancelReply();
+    }
+    setIsUpdateMode(true);
+    setEditedComment(comment.comment);
+    setSelectedCommentId(comment.id);
+  };
+
+  // const handleEdit = () => {
+  //   setIsUpdateMode(true);
+  //   setEditedComment(comment.comment);
+  //   setSelectedCommentId(comment.id);
+  // };
+
+  const handleUpdateComment = (commentId) => {
+    const updatedComments = comments.map((comment) => {
+      if (comment.id === commentId) {
+        return { ...comment, comment: editedComment };
+      }
+      return comment;
+    });
+
+    setComments(updatedComments);
+    setEditCommentId(null);
+    setEditedComment("");
+  };
+
+  const handleCancelReply = () => {
+    setIsReplyMode(false);
+    setReplyToComment(null);
+  };
+
+  const handleReply = (commentId) => {
+    setIsReplyMode(true);
+    setReplyToComment(commentId);
+    setIsUpdateMode(false);
+    setSelectedCommentId(null);
+    // setIsReplySubmitted(false);
+  };
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -33,29 +121,44 @@ export default function SinglePost() {
   const handlePostComment = (e) => {
     e.preventDefault();
 
-    // Create a new comment object
-    const newComment = {
-      name,
-      email,
-      website,
-      comment,
-      id: Date.now(), // Generate a unique ID for the comment
-    };
+    if (replyToComment) {
+      const parentComment = comments.find((c) => c.id === replyToComment);
+      const newComment = {
+        name,
+        email,
+        website,
+        comment,
+        id: comments.length + 1,
+        createdDate: new Date().toISOString(),
+        replyTo: parentComment.id,
+      };
 
-    // Add the new comment to the comments array
-    setComments([newComment, ...comments]);
+      // Add the new reply comment to the comments array
+      setComments([newComment, ...comments]);
+    } else {
+      // Create a new comment object
+      const newComment = {
+        name,
+        email,
+        website,
+        comment,
+        id: comments.length + 1,
+        createdDate: new Date().toISOString(),
+      };
+
+      // Add the new comment to the comments array
+      setComments([newComment, ...comments]);
+    }
 
     // Clear the form fields
     setName("");
     setEmail("");
     setWebsite("");
     setComment("");
+    setReplyToComment(null);
+    setIsReplySubmitted(false);
   };
 
-  const handleReply = (commentId) => {
-    // Implement your reply functionality here
-    console.log(`Reply to comment with ID: ${commentId}`);
-  };
   useEffect(() => {
     setBlogPost(getBlogPost(title));
   }, []);
@@ -88,8 +191,11 @@ export default function SinglePost() {
 
             <div>
               <i class="fa fa-comment-o" aria-hidden="true"></i>
-              {comments.length === 0 && <span>No Comment</span>}
-              <span>No Comment</span>
+              {comments.length === 0 ? (
+                <span>No Comment</span>
+              ) : (
+                <span>{comments.length} Comment(s)</span>
+              )}
             </div>
           </div>
         </div>
@@ -102,6 +208,38 @@ export default function SinglePost() {
             alt={blogPost.title}
           />
           <p className="single-blog-post__content">{blogPost.content}</p>
+
+          <CommentSection
+            handleCommentChange={handleCommentChange}
+            handleNameChange={handleNameChange}
+            handleEmailChange={handleEmailChange}
+            handleWebsiteChange={handleWebsiteChange}
+            handlePostComment={handlePostComment}
+            handleReply={handleReply}
+            comments={comments}
+            email={email}
+            name={name}
+            website={website}
+            comment={comment}
+            defaultUserIcon={defaultUserIcon}
+            replyToComment={replyToComment}
+            isReplyMode={isReplyMode}
+            handleCancelReply={handleCancelReply}
+            isReplySubmitted={isReplySubmitted}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+            handleUpdateComment={handleUpdateComment}
+            setEditCommentId={setEditCommentId}
+            editCommentId={editCommentId}
+            // handleEditCommentClick={handleEditCommentClick}
+            editedComment={editedComment}
+            setEditedComment={setEditedComment}
+            setIsReplyMode={setIsReplyMode}
+            setSelectedCommentId={setSelectedCommentId}
+            setIsUpdateMode={setIsUpdateMode}
+            handleCancelEdit={handleCancelEdit}
+            selectedCommentId={selectedCommentId}
+          />
         </section>
 
         {/* Recent Article Section */}
