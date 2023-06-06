@@ -27,15 +27,20 @@ export default function SinglePost() {
   //   setEditCommentId(comment.id);
   // };
 
-  const handleDelete = (commentId) => {
-    // Find the comment with the specified commentId and delete it
-    const updatedComments = comments.filter(
-      (comment) => comment.id !== commentId
-    );
+  // const handleDelete = () => {
+  //   setIsConfirmationOpen(true);
+  //   setCommentToDeleteId(comment.id);
+  // };
 
-    // Update the comments state with the updated comments
-    setComments(updatedComments);
-  };
+  // const handleDelete = (commentId) => {
+  //   // Find the comment with the specified commentId and delete it
+  //   const updatedComments = comments.filter(
+  //     (comment) => comment.id !== commentId
+  //   );
+
+  //   // Update the comments state with the updated comments
+  //   setComments(updatedComments);
+  // };
 
   // const handleEditCommentClick = (comment) => {
   //   setEditCommentId(comment.id);
@@ -226,7 +231,7 @@ export default function SinglePost() {
             isReplyMode={isReplyMode}
             handleCancelReply={handleCancelReply}
             isReplySubmitted={isReplySubmitted}
-            handleDelete={handleDelete}
+            // handleDelete={handleDelete}
             handleEdit={handleEdit}
             handleUpdateComment={handleUpdateComment}
             setEditCommentId={setEditCommentId}
@@ -239,6 +244,7 @@ export default function SinglePost() {
             setIsUpdateMode={setIsUpdateMode}
             handleCancelEdit={handleCancelEdit}
             selectedCommentId={selectedCommentId}
+            setComments={setComments}
           />
         </section>
 

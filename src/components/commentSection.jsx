@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../components/styles/comments.css";
+import DeleteConfirmation from "./deleteConfirmation";
 
 export default function CommentSection({
   handleEmailChange,
@@ -23,13 +24,30 @@ export default function CommentSection({
   setEditedComment,
   editedComment,
   editCommentId,
+  setComments,
 }) {
   const [selectedCommentId, setSelectedCommentId] = useState(null);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [commentToDeleteId, setCommentToDeleteId] = useState(null);
 
-  const renderComment = (comment) => {
+  const handleConfirmDelete = (commentId) => {
+    // Find the comment with the specified commentId and delete it
+    const updatedComments = comments.filter(
+      (comment) => comment.id !== commentId
+    );
+
+    setIsConfirmationOpen(false);
+    setCommentToDeleteId(null);
+    setComments(updatedComments);
+  };
+
+  const handleDeleteCancel = () => {
+    setIsConfirmationOpen(false);
+    setCommentToDeleteId(null);
+  };
+
+  const renderComment = (comment, indentLevel = 0) => {
     const createdDate = new Date(comment.createdDate);
 
     const options = {
@@ -67,20 +85,16 @@ export default function CommentSection({
       setCommentToDeleteId(comment.id);
     };
 
-    const handleConfirmDelete = () => {
-      // Implement your delete logic here using commentToDeleteId
-      // ...
-      setIsConfirmationOpen(false);
-      setCommentToDeleteId(null);
-    };
-
-    const handleCancel = () => {
-      setIsConfirmationOpen(false);
-      setCommentToDeleteId(null);
+    const handleReplyToComment = () => {
+      handleReply(comment.id);
     };
 
     return (
-      <div key={comment.id} className="comment">
+      <div
+        key={comment.id}
+        className="comment"
+        style={{ marginLeft: `${indentLevel}px` }}
+      >
         <div className="comment-user-info">
           <img
             src={comment.picture || defaultUserIcon}
@@ -93,10 +107,7 @@ export default function CommentSection({
           </div>
         </div>
 
-        <button
-          className="reply-button"
-          onClick={() => handleReply(comment.id)}
-        >
+        <button className="reply-button" onClick={handleReplyToComment}>
           Reply
         </button>
         {!isUpdateMode && (
@@ -109,7 +120,8 @@ export default function CommentSection({
             Delete
           </button>
         )}
-        {isUpdateMode && selectedCommentId === comment.id ? (
+
+        {!isUpdateMode && selectedCommentId === comment.id ? (
           <div>
             <h2>Edit Comment</h2>
             <form onSubmit={handleUpdate}>
@@ -133,14 +145,9 @@ export default function CommentSection({
         {replyToComment === comment.id && isReplyMode && (
           <div>
             <h2>Reply to {comment.name}</h2>
-            {replyToComment === comment.id && isReplyMode && (
-              <button
-                className="cancel-reply-button"
-                onClick={handleCancelReply}
-              >
-                Cancel Reply
-              </button>
-            )}
+            <button className="cancel-reply-button" onClick={handleCancelReply}>
+              Cancel Reply
+            </button>
             <form onSubmit={handlePostComment}>
               <textarea
                 value={isReplyMode ? comment.replyComment : comment.comment}
@@ -175,7 +182,11 @@ export default function CommentSection({
 
         {comment.replies && (
           <div className="comment-replies">
-            {comment.replies.map((reply) => renderComment(reply))}
+            {comment.replies.map((reply) => (
+              <div key={reply.id} style={{ marginLeft: "30px" }}>
+                {renderComment(reply, indentLevel + 30)}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -224,13 +235,12 @@ export default function CommentSection({
           </div>
         )}
 
-      {isConfirmationOpen && (
-        <div className="delete-confirmation">
-          <p>Are you sure you want to delete this comment?</p>
-          <button onClick={handleConfirmDelete}>Yes</button>
-          <button onClick={handleCancel}>No</button>
-        </div>
-      )}
+      <DeleteConfirmation
+        isConfirmationOpen={isConfirmationOpen}
+        handleConfirmDelete={handleConfirmDelete}
+        handleDeleteCancel={handleDeleteCancel}
+        commentToDeleteId={commentToDeleteId}
+      />
     </div>
   );
 }
