@@ -47,7 +47,7 @@ export default function CommentSection({
     setCommentToDeleteId(null);
   };
 
-  const renderComment = (comment, indentLevel = 0) => {
+  const renderComment = (comment) => {
     const createdDate = new Date(comment.createdDate);
 
     const options = {
@@ -89,12 +89,18 @@ export default function CommentSection({
       handleReply(comment.id);
     };
 
+    const renderReplies = (replies) => {
+      return (
+        <div className="comment-replies">
+          {replies.map((reply) => (
+            <div key={reply.id}>{renderComment(reply)}</div>
+          ))}
+        </div>
+      );
+    };
+
     return (
-      <div
-        key={comment.id}
-        className="comment"
-        style={{ marginLeft: `${indentLevel}px` }}
-      >
+      <div key={comment.id} className="comment">
         <div className="comment-user-info">
           <img
             src={comment.picture || defaultUserIcon}
@@ -120,8 +126,7 @@ export default function CommentSection({
             Delete
           </button>
         )}
-
-        {!isUpdateMode && selectedCommentId === comment.id ? (
+        {isUpdateMode && selectedCommentId === comment.id ? (
           <div>
             <h2>Edit Comment</h2>
             <form onSubmit={handleUpdate}>
@@ -145,9 +150,14 @@ export default function CommentSection({
         {replyToComment === comment.id && isReplyMode && (
           <div>
             <h2>Reply to {comment.name}</h2>
-            <button className="cancel-reply-button" onClick={handleCancelReply}>
-              Cancel Reply
-            </button>
+            {replyToComment === comment.id && isReplyMode && (
+              <button
+                className="cancel-reply-button"
+                onClick={handleCancelReply}
+              >
+                Cancel Reply
+              </button>
+            )}
             <form onSubmit={handlePostComment}>
               <textarea
                 value={isReplyMode ? comment.replyComment : comment.comment}
@@ -180,15 +190,7 @@ export default function CommentSection({
           </div>
         )}
 
-        {comment.replies && (
-          <div className="comment-replies">
-            {comment.replies.map((reply) => (
-              <div key={reply.id} style={{ marginLeft: "30px" }}>
-                {renderComment(reply, indentLevel + 30)}
-              </div>
-            ))}
-          </div>
-        )}
+        {comment.replies && renderReplies(comment.replies)}
       </div>
     );
   };

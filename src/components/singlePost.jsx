@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { getBlogPost } from "./blogPosts";
 import "../components/styles/singleBlog.css";
 import CommentSection from "./commentSection";
+import Comments from "./comments/Comments";
 
 export default function SinglePost() {
   const [blogPost, setBlogPost] = useState([]);
@@ -214,38 +215,7 @@ export default function SinglePost() {
           />
           <p className="single-blog-post__content">{blogPost.content}</p>
 
-          <CommentSection
-            handleCommentChange={handleCommentChange}
-            handleNameChange={handleNameChange}
-            handleEmailChange={handleEmailChange}
-            handleWebsiteChange={handleWebsiteChange}
-            handlePostComment={handlePostComment}
-            handleReply={handleReply}
-            comments={comments}
-            email={email}
-            name={name}
-            website={website}
-            comment={comment}
-            defaultUserIcon={defaultUserIcon}
-            replyToComment={replyToComment}
-            isReplyMode={isReplyMode}
-            handleCancelReply={handleCancelReply}
-            isReplySubmitted={isReplySubmitted}
-            // handleDelete={handleDelete}
-            handleEdit={handleEdit}
-            handleUpdateComment={handleUpdateComment}
-            setEditCommentId={setEditCommentId}
-            editCommentId={editCommentId}
-            // handleEditCommentClick={handleEditCommentClick}
-            editedComment={editedComment}
-            setEditedComment={setEditedComment}
-            setIsReplyMode={setIsReplyMode}
-            setSelectedCommentId={setSelectedCommentId}
-            setIsUpdateMode={setIsUpdateMode}
-            handleCancelEdit={handleCancelEdit}
-            selectedCommentId={selectedCommentId}
-            setComments={setComments}
-          />
+          <Comments />
         </section>
 
         {/* Recent Article Section */}

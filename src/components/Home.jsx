@@ -10,12 +10,13 @@ import Blog from "./blog";
 function Home() {
   return (
     <section>
-      {/* <HomeSlider /> */}
-      {/* <BrandProduct /> */}
+      <HomeSlider />
+      <BrandProduct />
       {/* <FamilyBrand /> */}
-      {/* <Feactured /> */}
+      <Feactured />
+      <BrandProduct />
       {/* <Products /> */}
-      {/* <FaqSection /> */}
+      <FaqSection />
       <Blog />
     </section>
   );

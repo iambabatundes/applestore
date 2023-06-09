@@ -1,0 +1,76 @@
+@import url("./mixin.css");
+@import url("./main.css");
+
+.delete-confirmation-wrapper {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.delete-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.delete-container .title {
+    color: var(--dark-blue);
+    font-weight: var(--fw-bold);
+    font-size: 1.2rem;
+}
+
+.delete-container .confirmation-message {
+    line-height: 1.5;
+    color: var(--grayish-blue);
+}
+
+.delete-container .btn-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete-container button {
+    color: var(--white);
+    text-transform: uppercase;
+    font-weight: var(--fw-medium);
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.delete-container button:hover {
+    opacity: 0.65;
+}
+
+.delete-container .cancel-btn {
+    background: var(--grayish-blue);
+}
+
+.delete-container .delete-btn {
+    background: var(--soft-red);
+    color: var(--white);
+}
+
+@media (min-width: 576px) {
+    .delete-container {
+        width: 400px;
+        padding: 30px;
+    }
+
+    .delete-container .btn-container button {
+        padding: 15px 30px;
+    }
+}

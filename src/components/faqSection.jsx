@@ -4,7 +4,7 @@ import "../components/styles/faqSection.css";
 
 export default function FaqSection() {
   return (
-    <section>
+    <section className="faq__main">
       <header className="faqSection__header">
         <h1>Frequently Asked Any Questions</h1>
       </header>

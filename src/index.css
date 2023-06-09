@@ -1,3 +1,10 @@
+@import url("./components/comments/styles/main.css");
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--grayish-blue) var(--very-light-gray);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -12,4 +19,68 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+a,
+p,
+span {
+  font-weight: var(--fw-regular);
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--grayish-blue) var(--very-light-gray);
+}
+
+/* body {
+  font-family: var(--ff-rubik);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+} */
+
+body::-webkit-scrollbar {
+  width: 6px;
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--very-light-gray);
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--grayish-blue);
+}
+
+/* ------------------- */
+/* utility classes */
+/* ------------------- */
+
+.display--none {
+  display: none !important;
+}
+
+.overflow--hidden {
+  overflow-y: hidden;
+}
+
+::selection {
+  color: var(--white);
+  background: var(--grayish-blue);
 }

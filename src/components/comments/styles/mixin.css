@@ -1,0 +1,11 @@
+@media (min-width: 26.25em) {
+    /* Your CSS code for media-sm goes here */
+}
+
+@media (min-width: 47em) {
+    /* Your CSS code for media-md goes here */
+}
+
+@supports (scrollbar-width: thin) {
+    /* Your CSS code for support(scrollbar-width: thin) goes here */
+}
