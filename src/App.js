@@ -10,6 +10,7 @@ import Product from "./components/Product";
 import Contact from "./components/Contact";
 import About from "./components/About";
 import SinglePost from "./components/singlePost";
+import Footer from "./components/footer/footer";
 
 // const Home = () => <h1>Home Page</h1>;
 
@@ -28,6 +29,7 @@ function App() {
           {/* <Route path="/cart" component={<Cart />} /> */}
         </Routes>
       </main>
+      <Footer />
     </>
   );
 }
