@@ -6,6 +6,7 @@ import Products from "./products";
 import BrandProduct from "./brandProduct";
 import FaqSection from "./faqSection";
 import Blog from "./blog";
+import Newsletter from "./Newsletter";
 
 function Home() {
   return (
@@ -18,6 +19,7 @@ function Home() {
       {/* <Products /> */}
       <FaqSection />
       <Blog />
+      <Newsletter />
     </section>
   );
 }

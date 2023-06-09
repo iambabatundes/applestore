@@ -2,168 +2,76 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getBlogPost } from "./blogPosts";
 import "../components/styles/singleBlog.css";
-import CommentSection from "./commentSection";
 import Comments from "./comments/Comments";
 
 export default function SinglePost() {
   const [blogPost, setBlogPost] = useState([]);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [website, setWebsite] = useState("");
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
-  const [isReplyMode, setIsReplyMode] = useState(false);
-  const [replyToComment, setReplyToComment] = useState(null);
-  const [isReplySubmitted, setIsReplySubmitted] = useState(false);
-  const [editCommentId, setEditCommentId] = useState(null);
-  const [editedComment, setEditedComment] = useState("");
-  const [selectedCommentId, setSelectedCommentId] = useState(null);
-  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const initialComments = {
+    currentUser: {
+      username: "juliusomo",
+    },
+    comments: [
+      {
+        id: 1,
+        content:
+          "Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.",
+        createdAt: "23 November 2021",
+        score: 12,
+        username: "amyrobson",
+        currentUser: false,
+        replies: [],
+      },
+      {
+        id: 2,
+        content:
+          "Woah, your project looks awesome! How long have you been coding for? I'm still new, but think I want to dive into React as well soon. Perhaps you can give me an insight on where I can learn React? Thanks!",
+        createdAt: "5 December 2021",
+        score: 5,
+        username: "maxblagun",
+        currentUser: false,
+        replies: [
+          {
+            id: 3,
+            content:
+              "@maxblaugn, If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
+            createdAt: "18 December 2021",
+            score: 4,
+            username: "ramsesmiron",
+            currentUser: false,
+            replies: [],
+          },
+          {
+            id: 4,
+            content:
+              "@ramsesmiron, I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
+            createdAt: "30 December 2021",
+            score: 2,
+            username: "juliusomo",
+            currentUser: true,
+            replies: [],
+          },
+        ],
+      },
+    ],
+  };
+
+  const [comments, updateComments] = useState(initialComments.comments);
+  const [deleteModalState, setDeleteModalState] = useState(false);
 
   const { title } = useParams();
 
-  const defaultUserIcon = "/user.png";
+  useEffect(() => {
+    localStorage.getItem("comments") !== null
+      ? updateComments(JSON.parse(localStorage.getItem("comments")))
+      : updateComments();
+  }, []);
 
-  // const handleEdit = () => {
-  //   setEditCommentId(comment.id);
-  // };
-
-  // const handleDelete = () => {
-  //   setIsConfirmationOpen(true);
-  //   setCommentToDeleteId(comment.id);
-  // };
-
-  // const handleDelete = (commentId) => {
-  //   // Find the comment with the specified commentId and delete it
-  //   const updatedComments = comments.filter(
-  //     (comment) => comment.id !== commentId
-  //   );
-
-  //   // Update the comments state with the updated comments
-  //   setComments(updatedComments);
-  // };
-
-  // const handleEditCommentClick = (comment) => {
-  //   setEditCommentId(comment.id);
-  //   setEditedComment(comment.comment);
-  //   setIsUpdateMode(true);
-  //   setIsReplyMode(false);
-  //   setEditedComment(comment.comment);
-  //   setSelectedCommentId(comment.id);
-  // };
-
-  const handleCancelEdit = () => {
-    setIsUpdateMode(false);
-    setEditedComment("");
-    setSelectedCommentId(null);
-  };
-
-  // const handleReply = (commentId) => {
-  //   if (isUpdateMode) {
-  //     setIsUpdateMode(false);
-  //     setEditedComment("");
-  //     setSelectedCommentId(null);
-  //   }
-  //   // Your existing logic for handling the reply action
-  // };
-
-  const handleEdit = () => {
-    if (isReplyMode) {
-      handleCancelReply();
-    }
-    setIsUpdateMode(true);
-    setEditedComment(comment.comment);
-    setSelectedCommentId(comment.id);
-  };
-
-  // const handleEdit = () => {
-  //   setIsUpdateMode(true);
-  //   setEditedComment(comment.comment);
-  //   setSelectedCommentId(comment.id);
-  // };
-
-  const handleUpdateComment = (commentId) => {
-    const updatedComments = comments.map((comment) => {
-      if (comment.id === commentId) {
-        return { ...comment, comment: editedComment };
-      }
-      return comment;
-    });
-
-    setComments(updatedComments);
-    setEditCommentId(null);
-    setEditedComment("");
-  };
-
-  const handleCancelReply = () => {
-    setIsReplyMode(false);
-    setReplyToComment(null);
-  };
-
-  const handleReply = (commentId) => {
-    setIsReplyMode(true);
-    setReplyToComment(commentId);
-    setIsUpdateMode(false);
-    setSelectedCommentId(null);
-    // setIsReplySubmitted(false);
-  };
-
-  const handleNameChange = (e) => {
-    setName(e.target.value);
-  };
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handleWebsiteChange = (e) => {
-    setWebsite(e.target.value);
-  };
-
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
-  };
-
-  const handlePostComment = (e) => {
-    e.preventDefault();
-
-    if (replyToComment) {
-      const parentComment = comments.find((c) => c.id === replyToComment);
-      const newComment = {
-        name,
-        email,
-        website,
-        comment,
-        id: comments.length + 1,
-        createdDate: new Date().toISOString(),
-        replyTo: parentComment.id,
-      };
-
-      // Add the new reply comment to the comments array
-      setComments([newComment, ...comments]);
-    } else {
-      // Create a new comment object
-      const newComment = {
-        name,
-        email,
-        website,
-        comment,
-        id: comments.length + 1,
-        createdDate: new Date().toISOString(),
-      };
-
-      // Add the new comment to the comments array
-      setComments([newComment, ...comments]);
-    }
-
-    // Clear the form fields
-    setName("");
-    setEmail("");
-    setWebsite("");
-    setComment("");
-    setReplyToComment(null);
-    setIsReplySubmitted(false);
-  };
+  useEffect(() => {
+    localStorage.setItem("comments", JSON.stringify(comments));
+    deleteModalState
+      ? document.body.classList.add("overflow--hidden")
+      : document.body.classList.remove("overflow--hidden");
+  }, [comments, deleteModalState]);
 
   useEffect(() => {
     setBlogPost(getBlogPost(title));
@@ -172,6 +80,87 @@ export default function SinglePost() {
   if (!blogPost) {
     return <div>Loading...</div>;
   }
+
+  // update score
+  let updateScore = (score, id, type) => {
+    let updatedComments = [...comments];
+
+    if (type === "comment") {
+      updatedComments.forEach((data) => {
+        if (data.id === id) {
+          data.score = score;
+        }
+      });
+    } else if (type === "reply") {
+      updatedComments.forEach((comment) => {
+        comment.replies.forEach((data) => {
+          if (data.id === id) {
+            data.score = score;
+          }
+        });
+      });
+    }
+    updateComments(updatedComments);
+  };
+
+  // add comments
+  let addComments = (newComment) => {
+    let updatedComments = [...comments, newComment];
+    updateComments(updatedComments);
+  };
+
+  // add replies
+  let updateReplies = (replies, id) => {
+    let updatedComments = [...comments];
+    updatedComments.forEach((data) => {
+      if (data.id === id) {
+        data.replies = [...replies];
+      }
+    });
+    updateComments(updatedComments);
+  };
+
+  // edit comment
+  let editComment = (content, id, type) => {
+    let updatedComments = [...comments];
+
+    if (type === "comment") {
+      updatedComments.forEach((data) => {
+        if (data.id === id) {
+          data.content = content;
+        }
+      });
+    } else if (type === "reply") {
+      updatedComments.forEach((comment) => {
+        comment.replies.forEach((data) => {
+          if (data.id === id) {
+            data.content = content;
+          }
+        });
+      });
+    }
+
+    updateComments(updatedComments);
+  };
+
+  // delete comment
+  let commentDelete = (id, type, parentComment) => {
+    let updatedComments = [...comments];
+    let updatedReplies = [];
+
+    if (type === "comment") {
+      updatedComments = updatedComments.filter((data) => data.id !== id);
+    } else if (type === "reply") {
+      comments.forEach((comment) => {
+        if (comment.id === parentComment) {
+          updatedReplies = comment.replies.filter((data) => data.id !== id);
+          comment.replies = updatedReplies;
+        }
+      });
+    }
+
+    updateComments(updatedComments);
+  };
 
   return (
     <section>
@@ -215,7 +204,15 @@ export default function SinglePost() {
           />
           <p className="single-blog-post__content">{blogPost.content}</p>
 
-          <Comments />
+          <Comments
+            updateReplies={updateReplies}
+            comments={comments}
+            updateScore={updateScore}
+            editComment={editComment}
+            commentDelete={commentDelete}
+            setDeleteModalState={setDeleteModalState}
+            addComments={addComments}
+          />
         </section>
 
         {/* Recent Article Section */}

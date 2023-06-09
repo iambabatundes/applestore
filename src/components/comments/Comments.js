@@ -1,62 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-// import "./Components/Styles/App.scss";
+import "./styles/Comments.css";
 import Comment from "./Comment";
 import AddComment from "./AddComment";
 
-const Comments = () => {
-  const initialComments = {
-    currentUser: {
-      username: "juliusomo",
-    },
-    comments: [
-      {
-        id: 1,
-        content:
-          "Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.",
-        createdAt: "23 November 2021",
-        score: 12,
-        username: "amyrobson",
-        currentUser: false,
-        replies: [],
-      },
-      {
-        id: 2,
-        content:
-          "Woah, your project looks awesome! How long have you been coding for? I'm still new, but think I want to dive into React as well soon. Perhaps you can give me an insight on where I can learn React? Thanks!",
-        createdAt: "5 December 2021",
-        score: 5,
-        username: "maxblagun",
-        currentUser: false,
-        replies: [
-          {
-            id: 3,
-            content:
-              "@maxblaugn, If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
-            createdAt: "18 December 2021",
-            score: 4,
-            username: "ramsesmiron",
-            currentUser: false,
-            replies: [],
-          },
-          {
-            id: 4,
-            content:
-              "@ramsesmiron, I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
-            createdAt: "30 December 2021",
-            score: 2,
-            username: "juliusomo",
-            currentUser: true,
-            replies: [],
-          },
-        ],
-      },
-    ],
-  };
-
-  const [comments, updateComments] = useState(initialComments.comments);
-  const [deleteModalState, setDeleteModalState] = useState(false);
-
+const Comments = ({
+  comments,
+  addComments,
+  updateScore,
+  updateReplies,
+  editComment,
+  commentDelete,
+  setDeleteModalState,
+}) => {
   // const getData = async () => {
   //   try {
   //     const res = await fetch();
@@ -70,100 +26,6 @@ const Comments = () => {
   //     console.error("Error fetching data:", error);
   //   }
   // };
-
-  useEffect(() => {
-    localStorage.getItem("comments") !== null
-      ? updateComments(JSON.parse(localStorage.getItem("comments")))
-      : updateComments();
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("comments", JSON.stringify(comments));
-    deleteModalState
-      ? document.body.classList.add("overflow--hidden")
-      : document.body.classList.remove("overflow--hidden");
-  }, [comments, deleteModalState]);
-
-  // update score
-  let updateScore = (score, id, type) => {
-    let updatedComments = [...comments];
-
-    if (type === "comment") {
-      updatedComments.forEach((data) => {
-        if (data.id === id) {
-          data.score = score;
-        }
-      });
-    } else if (type === "reply") {
-      updatedComments.forEach((comment) => {
-        comment.replies.forEach((data) => {
-          if (data.id === id) {
-            data.score = score;
-          }
-        });
-      });
-    }
-    updateComments(updatedComments);
-  };
-
-  // add comments
-  let addComments = (newComment) => {
-    let updatedComments = [...comments, newComment];
-    updateComments(updatedComments);
-  };
-
-  // add replies
-  let updateReplies = (replies, id) => {
-    let updatedComments = [...comments];
-    updatedComments.forEach((data) => {
-      if (data.id === id) {
-        data.replies = [...replies];
-      }
-    });
-    updateComments(updatedComments);
-  };
-
-  // edit comment
-  let editComment = (content, id, type) => {
-    let updatedComments = [...comments];
-
-    if (type === "comment") {
-      updatedComments.forEach((data) => {
-        if (data.id === id) {
-          data.content = content;
-        }
-      });
-    } else if (type === "reply") {
-      updatedComments.forEach((comment) => {
-        comment.replies.forEach((data) => {
-          if (data.id === id) {
-            data.content = content;
-          }
-        });
-      });
-    }
-
-    updateComments(updatedComments);
-  };
-
-  // delete comment
-  let commentDelete = (id, type, parentComment) => {
-    let updatedComments = [...comments];
-    let updatedReplies = [];
-
-    if (type === "comment") {
-      updatedComments = updatedComments.filter((data) => data.id !== id);
-    } else if (type === "reply") {
-      comments.forEach((comment) => {
-        if (comment.id === parentComment) {
-          updatedReplies = comment.replies.filter((data) => data.id !== id);
-          comment.replies = updatedReplies;
-        }
-      });
-    }
-
-    updateComments(updatedComments);
-  };
 
   return (
     <main className="App">
