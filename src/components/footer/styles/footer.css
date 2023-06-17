@@ -7,7 +7,7 @@
 
 .footer__contact {
     color: #fff;
-    padding: 15px;
+    /* padding: 15px; */
     font-size: 1em;
     line-height: 35px;
     font-weight: 400;
@@ -62,7 +62,7 @@
 
 .footer__useful-link {
     color: #fff;
-    padding: 15px;
+    /* padding: 15px; */
     font-size: 1em;
     line-height: 35px;
     font-weight: 400;
@@ -86,6 +86,7 @@
 
 .footer__newsletter {
     color: #fff;
+    padding-top: 20px;
 }
 
 .footer_newsletter-form {
@@ -116,11 +117,81 @@
     /* font-size: 1em; */
 }
 
+.footer__openTime {
+    color: #fff;
+    text-align: start;
+    padding-top: 30px;
+    text-transform: uppercase;
+}
+
+.footer__openTime p {
+    text-transform: initial;
+}
+
+.footer__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #dadada;
+    padding: 20px 15px;
+    /* color: #fff; */
+}
+
+.footer__footer h1 {
+    font-weight: 300;
+    font-size: 1em;
+    text-transform: uppercase;
+}
+
+.footer__footer h2 {
+    font-weight: 300;
+    font-size: 1em;
+    text-transform: capitalize;
+}
+
+.footer__payment-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* width: 20%; */
+    object-fit: contain;
+    /* padding-right: 20px; */
+}
+
+.visa {
+    margin-left: 10px;
+}
+
+/* .paystack {
+    margin-right: 10px;
+} */
+
+.strip {
+    margin-right: 10px;
+}
+
 
 
 @media (min-width: 768px) {
     .footer {
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-template-columns: 150px 248px 150px 1fr 1fr;
+        gap: 10px;
+    }
+
+    .footer__footer {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0;
+    }
+
+    .footer__openTime {
+        padding-top: 0;
+
+    }
+
+    .footer__newsletter {
+        padding-top: 0;
     }
 
     .slides-button {

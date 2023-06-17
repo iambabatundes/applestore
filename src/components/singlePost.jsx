@@ -177,15 +177,16 @@ export default function SinglePost() {
                 {blogPost.datePosted}
               </span>
             </span>
-            <div>
-              <i class="fa fa-user" aria-hidden="true"></i>
+
+            <div className="singlePost__postedBy">
+              <i className="fa fa-user" aria-hidden="true"></i>
               <span className="single-blog-post__author">
                 {blogPost.postedBy}
               </span>
             </div>
 
-            <div>
-              <i class="fa fa-comment-o" aria-hidden="true"></i>
+            <div className="singlePost__comment">
+              <i className="fa fa-comment-o" aria-hidden="true"></i>
               {comments.length === 0 ? (
                 <span>No Comment</span>
               ) : (

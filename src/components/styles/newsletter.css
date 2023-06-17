@@ -17,7 +17,7 @@
 }
 
 .newsletter__form {
-    width: 50%;
+    width: 100%;
 }
 
 .newsletter__form input {
@@ -50,5 +50,10 @@
     padding: 18px;
     border-color: #f5c2c7;
     border-radius: 5px;
+}
 
+@media (min-width: 768px) {
+    .newsletter__form {
+        width: 50%;
+    }
 }

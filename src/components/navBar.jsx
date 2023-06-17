@@ -5,11 +5,22 @@ import message from "../message.svg";
 import notification from "../notification.svg";
 import { Link, NavLink } from "react-router-dom";
 import Search from "./search";
+import Icon from "./icon";
+import LoginModal from "./loginModal";
+import RegisterModal from "./registerModal";
 // import NavRight from "./navRight";
 
 function NavBar() {
   const [showNavbar, setShowNavbar] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleLoginClose = () => {
+    setShowModal(false);
+  };
 
   const handleToggle = () => {
     setShowNavbar(!showNavbar);
@@ -21,6 +32,20 @@ function NavBar() {
     setShowOverlay(false);
   };
 
+  const handleContinueClick = (e) => {
+    e.preventDefault();
+    setShowJoinModal(true);
+  };
+
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    setShowLoginModal(true);
+  };
+
+  const handleFormClick = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <header className="navbar__main">
       <header className="header__contact">
@@ -29,18 +54,8 @@ function NavBar() {
       </header>
       <section className="container-menu">
         <div className="mobile-menu">
-          <span className="toggle-icon" onClick={handleToggle}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="23"
-              height="19"
-              viewBox="0 0 23 19"
-            >
-              <rect y="16" width="23" height="3" rx="1.5" fill="#555"></rect>
-              <rect width="23" height="3" rx="1.5" fill="#555"></rect>
-              <rect y="8" width="23" height="3" rx="1.5" fill="#555"></rect>
-            </svg>
-          </span>
+          <Icon menu onClick={handleToggle} />
+
           <Link to="/">
             <img src={logo} alt="logo" className="App-logo" />
           </Link>
@@ -61,23 +76,49 @@ function NavBar() {
 
           <NavLink to="/cart">
             <div className="icon">
-              <img src={message} alt="Message Icon" />
-              <span className="badge-nav">10</span>
-            </div>
-          </NavLink>
-
-          <NavLink to="/cart">
-            <div className="icon">
-              <img src={notification} alt="Notification Icon" />
+              <Icon cart className="cart-icon" />
               <span className="badge-nav">10</span>
             </div>
           </NavLink>
 
           <div className="right-section">
-            <Link to="/login">Login</Link>
-            <Link to="/join">
-              <button className="join">Join</button>
-            </Link>
+            <section>
+              <span
+                style={{ cursor: "pointer" }}
+                className="nav-login"
+                onClick={() => setShowModal(true)}
+              >
+                Login
+              </span>
+
+              {showModal && (
+                <LoginModal
+                  onClose={handleLoginClose}
+                  onOpen={() => setOpenModal(true)}
+                  handleLoginClick={handleLoginClick}
+                  setShowLoginModal={setShowLoginModal}
+                  showLoginModal={showLoginModal}
+                  handleFormClick={handleFormClick}
+                />
+              )}
+            </section>
+
+            <section>
+              <button onClick={() => setOpenModal(true)} className="join">
+                Join
+              </button>
+
+              {openModal && (
+                <RegisterModal
+                  onClose={() => setOpenModal(false)}
+                  onOpen={() => setShowModal(true)}
+                  setShowJoinModal={setShowJoinModal}
+                  showJoinModal={showJoinModal}
+                  handleContinueClick={handleContinueClick}
+                  handleFormClick={handleFormClick}
+                />
+              )}
+            </section>
           </div>
         </nav>
       </section>
@@ -87,9 +128,7 @@ function NavBar() {
           <div className="overlay-content">
             <div className="toggle-menu-logo">
               <img src={logo} alt="logo" className="mobile-App-logo" />
-              <span className="close-icon" onClick={handleClose}>
-                X
-              </span>
+              <Icon closed onClick={handleClose} className="close-icon" />
             </div>
             <div className="nav-links">
               <Link to="/">Home</Link>

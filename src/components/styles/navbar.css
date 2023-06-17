@@ -1,5 +1,7 @@
 .App-logo {
-    height: 10vmin;
+    /* height: 50px;
+    padding: 0; */
+    width: 10vmin;
     pointer-events: none;
 }
 
@@ -11,13 +13,14 @@
 
 /* Navbar */
 .navbar__main {
-    margin: 1rem 1rem;
+    margin: 1rem 1.5rem;
 }
 
 .header__contact {
     display: none;
-    margin: 1rem 0.5rem 1rem 0px;
+    margin: 1rem 0.5rem 0.3rem 0.5rem;
     color: #95979d;
+    border: 1px solid #000;
 }
 
 .search-section {
@@ -28,11 +31,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 30px;
+    margin: 0 0.5rem 30px;
+    /* margin-bottom: 30px; */
     /* background: #95979d; */
+    border: 1px solid #000;
 }
 
 nav {
+    margin: 0;
     /* padding: 10px; */
     border-radius: 10px;
     display: flex;
@@ -51,7 +57,18 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    /* gap: 5px; */
+    margin-left: 20px;
+}
+
+.right-section a {
+    text-decoration: none;
+    color: #000;
+}
+
+.nav-login {
+    padding-right: 20px;
+
 }
 
 .join {
@@ -106,6 +123,11 @@ nav {
 
 .icon {
     display: none;
+}
+
+.cart-icon {
+    margin-top: 5px;
+    margin-left: -11px;
 }
 
 /* Overlay Styles */
@@ -220,7 +242,7 @@ nav {
 
     .badge-nav {
         position: absolute;
-        top: -5px;
+        top: -1px;
         right: -5px;
         width: 20px;
         height: 20px;
