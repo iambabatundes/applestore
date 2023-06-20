@@ -1,0 +1,58 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.password-input {
+    position: relative;
+}
+
+.icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.login-btn {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.form-check {
+    margin-top: 10px;
+}
+
+.forget {
+    text-decoration: none;
+    color: #000;
+}
+
+.forget:hover {
+    text-decoration: underline;
+}

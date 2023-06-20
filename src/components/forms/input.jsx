@@ -10,17 +10,18 @@ export default function Input({
   error,
   type,
   placeholder,
+  className,
 }) {
   return (
     <section>
-      <label htmlFor={name} className="form-label">
+      <label htmlFor={name} className={`form-label ${className}`}>
         {label}
       </label>
       <input
         type={type}
         value={value}
         name={name}
-        className="form-control"
+        className={`form-control ${className}`}
         autoFocus={autoFocus}
         onChange={onChange}
         placeholder={placeholder}

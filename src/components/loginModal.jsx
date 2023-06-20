@@ -9,24 +9,33 @@ export default function LoginModal({
   handleFormClick,
   showLoginModal,
   setShowLoginModal,
-  handleLoginClick,
+  // handleLoginClick,
 }) {
-  // const handleLoginClick = (e) => {
-  //   e.preventDefault();
-  //   setShowLoginModal(true);
-  // };
+  const [activeModal, setActiveModal] = useState("login");
+
+  const navigateToLogin = () => {
+    setActiveModal("login");
+  };
+
+  const handleLoginClick = () => {
+    setActiveModal("signin");
+  };
 
   return (
     <section className="modal" onClick={onClose}>
-      {showLoginModal ? (
-        <SignInModal onClose={() => setShowLoginModal(false)} onOpen={onOpen} />
-      ) : (
+      {activeModal === "login" ? (
         <LoginModalContent
           onClose={onClose}
           setShowLoginModal={setShowLoginModal}
           onOpen={onOpen}
           handleFormClick={handleFormClick}
           handleLoginClick={handleLoginClick}
+        />
+      ) : (
+        <SignInModal
+          onClose={onClose}
+          onOpen={onOpen}
+          navigateToLogin={navigateToLogin}
         />
       )}
     </section>

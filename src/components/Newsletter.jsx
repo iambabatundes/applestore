@@ -69,7 +69,6 @@ export default function Newsletter() {
         </article>
         <form onSubmit={handleSubmit} className="newsletter__form">
           <Input
-            autoFocus
             name="name"
             value={data.name}
             onChange={handleChange}

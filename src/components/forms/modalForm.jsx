@@ -1,39 +1,78 @@
-import React from "react";
+import React, { useState } from "react";
+import Joi from "joi";
+// import "./styles/modalForm.css";
 import "./modal.css";
+import Input from "./input";
+import { useForm } from "./useForms";
+import Icon from "../icon";
 
 export default function ModalForm({
-  checked,
-  desc,
-  email,
-  password,
-  subscribe,
+  forget,
+  onClick,
   title,
+  password,
+  label,
+  placeholder,
+  submit,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required(),
+    username: Joi.string().required(),
+  });
+
+  const { handleChange, validate, handleSubmit } = useForm({ schema: schema });
+
   return (
     <section>
-      <form className="modalForm-form">
-        <input type="email/text" placeholder={email} />
-        {password && <input type="password" placeholder={password} />}
+      <form onSubmit={handleSubmit} className="login-form">
+        <Input
+          label={label}
+          placeholder={placeholder}
+          autoFocus
+          onChange={handleChange}
+          name="email"
+          className="login-form-control form-label"
+        />
 
-        {desc && <p className="modal-desc">{desc}</p>}
-
-        <button className="continue" type="submit">
-          {title}
-        </button>
-
-        {checked && (
-          <div className="form-check">
-            <div className="checkbox">
-              <input type="checkbox" />
-              <label className="remember">Remember me</label>
-            </div>
-            <a className="forget" href="#">
-              Forget Password
-            </a>
+        {password && (
+          <div className="password-input">
+            <Input
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={handleChange}
+              name="password"
+              className="login-form-control login-password form-label"
+            />
+            {showPassword ? (
+              <Icon eye className="icon" onClick={handleTogglePassword} />
+            ) : (
+              <Icon eyeCancel className="icon" onClick={handleTogglePassword} />
+            )}
           </div>
         )}
 
-        {subscribe && <p className="modal-subscribe">{subscribe}</p>}
+        {forget && (
+          <div className="form-check">
+            <span onClick={onClick} className="forget">
+              Forget Password?
+            </span>
+          </div>
+        )}
+
+        {submit && (
+          <button className="login-btn-login" disabled={validate()}>
+            {title}
+          </button>
+        )}
       </form>
     </section>
   );
