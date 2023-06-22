@@ -461,7 +461,7 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
       {eye && (
         <button
           type="button"
-          style={{ width: "16", height: "16" }}
+          style={{ width: "16", height: "16", background: "none" }}
           onClick={onClick}
           className={`${className}`}
         >
@@ -479,7 +479,7 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
       {eyeCancel && (
         <button
           type="button"
-          style={{ width: "16", height: "16" }}
+          style={{ width: "16", height: "16", background: "none" }}
           onClick={onClick}
           className={`${className}`}
         >

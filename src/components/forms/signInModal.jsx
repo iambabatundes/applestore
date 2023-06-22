@@ -48,9 +48,8 @@ export default function SignInModal({ onClose, onOpen, navigateToLogin }) {
             />
           ) : (
             <ModalForm
-              label="Email or Password"
-              placeholder="Email or Password"
-              email="Email / Password"
+              label="Email or Username"
+              placeholder="Email or Username"
               password="Password"
               title="Login"
               onClick={handleForgetClick}

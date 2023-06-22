@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Joi from "joi";
-// import "./styles/modalForm.css";
 import "./modal.css";
 import Input from "./input";
 import { useForm } from "./useForms";
@@ -24,11 +23,19 @@ export default function ModalForm({
   const schema = Joi.object({
     email: Joi.string()
       .email({ tlds: { allow: false } })
-      .required(),
-    username: Joi.string().required(),
+      .required()
+      .label("Email"),
+    username: Joi.string().required().label("Username"),
+    password: Joi.string()
+      .min(8)
+      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+      .label("Password"),
+    // .required(),
   });
 
-  const { handleChange, validate, handleSubmit } = useForm({ schema: schema });
+  const { handleChange, validate, errors, data, handleSubmit } = useForm({
+    schema,
+  });
 
   return (
     <section>
@@ -40,6 +47,8 @@ export default function ModalForm({
           onChange={handleChange}
           name="email"
           className="login-form-control form-label"
+          // error={errors && errors.email}
+          // value={data.email}
         />
 
         {password && (
@@ -51,6 +60,7 @@ export default function ModalForm({
               onChange={handleChange}
               name="password"
               className="login-form-control login-password form-label"
+              // error={errors && errors.password}
             />
             {showPassword ? (
               <Icon eye className="icon" onClick={handleTogglePassword} />
@@ -59,6 +69,10 @@ export default function ModalForm({
             )}
           </div>
         )}
+
+        {/* {errors && errors.password && (
+          <div className="validation-message">{errors.password}</div>
+        )} */}
 
         {forget && (
           <div className="form-check">

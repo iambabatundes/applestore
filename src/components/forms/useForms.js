@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export function useForm({ schema, doSubmit }) {
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ username: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
 
   function validate() {
@@ -22,12 +22,12 @@ export function useForm({ schema, doSubmit }) {
     return error ? error.details[0].message : null;
   }
 
-  //   function validateProperty({ name, value }) {
-  //     const obj = { [name]: value };
-  //     const subSchema = { [name]: schema[name] };
-  //     const { error } = schema.validate(obj, subSchema);
-  //     return error ? error.details[0].message : null;
-  //   }
+  function validateProperty({ name, value }) {
+    const obj = { [name]: value };
+    const subSchema = { [name]: schema[name] };
+    const { error } = schema.validate(obj, subSchema);
+    return error ? error.details[0].message : null;
+  }
 
   function handleSubmit(event) {
     event.preventDefault();

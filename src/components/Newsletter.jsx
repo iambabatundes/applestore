@@ -72,9 +72,9 @@ export default function Newsletter() {
             name="name"
             value={data.name}
             onChange={handleChange}
-            // label="Name"
             placeholder="Name"
             type="name"
+            alertDanger="alertDanger"
             error={errors.name}
           />
 
@@ -82,9 +82,9 @@ export default function Newsletter() {
             name="email"
             value={data.email}
             onChange={handleChange}
-            // label="Email"
             placeholder="Email"
             type="email"
+            alertDanger="alertDanger"
             error={errors.email}
           />
 

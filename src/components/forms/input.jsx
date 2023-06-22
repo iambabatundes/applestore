@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/newsletter.css";
+import "./modal.css";
 
 export default function Input({
   name,
@@ -10,8 +10,21 @@ export default function Input({
   error,
   type,
   placeholder,
+  alert,
+  alertDanger,
   className,
 }) {
+  const getInputClassName = () => {
+    if (error) {
+      return `${className} invalid-input`;
+    } else if (value) {
+      return `${className} valid-input`;
+    } else if (value === "") {
+      return `${className} blue-outline`;
+    }
+    return className;
+  };
+
   return (
     <section>
       <label htmlFor={name} className={`form-label ${className}`}>
@@ -21,12 +34,15 @@ export default function Input({
         type={type}
         value={value}
         name={name}
-        className={`form-control ${className}`}
+        // className={`form-control ${className}`}
+        className={getInputClassName()}
         autoFocus={autoFocus}
         onChange={onChange}
         placeholder={placeholder}
+        id={name}
+        required
       />
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className={`${alert} ${alertDanger}`}>{error}</div>}
     </section>
   );
 }
