@@ -6,7 +6,7 @@ import Icon from "../icon";
 import Input from "./input";
 
 export default function JoinModal({ onClose, onOpen, navigateToRegister }) {
-  const [data, setData] = useState({});
+  const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
@@ -79,7 +79,7 @@ export default function JoinModal({ onClose, onOpen, navigateToRegister }) {
       .min(3)
       .max(225),
     // .required(),
-    // username: Joi.string().required().label("Username"),
+    username: Joi.string().min(3).max(255).label("Username"),
     password: Joi.string()
       .min(8)
       .max(25)
@@ -110,6 +110,17 @@ export default function JoinModal({ onClose, onOpen, navigateToRegister }) {
           <ModalHeading title="Continue with your email" />
 
           <form onSubmit={handleSubmit} className="login-form">
+            <Input
+              name="username"
+              value={data.username}
+              placeholder="Emmanuel_Babatunde"
+              label="Username"
+              onChange={handleChange}
+              type="text"
+              className="login-form-control form-label"
+              alert="alert"
+              error={errors.username}
+            />
             <Input
               name="email"
               value={data.email}

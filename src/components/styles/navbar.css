@@ -12,15 +12,41 @@
 }
 
 /* Navbar */
+.nav-main {
+    background: #fff;
+}
+
 .navbar__main {
-    margin: 1rem 1.5rem;
+    margin: 0 1rem 1.5rem;
+    background: #fff;
+
 }
 
 .header__contact {
     display: none;
     margin: 1rem 0.5rem 0.3rem 0.5rem;
     color: #95979d;
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
+}
+
+.fixed-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+.hide-contact {
+    display: none;
+}
+
+.show-search {
+    display: block;
+}
+
+.show-links {
+    display: flex;
 }
 
 .search-section {
@@ -32,9 +58,6 @@
     align-items: center;
     justify-content: space-between;
     margin: 0 0.5rem 30px;
-    /* margin-bottom: 30px; */
-    /* background: #95979d; */
-    border: 1px solid #000;
 }
 
 nav {

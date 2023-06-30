@@ -1,0 +1,321 @@
+.product-main {
+    margin: 4rem 0px;
+    position: relative;
+}
+
+/* .slides-card {
+    display: flex;
+  } */
+
+.productMain__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: nowrap;
+    transition: transform 0.5s;
+    margin: 1.8rem 0;
+    overflow: hidden;
+    width: 100%;
+    margin-left: 5px;
+
+}
+
+.product__title {
+    color: #404145;
+    font-family: Macan, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40px;
+}
+
+/* Brand11 section */
+.brand11 {
+    color: black;
+    font-size: 1.2em;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 20px;
+    /* width: 100%; */
+}
+
+.brand11 h2 {
+    color: #000;
+    font-size: 1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brand11 h4 {
+    color: #000;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+/* Brands section */
+.brands {
+    color: black;
+    font-size: 1.2em;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 20px;
+
+}
+
+.brands h2 {
+    color: #000;
+    font-size: 1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brands h4 {
+    color: #000;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brand32 {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 20px;
+
+}
+
+.brand32 h2 {
+    color: #fff;
+    font-size: 1.1em;
+    text-shadow: 0 0 10px #000;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brand32 h4 {
+    color: #fff;
+    width: 30px;
+    text-shadow: 2px 2px 3px #000;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brand2 {
+    color: #fff;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+
+}
+
+.brand2 h2 {
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brand2 h4 {
+    color: #fff;
+    width: 131px;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brandNew32 {
+    color: #fff;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+
+}
+
+.brandNew32 h2 {
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brandNew32 h4 {
+    color: #000;
+    width: 131px;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brandNew21 {
+    color: #000;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+}
+
+.brandNew21 h2 {
+    color: #000;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brandNew21 h4 {
+    color: #000;
+    width: 131px;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brandNew23 {
+    color: #fff;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+}
+
+.brandNew23 h2 {
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brandNew23 h4 {
+    color: #fff;
+    width: 131px;
+    font-size: 0.8em;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.newBrand {
+    color: #000;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+}
+
+.newBrand h2 {
+    color: #000;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.newBrand h4 {
+    color: #000;
+    width: 131px;
+    font-size: 0.8em;
+    text-shadow: 0 0 2px #fff;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.brandNew {
+    color: #000;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    line-height: 20px;
+}
+
+.brandNew h2 {
+    color: #000;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+
+.brandNew h4 {
+    color: #000;
+    width: 131px;
+    font-size: 0.8em;
+    text-shadow: 0 0 2px #fff;
+    font-weight: 700;
+    padding-top: 12px;
+    text-transform: capitalize;
+    line-height: 20px;
+}
+
+.productMain-button {
+    position: absolute;
+    z-index: 1;
+    top: 70%;
+    transform: translateY(-50%);
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.productMain-button-prev {
+    border-radius: 50px 50px 50px 50px;
+    left: -28px;
+    padding-left: 10px;
+}
+
+.productMain-button-next {
+    right: -30px;
+    border-radius: 50px 50px 50px 50px;
+}
+
+.productMain-button-icon {
+    font-size: 18px;
+    color: #333;
+}
+
+.productMain__card button:first-child {
+    left: 0;
+}
+
+/* .slides__card button:last-child {
+    right: 0;
+} */
+
+@media (min-width: 768px) {
+    .productMain__card {
+        flex-direction: row;
+        gap: 25px;
+        margin-left: 0;
+    }
+
+    .productMain-button {
+        top: 60%;
+    }
+
+    .productMain-button-next {
+        right: -27px;
+
+    }
+}

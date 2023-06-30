@@ -1,0 +1,30 @@
+.cart {
+    display: grid;
+    /* background: #d0d0d0; */
+}
+
+.cart-right {
+    background: #d7d7d7;
+    padding: 20px;
+}
+
+.cart-right header {
+    font-size: 1.5em;
+    line-height: 25px;
+    font-weight: 500;
+}
+
+.cart-right span {
+    font-size: 0.9em;
+    border-bottom: 1px solid #783030;
+    text-align: end;
+    float: right;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .cart {
+        grid-template-columns: 3fr 1fr;
+        gap: 20px;
+    }
+}

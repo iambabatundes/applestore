@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
@@ -11,22 +12,59 @@ import Contact from "./components/Contact";
 import About from "./components/About";
 import SinglePost from "./components/singlePost";
 import Footer from "./components/footer/footer";
-
-// const Home = () => <h1>Home Page</h1>;
+import Cart from "./components/cart";
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
+  const [selectedQuantities, setSelectedQuantities] = useState({});
+
+  const addToCart = (item, quantity) => {
+    const updatedQuantities = {
+      ...selectedQuantities,
+      [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
+    };
+
+    setCartItems((prevCartItems) => [
+      ...prevCartItems,
+      { ...item, quantity: parseInt(quantity) },
+    ]);
+    setSelectedQuantities(updatedQuantities);
+  };
+
+  const cartItemCount =
+    Object.values(selectedQuantities).reduce((total, quantity) => {
+      if (quantity === "10+") {
+        return total + 1; // Increment count by 1 "Quantity 10+"
+      }
+      return total + parseInt(quantity);
+    }, 0) + (selectedQuantities["Quantity 10+"] || 0);
+
   return (
     <>
-      <NavBar />
+      <NavBar
+        cartItemCount={cartItemCount}
+        cartItems={cartItems}
+        selectedQuantities={selectedQuantities}
+        setSelectedQuantities={setSelectedQuantities}
+      />
       <main className="main">
         <Routes>
-          <Route path="/" exact element={<Home />} />
+          <Route path="/" exact element={<Home addToCart={addToCart} />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/product" element={<Product />} />
+          <Route path="/product" element={<Product addToCart={addToCart} />} />
           <Route path="/:title" element={<SinglePost />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          {/* <Route path="/cart" component={<Cart />} /> */}
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                cartItems={cartItems}
+                selectedQuantities={selectedQuantities}
+                setSelectedQuantities={setSelectedQuantities}
+              />
+            }
+          />
         </Routes>
       </main>
       <Footer />

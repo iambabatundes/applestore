@@ -1,0 +1,157 @@
+h1 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    font-weight: 600;
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+}
+
+h4 {
+    padding: 0;
+    margin: 0;
+    box-sizing: 0;
+    font-weight: 400;
+}
+
+.productCards {
+    /* border: 1px solid #000; */
+    border-radius: 5px;
+    cursor: pointer;
+    height: 350px;
+    margin: 0rem 0rem;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    /* margin-right: 25px; */
+}
+
+.productCards__image {
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.productCards__content {
+    font-family: "Poppins";
+    color: #ffffff;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    padding: 15px;
+}
+
+.productCards__title {
+    font-size: 25px;
+    padding-top: 10px;
+    font-weight: 700;
+
+}
+
+/* .title {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 20px;
+} */
+
+.header {
+    font-family: "Poppins";
+    color: black;
+    font-size: 1.5em;
+    font-weight: 700;
+    padding-top: 0;
+    padding-bottom: 5px;
+    text-transform: lowercase;
+}
+
+.productCards__subtitle {
+    padding-bottom: 0px;
+    color: #000;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.product-card__description {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+.productCard-container {
+    position: absolute;
+    top: 248px;
+}
+
+.products-card__group {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+    gap: 20px;
+
+}
+
+.product-card__rating {
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.product-card__price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.product-card__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 200px;
+    padding: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.productCards__btn {
+    padding: 8px 9px;
+    background-color: #920300;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.7em;
+    font-family: "Poppins";
+    text-transform: uppercase;
+    font-weight: 500;
+    position: absolute;
+    top: 260px;
+    margin-left: 15px;
+}
+
+.productCards__btn:hover {
+    background: #651211;
+}
+
+@media (min-width: 768px) {
+    .productCards {
+        width: 100%;
+    }
+
+    .slides-button {
+        top: 60%;
+    }
+}
