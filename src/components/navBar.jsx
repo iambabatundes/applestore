@@ -28,7 +28,7 @@ function NavBar({
       }
     });
     setSelectedQuantities(initialQuantities);
-  }, [cartItems]);
+  }, [cartItems, setSelectedQuantities]);
 
   const handleLoginClose = () => {
     setShowModal(false);
