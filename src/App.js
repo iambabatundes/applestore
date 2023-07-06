@@ -17,6 +17,26 @@ import Cart from "./components/cart";
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
+  const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
+
+  const handleSubmit = (e, itemId) => {
+    e.preventDefault();
+    const inputValue = parseInt(e.target[0].value); // Get the value entered in the input field
+    const updatedQuantities = { ...selectedQuantities };
+
+    if (isNaN(inputValue)) {
+      // If the input value is not a valid number, set the quantity to undefined
+      updatedQuantities[itemId] = undefined;
+    } else {
+      updatedQuantities[itemId] = inputValue;
+    }
+
+    setSelectedQuantities(updatedQuantities);
+    // setQuantityTenPlus((prevQuantityTenPlus) => ({
+    //   ...prevQuantityTenPlus,
+    //   [itemId]: true,
+    // }));
+  };
 
   const addToCart = (item, quantity) => {
     const updatedQuantities = {
@@ -62,6 +82,9 @@ function App() {
                 cartItems={cartItems}
                 selectedQuantities={selectedQuantities}
                 setSelectedQuantities={setSelectedQuantities}
+                quantityTenPlus={quantityTenPlus}
+                setQuantityTenPlus={setQuantityTenPlus}
+                handleSubmit={handleSubmit}
               />
             }
           />
