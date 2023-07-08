@@ -30,7 +30,7 @@ export default function Cart({
     } else {
       const initialQuantityTenPlus = {};
       cartItems.forEach((item) => {
-        initialQuantityTenPlus[item.id] = false; // Set the initial value to false
+        initialQuantityTenPlus[item.id] = 1; // Set the initial value to false
       });
       setQuantityTenPlus(initialQuantityTenPlus); // Update the state with the initial values
     }
@@ -52,7 +52,7 @@ export default function Cart({
       }));
       setQuantityTenPlus((prevQuantityTenPlus) => ({
         ...prevQuantityTenPlus,
-        [itemId]: true,
+        [itemId]: 1,
       }));
     } else {
       setSelectedQuantities((prevQuantities) => ({
@@ -68,9 +68,10 @@ export default function Cart({
 
   const handleQuantityTenPlusChange = (e, itemId) => {
     const inputValue = parseInt(e.target.value);
+    const quantity = isNaN(inputValue) ? 1 : inputValue;
     setQuantityTenPlus((prevQuantityTenPlus) => ({
       ...prevQuantityTenPlus,
-      [itemId]: isNaN(inputValue) ? undefined : inputValue,
+      [itemId]: quantity,
     }));
   };
 

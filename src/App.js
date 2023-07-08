@@ -19,23 +19,41 @@ function App() {
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
 
+  // const handleSubmit = (e, itemId) => {
+  //   e.preventDefault();
+  //   const inputValue = parseInt(e.target[0].value); // Get the value entered in the input field
+  //   const updatedQuantities = { ...selectedQuantities };
+
+  //   if (isNaN(inputValue)) {
+  //     // If the input value is not a valid number, set the quantity to undefined
+  //     updatedQuantities[itemId] = undefined;
+  //   } else {
+  //     updatedQuantities[itemId] = inputValue;
+  //   }
+
+  //   setSelectedQuantities(updatedQuantities);
+  //   setQuantityTenPlus((prevQuantityTenPlus) => ({
+  //     ...prevQuantityTenPlus,
+  //     [itemId]: true,
+  //   }));
+  // };
+
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
-    const inputValue = parseInt(e.target[0].value); // Get the value entered in the input field
-    const updatedQuantities = { ...selectedQuantities };
+    const inputValue = e.target[0].value.trim(); // Get the value entered in the input field
 
-    if (isNaN(inputValue)) {
-      // If the input value is not a valid number, set the quantity to undefined
-      updatedQuantities[itemId] = undefined;
+    if (inputValue === "10+") {
+      setSelectedQuantities((prevQuantities) => ({
+        ...prevQuantities,
+        [itemId]: inputValue,
+      }));
     } else {
-      updatedQuantities[itemId] = inputValue;
+      const quantity = parseInt(inputValue);
+      setSelectedQuantities((prevQuantities) => ({
+        ...prevQuantities,
+        [itemId]: isNaN(quantity) ? 1 : quantity,
+      }));
     }
-
-    setSelectedQuantities(updatedQuantities);
-    // setQuantityTenPlus((prevQuantityTenPlus) => ({
-    //   ...prevQuantityTenPlus,
-    //   [itemId]: true,
-    // }));
   };
 
   const addToCart = (item, quantity) => {
