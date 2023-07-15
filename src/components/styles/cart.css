@@ -1,27 +1,142 @@
+::selection {
+    background: #ccc;
+    color: #000;
+}
+
 .cart {
     display: grid;
     /* background: #d0d0d0; */
 }
 
-.cart-right {
+.cart-left {
     background: #d7d7d7;
     padding: 20px;
 }
 
-.cart-right header {
+.cart-left header {
     font-size: 1.5em;
     line-height: 25px;
     font-weight: 500;
-
 }
 
-.cart-right span {
+.cart-left h3 {
     font-size: 0.9em;
     border-bottom: 1px solid #783030;
     text-align: end;
     float: right;
     width: 100%;
+    margin-bottom: 20px;
 }
+
+.cart-item {
+    /* display: flex; */
+    align-items: center;
+}
+
+.cart-item__main {
+    display: inline-flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+}
+
+.cart-item img {
+    width: 15%;
+    height: 15%;
+    /* float: left; */
+    padding-right: 25px;
+}
+
+.cart-item__details {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.item-details {
+    position: relative;
+}
+
+.item-details .cart-item__price {
+    position: absolute;
+    top: 8px;
+    right: -220px;
+    font-weight: 600;
+    color: #000;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.cart-item__input {
+    width: 85px;
+    height: 38px;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    padding: 10px;
+}
+
+.cart-item__select {
+    /* appearance: none; */
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    border-radius: 7px;
+    background: #F0F2F2;
+    font-size: 14px;
+    width: 70px;
+    padding: 5px;
+    outline: none;
+}
+
+.cart-item__select:hover {
+    background: #d8d8d8;
+}
+
+.cart-item__qty {
+    background: #fff;
+}
+
+.cart-item-qty {
+    border-top: 5px solid #ccc;
+    padding-top: 20px;
+}
+
+.cart-quantity10__btn {
+    padding: 6px;
+    border-radius: 15px;
+    background: #920300;
+    border: none;
+    color: #fff;
+    font-size: 12px;
+}
+
+.cart-item__span {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #007185;
+    font-size: 14px;
+    /* margin-right: 5px; */
+}
+
+.cart-item__span::after {
+    content: " |";
+    margin-left: 15px;
+    /* Adjust the value as needed */
+}
+
+.cart-item__span:nth-child(4)::after {
+    content: "";
+
+}
+
+.cart-item__span:hover {
+    color: #0b97b0;
+}
+
 
 @media (min-width: 768px) {
     .cart {

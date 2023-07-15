@@ -20,16 +20,6 @@ function NavBar({
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  useEffect(() => {
-    const initialQuantities = {};
-    cartItems.forEach((item) => {
-      if (!initialQuantities.hasOwnProperty(item.id)) {
-        initialQuantities[item.id] = selectedQuantities[item.id] || 1;
-      }
-    });
-    setSelectedQuantities(initialQuantities);
-  }, [cartItems, setSelectedQuantities]);
-
   const handleLoginClose = () => {
     setShowModal(false);
   };

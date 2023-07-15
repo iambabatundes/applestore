@@ -80,7 +80,9 @@ body::-webkit-scrollbar-thumb {
   overflow-y: hidden;
 }
 
-::selection {
+/* To do list */
+
+/* ::selection {
   color: var(--white);
   background: var(--grayish-blue);
-}
+} */

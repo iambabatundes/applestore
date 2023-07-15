@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
@@ -19,42 +19,40 @@ function App() {
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
 
-  // const handleSubmit = (e, itemId) => {
-  //   e.preventDefault();
-  //   const inputValue = parseInt(e.target[0].value); // Get the value entered in the input field
-  //   const updatedQuantities = { ...selectedQuantities };
-
-  //   if (isNaN(inputValue)) {
-  //     // If the input value is not a valid number, set the quantity to undefined
-  //     updatedQuantities[itemId] = undefined;
-  //   } else {
-  //     updatedQuantities[itemId] = inputValue;
-  //   }
-
-  //   setSelectedQuantities(updatedQuantities);
-  //   setQuantityTenPlus((prevQuantityTenPlus) => ({
-  //     ...prevQuantityTenPlus,
-  //     [itemId]: true,
-  //   }));
-  // };
-
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
     const inputValue = e.target[0].value.trim(); // Get the value entered in the input field
 
-    if (inputValue === "10+") {
+    const quantity = parseInt(inputValue);
+    if (quantity >= 1 && quantity <= 9) {
       setSelectedQuantities((prevQuantities) => ({
         ...prevQuantities,
-        [itemId]: inputValue,
+        [itemId]: quantity,
+      }));
+      setQuantityTenPlus((prevQuantityTenPlus) => ({
+        ...prevQuantityTenPlus,
+        [itemId]: undefined,
       }));
     } else {
-      const quantity = parseInt(inputValue);
       setSelectedQuantities((prevQuantities) => ({
         ...prevQuantities,
         [itemId]: isNaN(quantity) ? 1 : quantity,
       }));
     }
   };
+
+  // const addToCart = (item, quantity) => {
+  //   const updatedQuantities = {
+  //     ...selectedQuantities,
+  //     [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
+  //   };
+
+  //   setCartItems((prevCartItems) => [
+  //     ...prevCartItems,
+  //     { ...item, quantity: parseInt(quantity) },
+  //   ]);
+  //   setSelectedQuantities(updatedQuantities);
+  // };
 
   const addToCart = (item, quantity) => {
     const updatedQuantities = {
@@ -67,7 +65,78 @@ function App() {
       { ...item, quantity: parseInt(quantity) },
     ]);
     setSelectedQuantities(updatedQuantities);
+
+    // Reset QuantityTenPlus to default when an item is added
+    setQuantityTenPlus((prevQuantityTenPlus) => {
+      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
+      updatedQuantityTenPlus[item.id] = undefined; // Reset QuantityTenPlus to default
+      return updatedQuantityTenPlus;
+    });
   };
+
+  // const handleDelete = (itemId) => {
+  //   setCartItems((prevCartItems) => {
+  //     const updatedCartItems = prevCartItems.filter(
+  //       (item) => item.id !== itemId
+  //     );
+  //     return updatedCartItems;
+  //   });
+
+  //   setSelectedQuantities((prevQuantities) => {
+  //     const updatedQuantities = { ...prevQuantities };
+  //     delete updatedQuantities[itemId];
+  //     return updatedQuantities;
+  //   });
+
+  //   setQuantityTenPlus((prevQuantityTenPlus) => {
+  //     const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
+  //     delete updatedQuantityTenPlus[itemId];
+  //     return updatedQuantityTenPlus;
+  //   });
+  // };
+
+  const handleDelete = (itemId) => {
+    setCartItems((prevCartItems) => {
+      const updatedCartItems = prevCartItems.filter(
+        (item) => item.id !== itemId
+      );
+      return updatedCartItems;
+    });
+
+    setSelectedQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      delete updatedQuantities[itemId];
+      return updatedQuantities;
+    });
+
+    setQuantityTenPlus((prevQuantityTenPlus) => {
+      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
+      delete updatedQuantityTenPlus[itemId];
+      return updatedQuantityTenPlus;
+    });
+
+    // Reset the selected quantity and QuantityTenPlus for the deleted item
+    setSelectedQuantities((prevQuantities) => {
+      const updatedQuantities = { ...prevQuantities };
+      updatedQuantities[itemId] = 1; // Reset the quantity to default (1)
+      return updatedQuantities;
+    });
+    setQuantityTenPlus((prevQuantityTenPlus) => {
+      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
+      updatedQuantityTenPlus[itemId] = undefined; // Reset QuantityTenPlus to default
+      return updatedQuantityTenPlus;
+    });
+  };
+
+  useEffect(() => {
+    const initialQuantities = {};
+    cartItems.forEach((item) => {
+      if (!initialQuantities.hasOwnProperty(item.id)) {
+        initialQuantities[item.id] = selectedQuantities[item.id] || 1;
+      }
+    });
+    setSelectedQuantities(initialQuantities);
+  }, [cartItems]);
 
   const cartItemCount =
     Object.values(selectedQuantities).reduce((total, quantity) => {
@@ -103,6 +172,8 @@ function App() {
                 quantityTenPlus={quantityTenPlus}
                 setQuantityTenPlus={setQuantityTenPlus}
                 handleSubmit={handleSubmit}
+                setCartItems={setCartItems}
+                handleDelete={handleDelete}
               />
             }
           />
