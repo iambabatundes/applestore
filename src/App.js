@@ -41,19 +41,6 @@ function App() {
     }
   };
 
-  // const addToCart = (item, quantity) => {
-  //   const updatedQuantities = {
-  //     ...selectedQuantities,
-  //     [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
-  //   };
-
-  //   setCartItems((prevCartItems) => [
-  //     ...prevCartItems,
-  //     { ...item, quantity: parseInt(quantity) },
-  //   ]);
-  //   setSelectedQuantities(updatedQuantities);
-  // };
-
   const addToCart = (item, quantity) => {
     const updatedQuantities = {
       ...selectedQuantities,
@@ -73,27 +60,6 @@ function App() {
       return updatedQuantityTenPlus;
     });
   };
-
-  // const handleDelete = (itemId) => {
-  //   setCartItems((prevCartItems) => {
-  //     const updatedCartItems = prevCartItems.filter(
-  //       (item) => item.id !== itemId
-  //     );
-  //     return updatedCartItems;
-  //   });
-
-  //   setSelectedQuantities((prevQuantities) => {
-  //     const updatedQuantities = { ...prevQuantities };
-  //     delete updatedQuantities[itemId];
-  //     return updatedQuantities;
-  //   });
-
-  //   setQuantityTenPlus((prevQuantityTenPlus) => {
-  //     const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
-  //     delete updatedQuantityTenPlus[itemId];
-  //     return updatedQuantityTenPlus;
-  //   });
-  // };
 
   const handleDelete = (itemId) => {
     setCartItems((prevCartItems) => {

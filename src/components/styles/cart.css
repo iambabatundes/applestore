@@ -5,11 +5,11 @@
 
 .cart {
     display: grid;
-    /* background: #d0d0d0; */
+
 }
 
 .cart-left {
-    background: #d7d7d7;
+    background: #f6f6f6;
     padding: 20px;
 }
 
@@ -135,6 +135,14 @@
 
 .cart-item__span:hover {
     color: #0b97b0;
+}
+
+.cart-item__subTotal {
+    /* text-align: right; */
+    font-family: "Poppins";
+    font-size: 18px;
+    font-weight: 700;
+    float: right;
 }
 
 

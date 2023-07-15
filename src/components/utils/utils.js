@@ -14,49 +14,7 @@ function calculateTotalPrice(cartItems, selectedQuantities, quantityTenPlus) {
     }
   });
 
-  return totalPrice;
+  return totalPrice.toFixed(2); // Format the total price to two decimal places
 }
-
-// function handleQuantityTenPlusChange(e, itemId, setQuantityTenPlus) {
-//   const inputValue = parseInt(e.target.value);
-//   if (inputValue >= 1 && inputValue <= 9) {
-//     setQuantityTenPlus((prevQuantityTenPlus) => ({
-//       ...prevQuantityTenPlus,
-//       [itemId]: inputValue,
-//     }));
-//   } else {
-//     setQuantityTenPlus((prevQuantityTenPlus) => ({
-//       ...prevQuantityTenPlus,
-//       [itemId]: inputValue || 1,
-//     }));
-//   }
-// }
-
-// function handleQuantityChange(
-//   itemId,
-//   quantity,
-//   setSelectedQuantities,
-//   setQuantityTenPlus
-// ) {
-//   if (quantity === "10+") {
-//     setSelectedQuantities((prevQuantities) => ({
-//       ...prevQuantities,
-//       [itemId]: quantity,
-//     }));
-//     setQuantityTenPlus((prevQuantityTenPlus) => ({
-//       ...prevQuantityTenPlus,
-//       [itemId]: 1,
-//     }));
-//   } else {
-//     setSelectedQuantities((prevQuantities) => ({
-//       ...prevQuantities,
-//       [itemId]: parseInt(quantity) || 1,
-//     }));
-//     setQuantityTenPlus((prevQuantityTenPlus) => ({
-//       ...prevQuantityTenPlus,
-//       [itemId]: undefined,
-//     }));
-//   }
-// }
 
 export { calculateTotalPrice };

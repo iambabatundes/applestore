@@ -139,113 +139,114 @@ export default function Cart({
   }
 
   return (
-    <section className="cart-background">
-      <section className="cart cart-main">
-        <section className="cart-left">
-          <header>Shopping Cart</header>
-          <h3>Price</h3>
+    <section className="cart cart-main">
+      <section className="cart-left">
+        <header>Shopping Cart</header>
+        <h3>Price</h3>
 
-          {cartItems.map((item) => {
-            const selectedQuantity = selectedQuantities[item.id] || 1;
-            const isQuantityTenPlus = quantityTenPlus[item.id] !== undefined;
+        {cartItems.map((item) => {
+          const selectedQuantity = selectedQuantities[item.id] || 1;
+          const isQuantityTenPlus = quantityTenPlus[item.id] !== undefined;
 
-            return (
-              <section className="cart-item" key={item.id}>
-                <article className="cart-item__main">
-                  <img src={item.image} alt={item.title} width={100} />
-                  <div className="cart-item__content">
-                    <div className="item-details">
-                      <h2>{item.title}</h2>
-                      <span className="cart-item__price">${item.price}</span>
-                      <p>In Stock: {item.inStock}</p>
-                    </div>
-                    <div className="item-actions">
-                      {isQuantityTenPlus ? (
-                        <div className="cart-item__form">
-                          <form onSubmit={(e) => handleSubmit(e, item.id)}>
-                            <input
-                              type="number"
-                              className="cart-item__input"
-                              min="1"
-                              value={quantityTenPlus[item.id] || 1}
-                              onChange={(e) =>
-                                handleQuantityTenPlusChange(e, item.id)
-                              }
-                            />
-                            <button
-                              className="cart-quantity10__btn"
-                              type="submit"
-                            >
-                              Update
-                            </button>
-                          </form>
-                        </div>
-                      ) : (
-                        <select
-                          value={selectedQuantity}
-                          className="cart-item__select"
-                          onChange={(e) =>
-                            handleQuantityChange(item.id, e.target.value)
-                          }
-                        >
-                          {selectedQuantity === 1 ? (
-                            <option className="cart-item__qty" value="1">
-                              Qty: 1
-                            </option>
-                          ) : (
-                            <option className="cart-item__qty" value="1">
-                              1
-                            </option>
-                          )}
-                          {Array.from({ length: 8 }, (_, index) => (
-                            <option
-                              className="cart-item__qty"
-                              key={index + 2}
-                              value={index + 2}
-                            >
-                              {selectedQuantity === index + 2
-                                ? `Qty: ${index + 2}`
-                                : index + 2}
-                            </option>
-                          ))}
-                          <option
-                            className="cart-item__qty cart-item-qty"
-                            value="10+"
-                          >
-                            10+
-                          </option>
-                        </select>
-                      )}
-
-                      <span
-                        className="cart-item__span"
-                        onClick={() => handleDelete(item.id)}
-                      >
-                        Delete
-                      </span>
-                      <span className="cart-item__span">Save for Later</span>
-                      <span className="cart-item__span">Share</span>
-                    </div>
+          return (
+            <section className="cart-item" key={item.id}>
+              <article className="cart-item__main">
+                <img src={item.image} alt={item.title} width={100} />
+                <div className="cart-item__content">
+                  <div className="item-details">
+                    <h2>{item.title}</h2>
+                    <span className="cart-item__price">${item.price}</span>
+                    <p>In Stock: {item.inStock}</p>
                   </div>
-                </article>
-              </section>
-            );
-          })}
-        </section>
+                  <div className="item-actions">
+                    {isQuantityTenPlus ? (
+                      <div className="cart-item__form">
+                        <form onSubmit={(e) => handleSubmit(e, item.id)}>
+                          <input
+                            type="number"
+                            className="cart-item__input"
+                            min="1"
+                            value={quantityTenPlus[item.id] || 1}
+                            onChange={(e) =>
+                              handleQuantityTenPlusChange(e, item.id)
+                            }
+                          />
+                          <button
+                            className="cart-quantity10__btn"
+                            type="submit"
+                          >
+                            Update
+                          </button>
+                        </form>
+                      </div>
+                    ) : (
+                      <select
+                        value={selectedQuantity}
+                        className="cart-item__select"
+                        onChange={(e) =>
+                          handleQuantityChange(item.id, e.target.value)
+                        }
+                      >
+                        {selectedQuantity === 1 ? (
+                          <option className="cart-item__qty" value="1">
+                            Qty: 1
+                          </option>
+                        ) : (
+                          <option className="cart-item__qty" value="1">
+                            1
+                          </option>
+                        )}
+                        {Array.from({ length: 8 }, (_, index) => (
+                          <option
+                            className="cart-item__qty"
+                            key={index + 2}
+                            value={index + 2}
+                          >
+                            {selectedQuantity === index + 2
+                              ? `Qty: ${index + 2}`
+                              : index + 2}
+                          </option>
+                        ))}
+                        <option
+                          className="cart-item__qty cart-item-qty"
+                          value="10+"
+                        >
+                          10+
+                        </option>
+                      </select>
+                    )}
 
-        <section className="cart-right">
-          <div className="cart-subtotal">
-            <h2>Your AppleStore Cart</h2>
-            <h3>
-              Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): $
-              {price}
-            </h3>
-            <button>Proceed to checkout</button>
-          </div>
+                    <span
+                      className="cart-item__span"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Delete
+                    </span>
+                    <span className="cart-item__span">Save for Later</span>
+                    <span className="cart-item__span">Share</span>
+                  </div>
+                </div>
+              </article>
+            </section>
+          );
+        })}
+        <span className="cart-item__subTotal">
+          Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): ${price}
+        </span>
+      </section>
 
-          <section className="cart-product">
-            <h1>Cart Product</h1>
-          </section>
+      <section className="cart-right">
+        <div className="cart-subtotal">
+          <h2>Your AppleStore Cart</h2>
+          <h3>
+            Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): $
+            {price}
+          </h3>
+          <button>Proceed to checkout</button>
+        </div>
+
+        <section className="cart-product">
+          <h1>Cart Product</h1>
         </section>
       </section>
     </section>
