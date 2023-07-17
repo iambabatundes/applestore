@@ -1,20 +1,30 @@
 import React from "react";
 import "./styles/productCards.css";
+import { Link } from "react-router-dom";
 
-export default function ProductCards({ item, className, addToCart }) {
+export default function ProductCards({ item, className, addToCart, product }) {
   const handleAddToCart = () => {
     addToCart(item);
   };
 
+  function formatPermalink(title) {
+    return title.toLowerCase().replaceAll(" ", "-");
+  }
+
   return (
-    <section className={`${className} productCards`}>
+    <section className={`productCards`}>
       <img
         className="productCards__image"
         src={item.image}
-        alt="Product image"
+        alt="This is a Product"
       />
-      <div className="productCards__content">
-        <h1 className={`${className} productCards__title`}>{item.title}</h1>
+      <div className={`productCards__content`}>
+        <Link
+          to={`/${formatPermalink(product.title)}`}
+          className="productCards__links"
+        >
+          <h1 className={`${className} productCards__title`}>{item.title}</h1>
+        </Link>
         <h2 className={`${className} productCards__title header`}>
           {item.header}
         </h2>

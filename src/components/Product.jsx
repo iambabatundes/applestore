@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./productCards";
-import products from "./productData";
+import { getProducts } from "./productData";
 import "./styles/Product.css";
 
 export default function Product({ addToCart }) {
+  const [products, setProducts] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [cardsPerPage, setCardsPerPage] = useState(5);
+
+  useEffect(() => {
+    const fetchedProducts = getProducts();
+    setProducts(fetchedProducts);
+  }, []);
 
   const handleNextCard = () => {
     const nextIndex = (currentCardIndex + 1) % products.length;
@@ -44,7 +50,11 @@ export default function Product({ addToCart }) {
 
   for (let i = 0; i < cardsPerPage; i++) {
     const cardIndex = (currentCardIndex + i) % products.length;
-    productsToDisplay.push(products[cardIndex]);
+    const card = products[cardIndex];
+
+    if (card && card.className) {
+      productsToDisplay.push(card);
+    }
   }
 
   return (
@@ -64,9 +74,10 @@ export default function Product({ addToCart }) {
         {productsToDisplay.map((card) => (
           <ProductCard
             item={card}
-            key={card._id}
+            key={card.id}
             addToCart={addToCart}
             className={card.className}
+            product={card}
           />
         ))}
       </div>

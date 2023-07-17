@@ -13,7 +13,9 @@ export default function ProductCard({
     <section>
       <div className="product-card">
         <img src={image} alt="Product" className="product-card__image" />
+
         <h3 className="product-card__title">{title}</h3>
+
         {/* <p className="product-card__description">{description}</p> */}
         <div className="product-card__group">
           <span className="product-card__rating">{rating} stars</span>

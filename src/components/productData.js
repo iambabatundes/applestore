@@ -130,12 +130,16 @@ const products = [
   },
 ];
 
-export default products;
+// export default products;
 
-// export function getProducts() {
-//   return products;
-// }
+export function getProducts() {
+  return products;
+}
 
-// export function getProduct(title) {
-//   return products.find((product) => product.title === title);
-// }
+export function getProduct(title) {
+  return products.find((product) => formatPermalink(product.title) === title);
+}
+
+function formatPermalink(title) {
+  return title.toLowerCase().replaceAll(" ", "-");
+}

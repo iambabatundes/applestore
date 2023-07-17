@@ -55,6 +55,7 @@
 
 .item-details {
     position: relative;
+    width: 500px;
 }
 
 .item-details .cart-item__price {

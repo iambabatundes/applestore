@@ -13,6 +13,7 @@ import About from "./components/About";
 import SinglePost from "./components/singlePost";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
+import SingleProduct from "./components/singleProduct";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -126,6 +127,7 @@ function App() {
           <Route path="/shop" element={<Shop />} />
           <Route path="/product" element={<Product addToCart={addToCart} />} />
           <Route path="/:title" element={<SinglePost />} />
+          <Route path="/:title" element={<SingleProduct />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route
