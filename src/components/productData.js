@@ -1,7 +1,22 @@
 const products = [
   {
     id: 1,
-    image: "/brandNew.webp",
+    image: "/brandNew21.webp",
+    productImages: {
+      image1: "/brandNew23.webp",
+      image2: "/brandNew21.webp",
+      image3: "/brandNew32.webp",
+      image4: "/brandNew342.webp",
+      image5: "/brandNew.webp",
+    },
+
+    // productImages: [
+    //   "/brandNew23.webp",
+    //   "/brandNew21.webp",
+    //   "/brandNew32.webp",
+    //   "/brandNew342.webp",
+    //   "/brandNew.webp",
+    // ],
     title: "Refreshing Flavors in Every Bite",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
@@ -44,6 +59,12 @@ const products = [
     rating: 4.99,
     price: 50.99,
     image: "/brandNew23.webp",
+    productImages: {
+      image1: "/brandNew23.webp",
+      image2: "/brandNew21.webp",
+      image3: "/brandNew32.webp",
+      image4: "/brandNew342.webp",
+    },
     className: "brandNew23",
   },
 

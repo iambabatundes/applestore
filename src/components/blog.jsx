@@ -35,7 +35,7 @@ export default function Blog() {
               {/* <p className="blog-post__author">Posted by {post.postedBy}</p> */}
               <p className="blog-post__text">{post.content}</p>
               <Link
-                to={`/${formatPermalink(post.title)}`}
+                to={`/blog/${formatPermalink(post.title)}`}
                 className="blog-post__read-more"
               >
                 Read More

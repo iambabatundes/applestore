@@ -126,8 +126,8 @@ function App() {
           <Route path="/" exact element={<Home addToCart={addToCart} />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product" element={<Product addToCart={addToCart} />} />
-          <Route path="/:title" element={<SinglePost />} />
-          <Route path="/:title" element={<SingleProduct />} />
+          <Route path="/blog/:title" element={<SinglePost />} />
+          <Route path="/:title" exact element={<SingleProduct />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route
