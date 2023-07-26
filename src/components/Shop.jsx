@@ -1,7 +1,12 @@
 import React from "react";
+import ImagePreview from "./imagePreview";
 
 function Shop() {
-  return <div>Shop</div>;
+  return (
+    <section>
+      <ImagePreview />
+    </section>
+  );
 }
 
 export default Shop;
