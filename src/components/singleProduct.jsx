@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import "./styles/singleProduct.css";
 import { getProduct } from "./productData";
 import ReactImageMagnify from "react-image-magnify";
+import SingleProductModal from "./singleProductModal";
 
 export default function SingleProduct() {
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState(null);
   const [hoveredImage, setHoveredImage] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedVideoSrc, setSelectedVideoSrc] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState([]);
 
   const { title } = useParams();
 
@@ -22,36 +22,31 @@ export default function SingleProduct() {
     return <div>Loading...</div>;
   }
 
-  const handleImageHover = (image) => {
-    if (selectedImage === image) {
-      setHoveredImage(image);
-    } else {
-      setSelectedImage(image);
-      setHoveredImage(image);
-    }
+  const handleMediaHover = (media) => {
+    setHoveredImage(media);
   };
 
-  const handleImageClick = (image) => {
-    setSelectedImage(image);
-    setHoveredImage(image);
-  };
-
-  const handleMouseLeave = () => {
-    if (selectedImage === null) {
-      setHoveredImage(null);
-    }
-  };
-  const handleVideoClick = (videoSrc) => {
-    // Handle video click and display the video in the video section
-    setSelectedVideoSrc(videoSrc);
-  };
-
-  const handleDoubleClick = () => {
+  const handleMediaClick = (media) => {
+    // Handle media click and open the modal
+    setSelectedMedia(media);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
+    // Close the modal and reset the selected media
+    setSelectedMedia([]);
     setIsModalOpen(false);
+  };
+
+  const getThumbnailMedia = () => {
+    // Get at least 6 images and one video for the thumbnail display
+    const thumbnailMedia = Object.values(product.productDatas || {});
+
+    if (product.video) {
+      thumbnailMedia.push(product.video);
+    }
+
+    return thumbnailMedia.slice(0, 7);
   };
 
   return (
@@ -59,73 +54,101 @@ export default function SingleProduct() {
       <div className="singleProduct-main">
         <section className="singleProduct-left">
           <div className="singleProduct-thumbnail">
-            {product.productDatas &&
-              Object.entries(product.productDatas).map(([key, data]) => {
-                // Checking if the entry is a video
-                const isVideo = key.includes("video");
-
-                return (
-                  <div
-                    key={key}
-                    onClick={() => (isVideo ? handleVideoClick(data) : null)}
-                  >
-                    {isVideo ? (
-                      <video
-                        src={data}
-                        controls
-                        width="100"
-                        height="80"
-                        muted
-                      ></video>
-                    ) : (
-                      <img
-                        src={data}
-                        alt=""
-                        id={hoveredImage === data ? "selected" : ""}
-                        onMouseEnter={() => handleImageHover(data)}
-                        onMouseLeave={handleMouseLeave}
-                        onClick={() => handleImageClick(data)}
-                      />
-                    )}
-                  </div>
-                );
-              })}
+            {getThumbnailMedia().map((media, index) => {
+              const isVideo = media.includes(".mp4");
+              return (
+                <div
+                  key={index}
+                  onMouseEnter={() => handleMediaHover(media)}
+                  onMouseLeave={() => handleMediaHover(media)}
+                >
+                  {isVideo ? (
+                    <video
+                      src={media}
+                      controls
+                      width="100"
+                      height="80"
+                      muted
+                      id={hoveredImage === media ? "selected" : ""}
+                      className="thumbnail__video"
+                    ></video>
+                  ) : (
+                    <img
+                      src={media}
+                      alt=""
+                      id={hoveredImage === media ? "selected" : ""}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div
             className="product-image-container"
-            onDoubleClick={handleDoubleClick}
+            onDoubleClick={(media) => handleMediaClick(media)}
           >
-            <ReactImageMagnify
-              {...{
-                imageClassName: "smallImage",
-
-                smallImage: {
-                  alt: "",
-                  isFluidWidth: true,
-                  src: selectedImage || product.image,
-                },
-                shouldUsePositiveSpaceLens: true,
-                lensStyle: {
-                  background: "hsla(0, 0%, 100%, .3)",
-                  // border: "1px solid #ccc",
-                  cursor: "pointer",
-                },
-
-                largeImage: {
-                  src: hoveredImage || product.image,
-                  width: 1800,
-                  height: 1800,
-                },
-                enlargedImageContainerDimensions: {
-                  width: "150%",
-                  height: "100%",
-                },
-
-                isHintEnabled: true,
-                shouldHideHintAfterFirstActivation: false,
-              }}
-            />
+            {hoveredImage ? (
+              hoveredImage.includes(".mp4") ? (
+                <div className="product__video-main">
+                  <video className="product-video" src={hoveredImage} />
+                </div>
+              ) : (
+                <ReactImageMagnify
+                  {...{
+                    imageClassName: "smallImage",
+                    smallImage: {
+                      alt: "",
+                      isFluidWidth: true,
+                      src: hoveredImage || product.image,
+                    },
+                    shouldUsePositiveSpaceLens: true,
+                    lensStyle: {
+                      background: "hsla(0, 0%, 100%, .3)",
+                      cursor: "pointer",
+                    },
+                    largeImage: {
+                      src: hoveredImage,
+                      width: 1800,
+                      height: 1800,
+                    },
+                    enlargedImageContainerDimensions: {
+                      width: "150%",
+                      height: "100%",
+                    },
+                    isHintEnabled: true,
+                    shouldHideHintAfterFirstActivation: false,
+                  }}
+                />
+              )
+            ) : (
+              <ReactImageMagnify
+                {...{
+                  imageClassName: "smallImage",
+                  smallImage: {
+                    alt: "",
+                    isFluidWidth: true,
+                    src: product.image,
+                  },
+                  shouldUsePositiveSpaceLens: true,
+                  lensStyle: {
+                    background: "hsla(0, 0%, 100%, .3)",
+                    cursor: "pointer",
+                  },
+                  largeImage: {
+                    src: product.image,
+                    width: 1800,
+                    height: 1800,
+                  },
+                  enlargedImageContainerDimensions: {
+                    width: "150%",
+                    height: "100%",
+                  },
+                  isHintEnabled: true,
+                  shouldHideHintAfterFirstActivation: false,
+                }}
+              />
+            )}
           </div>
         </section>
 
@@ -138,34 +161,11 @@ export default function SingleProduct() {
       </div>
 
       {/* Modal */}
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <button className="close-button" onClick={handleCloseModal}>
-              Close
-            </button>
-            {/* Video and Image tabs */}
-            <div className="tabs">
-              <button>Video</button>
-              <button>Image</button>
-            </div>
-            {/* Video and Image content */}
-            <div className="tab-content">
-              {/* Video content */}
-              <div className="video-tab">
-                <video controls>
-                  <source src="path_to_video" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              {/* Image content */}
-              <div className="image-tab">
-                <img src="path_to_image" alt="" />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <SingleProductModal
+        isModalOpen={isModalOpen}
+        media={selectedMedia}
+        handleCloseModal={handleCloseModal}
+      />
     </section>
   );
 }

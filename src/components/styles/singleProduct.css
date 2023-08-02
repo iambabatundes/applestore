@@ -11,11 +11,39 @@
 .singleProduct-left img {
     width: 50%;
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 
 .product-image-container {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
+
+.product__video-main {
+    position: relative;
+    background: #000;
+    /* width: 200px; */
+
+}
+
+.product__video-main::after {
+    background: url(/public/play-button.png) no-repeat;
+    background-size: 80px;
+    content: "";
+    height: 80px;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 80px;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    cursor: pointer;
+
+}
+
+.product-video {
     object-fit: cover;
     width: 100%;
     height: auto;
@@ -27,7 +55,7 @@
 }
 
 .singleProduct-thumbnail img,
-video {
+.thumbnail__video {
     width: 55px;
     height: 55px;
     display: block;

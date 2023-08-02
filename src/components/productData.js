@@ -1,15 +1,21 @@
 const products = [
   {
     id: 1,
-    data: "/brandNew21.webp",
+    image: "/brandNew21.webp",
+    video: "/video1.mp4",
     productDatas: {
       image1: "/brandNew23.webp",
       image2: "/brandNew21.webp",
       image3: "/brandNew32.webp",
       image4: "/brandNew342.webp",
       image5: "/brandNew.webp",
+      // video1: "/video1.mp4",
+    },
+
+    productVideo: {
       video1: "/video1.mp4",
       video2: "/video1.mp4",
+      video3: "/video1.mp4",
     },
 
     title: "Refreshing Flavors in Every Bite",
@@ -22,7 +28,7 @@ const products = [
   },
   {
     id: 2,
-    data: "/brand11.webp",
+    image: "/brand11.webp",
     title: "Discover the Delight of Fresh Apples",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
@@ -34,7 +40,7 @@ const products = [
 
   {
     id: 3,
-    data: "/newBrand.webp",
+    image: "/newBrand.webp",
     title: "Apple Ecstasy at Your Fingertips.",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
@@ -53,7 +59,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brandNew23.webp",
+    image: "/brandNew23.webp",
     productDatas: {
       image1: "/brandNew23.webp",
       image2: "/brandNew21.webp",
@@ -71,7 +77,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brandNew21.webp",
+    image: "/brandNew21.webp",
     className: "brandNew21",
   },
   {
@@ -83,7 +89,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brandNew32.webp",
+    image: "/brandNew32.webp",
     className: "brandNew32",
   },
   {
@@ -95,7 +101,7 @@ const products = [
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     rating: 4.99,
     price: 50.99,
-    data: "/brand2.webp",
+    image: "/brand2.webp",
     className: "brand2",
   },
   {
@@ -107,7 +113,7 @@ const products = [
     rating: 4.99,
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     price: 50.99,
-    data: "/brand11.webp",
+    image: "/brand11.webp",
     className: "brand11",
   },
   {
@@ -118,7 +124,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brands.webp",
+    image: "/brands.webp",
     className: "brands",
   },
   {
@@ -129,7 +135,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brand32.webp",
+    image: "/brand32.webp",
     className: "brand32",
   },
   {
@@ -141,7 +147,7 @@ const products = [
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
     price: 50.99,
-    data: "/brand32.webp",
+    image: "/brand32.webp",
     className: "brand32",
   },
 ];
