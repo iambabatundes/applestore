@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 // import Select from "react-select";
 import "./styles/cart.css";
 import { calculateTotalPrice } from "./utils/utils";
+import { Link } from "react-router-dom";
 
 export default function Cart({
   cartItems,
@@ -138,6 +139,10 @@ export default function Cart({
     );
   }
 
+  function formatPermalink(title) {
+    return title.toLowerCase().replaceAll(" ", "-");
+  }
+
   return (
     <section className="cart cart-main">
       <section className="cart-left">
@@ -154,7 +159,9 @@ export default function Cart({
                 <img src={item.image} alt={item.title} width={100} />
                 <div className="cart-item__content">
                   <div className="item-details">
-                    <h2>{item.title}</h2>
+                    <Link to={`/${formatPermalink(item.title)}`}>
+                      <h2>{item.title}</h2>
+                    </Link>
                     <span className="cart-item__price">${item.price}</span>
                     <p>In Stock: {item.inStock}</p>
                   </div>

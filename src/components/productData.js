@@ -2,7 +2,8 @@ const products = [
   {
     id: 1,
     image: "/brandNew21.webp",
-    video: "/video1.mp4",
+    video: { video: "/video1.mp4", title: "Build your ways" },
+
     productDatas: {
       image1: "/brandNew23.webp",
       image2: "/brandNew21.webp",
@@ -13,9 +14,18 @@ const products = [
     },
 
     productVideo: {
-      video1: "/video1.mp4",
-      video2: "/video1.mp4",
-      video3: "/video1.mp4",
+      video1: {
+        src: "/video2.mp4",
+        title: "Video 2 Title",
+      },
+      video2: {
+        src: "/video3.mp4",
+        title: "Video 3 Title",
+      },
+      video3: {
+        src: "/video4.mp4",
+        title: "Video 4 Title",
+      },
     },
 
     title: "Refreshing Flavors in Every Bite",

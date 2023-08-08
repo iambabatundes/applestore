@@ -6,10 +6,14 @@ import ReactImageMagnify from "react-image-magnify";
 import SingleProductModal from "./singleProductModal";
 
 export default function SingleProduct() {
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState({});
   const [hoveredImage, setHoveredImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
+  const [activeTab, setActiveTab] = useState("video");
+
+  const videosArray = Object.values(product.productVideo || {});
+  const imagesArray = Object.values(product.productDatas || {});
 
   const { title } = useParams();
 
@@ -22,15 +26,88 @@ export default function SingleProduct() {
     return <div>Loading...</div>;
   }
 
+  const updateMainVideo = (video) => {
+    setSelectedMedia(video);
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    // If the "Images" tab is clicked, set the selectedMedia state to the main product image
+    if (tab === "image") {
+      setSelectedMedia(product.image);
+    } else setSelectedMedia(mainVideo);
+  };
+
   const handleMediaHover = (media) => {
     setHoveredImage(media);
   };
 
+  // const handleMediaClick = (media) => {
+  //   // Handle media click and open the modal
+  //   setSelectedMedia(media);
+
+  //   // Check if the media is a video or image and set the active tab accordingly
+  //   if (media === product.image) {
+  //     setActiveTab("image");
+  //   } else {
+  //     setActiveTab("video");
+  //   }
+
+  //   setIsModalOpen(true);
+
+  //   // Call the updateMainVideo function with the selected video
+  //   if (media.src || (media.video && media.title)) {
+  //     updateMainVideo({
+  //       src: media.src,
+  //       title: media.title,
+  //     });
+  //   }
+  // };
+
   const handleMediaClick = (media) => {
     // Handle media click and open the modal
     setSelectedMedia(media);
+
+    // Check if the media is a video or image and set the active tab accordingly
+    if (media === product.image) {
+      setActiveTab("image");
+    } else if (media.src || (media.video && media.title)) {
+      setActiveTab("video");
+    }
+
     setIsModalOpen(true);
+
+    // Call the updateMainVideo function with the selected video
+    if (media.src || (media.video && media.title)) {
+      updateMainVideo({
+        src: media.src,
+        title: media.title,
+      });
+    }
   };
+
+  // const handleMediaClick = (media, type) => {
+  //   // Handle media click and open the modal
+  //   setSelectedMedia(media);
+
+  //   if (type === "image") {
+  //     // If the clicked media is an image, set the active tab to "image"
+  //     setActiveTab("image");
+  //   } else {
+  //     // Otherwise, check if the media is a video or image and set the active tab accordingly
+  //     setActiveTab(media === product.image ? "image" : "video");
+  //   }
+
+  //   setIsModalOpen(true);
+
+  //   // Call the updateMainVideo function with the selected video
+  //   if (type === "video" && (media.src || (media.video && media.title))) {
+  //     updateMainVideo({
+  //       src: media.src,
+  //       title: media.title,
+  //     });
+  //   }
+  // };
 
   const handleCloseModal = () => {
     // Close the modal and reset the selected media
@@ -43,11 +120,15 @@ export default function SingleProduct() {
     const thumbnailMedia = Object.values(product.productDatas || {});
 
     if (product.video) {
-      thumbnailMedia.push(product.video);
+      thumbnailMedia.push(product.video.video);
     }
 
     return thumbnailMedia.slice(0, 7);
   };
+
+  const mainVideo = product.video
+    ? { src: product.video.video, title: product.video.title }
+    : product.image;
 
   return (
     <section>
@@ -64,11 +145,12 @@ export default function SingleProduct() {
                 >
                   {isVideo ? (
                     <video
+                      onClick={(isVideo) =>
+                        handleMediaClick(mainVideo, isVideo ? "video" : "")
+                      }
                       src={media}
-                      controls
                       width="100"
                       height="80"
-                      muted
                       id={hoveredImage === media ? "selected" : ""}
                       className="thumbnail__video"
                     ></video>
@@ -86,7 +168,13 @@ export default function SingleProduct() {
 
           <div
             className="product-image-container"
-            onDoubleClick={(media) => handleMediaClick(media)}
+            onDoubleClick={() => {
+              if (product.image) {
+                handleMediaClick(product.image, "image");
+              } else {
+                handleMediaClick(mainVideo, "video");
+              }
+            }}
           >
             {hoveredImage ? (
               hoveredImage.includes(".mp4") ? (
@@ -162,9 +250,16 @@ export default function SingleProduct() {
 
       {/* Modal */}
       <SingleProductModal
+        activeTab={activeTab}
+        videosArray={[mainVideo, ...videosArray]} // Include the main video in the videosArray
+        imagesArray={imagesArray}
+        selectedMedia={selectedMedia}
         isModalOpen={isModalOpen}
-        media={selectedMedia}
         handleCloseModal={handleCloseModal}
+        handleTabClick={handleTabClick}
+        handleMediaClick={handleMediaClick}
+        mainVideoTitle={mainVideo?.title || ""}
+        updateMainVideo={updateMainVideo}
       />
     </section>
   );

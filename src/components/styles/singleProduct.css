@@ -38,9 +38,8 @@
     position: absolute;
     width: 80px;
     transform: translate(-50%, -50%);
-    z-index: 99;
+    z-index: 0;
     cursor: pointer;
-
 }
 
 .product-video {
@@ -61,12 +60,19 @@
     display: block;
     object-fit: cover;
     margin-bottom: 10px;
-    border: 3px solid #ccc;
+    /* border: 3px solid #ccc; */
     border-radius: 10px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
 }
 
-#selected {
+/* #selected {
     border: 2px solid blue;
+} */
+
+.singleProduct-thumbnail img#selected,
+.singleProduct-thumbnail video#selected {
+    border-color: #007bff;
 }
 
 .smallImage {
@@ -84,8 +90,6 @@
     .singleProduct-left {
         flex-direction: row;
     }
-
-
 
     .singleProduct-thumbnail {
         flex-direction: column;
