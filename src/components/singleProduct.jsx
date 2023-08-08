@@ -64,50 +64,51 @@ export default function SingleProduct() {
   //   }
   // };
 
-  const handleMediaClick = (media) => {
-    // Handle media click and open the modal
-    setSelectedMedia(media);
-
-    // Check if the media is a video or image and set the active tab accordingly
-    if (media === product.image) {
-      setActiveTab("image");
-    } else if (media.src || (media.video && media.title)) {
-      setActiveTab("video");
-    }
-
-    setIsModalOpen(true);
-
-    // Call the updateMainVideo function with the selected video
-    if (media.src || (media.video && media.title)) {
-      updateMainVideo({
-        src: media.src,
-        title: media.title,
-      });
-    }
-  };
-
-  // const handleMediaClick = (media, type) => {
+  // const handleMediaClick = (media) => {
   //   // Handle media click and open the modal
   //   setSelectedMedia(media);
 
-  //   if (type === "image") {
-  //     // If the clicked media is an image, set the active tab to "image"
+  //   // Check if the media is a video or image and set the active tab accordingly
+  //   if (media === product.image) {
   //     setActiveTab("image");
-  //   } else {
-  //     // Otherwise, check if the media is a video or image and set the active tab accordingly
-  //     setActiveTab(media === product.image ? "image" : "video");
+  //   } else if (media.src || (media.video && media.title)) {
+  //     setActiveTab("video");
   //   }
 
   //   setIsModalOpen(true);
 
   //   // Call the updateMainVideo function with the selected video
-  //   if (type === "video" && (media.src || (media.video && media.title))) {
+  //   if (media.src || (media.video && media.title)) {
   //     updateMainVideo({
   //       src: media.src,
   //       title: media.title,
   //     });
+  //   } else if (media === product.image) {
+  //     setActiveTab("image");
   //   }
   // };
+
+  const handleMediaClick = (media, type) => {
+    // Handle media click and open the modal
+    setSelectedMedia(media);
+
+    if (type === "image") {
+      // If the clicked media is an image, set the active tab to "image"
+      setActiveTab("image");
+    } else if (type === "video") {
+      // If the clicked media is a video, set the active tab to "video"
+      setActiveTab("video");
+    } else setActiveTab("");
+
+    // Call the updateMainVideo function with the selected video
+    if (type === "video" && (media.src || (media.video && media.title))) {
+      updateMainVideo({
+        src: media.src,
+        title: media.title,
+      });
+    }
+    setIsModalOpen(true);
+  };
 
   const handleCloseModal = () => {
     // Close the modal and reset the selected media
@@ -168,13 +169,11 @@ export default function SingleProduct() {
 
           <div
             className="product-image-container"
-            onDoubleClick={() => {
-              if (product.image) {
-                handleMediaClick(product.image, "image");
-              } else {
-                handleMediaClick(mainVideo, "video");
-              }
-            }}
+            onClick={() =>
+              hoveredImage && hoveredImage.includes(".mp4")
+                ? handleMediaClick(mainVideo, "video")
+                : handleMediaClick(hoveredImage, "image")
+            }
           >
             {hoveredImage ? (
               hoveredImage.includes(".mp4") ? (
