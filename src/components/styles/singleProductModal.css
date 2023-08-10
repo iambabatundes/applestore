@@ -75,7 +75,6 @@ button.product__active {
     top: 3px;
     transform: scaleX(1);
     transition: transform 3s ease-in-out;
-
 }
 
 .ProductModal-tabs button.product-active:hover::after,
@@ -145,5 +144,9 @@ button.product__active {
 }
 
 .modal-thumbnail.selected {
+    border: 2px solid yellow;
+}
+
+.playing {
     border: 2px solid yellow;
 }

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styles/productCards.css";
 import { Link } from "react-router-dom";
 
 export default function ProductCards({ item, className, addToCart, product }) {
+  const [added, setAdded] = useState(false);
   const handleAddToCart = () => {
     addToCart(item);
+    setAdded(true);
   };
 
   function formatPermalink(title) {
@@ -37,6 +39,12 @@ export default function ProductCards({ item, className, addToCart, product }) {
             <span className="products-card__rating">{item.rating} stars</span>
             <span className="products-card__price">${item.price}</span>
           </div>
+          {added && (
+            <div className="product-card__added">
+              <i className="fa fa-check-circle"></i>
+              <span>Added to cart</span>
+            </div>
+          )}
           <button className="products-card__button" onClick={handleAddToCart}>
             <i className="fa fa-shopping-cart"></i> Add to Cart
           </button>

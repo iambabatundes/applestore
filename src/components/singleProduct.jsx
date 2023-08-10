@@ -11,6 +11,7 @@ export default function SingleProduct() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [activeTab, setActiveTab] = useState("video");
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState(-1);
 
   const videosArray = Object.values(product.productVideo || {});
   const imagesArray = Object.values(product.productDatas || {});
@@ -42,52 +43,6 @@ export default function SingleProduct() {
     setHoveredImage(media);
   };
 
-  // const handleMediaClick = (media) => {
-  //   // Handle media click and open the modal
-  //   setSelectedMedia(media);
-
-  //   // Check if the media is a video or image and set the active tab accordingly
-  //   if (media === product.image) {
-  //     setActiveTab("image");
-  //   } else {
-  //     setActiveTab("video");
-  //   }
-
-  //   setIsModalOpen(true);
-
-  //   // Call the updateMainVideo function with the selected video
-  //   if (media.src || (media.video && media.title)) {
-  //     updateMainVideo({
-  //       src: media.src,
-  //       title: media.title,
-  //     });
-  //   }
-  // };
-
-  // const handleMediaClick = (media) => {
-  //   // Handle media click and open the modal
-  //   setSelectedMedia(media);
-
-  //   // Check if the media is a video or image and set the active tab accordingly
-  //   if (media === product.image) {
-  //     setActiveTab("image");
-  //   } else if (media.src || (media.video && media.title)) {
-  //     setActiveTab("video");
-  //   }
-
-  //   setIsModalOpen(true);
-
-  //   // Call the updateMainVideo function with the selected video
-  //   if (media.src || (media.video && media.title)) {
-  //     updateMainVideo({
-  //       src: media.src,
-  //       title: media.title,
-  //     });
-  //   } else if (media === product.image) {
-  //     setActiveTab("image");
-  //   }
-  // };
-
   const handleMediaClick = (media, type) => {
     // Handle media click and open the modal
     setSelectedMedia(media);
@@ -98,7 +53,7 @@ export default function SingleProduct() {
     } else if (type === "video") {
       // If the clicked media is a video, set the active tab to "video"
       setActiveTab("video");
-    } else setActiveTab("");
+    } else setActiveTab("image");
 
     // Call the updateMainVideo function with the selected video
     if (type === "video" && (media.src || (media.video && media.title))) {
@@ -131,6 +86,8 @@ export default function SingleProduct() {
     ? { src: product.video.video, title: product.video.title }
     : product.image;
 
+  const hasVideo = videosArray.length > 0;
+
   return (
     <section>
       <div className="singleProduct-main">
@@ -144,7 +101,7 @@ export default function SingleProduct() {
                   onMouseEnter={() => handleMediaHover(media)}
                   onMouseLeave={() => handleMediaHover(media)}
                 >
-                  {isVideo ? (
+                  {hasVideo && isVideo ? (
                     <video
                       onClick={(isVideo) =>
                         handleMediaClick(mainVideo, isVideo ? "video" : "")
@@ -172,7 +129,7 @@ export default function SingleProduct() {
             onClick={() =>
               hoveredImage && hoveredImage.includes(".mp4")
                 ? handleMediaClick(mainVideo, "video")
-                : handleMediaClick(hoveredImage, "image")
+                : handleMediaClick(hoveredImage || product.image, "image")
             }
           >
             {hoveredImage ? (
@@ -250,7 +207,7 @@ export default function SingleProduct() {
       {/* Modal */}
       <SingleProductModal
         activeTab={activeTab}
-        videosArray={[mainVideo, ...videosArray]} // Include the main video in the videosArray
+        videosArray={hasVideo ? [mainVideo, ...videosArray] : []} // Include the main video in the videosArray
         imagesArray={imagesArray}
         selectedMedia={selectedMedia}
         isModalOpen={isModalOpen}
@@ -259,6 +216,10 @@ export default function SingleProduct() {
         handleMediaClick={handleMediaClick}
         mainVideoTitle={mainVideo?.title || ""}
         updateMainVideo={updateMainVideo}
+        hasVideo={hasVideo}
+        currentPlayingIndex={currentPlayingIndex}
+        setCurrentPlayingIndex={setCurrentPlayingIndex}
+        setSelectedMedia={setSelectedMedia}
       />
     </section>
   );

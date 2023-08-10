@@ -85,7 +85,7 @@ h4 {
 
 .productCard-container {
     position: absolute;
-    top: 248px;
+    top: 206px;
 }
 
 .products-card__group {
@@ -107,6 +107,17 @@ h4 {
     font-weight: bold;
     margin-bottom: 10px;
     text-align: center;
+}
+
+.product-card__added i {
+    /* background: #067d62; */
+    color: #067d62;
+}
+
+.product-card__added span {
+    margin-left: 10px;
+    color: #007600;
+    font-size: 14px;
 }
 
 .product-card__button {

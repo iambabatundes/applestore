@@ -76,6 +76,7 @@ export default function Product({ addToCart }) {
             item={card}
             key={card.id}
             addToCart={addToCart}
+            add
             className={card.className}
             product={card}
           />

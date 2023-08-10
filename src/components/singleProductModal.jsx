@@ -13,12 +13,24 @@ export default function SingleProductModal({
   handleMediaClick,
   mainVideoTitle,
   updateMainVideo,
+  hasVideo, // Add this prop
+  currentPlayingIndex,
+  setCurrentPlayingIndex,
+  setSelectedMedia,
 }) {
   const mainVideoRef = useRef(null);
 
   useEffect(() => {
     if (isModalOpen && mainVideoRef.current) {
       mainVideoRef.current.play();
+
+      // Add an event listener for the "ended" event
+      mainVideoRef.current.addEventListener("ended", handleVideoEnded);
+
+      // Clean up the event listener when the component unmounts
+      return () => {
+        mainVideoRef.current.removeEventListener("ended", handleVideoEnded);
+      };
     }
   }, [isModalOpen]);
 
@@ -33,6 +45,12 @@ export default function SingleProductModal({
         mainVideoRef.current.src = nextVideo.src;
         mainVideoRef.current.title = nextVideo.title;
         mainVideoRef.current.play();
+
+        setCurrentPlayingIndex(nextIndex); // Update the index of the currently playing video
+        setSelectedMedia(nextVideo); // Update the selected video
+      } else {
+        setCurrentPlayingIndex(-1); // No video is playing
+        setSelectedMedia([]); // Clear the selected video
       }
     }
   };
@@ -46,12 +64,15 @@ export default function SingleProductModal({
             <Icon cancel className="modalCancel" onClick={handleCloseModal} />
             {/* Tabs */}
             <div className="ProductModal-tabs">
-              <button
-                onClick={() => handleTabClick("video")}
-                className={activeTab === "video" ? "product-active" : ""}
-              >
-                Videos
-              </button>
+              {hasVideo && (
+                <button
+                  onClick={() => handleTabClick("video")}
+                  className={activeTab === "video" ? "product-active" : ""}
+                >
+                  Videos
+                </button>
+              )}
+
               <button
                 onClick={() => handleTabClick("image")}
                 className={activeTab === "image" ? "product__active" : ""}
@@ -63,7 +84,7 @@ export default function SingleProductModal({
             {/* Media content based on active tab */}
             <div className="modal-media">
               <div className="modal-big-media">
-                {activeTab === "video" ? (
+                {hasVideo && activeTab === "video" ? (
                   <>
                     <video
                       // ref={mainVideoRef} // Ref to the main video element
@@ -91,11 +112,12 @@ export default function SingleProductModal({
                       <div
                         key={index}
                         onClick={() => {
-                          updateMainVideo(video); // Call updateMainVideo when a video thumbnail is clicked
+                          updateMainVideo(video);
+                          setCurrentPlayingIndex(index); // Set the currentPlayingIndex when a thumbnail is clicked
                         }}
                         className={`modal-thumbnail ${
                           selectedMedia === video ? "selected" : ""
-                        }`}
+                        } ${currentPlayingIndex === index ? "playing" : ""}`}
                       >
                         <video src={video.src} muted width="100" height="80" />
                         {video.title && (
