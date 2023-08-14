@@ -1,24 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
+import About from "./components/About";
+import SinglePost from "./components/singlePost";
 import NavBar from "./components/navBar";
 import Home from "./components/Home";
 import Shop from "./components/Shop";
 import Product from "./components/Product";
 import Contact from "./components/Contact";
-import About from "./components/About";
-import SinglePost from "./components/singlePost";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
 import SingleProduct from "./components/singleProduct";
+import Checkout from "./components/checkout";
+import CheckoutNavbar from "./components/checkoutNavbar";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
+
+  const location = useLocation();
 
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
@@ -42,25 +46,44 @@ function App() {
     }
   };
 
-  const addToCart = (item, quantity) => {
-    const updatedQuantities = {
-      ...selectedQuantities,
-      [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
-    };
+  const addToCart = (product) => {
+    // Check if the product already exists in the cart
+    const existingProduct = cartItems.find((item) => item.id === product.id);
 
-    setCartItems((prevCartItems) => [
-      ...prevCartItems,
-      { ...item, quantity: parseInt(quantity) },
-    ]);
-    setSelectedQuantities(updatedQuantities);
-
-    // Reset QuantityTenPlus to default when an item is added
-    setQuantityTenPlus((prevQuantityTenPlus) => {
-      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
-      updatedQuantityTenPlus[item.id] = undefined; // Reset QuantityTenPlus to default
-      return updatedQuantityTenPlus;
-    });
+    if (existingProduct) {
+      // Product already in the cart, increase the quantity
+      setCartItems((prevCart) =>
+        prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      // Product not in the cart, add it with quantity 1
+      setCartItems((prevCart) => [...prevCart, { ...product, quantity: 1 }]);
+    }
   };
+
+  // const addToCart = (item, quantity) => {
+  //   const updatedQuantities = {
+  //     ...selectedQuantities,
+  //     [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
+  //   };
+
+  //   setCartItems((prevCartItems) => [
+  //     ...prevCartItems,
+  //     { ...item, quantity: parseInt(quantity) },
+  //   ]);
+  //   setSelectedQuantities(updatedQuantities);
+
+  //   // Reset QuantityTenPlus to default when an item is added
+  //   setQuantityTenPlus((prevQuantityTenPlus) => {
+  //     const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
+  //     updatedQuantityTenPlus[item.id] = undefined; // Reset QuantityTenPlus to default
+  //     return updatedQuantityTenPlus;
+  //   });
+  // };
 
   const handleDelete = (itemId) => {
     setCartItems((prevCartItems) => {
@@ -113,23 +136,41 @@ function App() {
       return total + parseInt(quantity);
     }, 0) + (selectedQuantities["Quantity 10+"] || 0);
 
+  const renderNavbar = () => {
+    if (location.pathname === "/checkout") {
+      return <CheckoutNavbar cartItemCount={cartItemCount} />;
+    } else {
+      return (
+        <NavBar
+          cartItemCount={cartItemCount}
+          cartItems={cartItems}
+          selectedQuantities={selectedQuantities}
+          setSelectedQuantities={setSelectedQuantities}
+        />
+      );
+    }
+  };
+
   return (
     <>
-      <NavBar
-        cartItemCount={cartItemCount}
-        cartItems={cartItems}
-        selectedQuantities={selectedQuantities}
-        setSelectedQuantities={setSelectedQuantities}
-      />
+      {renderNavbar()}
       <main className="main">
         <Routes>
-          <Route path="/" exact element={<Home addToCart={addToCart} />} />
+          <Route
+            path="/"
+            exact
+            element={<Home addToCart={addToCart} cartItems={cartItems} />}
+          />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/product" element={<Product addToCart={addToCart} />} />
+          <Route
+            path="/product"
+            element={<Product addToCart={addToCart} cartItems={cartItems} />}
+          />
           <Route path="/blog/:title" element={<SinglePost />} />
           <Route path="/:title" exact element={<SingleProduct />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/checkout" element={<Checkout cartItem={cartItems} />} />
           <Route
             path="/cart"
             element={

@@ -6,26 +6,44 @@ import ReactImageMagnify from "react-image-magnify";
 import SingleProductModal from "./singleProductModal";
 
 export default function SingleProduct() {
-  const [product, setProduct] = useState({});
-  const [hoveredImage, setHoveredImage] = useState(null);
+  const [product, setProduct] = useState([]);
+  const [hoveredImage, setHoveredImage] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [activeTab, setActiveTab] = useState("video");
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(-1);
 
-  const videosArray = Object.values(product.productVideo || {});
-  const imagesArray = Object.values(product.productDatas || {});
+  const videosArray = Object.values(product?.productVideo || {});
+  const imagesArray = Object.values(product?.productDatas || {});
 
   const { title } = useParams();
 
+  // useEffect(() => {
+  //   const fetchedProduct = getProduct(title);
+  //   setProduct(fetchedProduct);
+  // }, [title]);
+
+  function formatPermalink(title) {
+    return title.toLowerCase().replaceAll(" ", "-");
+  }
+
+  // useEffect(() => {
+  //   const fetchedProduct = getProduct(formatPermalink(title));
+  //   setProduct(fetchedProduct);
+  // }, [title]);
+
   useEffect(() => {
-    const fetchedProduct = getProduct(title);
-    setProduct(fetchedProduct);
+    try {
+      const fetchedProduct = getProduct(formatPermalink(title));
+      setProduct(fetchedProduct);
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
   }, [title]);
 
-  if (!product) {
-    return <div>Loading...</div>;
-  }
+  // if (!product) {
+  //   return <div>Loading...</div>;
+  // }
 
   const updateMainVideo = (video) => {
     setSelectedMedia(video);
@@ -83,7 +101,7 @@ export default function SingleProduct() {
   };
 
   const mainVideo = product.video
-    ? { src: product.video.video, title: product.video.title }
+    ? { src: product?.video.video, title: product.video.title }
     : product.image;
 
   const hasVideo = videosArray.length > 0;

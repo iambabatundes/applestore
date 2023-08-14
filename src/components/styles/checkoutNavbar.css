@@ -1,0 +1,82 @@
+.checkout-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 45px;
+    position: relative;
+}
+
+.checkout-logo {
+    width: 50px;
+    height: 50px;
+}
+
+.checkout-link {
+    color: #007185;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.custom-modal {
+    position: absolute;
+    font-size: 14px;
+    bottom: 473px;
+    left: 40%;
+    transform: translateX(0%);
+    border: 1px solid #BBBFBF;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    padding: 15px 20px;
+    border-radius: 8px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* opacity: 1; */
+    /* Start with opacity set to 0 */
+    /* transition: opacity 0.3s ease-in-out; */
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.custom-modal.open {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.modal-arrow {
+    border: 1px solid #BBBFBF;
+    position: absolute;
+    top: 68px;
+    left: 55%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    transform: rotate(45deg);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.custom-modal__btn {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+}
+
+.return-button,
+.stay-button {
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    border-radius: 8px;
+    margin-top: 10px;
+    padding: 5px 37px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.return-button {
+    background: #920300;
+    color: #fff;
+}

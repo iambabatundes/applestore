@@ -7,12 +7,7 @@ import Icon from "./icon";
 import LoginModal from "./loginModal";
 import RegisterModal from "./registerModal";
 
-function NavBar({
-  cartItemCount,
-  setSelectedQuantities,
-  cartItems,
-  selectedQuantities,
-}) {
+function NavBar({ cartItemCount }) {
   const [showNavbar, setShowNavbar] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false);
   const [showModal, setShowModal] = useState(false);

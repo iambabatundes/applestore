@@ -3,7 +3,7 @@ import ProductCard from "./productCards";
 import { getProducts } from "./productData";
 import "./styles/Product.css";
 
-export default function Product({ addToCart }) {
+export default function Product({ addToCart, cartItems }) {
   const [products, setProducts] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [cardsPerPage, setCardsPerPage] = useState(5);
@@ -11,6 +11,17 @@ export default function Product({ addToCart }) {
   useEffect(() => {
     const fetchedProducts = getProducts();
     setProducts(fetchedProducts);
+  }, []);
+
+  useEffect(() => {
+    // Update the number of cards per page on window resize
+    window.addEventListener("resize", updateCardsPerPage);
+    // Initial update on component mount
+    updateCardsPerPage();
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", updateCardsPerPage);
+    };
   }, []);
 
   const handleNextCard = () => {
@@ -34,17 +45,6 @@ export default function Product({ addToCart }) {
       setCardsPerPage(5);
     }
   };
-
-  useEffect(() => {
-    // Update the number of cards per page on window resize
-    window.addEventListener("resize", updateCardsPerPage);
-    // Initial update on component mount
-    updateCardsPerPage();
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", updateCardsPerPage);
-    };
-  }, []);
 
   const productsToDisplay = [];
 
@@ -76,9 +76,9 @@ export default function Product({ addToCart }) {
             item={card}
             key={card.id}
             addToCart={addToCart}
-            add
             className={card.className}
             product={card}
+            cartItems={cartItems}
           />
         ))}
       </div>

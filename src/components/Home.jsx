@@ -9,13 +9,13 @@ import FaqSection from "./faqSection";
 import Blog from "./blog";
 import Newsletter from "./Newsletter";
 
-function Home({ addToCart }) {
+function Home({ addToCart, cartItems }) {
   return (
     <section>
       <HomeSlider />
       <BrandProduct />
       <Feactured />
-      <Product addToCart={addToCart} />
+      <Product addToCart={addToCart} cartItems={cartItems} />
       <FaqSection />
       <Blog />
       <Newsletter />

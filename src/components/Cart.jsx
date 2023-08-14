@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-// import Select from "react-select";
 import "./styles/cart.css";
 import { calculateTotalPrice } from "./utils/utils";
 import { Link } from "react-router-dom";
@@ -249,7 +248,9 @@ export default function Cart({
             Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): $
             {price}
           </h3>
-          <button>Proceed to checkout</button>
+          <Link to="/checkout">
+            <button>Proceed to checkout</button>
+          </Link>
         </div>
 
         <section className="cart-product">

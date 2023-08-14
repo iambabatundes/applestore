@@ -172,6 +172,13 @@ export function getProduct(title) {
   return products.find((product) => formatPermalink(product.title) === title);
 }
 
+// export function getProduct(title) {
+//   const formattedTitle = formatPermalink(title);
+//   return products.find(
+//     (product) => formatPermalink(product.title) === formattedTitle
+//   );
+// }
+
 function formatPermalink(title) {
   return title.toLowerCase().replaceAll(" ", "-");
 }
