@@ -1,0 +1,28 @@
+.editAddress-modal {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* overflow: auto; */
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.9s all ease;
+}
+
+.editAddress-container {
+    width: 100%;
+    height: 88%;
+    max-width: 550px;
+    overflow: auto;
+    border: 1px solid #888;
+    background-color: #fefefe;
+    border-radius: 10px;
+}
+
+.editAddress-cancel {
+    display: flex;
+}

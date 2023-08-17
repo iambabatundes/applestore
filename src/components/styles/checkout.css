@@ -56,7 +56,6 @@ li {
     display: flex;
     align-items: center;
     width: 43%;
-
 }
 
 .address__selected {
@@ -73,6 +72,73 @@ li {
     color: #007185;
     font-size: 14px;
     font-weight: 500;
+    cursor: pointer;
+}
+
+.address__selection {
+    align-items: baseline;
+    background: #fcf5ee;
+    border-radius: 7px;
+    display: flex;
+    border: 1px solid #FBD8B4;
+    padding: 5px 10px;
+    margin-bottom: 7px;
+
+}
+
+.address-selected input {
+    width: 15px;
+    border: 0;
+    box-shadow: none;
+    margin-right: 10px;
+}
+
+.address-selected h1 {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.address-selected label {
+    border-radius: 7px;
+    margin: 10px 0;
+}
+
+.selected-address {
+    display: flex;
+}
+
+.address__edit {
+    color: #007185;
+    cursor: pointer;
+    padding-left: 20px;
+
+}
+
+.address-new {
+    color: #007185;
+    font-size: 14px;
+    margin: 20px 10px;
+}
+
+.address-new i {
+    padding-right: 10px;
+}
+
+.address-btn__main {
+    background: #007185;
+    margin: 0;
+    padding: 0;
+}
+
+.address-btn {
+    margin-top: 40px;
+    background: #cc1c39;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    border-radius: 10px;
+    padding: 7px;
+    border: 1px solid #888C8C;
+    color: #fff;
+    font-size: 13px;
 }
 
 .address-content,

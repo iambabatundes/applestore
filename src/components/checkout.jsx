@@ -1,60 +1,11 @@
 import React, { useState } from "react";
 import "./styles/checkout.css";
-import * as Yup from "yup";
 // import Countr from "country-list";
 import Select from "react-select";
 import { Country } from "country-state-city";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-// import Icon from "./icon";
-
-const AddressSchema = Yup.object().shape({
-  country: Yup.string()
-    .required(
-      <span className="checkout-address__alert">
-        <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-        Please enter a country
-      </span>
-    )
-    .min(3)
-    .max(255),
-  fullName: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a name
-    </span>
-  ),
-  phoneNumber: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a phone number so we can call if there are any issues with
-      delivery.
-    </span>
-  ),
-  address: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter an address
-    </span>
-  ),
-  city: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a city
-    </span>
-  ),
-  state: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a state
-    </span>
-  ),
-  zipCode: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a zip code
-    </span>
-  ),
-});
+import { AddressSchema } from "../components/checkout/utils/validation";
+import EditAddress from "./checkout/editAddress";
 
 export default function Checkout() {
   const [step, setStep] = useState(1); // Initialize with step 1
@@ -65,44 +16,22 @@ export default function Checkout() {
   const [defaultAddress, setDefaultAddress] = useState(
     JSON.parse(localStorage.getItem("defaultAddress")) || null
   ); // Initialize with the default address from localStorage
-  // const [stateOptions, setStateOptions] = useState([]);
   const [formattedAddress, setFormattedAddress] = useState("");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
+
+  const handleEditAddress = (address) => {
+    setEditingAddress(address);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditAddressClose = () => {
+    setIsEditModalOpen(false);
+  };
 
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
     setStep(3); // Move to step 3 after selecting payment method
-  };
-
-  const handleAutofills = (setFieldValue) => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-            );
-            const data = await response.json();
-
-            // Process data and update form fields using setFieldValue
-
-            setAutofillError(null);
-          } catch (error) {
-            console.log("Error fetching or processing location data:", error);
-            setAutofillError("Error fetching or processing location data.");
-          }
-        },
-        (error) => {
-          console.log("Error getting location:", error);
-          setAutofillError("Error getting location. Please try again.");
-        }
-      );
-    } else {
-      setAutofillError(
-        "Geolocation is not supported by your browser. Please fill in the fields manually."
-      );
-    }
   };
 
   const handleAutofill = async (setFieldValue) => {
@@ -155,100 +84,6 @@ export default function Checkout() {
     setStep(2); // Move to step 2 after selecting address
   };
 
-  // const handleAutofill = (setFieldValue) => {
-  //   // Check if geolocation is available
-  //   if ("geolocation" in navigator) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         const { latitude, longitude } = position.coords;
-
-  //         // Use latitude and longitude to fetch location data from Nominatim API
-  //         fetch(
-  //           `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-  //         )
-  //           .then((response) => response.json())
-  //           .then((data) => {
-  //             const address = data.display_name;
-  //             const country = data.address.country;
-  //             const state = data.address.state;
-  //             const city = data.address.city;
-  //             const zipCode = data.address.postcode;
-
-  //             setFieldValue("country", country);
-  //             setFieldValue("state", state);
-  //             setFieldValue("city", city);
-  //             setFieldValue("address", address);
-  //             setFieldValue("zipCode", zipCode);
-
-  //             // Clear any previous error message
-  //             setAutofillError(null);
-  //           })
-  //           .catch((error) => {
-  //             console.log("Error fetching location data:", error);
-  //             setAutofillError(
-  //               "Error fetching location data. Please try again."
-  //             );
-  //           });
-  //       },
-  //       // Handle geolocation error
-  //       (error) => {
-  //         console.log("Error getting location:", error);
-  //         setAutofillError(
-  //           "Hmm. We couldn't detect your location. Please grant applestore.com location permission in your browser"
-  //         );
-  //       }
-  //     );
-  //   } else {
-  //     setAutofillError(
-  //       "Geolocation is not supported by your browser. Please fill in the fields manually."
-  //     );
-  //   }
-  // };
-
-  // const handleAutofill = (setFieldValue) => {
-  //   // Check if geolocation is available
-  //   if ("geolocation" in navigator) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         const { latitude, longitude } = position.coords;
-
-  //         // Use latitude and longitude to fetch location data from an API
-  //         // For example, you could use a reverse geocoding API to get address details
-  //         // Replace the API call below with the actual API you want to use
-  //         fetch(
-  //           `https://api.google.com/reverse-geocode?lat=${latitude}&lon=${longitude}`
-  //         )
-  //           .then((response) => response.json())
-  //           .then((data) => {
-  //             setFieldValue("country", data.country);
-  //             setFieldValue("state", data.state);
-  //             setFieldValue("city", data.city);
-  //             setFieldValue("address", data.address);
-  //             setFieldValue("zipCode", data.zipCode);
-
-  //             // Clear any previous error message
-  //             setAutofillError(null);
-  //           })
-  //           .catch((error) => {
-  //             console.log("Error fetching location data:", error);
-  //             setAutofillError(
-  //               "Error fetching location data. Please try again."
-  //             );
-  //           });
-  //       },
-  //       // Handle geolocation error
-  //       (error) => {
-  //         console.log("Error getting location:", error);
-  //         setAutofillError("Error getting location. Please try again.");
-  //       }
-  //     );
-  //   } else {
-  //     setAutofillError(
-  //       "Geolocation is not supported by your browser. Please fill in the fields manually."
-  //     );
-  //   }
-  // };
-
   return (
     <section className="checkout-main">
       <div className="steps-container">
@@ -291,27 +126,61 @@ export default function Checkout() {
                     <input
                       type="radio"
                       value="address"
-                      checked={defaultAddress.address}
+                      checked={defaultAddress.formattedAddress}
                       onChange={() => handleAddressChange("address")}
                     />
-                    {defaultAddress.address}
+                    {defaultAddress.formattedAddress}
                   </label>
                   {/* <p>Selected Address: {selectedAddress}</p> */}
+
                   <button onClick={() => setStep(2)}>Use this address</button>
                 </div>
               ) : selectedAddress ? (
                 <div className="address-selected">
-                  <label>
-                    <input
-                      type="radio"
-                      value="address1"
-                      checked={selectedAddress.address}
-                      onChange={() => handleAddressChange("address1")}
+                  <h1>Your Address</h1>
+                  <section className="address__selection">
+                    <label>
+                      <input
+                        type="radio"
+                        value="address1"
+                        checked={selectedAddress.address}
+                        onChange={() => handleAddressChange("address1")}
+                      />
+                    </label>
+                    <div>
+                      <span style={{ fontWeight: 600, paddingRight: 5 }}>
+                        {selectedAddress.fullName}
+                      </span>
+                      {selectedAddress.address} {selectedAddress.city},{" "}
+                      {selectedAddress.state}, {selectedAddress.zipCode},{" "}
+                      {selectedAddress.country}
+                      <span
+                        className="address__edit"
+                        onClick={() => handleEditAddress(selectedAddress)}
+                      >
+                        Edit address
+                      </span>
+                    </div>
+
+                    <EditAddress
+                      AddressSchema={AddressSchema}
+                      editingAddress={editingAddress}
+                      isEditModalOpen={isEditModalOpen}
+                      onClose={handleEditAddressClose}
+                      setIsEditModalOpen={setIsEditModalOpen}
                     />
-                    {selectedAddress.address}
-                  </label>
-                  {/* <p>Selected Address: {selectedAddress}</p> */}
-                  <button onClick={() => setStep(2)}>Use this address</button>
+                  </section>
+
+                  <div>
+                    <span className="address-new">
+                      <i class="fa fa-plus" aria-hidden="true"></i>
+                      Add new address
+                    </span>
+                  </div>
+
+                  <button className="address-btn" onClick={() => setStep(2)}>
+                    Use this address
+                  </button>
                 </div>
               ) : (
                 <div className="address-form">
