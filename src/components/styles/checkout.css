@@ -1,21 +1,242 @@
+li {
+    list-style: none;
+}
+
 .checkout-main {
     display: grid;
 }
 
+.steps-container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    width: 100%;
+    max-width: 890px;
+}
+
+.checkout-step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* margin: 20px; */
+    padding: 10px;
+    border: 1px solid #ddd;
+    /* border-radius: 5px; */
+    /* background-color: #f5f5f5; */
+    width: 100%;
+}
+
+.checkout-step.active {
+    background-color: #ffffff;
+}
+
+.checkout-number {
+    font-size: 18px;
+    font-weight: 600;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.checkout-heading {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
 .address-main {
     display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
     color: #c45500;
+    width: 100%;
 }
 
-.address-main span {
-    font-size: 30px;
-    font-weight: 700;
+.address__title {
+    display: flex;
+    align-items: center;
+    width: 43%;
+
 }
 
-.address-main h1 {
-    font-size: 30px;
-    font-weight: 700;
-    padding-left: 20px;
+.address__selected {
+    align-items: center;
+    color: #000;
+    display: flex;
+    font-size: 14px;
+    font-weight: 500;
+    justify-content: space-between;
+    width: 43%;
+}
+
+.address-change span {
+    color: #007185;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.address-content,
+.payment-content,
+.items-and-shipping-content {
+    display: none;
+    padding: 15px;
+    margin-left: 38px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 95%;
+}
+
+.checkout-step.active .address-content,
+.checkout-step.active .payment-content,
+.checkout-step.active .items-and-shipping-content {
+    display: block;
+}
+
+.address-form {
+    padding-bottom: 20px;
+}
+
+.address-form h1 {
+    margin-bottom: 22px;
+    /* font-size: 14px; */
+}
+
+.address-save {
+    background: #d5f7fc;
+    font-size: 14px;
+    border: 1px solid #007185;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    font-weight: 500;
+    padding: 20px 30px;
+
+}
+
+::placeholder {
+    color: #6f7373;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.address-save button {
+    background-color: #ffffff;
+    border: 1px solid #007185;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    color: #000;
+    font-size: 13px;
+    padding: 5px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 60px;
+
+}
+
+.address-save button:hover {
+    /* background-color: #D5D9D9; */
+    background-color: #fffafa;
+}
+
+.phoneNumber {
+    display: flex;
+    flex-direction: column;
+}
+
+.phoneNumber-tooltip {
+    font-size: 10px;
+}
+
+
+
+.checkout-address {
+    margin-top: 35px;
+    margin-bottom: 56px;
+    width: 80%;
+    height: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* .address__country {
+    height: 20px;
+} */
+
+input {
+    width: 80%;
+    /* height: 35px; */
+    outline: 0;
+    padding: 3px 7px;
+    border: 1px solid #888C8C;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.active-input {
+    border: 1px solid #888C8C;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+/* Style the focus state of the inputs */
+.active-input:focus {
+    border-color: dodgerblue;
+}
+
+input:focus {
+    border-color: dodgerblue;
+}
+
+.error-input {
+    border-color: #cc1c39;
+}
+
+.error-message {
+    color: #cc1c39;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 70%;
+}
+
+.error-message i {
+    padding-right: 10px;
+    font-size: 18px;
+}
+
+
+.checkout-form {
+    padding-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.address-input input:nth-child(1) {
+    margin-bottom: 5px;
+}
+
+.checkout-address__alert {
+    font-size: 13px;
+    color: #cc1c39;
+}
+
+.checkout-address__alert i {
+    padding-right: 10px;
+    font-size: 18px;
+}
+
+.makeDefault-main {
+    display: flex;
+    align-items: center;
+}
+
+.makeDefault {
+    width: 15px;
+}
+
+.makeDefault-main label {
+    font-size: 13px;
+    padding-left: 10px;
 }
 
 @media (min-width: 768px) {
