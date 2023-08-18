@@ -24,5 +24,74 @@
 }
 
 .editAddress-cancel {
+    background: #F0F2F2;
+    border-bottom: 1px solid #D5D9D9;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+}
+
+.editAddress-cancel h2 {
+    font-size: 18px;
+}
+
+.editAddress-icon {
+    cursor: pointer;
+}
+
+.editAddress-content {
+    padding: 10px 30px;
+}
+
+.editAddress-content h2 {
+    margin-bottom: 20px;
+}
+
+.editAddress input {
+    width: 100%;
+    height: 35px;
+    outline: 0;
+    padding: 3px 7px;
+    border: 1px solid #888C8C;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.editAddress-address {
+    margin-top: 12px;
+    margin-bottom: 50px;
+    /* width: 80%; */
+    height: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.editAddress-form {
+    padding-top: 10px;
+    font-size: 13px;
+    font-weight: 500
+}
+
+.address-input {
+    margin-top: 8px;
+}
+
+.editMakeDefault {
+    margin: 15px 0;
+    font-size: 14px;
+}
+
+.editAddress-btn {
+    background: #cc1c39;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    border: 1px solid #888C8C;
+    border-radius: 7px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    padding: 8px 12px;
 }

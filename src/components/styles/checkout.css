@@ -118,6 +118,7 @@ li {
     color: #007185;
     font-size: 14px;
     margin: 20px 10px;
+    cursor: pointer;
 }
 
 .address-new i {
@@ -131,14 +132,16 @@ li {
 }
 
 .address-btn {
-    margin-top: 40px;
     background: #cc1c39;
     box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
-    border-radius: 10px;
-    padding: 7px;
     border: 1px solid #888C8C;
+    border-radius: 10px;
     color: #fff;
-    font-size: 13px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 40px;
+    padding: 7px;
 }
 
 .address-content,
@@ -174,7 +177,7 @@ li {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
     font-weight: 500;
-    padding: 20px 30px;
+    padding: 18px 30px;
 
 }
 
@@ -211,12 +214,10 @@ li {
     font-size: 10px;
 }
 
-
-
 .checkout-address {
-    margin-top: 35px;
-    margin-bottom: 56px;
-    width: 80%;
+    margin-top: 14px;
+    margin-bottom: 50px;
+    /* width: 80%; */
     height: 20px;
     font-size: 13px;
     font-weight: 500;
@@ -226,9 +227,9 @@ li {
     height: 20px;
 } */
 
-input {
+.checkout-add__address input {
     width: 80%;
-    /* height: 35px; */
+    height: 35px;
     outline: 0;
     padding: 3px 7px;
     border: 1px solid #888C8C;
@@ -294,6 +295,7 @@ input:focus {
 .makeDefault-main {
     display: flex;
     align-items: center;
+    margin: 28px auto;
 }
 
 .makeDefault {
@@ -303,6 +305,19 @@ input:focus {
 .makeDefault-main label {
     font-size: 13px;
     padding-left: 10px;
+}
+
+.addAddress-btn {
+    background: #cc1c39;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+    border: 1px solid #888C8C;
+    border-radius: 7px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    padding: 8px 12px;
 }
 
 @media (min-width: 768px) {

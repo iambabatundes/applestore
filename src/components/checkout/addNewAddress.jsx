@@ -1,61 +1,58 @@
 import React from "react";
-import Icon from "../icon";
-import "./style/editAddress.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import AutoFillForm from "./autoFillForm";
+import Icon from "../icon";
 import Button from "../common/button";
 
-export default function EditAddress({
-  editingAddress,
+export default function AddNewAddress({
+  //   addNewAddress,
   AddressSchema,
-  setIsEditModalOpen,
-  isEditModalOpen,
+  setIsAddModalOpen,
+  isAddModalOpen,
   handleAutofill,
   autofillError,
-  onUpdateAddress,
+  handleAddressChange,
+  setStep,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
   };
 
   return (
-    <div>
-      {isEditModalOpen && (
+    <section>
+      {isAddModalOpen && (
         <section className="editAddress-modal" onClick={handleFormClick}>
           <div className="editAddress-container">
             <article className="editAddress-cancel">
-              <h2>Update your shipping address</h2>
+              <h2>Add a new shipping address</h2>
               <Icon
                 cancel
                 className="editAddress-icon"
-                onClick={() => setIsEditModalOpen(false)}
+                onClick={() => setIsAddModalOpen(false)}
               />
             </article>
             <div className="editAddress-content">
               <div>
-                <h2>Edit your Address</h2>
+                <h2>Add an Address</h2>
                 <AutoFillForm
                   handleAutofill={handleAutofill}
                   autofillError={autofillError}
                 />
                 <Formik
                   initialValues={{
-                    // Pre-fill the form with the editingAddress details
-                    country: editingAddress.country,
-                    fullName: editingAddress.fullName,
-                    address: editingAddress.address,
-                    city: editingAddress.city,
-                    phoneNumber: editingAddress.phoneNumber,
-                    state: editingAddress.state,
-                    zipCode: editingAddress.zipCode,
-                    makeDefault: editingAddress.makeDefault,
-                    // ...other fields...
+                    country: "",
+                    fullName: "",
+                    phoneNumber: "",
+                    address: "",
+                    city: "",
+                    state: "",
+                    zipCode: "",
+                    makeDefault: false,
                   }}
                   validationSchema={AddressSchema}
-                  onSubmit={(values, { setSubmitting }) => {
-                    // Handle address update logic
-                    onUpdateAddress(values);
-                    setIsEditModalOpen(false); // Close the modal after submission
+                  onSubmit={async (values, { setSubmitting }) => {
+                    handleAddressChange(values);
+                    setStep(2); // Move to step 2 after selecting address
                     setSubmitting(false);
                   }}
                 >
@@ -150,10 +147,10 @@ export default function EditAddress({
                                 name="address"
                                 placeholder="Street Address, P.O. Box or company name, c/o"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="address" component="div" />
                               <input
@@ -185,10 +182,10 @@ export default function EditAddress({
                                 id="state"
                                 name="state"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="state" component="div" />
                             </div>
@@ -212,10 +209,10 @@ export default function EditAddress({
                                 id="city"
                                 name="city"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="city" component="div" />
                             </div>
@@ -238,10 +235,10 @@ export default function EditAddress({
                                 id="zipCode"
                                 name="zipCode"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue("zipCode")); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue("zipCode")); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="zipCode" component="div" />
                             </div>
@@ -263,10 +260,11 @@ export default function EditAddress({
                       </div>
 
                       <Button
-                        className="editAddress-btn"
                         disabled={isSubmitting}
+                        type="submit"
+                        className="editAddress-btn"
                       >
-                        Update Address
+                        Use address
                       </Button>
                     </Form>
                   )}
@@ -276,6 +274,6 @@ export default function EditAddress({
           </div>
         </section>
       )}
-    </div>
+    </section>
   );
 }
