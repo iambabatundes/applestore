@@ -1,0 +1,36 @@
+.active-input {
+    border: 1px solid #888C8C;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+/* Style the focus state of the inputs */
+.active-input:focus {
+    border-color: dodgerblue;
+}
+
+input:focus {
+    border-color: dodgerblue;
+}
+
+.error-input {
+    border-color: #cc1c39;
+}
+
+.error-message {
+    color: #cc1c39;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 70%;
+}
+
+.error-message i {
+    padding-right: 10px;
+    font-size: 18px;
+}
+
+.address-field {
+    margin-top: 7px;
+}

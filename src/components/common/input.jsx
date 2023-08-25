@@ -1,60 +1,39 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import Button from "./button";
+import "./styles/input.css";
+// import { ErrorMessage } from "formik";
 
 export default function Input({
-  buttonTitle,
-  initialValues,
-  children,
   name,
-  onSubmit,
-  validationSchema,
-  otherProps,
+  meta,
+  className,
+  value,
+  setFieldValue,
+  tooltip,
+  tooltipTitle,
+  placeholder,
+  input,
+  type,
 }) {
   return (
-    <section>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={onSubmit}
-      >
-        {({ isSubmitting, setFieldValue }) => (
-          <Form>
-            <div>
-              <label htmlFor={name}>{children}</label>
-              <Field
-                name={name} // Set the Field name to the htmlFor prop
-                render={({ field, meta }) => (
-                  <div>
-                    <input
-                      className={`${
-                        meta.touched && meta.error
-                          ? "error-input"
-                          : "active-input"
-                      }`}
-                      {...field}
-                      type={name} // You can customize the input type as needed
-                      id={name}
-                      name={name}
-                      value={values[name]}
-                      onChange={(text) => setFieldValue(name, text)}
-                      {...otherProps}
-                    />
-                    <ErrorMessage name={name} component="div" />
-                  </div>
-                )}
-              />
-            </div>
-            <Button
-              disabled={isSubmitting}
-              type="submit"
-              className="editAddress-btn"
-            >
-              {buttonTitle}
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </section>
+    <div className={`checkout-add__address ${className}`}>
+      <input
+        className={`${
+          meta.touched && meta.error ? "error-input" : "active-input"
+        }`}
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={(e) => setFieldValue(name, e.target.value)}
+        placeholder={placeholder}
+      />
+      {input && (
+        <input
+          className="address-field"
+          placeholder="Apt, suite, unit, building, floor, etc."
+        />
+      )}
+      {tooltip && <span className="phoneNumber-tooltip">{tooltipTitle}</span>}
+    </div>
   );
 }

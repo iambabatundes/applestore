@@ -5,7 +5,6 @@ import Icon from "../icon";
 import Button from "../common/button";
 
 export default function AddNewAddress({
-  //   addNewAddress,
   AddressSchema,
   setIsAddModalOpen,
   isAddModalOpen,
@@ -13,6 +12,7 @@ export default function AddNewAddress({
   autofillError,
   handleAddressChange,
   setStep,
+  onNewAddressAdded,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
@@ -33,7 +33,7 @@ export default function AddNewAddress({
             </article>
             <div className="editAddress-content">
               <div>
-                <h2>Add an Address</h2>
+                <h2>Add a new address</h2>
                 <AutoFillForm
                   handleAutofill={handleAutofill}
                   autofillError={autofillError}
@@ -50,11 +50,7 @@ export default function AddNewAddress({
                     makeDefault: false,
                   }}
                   validationSchema={AddressSchema}
-                  onSubmit={async (values, { setSubmitting }) => {
-                    handleAddressChange(values);
-                    setStep(2); // Move to step 2 after selecting address
-                    setSubmitting(false);
-                  }}
+                  onSubmit={onNewAddressAdded}
                 >
                   {({ isSubmitting, setFieldValue }) => (
                     <Form>
@@ -147,10 +143,6 @@ export default function AddNewAddress({
                                 name="address"
                                 placeholder="Street Address, P.O. Box or company name, c/o"
                                 {...field}
-                                // onChange={(e) => {
-                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                // }}
                               />
                               <ErrorMessage name="address" component="div" />
                               <input
@@ -171,7 +163,6 @@ export default function AddNewAddress({
                         <Field name="state">
                           {({ field, meta }) => (
                             <div className="editAddress">
-                              {/* <label htmlFor="state">State</label> */}
                               <input
                                 className={`${
                                   meta.touched && meta.error
@@ -182,10 +173,6 @@ export default function AddNewAddress({
                                 id="state"
                                 name="state"
                                 {...field}
-                                // onChange={(e) => {
-                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                // }}
                               />
                               <ErrorMessage name="state" component="div" />
                             </div>
@@ -264,7 +251,7 @@ export default function AddNewAddress({
                         type="submit"
                         className="editAddress-btn"
                       >
-                        Use address
+                        Use this address
                       </Button>
                     </Form>
                   )}

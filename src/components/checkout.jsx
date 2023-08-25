@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/checkout.css";
-// import Countr from "country-list";
-import Select from "react-select";
-import { Country } from "country-state-city";
 import { AddressSchema } from "../components/checkout/utils/validation";
 import EditAddress from "./checkout/editAddress";
 import AddNewAddress from "./checkout/addNewAddress";
 import AddAddress from "./checkout/addAddress";
 
 export default function Checkout() {
+  const [addresses, setAddresses] = useState([]);
   const [step, setStep] = useState(1); // Initialize with step 1
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [autofillError, setAutofillError] = useState(null);
   const [defaultAddress, setDefaultAddress] = useState(
@@ -22,9 +20,34 @@ export default function Checkout() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleAddNewAddress = () => {
-    // setAddNewAddress(address);
-    // setSelectedAddress(null);
     setIsAddModalOpen(true);
+  };
+
+  const handleUpdateAddresss = (updatedAddress) => {
+    const updatedAddresses = addresses.map((address) =>
+      address.id === updatedAddress.id ? updatedAddress : address
+    );
+
+    setAddresses(updatedAddresses);
+    setSelectedAddress(updatedAddress); // Update selectedAddress if needed
+    localStorage.setItem("addresses", JSON.stringify(updatedAddresses));
+    setIsEditModalOpen(false);
+  };
+
+  const handleUpdateAddress = (updatedAddress) => {
+    const updatedAddresses = addresses.map((address) =>
+      address.id === updatedAddress.id ? updatedAddress : address
+    );
+
+    setAddresses(updatedAddresses);
+    localStorage.setItem("addresses", JSON.stringify(updatedAddresses));
+
+    // Check if the updated address is the same as the selected address
+    if (selectedAddress && selectedAddress.id === updatedAddress.id) {
+      setSelectedAddress(updatedAddress);
+    }
+
+    setIsEditModalOpen(false);
   };
 
   const handleEditAddress = (address) => {
@@ -32,16 +55,22 @@ export default function Checkout() {
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateAddress = (newAddress) => {
-    const updatedAddress = { ...selectedAddress, ...newAddress };
-    setSelectedAddress(updatedAddress);
-
-    // Close the modal
+  const handleEditAddressClose = () => {
     setIsEditModalOpen(false);
   };
 
-  const handleEditAddressClose = () => {
-    setIsEditModalOpen(false);
+  const handleNewAddressAdded = (newAddress) => {
+    const newId = Date.now();
+    const addNewAddress = [...addresses, { ...newAddress, id: newId }];
+
+    // Set the newly added address as the selected address
+    setSelectedAddress({ ...newAddress, id: newId });
+
+    setAddresses(addNewAddress);
+    localStorage.setItem("addresses", JSON.stringify(addNewAddress));
+
+    setStep(2); // Move to step 2 after selecting the new address
+    setIsAddModalOpen(false); // Close the modal
   };
 
   const handlePaymentMethodChange = (method) => {
@@ -88,21 +117,15 @@ export default function Checkout() {
   };
 
   const handleAddressChange = (address) => {
-    // Format the selected address
-    const formatted = `${address.fullName} ${address.address}, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`;
-
     // Save the selected address to localStorage
     localStorage.setItem("selectedAddress", JSON.stringify(address));
 
     setSelectedAddress(address);
-    setFormattedAddress(formatted); // Update the formatted address
     setStep(2); // Move to step 2 after selecting address
   };
 
   const handleChangeAddress = () => {
     setIsAddModalOpen(false);
-    // setAddNewAddress(null);
-
     setStep(1);
   };
 
@@ -130,7 +153,6 @@ export default function Checkout() {
                     {selectedAddress.state}, {selectedAddress.country}
                   </li>
                 </ul>
-                {/* <span>{formattedAddress}</span> */}
               </div>
             )}
 
@@ -147,53 +169,61 @@ export default function Checkout() {
                   <label>
                     <input
                       type="radio"
-                      value="address"
+                      value={defaultAddress}
                       checked={defaultAddress.formattedAddress}
-                      onChange={() => handleAddressChange("address")}
+                      onChange={() => setSelectedAddress(defaultAddress)}
                     />
                     {defaultAddress.formattedAddress}
                   </label>
-                  {/* <p>Selected Address: {selectedAddress}</p> */}
 
                   <button onClick={() => setStep(2)}>Use this address</button>
                 </div>
               ) : selectedAddress ? (
                 <div className="address-selected">
-                  <h1>Your Address</h1>
+                  <h1>Your Addresses</h1>
                   <section className="address__selection">
-                    <label>
-                      <input
-                        type="radio"
-                        value="address1"
-                        checked={selectedAddress.address}
-                        onChange={() => handleAddressChange("address1")}
-                      />
-                    </label>
-                    <div>
-                      <span style={{ fontWeight: 600, paddingRight: 5 }}>
-                        {selectedAddress.fullName}
-                      </span>
-                      {selectedAddress.address} {selectedAddress.city},{" "}
-                      {selectedAddress.state}, {selectedAddress.zipCode},{" "}
-                      {selectedAddress.country}
-                      <span
-                        className="address__edit"
-                        onClick={() => handleEditAddress(selectedAddress)}
-                      >
-                        Edit address
-                      </span>
-                    </div>
+                    {addresses.map((address) => (
+                      <div key={address.id} className="address-item">
+                        <label>
+                          <input
+                            type="radio"
+                            // defaultChecked={address.id}
+                            value={address.id}
+                            checked={
+                              selectedAddress &&
+                              selectedAddress.id === address.id
+                            }
+                            onChange={() => handleAddressChange(address)}
+                          />
+                        </label>
+                        <div>
+                          <ul className="selectedAddresses">
+                            <li>{address.fullName}</li>
+                            <li>
+                              {address.address} {address.city}
+                              {address.state} {address.country}
+                            </li>
+                          </ul>
 
-                    <EditAddress
-                      AddressSchema={AddressSchema}
-                      editingAddress={editingAddress}
-                      isEditModalOpen={isEditModalOpen}
-                      onClose={handleEditAddressClose}
-                      setIsEditModalOpen={setIsEditModalOpen}
-                      autofillError={autofillError}
-                      handleAutofill={handleAutofill}
-                      onUpdateAddress={handleUpdateAddress}
-                    />
+                          <span
+                            className="checkout-address__btn"
+                            onClick={() => handleEditAddress(address)}
+                          >
+                            Edit address
+                          </span>
+                        </div>
+                        <EditAddress
+                          AddressSchema={AddressSchema}
+                          editingAddress={editingAddress}
+                          isEditModalOpen={isEditModalOpen}
+                          onClose={handleEditAddressClose}
+                          setIsEditModalOpen={setIsEditModalOpen}
+                          autofillError={autofillError}
+                          handleAutofill={handleAutofill}
+                          onUpdateAddress={handleUpdateAddress}
+                        />
+                      </div>
+                    ))}
                   </section>
 
                   <div>
@@ -206,23 +236,25 @@ export default function Checkout() {
                       AddressSchema={AddressSchema}
                       autofillError={autofillError}
                       handleAutofill={handleAutofill}
-                      handleAddressChange={handleAddressChange}
+                      // handleAddressChange={handleAddressChange}
                       isAddModalOpen={isAddModalOpen}
                       setIsAddModalOpen={setIsAddModalOpen}
                       setStep={setStep}
+                      onNewAddressAdded={handleNewAddressAdded}
                     />
                   </div>
 
-                  <button className="address-btn" onClick={() => setStep(2)}>
+                  <span className="address-new" onClick={() => setStep(2)}>
                     Use this address
-                  </button>
+                  </span>
                 </div>
               ) : (
                 <AddAddress
                   autofillError={autofillError}
-                  handleAddressChange={handleAddressChange}
+                  // handleAddressChange={handleNewAddressAdded}
                   handleAutofill={handleAutofill}
                   setStep={setStep}
+                  onNewAddressAdded={handleNewAddressAdded}
                 />
               )}
             </div>

@@ -150,10 +150,10 @@ export default function EditAddress({
                                 name="address"
                                 placeholder="Street Address, P.O. Box or company name, c/o"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="address" component="div" />
                               <input
@@ -174,7 +174,6 @@ export default function EditAddress({
                         <Field name="state">
                           {({ field, meta }) => (
                             <div className="editAddress">
-                              {/* <label htmlFor="state">State</label> */}
                               <input
                                 className={`${
                                   meta.touched && meta.error
@@ -185,10 +184,10 @@ export default function EditAddress({
                                 id="state"
                                 name="state"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="state" component="div" />
                             </div>
@@ -212,10 +211,10 @@ export default function EditAddress({
                                 id="city"
                                 name="city"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="city" component="div" />
                             </div>
@@ -227,7 +226,6 @@ export default function EditAddress({
                         <Field name="zipCode">
                           {({ field, meta }) => (
                             <div className="editAddress">
-                              {/* <label htmlFor="city">City</label> */}
                               <input
                                 className={`${
                                   meta.touched && meta.error
@@ -238,10 +236,10 @@ export default function EditAddress({
                                 id="zipCode"
                                 name="zipCode"
                                 {...field}
-                                onChange={(e) => {
-                                  field.onChange(e); // This line is necessary for Formik's handleChange to work
-                                  handleAutofill(setFieldValue("zipCode")); // Call handleAutofill and pass the setFieldValue function
-                                }}
+                                // onChange={(e) => {
+                                //   field.onChange(e); // This line is necessary for Formik's handleChange to work
+                                //   handleAutofill(setFieldValue("zipCode")); // Call handleAutofill and pass the setFieldValue function
+                                // }}
                               />
                               <ErrorMessage name="zipCode" component="div" />
                             </div>
@@ -264,6 +262,7 @@ export default function EditAddress({
 
                       <Button
                         className="editAddress-btn"
+                        // type="button"
                         disabled={isSubmitting}
                       >
                         Update Address
