@@ -16,26 +16,20 @@ export default function SingleProduct() {
   const videosArray = Object.values(product?.productVideo || {});
   const imagesArray = Object.values(product?.productDatas || {});
 
-  const { title } = useParams();
+  // const { productDatas = {} } = product || {};
+  // const imagesArray = Object.values(productDatas);
 
-  // useEffect(() => {
-  //   const fetchedProduct = getProduct(title);
-  //   setProduct(fetchedProduct);
-  // }, [title]);
+  const { title } = useParams();
 
   function formatPermalink(title) {
     return title.toLowerCase().replaceAll(" ", "-");
   }
 
-  // useEffect(() => {
-  //   const fetchedProduct = getProduct(formatPermalink(title));
-  //   setProduct(fetchedProduct);
-  // }, [title]);
-
   useEffect(() => {
     try {
       const fetchedProduct = getProduct(formatPermalink(title));
       setProduct(fetchedProduct);
+      console.log(fetchedProduct);
     } catch (error) {
       console.error("Error fetching product:", error);
     }
@@ -91,7 +85,7 @@ export default function SingleProduct() {
 
   const getThumbnailMedia = () => {
     // Get at least 6 images and one video for the thumbnail display
-    const thumbnailMedia = Object.values(product.productDatas || {});
+    const thumbnailMedia = Object.values(product?.productDatas || {});
 
     if (product.video) {
       thumbnailMedia.push(product.video.video);
@@ -100,9 +94,19 @@ export default function SingleProduct() {
     return thumbnailMedia.slice(0, 7);
   };
 
-  const mainVideo = product.video
-    ? { src: product?.video.video, title: product.video.title }
-    : product.image;
+  // const mainVideo = product.video
+  //   ? { src: product?.video.video, title: product.video.title }
+  //   : product.image;
+
+  // const mainVideo = product
+  //   ? product.video
+  //     ? { src: product?.video.video, title: product.video.title }
+  //     : product.image
+  //   : null; // or a default value
+
+  const mainVideo = product?.video
+    ? { src: product?.video?.video, title: product?.video?.title }
+    : product?.image || {}; // Provide a default value if 'image' is also undefined
 
   const hasVideo = videosArray.length > 0;
 

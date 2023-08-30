@@ -71,7 +71,7 @@ function NavBar({ cartItemCount }) {
         </header>
         <section className="container-menu">
           <div className="mobile-menu">
-            <Icon menu onClick={handleToggle} />
+            <Icon menu onClick={handleToggle} className="mobile-menu__icon" />
 
             <Link to="/">
               <img src={logo} alt="logo" className="App-logo" />

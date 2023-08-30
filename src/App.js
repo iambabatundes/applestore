@@ -16,6 +16,7 @@ import Cart from "./components/cart";
 import SingleProduct from "./components/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
+import Admin from "./components/backend/admin";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -151,44 +152,58 @@ function App() {
     }
   };
 
+  const isAdminMode = location.pathname.includes("/admin");
+  const countComment = 5;
+
   return (
     <>
-      {renderNavbar()}
-      <main className="main">
-        <Routes>
-          <Route
-            path="/"
-            exact
-            element={<Home addToCart={addToCart} cartItems={cartItems} />}
-          />
-          <Route path="/shop" element={<Shop />} />
-          <Route
-            path="/product"
-            element={<Product addToCart={addToCart} cartItems={cartItems} />}
-          />
-          <Route path="/blog/:title" element={<SinglePost />} />
-          <Route path="/:title" exact element={<SingleProduct />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/checkout" element={<Checkout cartItem={cartItems} />} />
-          <Route
-            path="/cart"
-            element={
-              <Cart
-                cartItems={cartItems}
-                selectedQuantities={selectedQuantities}
-                setSelectedQuantities={setSelectedQuantities}
-                quantityTenPlus={quantityTenPlus}
-                setQuantityTenPlus={setQuantityTenPlus}
-                handleSubmit={handleSubmit}
-                setCartItems={setCartItems}
-                handleDelete={handleDelete}
+      {isAdminMode ? (
+        <Admin companyName="Apple Store" count={countComment} />
+      ) : (
+        <>
+          {renderNavbar()}
+          <main className="main">
+            <Routes>
+              <Route
+                path="/"
+                exact
+                element={<Home addToCart={addToCart} cartItems={cartItems} />}
               />
-            }
-          />
-        </Routes>
-      </main>
-      <Footer />
+              <Route path="/shop" element={<Shop />} />
+              <Route
+                path="/product"
+                element={
+                  <Product addToCart={addToCart} cartItems={cartItems} />
+                }
+              />
+              <Route path="/blog/:title" element={<SinglePost />} />
+              {/* <Route path="/:title" exact element={<SingleProduct />} /> */}
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route
+                path="/checkout"
+                element={<Checkout cartItem={cartItems} />}
+              />
+              <Route
+                path="/cart"
+                element={
+                  <Cart
+                    cartItems={cartItems}
+                    selectedQuantities={selectedQuantities}
+                    setSelectedQuantities={setSelectedQuantities}
+                    quantityTenPlus={quantityTenPlus}
+                    setQuantityTenPlus={setQuantityTenPlus}
+                    handleSubmit={handleSubmit}
+                    setCartItems={setCartItems}
+                    handleDelete={handleDelete}
+                  />
+                }
+              />
+            </Routes>
+          </main>
+          <Footer />
+        </>
+      )}
     </>
   );
 }

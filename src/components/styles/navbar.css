@@ -13,18 +13,19 @@
 
 /* Navbar */
 .nav-main {
-    background: #fff;
+    background: #000;
 }
 
 .navbar__main {
-    margin: 0 1rem 1.5rem;
-    background: #fff;
+    /* margin: 0.2rem; */
+    background: #000;
+    padding-bottom: 0.4px;
 
 }
 
 .header__contact {
     display: none;
-    margin: 1rem 0.5rem 0.3rem 0.5rem;
+    /* margin: 1rem 0.5rem 0.3rem 0.5rem; */
     color: #95979d;
     /* border: 1px solid #000; */
 }
@@ -57,7 +58,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 0.5rem 30px;
+    margin: 0 0.5rem 10px;
+    padding: 7px;
 }
 
 nav {
@@ -74,6 +76,10 @@ nav {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.mobile-menu__icon {
+    width: 30px;
 }
 
 .right-section {
