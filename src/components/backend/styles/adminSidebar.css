@@ -1,8 +1,14 @@
 /* adminSidebar.css */
 .admin-sidebar {
-  width: 250px;
   background-color: #1d2327;
   color: #ffffff;
+  height: 100vh;
+  width: 179px;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 12px 15px;
 }
 
 .admin-sidebar ul {
@@ -10,64 +16,66 @@
   padding: 0;
 }
 
-.admin-sidebar li {
+/* .admin-sidebar li {
   padding: 12px 15px;
-}
+} */
 
 .admin-sidebar a {
   color: #ffffff;
   text-decoration: none;
   display: block;
   transition: background-color 0.3s ease;
+  padding: 10px;
 }
 
-.admin-sidebar a.active {
-  background-color: #343a40;
+.admin-sidebar a:hover {
+  border-left: 3px solid #2271b1;
+  color: #fff;
 }
 
-.admin-sidebar .dropdown {
-  display: none;
-  background-color: #343a40;
-  padding-left: 15px;
-}
-
-/* .admin-sidebar .parent-link {
-  cursor: pointer;
+a.active {
+  background-color: #2271b1;
   color: #ffffff;
-  transition: background-color 0.3s ease;
-} */
+}
 
-/* .admin-sidebar .parent-link.active {
-  background-color: #343a40;
+a i {
+  padding-right: 10px;
 }
 
 .admin-sidebar .dropdown {
   display: none;
-  background-color: #343a40;
-  padding-left: 15px;
-  position: absolute;
-  width: 100%;
-  top: 100%;
-  left: 0;
-} */
+  background-color: #2c3338;
+  color: #c3c4c7;
+  /* padding-left: 11px; */
+}
+
+.admin-sidebar .dropdown a:hover {
+  border-left: 3px solid #2271b1;
+  color: #2271b1;
+
+}
 
 .admin-sidebar .dropdown.open {
   display: block;
 }
 
-.admin-sidebar li:hover .dropdown {
+/* .admin-sidebar li:hover .dropdown {
   display: block;
-}
+} */
 
-.admin-sidebar .dropdown li {
+/* .admin-sidebar .dropdown li {
   padding: 8px 0;
-}
+} */
 
 .admin-sidebar .dropdown a {
-  color: #ffffff;
+  color: #c3c4c7;
   transition: background-color 0.3s ease;
+  font-size: 13px;
+  padding: 6px 11px;
 }
 
 .admin-sidebar .dropdown a.active {
   background-color: #343a40;
+  color: #ffffff;
+  border-color: #fff;
 }

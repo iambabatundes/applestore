@@ -1,0 +1,41 @@
+.dashboard {
+    padding: 15px 18px;
+}
+
+.dashboard-title {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.dashboard-content {
+    background-color: #fff;
+    /* padding: 60px;
+    color: azure;
+    margin-top: 10px; */
+}
+
+.dashboard-content__main {
+    background-color: black;
+    padding: 60px;
+    color: azure;
+    margin-top: 10px;
+}
+
+.dashboard-content__title {
+    font-size: 50px;
+    font-weight: 400;
+}
+
+.dashboard-content__main a {
+    color: #fff;
+    font-size: 18px;
+}
+
+.dashboard-section {
+    display: flex;
+}
+
+.dashboard-author {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}

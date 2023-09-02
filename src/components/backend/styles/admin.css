@@ -1,3 +1,9 @@
 .admin-container {
     display: flex;
 }
+
+.admin-main-content {
+    background: #f0f0f1;
+    width: 100%;
+    /* padding: 15px 20px; */
+}

@@ -21,19 +21,23 @@ export default function AdminSidebar({
                 onClick={() => setSelectedLink(link.to)}
                 className={selectedLink === link.to ? "active" : ""}
               >
+                <i className={`fa ${link.icon}`} />
                 {link.label}
               </Link>
               {link.dropdown && link.dropdown.length > 0 && (
-                <ul className="dropdown">
+                <ul
+                  className={`dropdown ${
+                    selectedLink === link.to ? "open" : ""
+                  }`}
+                >
+                  {/* Only render the submenu if the current parent link is selected */}
                   {link.dropdown.map((submenu) => (
                     <li key={submenu.to}>
                       <Link
                         to={submenu.to}
-                        onClick={() => setSelectedDropdownLink(submenu.to)} // Update the selectedDropdownLink state
+                        onClick={() => setSelectedDropdownLink(submenu.to)}
                         className={
-                          selectedDropdownLink === submenu.to
-                            ? "active" // Use a different CSS class for dropdown link highlighting
-                            : ""
+                          selectedDropdownLink === submenu.to ? "active" : ""
                         }
                       >
                         {submenu.label}

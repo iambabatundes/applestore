@@ -25,6 +25,9 @@ export default function Icon({
   eyeCancel,
   securedLock,
   comment,
+  pen,
+  build,
+  customizing,
   className,
 }) {
   return (
@@ -550,6 +553,71 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
                 <path d="M37,39h-26l-6,6v-34c0,-3.3 2.7,-6 6,-6h26c3.3,0 6,2.7 6,6v22c0,3.3 -2.7,6 -6,6z"></path>
               </g>
             </g>
+          </svg>
+        </span>
+      )}
+      {customizing && (
+        <span className={`${className}`}>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M18 16h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H18a2 2 0 0 1-2-2V18a2 2 0 0 1 2-2zm12 1.5H18a.5.5 0 0 0-.5.5v3h13v-3a.5.5 0 0 0-.5-.5zm.5 5H22v8h8a.5.5 0 0 0 .5-.5v-7.5zm-10 0h-3V30a.5.5 0 0 0 .5.5h2.5v-8z"
+              fill="#fff"
+            ></path>
+          </svg>
+        </span>
+      )}
+
+      {build && (
+        <span className={`${className}`}>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M31 24a7 7 0 0 1-7 7V17a7 7 0 0 1 7 7zm-7-8a8 8 0 1 1 0 16 8 8 0 0 1 0-16z"
+              fill="#fff"
+            ></path>
+          </svg>
+        </span>
+      )}
+
+      {pen && (
+        <span className={`${className}`}>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M32.0668 17.0854L28.8221 13.9454L18.2008 24.671L16.8983 29.0827L21.4257 27.8309L32.0668 17.0854ZM16 32.75H24V31.25H16V32.75Z"
+              fill="white"
+            ></path>
           </svg>
         </span>
       )}

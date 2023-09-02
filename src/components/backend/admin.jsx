@@ -8,6 +8,14 @@ import AllProduct from "./allProducts";
 import AllPosts from "./allPosts";
 import GeneralSettings from "./generalSettings";
 import AppearanceSettings from "./appearanceSettings";
+import Upload from "./upload";
+import NewMedia from "./newMedia";
+import AllPages from "./allPages";
+import Profile from "./profile";
+import AllUsers from "./allUsers";
+import NewPage from "./newPage";
+import Updates from "./updates";
+import SEO from "./seo";
 import Settings from "./settings";
 import "./styles/admin.css";
 import AdminSidebar from "./adminSidebar";
@@ -17,13 +25,19 @@ const Admin = ({ companyName, count }) => {
   const sidebarLinks = [
     {
       label: "Dashboard",
-      to: "/admin/dashboard",
-      content: <Dashboard />,
-      dropdown: [],
+      to: "/admin/home",
+      content: null,
+      icon: "fa-tachometer",
+      dropdown: [
+        { label: "Home", to: "/admin/home", content: <Dashboard /> },
+        { label: "Updates", to: "/admin/updates", content: <Updates /> },
+        { label: "SEO", to: "/admin/seo", content: <SEO /> },
+      ],
     },
     {
       label: "Posts",
       to: "/admin/posts",
+      icon: "fa-pencil-square-o",
       content: <AllPosts />,
       dropdown: [
         {
@@ -39,43 +53,106 @@ const Admin = ({ companyName, count }) => {
       ],
     },
     {
+      label: "Media",
+      to: "/admin/upload",
+      content: null,
+      icon: "fa-tag",
+      dropdown: [
+        {
+          label: "Library",
+          to: "/admin/upload",
+          content: <Upload />,
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-media",
+          content: <NewMedia />,
+        },
+      ],
+    },
+    {
       label: "Products",
-      to: "/admin/products",
-      content: <AllProduct />,
+      to: "/admin/edits",
+      content: null,
+      icon: "fa-tag",
       dropdown: [
         {
           label: "All Products",
-          to: "/admin/products/edits",
+          to: "/admin/edits",
           content: <ProductEdit />,
         },
         {
           label: "Add Product",
-          to: "/admin/products/add",
+          to: "/admin/add-product",
           content: <AddProduct />,
         },
       ],
     },
 
     {
+      label: "Pages",
+      to: "/admin/all-pages", // Corrected URL
+      icon: "fa-file",
+      content: null,
+      dropdown: [
+        {
+          label: "All Pages",
+          to: "/admin/all-pages", // Set the appropriate URLs
+          content: <AllPages />, // Use your specific components here
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-page", // Set the appropriate URLs
+          content: <NewPage />, // Use your specific components here
+        },
+      ],
+    },
+    {
+      label: "Users",
+      to: "/admin/all-users", // Corrected URL
+      icon: "fa-users",
+      content: null,
+      dropdown: [
+        {
+          label: "All Users",
+          to: "/admin/all-users", // Set the appropriate URLs
+          content: <AllUsers />, // Use your specific components here
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-user", // Set the appropriate URLs
+          content: <NewPage />, // Use your specific components here
+        },
+        {
+          label: "Profile",
+          to: "/admin/profile", // Set the appropriate URLs
+          content: <Profile />, // Use your specific components here
+        },
+      ],
+    },
+    {
       label: "Settings",
-      to: "/admin/settings", // Corrected URL
-      content: <Settings />,
+      to: "/admin/general", // Corrected URL
+      icon: "fa-cog",
+      content: null,
       dropdown: [
         {
           label: "General Settings",
-          to: "/admin/settings/general", // Set the appropriate URLs
+          to: "/admin/general", // Set the appropriate URLs
           content: <GeneralSettings />, // Use your specific components here
         },
         {
           label: "Appearance",
-          to: "/admin/settings/appearance", // Set the appropriate URLs
+          to: "/admin/appearance", // Set the appropriate URLs
           content: <AppearanceSettings />, // Use your specific components here
         },
       ],
     },
     // ... other links
   ];
-  const [selectedLink, setSelectedLink] = useState(sidebarLinks[0].to);
+
+  const [selectedLink, setSelectedLink] = useState(null);
+
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDropdownLink, setSelectedDropdownLink] = useState(null);
 
@@ -102,6 +179,7 @@ const Admin = ({ companyName, count }) => {
 
         <section className="admin-main-content">
           <Routes>
+            <Route path="/admin" element={<Dashboard />} />
             {sidebarLinks.map((link) => (
               <Route key={link.to} path={link.to} element={link.content} />
             ))}
