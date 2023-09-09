@@ -8,7 +8,7 @@ export default function Dashboard() {
     <section className="dashboard">
       <h1 className="dashboard-title">Dashboard</h1>
 
-      <section className="dasboard-content">
+      <section className="dashboard-content">
         <div className="dashboard-content__main">
           <h1 className="dashboard-content__title">Welcome to Appstore</h1>
           <Link to="learn-more-version">
@@ -16,11 +16,11 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        <section className="dashboard-section">
-          <div className="dashboard-author">
+        <section className="dashboard-panel-container">
+          <div className="dashboard-panel-column">
             <Icon pen />
-            <article>
-              <h1>Author rich content with blocks and patterns</h1>
+            <article className="dashboard-panel-content">
+              <h4>Author rich content with blocks and patterns</h4>
               <p>
                 Block patterns are pre-configured block layouts. Use them to get
                 inspired or create new pages in a flash.
@@ -28,22 +28,22 @@ export default function Dashboard() {
               <Link to="/admin/add-product">Add a new product</Link>
             </article>
           </div>
-          <div>
+          <div className="dashboard-panel-column">
             <Icon customizing />
-            <article>
-              <h1>Start Customizing</h1>
+            <article className="dashboard-panel-content">
+              <h4>Start Customizing</h4>
               <p>
-                Configure your site’s logo, header, menus, and more in the
+                Configure your site's logo, header, menus, and more in the
                 Customizer.
               </p>
 
               <Link to="/admin/settings">Open the settings</Link>
             </article>
           </div>
-          <div>
+          <div className="dashboard-panel-column">
             <Icon build />
-            <article>
-              <h1>Discover a new way to build your site.</h1>
+            <article className="dashboard-panel-content">
+              <h4>Discover a new way to build your site.</h4>
               <p>
                 There is a new kind of WordPress theme, called a block theme,
                 that lets you build the site you've always wanted — with blocks

@@ -38,16 +38,16 @@ const Admin = ({ companyName, count }) => {
       label: "Posts",
       to: "/admin/posts",
       icon: "fa-pencil-square-o",
-      content: <AllPosts />,
+      content: null,
       dropdown: [
         {
           label: "All Posts",
-          to: "/admin/posts/edits",
+          to: "/admin/posts",
           content: <AllPosts />,
         },
         {
           label: "Create Post",
-          to: "/admin/posts/create",
+          to: "/admin/create",
           content: <CreatePost />,
         },
       ],
@@ -72,13 +72,13 @@ const Admin = ({ companyName, count }) => {
     },
     {
       label: "Products",
-      to: "/admin/edits",
+      to: "/admin/products",
       content: null,
       icon: "fa-tag",
       dropdown: [
         {
           label: "All Products",
-          to: "/admin/edits",
+          to: "/admin/products",
           content: <ProductEdit />,
         },
         {

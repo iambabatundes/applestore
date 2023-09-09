@@ -1,0 +1,164 @@
+.allPost {
+    padding: 15px 18px;
+}
+
+.allPost-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+}
+
+.allPost-title {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.allPost-btn {
+    padding: 5px;
+    font-size: 13px;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 3px;
+}
+
+/* Filter the Post by All, Publish, Trash, Draft and search bar */
+
+.allPost-filtered {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.allPost__filter {
+    display: flex;
+    gap: 10px;
+    color: #2271b1;
+    font-size: 15px;
+
+}
+
+/* .allPost-search {
+    padding: 5px 5px;
+} */
+
+.allPost-input,
+.allPost-search-btn {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #2271b1;
+    font-size: 15px;
+}
+
+.allPost-search-btn {
+    margin-left: 5px;
+    color: #2271b1;
+}
+
+/* Filter all post by date and categories and also bulk actions */
+
+.allPost-post__filtered {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.allPost-filter__action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    /* border-radius: 5px; */
+
+}
+
+.allPost-filtered__action select,
+.allPost-filter__action-btn {
+    border: 1px solid #2271b1;
+    border-radius: 5px;
+    color: #2271b1;
+    cursor: pointer;
+}
+
+.allPost-filtered__action select {
+    padding: 7px 6px;
+    border-radius: 5px;
+    margin-right: 5px;
+    color: #2271b1;
+}
+
+.allPost-filter__action-btn {
+    padding: 4px 8px;
+    border-radius: 5px;
+    background: #fff;
+}
+
+.active {
+    color: #000;
+}
+
+
+/* table section */
+
+.allPost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    border: 1px solid #c3c4c7;
+    box-sizing: 0 1px 1px rgba(0, 0, 0, .4);
+    padding: 15px 0;
+}
+
+.allPost-table thead {
+    background: #fff;
+    padding: 10px;
+}
+
+.allPost-table thead th {
+
+    padding: 10px 15px;
+}
+
+.allPost-table th,
+.allPost-table td {
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    text-align: left;
+}
+
+.allPost-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.allPost-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.allPost-table tbody tr:hover {
+    background-color: #e5e5e5;
+}
+
+.featuredImage {
+    width: 50px;
+}
+
+input[type=checkbox],
+input[type=radio] {
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background: #fff;
+    color: #50575e;
+    clear: both;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 0;
+    height: 1rem;
+    outline: 0;
+    width: 1rem;
+    box-shadow: 0 1px 2px rgb(0, 0, 0, .1) inset;
+    transition: 0.5s border-color ease-in-out;
+
+}

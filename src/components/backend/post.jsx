@@ -1,9 +1,15 @@
 import React from "react";
+import "./styles/posts.css";
+import { Link } from "react-router-dom";
 
 export default function Post() {
   return (
     <section>
-      <h1>This is the post page</h1>
+      <h1>Posts</h1>
+
+      <Link to="/admin/create">
+        <button>Add New</button>
+      </Link>
     </section>
   );
 }
