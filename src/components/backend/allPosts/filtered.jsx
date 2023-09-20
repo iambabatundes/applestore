@@ -14,6 +14,8 @@ export default function Filtered({
   resetIndividualPostCheckboxes, // Add this prop
   setSearchQuery, // Add setSearchQuery prop
   searchQuery, // Add searchQuery prop
+  handleSearch,
+  // resetIndividualPostCheckboxes,
 }) {
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -99,7 +101,12 @@ export default function Filtered({
             value={searchQuery} // Set input value to searchQuery
           />
 
-          <Button className="allPost-search-btn" type="submit" title="Search" />
+          <Button
+            className="allPost-search-btn"
+            type="submit"
+            title="Search"
+            onClick={handleSearch}
+          />
         </div>
       </div>
     </section>

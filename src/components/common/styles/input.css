@@ -12,6 +12,7 @@
 
 input:focus {
     border-color: dodgerblue;
+    border-width: 1.5px;
 }
 
 .error-input {
