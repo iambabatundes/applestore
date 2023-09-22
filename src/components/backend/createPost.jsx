@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./styles/createNew.css";
 import "./styles/allPosts.css";
 import Button from "./button";
-import Spinner from "./common/spinner";
 import MessageData from "./common/messageData";
 import { Link } from "react-router-dom";
+import PublishHeader from "./common/publishHeader";
+import PublishData from "./common/publishData";
+import FormTitle from "./common/formData/formTitle";
+import FormContent from "./common/formData/formContent";
 
 export default function CreatePost() {
   const [savingDraft, setSavingDraft] = useState(false);
@@ -20,6 +23,31 @@ export default function CreatePost() {
   const [showPermalink, setShowPermalink] = useState(false); // State to control permalink visibility
   const [isEditingPermalink, setIsEditingPermalink] = useState(false); // Track edit mode for permalink
   const [editedPermalink, setEditedPermalink] = useState(permalink); //
+  const [visibility, setVisibility] = useState("Public");
+  const [stickToTop, setStickToTop] = useState(false);
+  const [isEditingVisibility, setIsEditingVisibility] = useState(false);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState(new Date().getMonth() + 1); // January is 1
+  const [day, setDay] = useState(new Date().getDate());
+  const [hour, setHour] = useState(new Date().getHours());
+  const [minute, setMinute] = useState(new Date().getMinutes());
+  const [isImmediate, setIsImmediate] = useState(true); // Track if publ
+  const [immediateDisplay, setImmediateDisplay] = useState("immediately");
+  const [isEditingDateTime, setIsEditingDateTime] = useState(false);
+
+  const visibilityOptions = ["Public", "Private"];
+
+  const handleVisibilityEdit = () => {
+    setIsEditingVisibility(true);
+  };
+
+  const handleVisibilitySave = () => {
+    setIsEditingVisibility(false);
+  };
+
+  const handleVisibilityCancel = () => {
+    setIsEditingVisibility(false);
+  };
 
   useEffect(() => {
     // Check the network status when the component mounts
@@ -122,10 +150,6 @@ export default function CreatePost() {
     setNetworkMessage(""); // Clear the message
   };
 
-  // const handlePermalinksEdit = () => {
-  //   setNetworkMessage(""); // Clear the message
-  // };
-
   // Function to start editing the permalink
   const startEditPermalink = () => {
     setIsEditingPermalink(true);
@@ -161,6 +185,52 @@ export default function CreatePost() {
     setPermalink(permalink);
   };
 
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const formatSelectedDate = () => {
+    return `${months[month - 1]} ${day}, ${year} at ${hour}:${minute}`;
+  };
+
+  const handleEditDateTime = () => {
+    setIsImmediate(false);
+    setIsEditingDateTime(true); // User is now in edit mode
+  };
+
+  const handleDateAndTimeEdit = () => {
+    setIsImmediate(false); // User chooses to set date and time
+  };
+
+  const handleSaveDateTime = () => {
+    setIsImmediate(true);
+    setIsEditingDateTime(true); // User has saved the date/time
+    // Update the display immediately with the new date and time
+    const formattedDate = formatSelectedDate();
+    setImmediateDisplay(formattedDate);
+  };
+
+  // Function to handle canceling date and time selection
+  const handleCancelDateTime = () => {
+    if (isImmediate) {
+      const formattedDate = formatSelectedDate();
+      setImmediateDisplay(formattedDate);
+    }
+    setIsImmediate(true);
+    setIsEditingDateTime(false); // User has canceled the edit
+  };
+
   return (
     <section className="padding">
       <h1 className="title">Add New Post</h1>
@@ -178,144 +248,66 @@ export default function CreatePost() {
 
       <section className="createPost-grid">
         <div className="blog__post">
-          <input
-            type="text"
-            name="Add title"
-            id="AddTile"
-            placeholder="Add title"
-            className="createPost__title"
-            spellCheck
-            autoComplete="off"
-            size="30"
-            onChange={(e) => updatePermalink(e.target.value)}
-            // onBlur={updatePermalink}
+          <FormTitle
+            updatePermalink={updatePermalink}
+            cancelEditPermalink={cancelEditPermalink}
+            editedPermalink={editedPermalink}
+            isEditingPermalink={isEditingPermalink}
+            permalinkURL={permalinkURL}
+            saveEditedPermalink={saveEditedPermalink}
+            setEditedPermalink={setEditedPermalink}
+            showPermalink={showPermalink}
+            startEditPermalink={startEditPermalink}
           />
 
-          {showPermalink && (
-            <div className="permalink">
-              <>
-                <span>Permalink: </span>
-                <Link className="permalink-url" target="_blank">
-                  {permalinkURL}
-                </Link>
-              </>
-
-              {isEditingPermalink ? (
-                <div>
-                  <input
-                    type="text"
-                    value={editedPermalink}
-                    className="edit-permalink__input"
-                    onChange={(e) => setEditedPermalink(e.target.value)} // Update edited permalink
-                  />
-                  <button
-                    className="EditedPermalink"
-                    onClick={saveEditedPermalink}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="EditedPermalink canel-edit"
-                    onClick={cancelEditPermalink}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <Button
-                  title="Edit"
-                  className="permalink-edit"
-                  onClick={startEditPermalink}
-                />
-              )}
-            </div>
-          )}
+          <FormContent />
         </div>
 
         <div>
           <div className="createPost-publish">
-            <div className="createPost-publish-main" onClick={toggleContent}>
-              <h3 className="createPost-publish__title">Publish</h3>
-              <i
-                className={`fa fa-caret-${isContentVisible ? "down" : "up"}`}
-                aria-hidden="true"
-              ></i>
-            </div>
+            <PublishHeader
+              isContentVisible={isContentVisible}
+              publishTitle="Public"
+              toggleContent={toggleContent}
+            />
 
             {isContentVisible && (
               <>
-                <span className="createPost-publish__button">
-                  <span>
-                    <Button
-                      onClick={handleSaveDraft}
-                      disabled={!networkStatus}
-                      title="Save Draft"
-                      type="submit"
-                      className="btn__action"
-                    />
-
-                    {savingDraft && <Spinner className="spinner" />}
-                  </span>
-                  <Button
-                    onClick={handlePostPublish}
-                    disabled={!networkStatus}
-                    title="Preview"
-                    type="submit"
-                    className="btn__action"
-                  />
-                </span>
-                <div className="publishing-actions">
-                  <div className="post-actions postbox post-status">
-                    <i className="fa fa-exclamation" aria-hidden="true"></i>
-                    Status:
-                    <span className="post-display" id="post-status-display">
-                      Draft
-                    </span>
-                  </div>
-
-                  <div className="post-actions postbox post-visibility">
-                    <i className="fa fa-eye" aria-hidden="true"></i>
-                    Visibility:
-                    <span className="post-display post-visibility-public">
-                      Public
-                    </span>
-                    <span className="post-edit edit-visibility">Edit</span>
-                  </div>
-
-                  <div className="post-actions postbox post-immediately">
-                    <i className="fa fa-calendar" aria-hidden="true"></i>
-                    Publish:
-                    <span className="post-display post-immediately-now">
-                      immediately
-                    </span>
-                    <span className="post-edit edit-immediately">Edit</span>
-                  </div>
-                </div>
-
-                <div className="publish__actions">
-                  {postPublished && ( // Render delete button only when post is published
-                    <div className="delete-button-container">
-                      <Button
-                        type="submit"
-                        onClick={handlePostDelete}
-                        title="Delete"
-                        className="delete-button"
-                      />
-                    </div>
-                  )}
-
-                  <span>
-                    {publishing && <span className="spinner"></span>}
-
-                    <Button
-                      type="submit"
-                      onClick={handlePostPublish}
-                      title="Publish"
-                      className="publish__actions__btn"
-                      disabled={!networkStatus}
-                    />
-                  </span>
-                </div>
+                <PublishData
+                  day={day}
+                  handleCancelDateTime={handleCancelDateTime}
+                  handleEditDateTime={handleEditDateTime}
+                  handlePostDelete={handlePostDelete}
+                  handlePostPublish={handlePostPublish}
+                  handleSaveDateTime={handleSaveDateTime}
+                  handleSaveDraft={handleSaveDraft}
+                  handleVisibilityCancel={handleVisibilityCancel}
+                  handleVisibilityEdit={handleVisibilityEdit}
+                  handleVisibilitySave={handleVisibilitySave}
+                  immediateDisplay={immediateDisplay}
+                  hour={hour}
+                  isContentVisible={isContentVisible}
+                  isEditingVisibility={isEditingVisibility}
+                  isImmediate={isImmediate}
+                  minute={minute}
+                  month={month}
+                  networkStatus={networkStatus}
+                  postPublished={postPublished}
+                  publishing={publishing}
+                  savingDraft={savingDraft}
+                  setDay={setDay}
+                  setHour={setHour}
+                  setMinute={setMinute}
+                  setMonth={setMonth}
+                  setVisibility={setVisibility}
+                  setYear={setYear}
+                  setStickToTop={setStickToTop}
+                  stickToTop={stickToTop}
+                  visibility={visibility}
+                  visibilityOptions={visibilityOptions}
+                  year={year}
+                  months={months}
+                />
               </>
             )}
           </div>

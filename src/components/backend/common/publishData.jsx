@@ -1,7 +1,12 @@
 import React from "react";
+import "../styles/createNew.css";
+import PublishActions from "./PublishActions";
+import PublishVisibility from "./publishVisibility";
+import PublishImmediately from "./publishImmediately";
+import PublishStatus from "./publishStatus";
+import SavePreviewAction from "./savePreviewAction";
 
 export default function PublishData({
-  toggleContent,
   isContentVisible,
   handleSaveDraft,
   networkStatus,
@@ -9,93 +14,86 @@ export default function PublishData({
   handlePostPublish,
   handlePostDelete,
   publishing,
+  handleCancelDateTime,
+  day,
+  handleEditDateTime,
+  year,
+  month,
+  hour,
+  minute,
+  setDay,
+  setHour,
+  setMinute,
+  setMonth,
+  setYear,
+  handleSaveDateTime,
+  immediateDisplay,
+  isImmediate,
+  handleVisibilityCancel,
+  handleVisibilityEdit,
+  handleVisibilitySave,
+  isEditingVisibility,
+  setVisibility,
+  stickToTop,
+  visibility,
+  visibilityOptions,
+  postPublished,
+  setStickToTop,
+  months,
 }) {
   return (
-    <div className="createPost-publish">
-      <div className="createPost-publish-main" onClick={toggleContent}>
-        <h3 className="createPost-publish__title">Publish</h3>
-        <i
-          className={`fa fa-caret-${isContentVisible ? "down" : "up"}`}
-          aria-hidden="true"
-        ></i>
-      </div>
-
+    <>
       {isContentVisible && (
         <>
-          <span className="createPost-publish__button">
-            <span>
-              <Button
-                onClick={handleSaveDraft}
-                disabled={!networkStatus}
-                title="Save Draft"
-                type="submit"
-                className="btn__action"
-              />
-
-              {savingDraft && <Spinner className="spinner" />}
-            </span>
-            <Button
-              onClick={handlePostPublish}
-              disabled={!networkStatus}
-              title="Preview"
-              type="submit"
-              className="btn__action"
-            />
-          </span>
+          <SavePreviewAction
+            handlePostPublish={handlePostPublish}
+            handleSaveDraft={handleSaveDraft}
+            networkStatus={networkStatus}
+            savingDraft={savingDraft}
+          />
           <div className="publishing-actions">
-            <div className="post-actions postbox post-status">
-              <i className="fa fa-exclamation" aria-hidden="true"></i>
-              Status:
-              <span className="post-display" id="post-status-display">
-                Draft
-              </span>
-            </div>
+            <PublishStatus />
 
-            <div className="post-actions postbox post-visibility">
-              <i className="fa fa-eye" aria-hidden="true"></i>
-              Visibility:
-              <span className="post-display post-visibility-public">
-                Public
-              </span>
-              <span className="post-edit edit-visibility">Edit</span>
-            </div>
+            <PublishVisibility
+              handleVisibilityCancel={handleVisibilityCancel}
+              handleVisibilityEdit={handleVisibilityEdit}
+              handleVisibilitySave={handleVisibilitySave}
+              isEditingVisibility={isEditingVisibility}
+              setVisibility={setVisibility}
+              stickToTop={stickToTop}
+              visibility={visibility}
+              visibilityOptions={visibilityOptions}
+              setStickToTop={setStickToTop}
+            />
 
-            <div className="post-actions postbox post-immediately">
-              <i className="fa fa-calendar" aria-hidden="true"></i>
-              Publish:
-              <span className="post-display post-immediately-now">
-                immediately
-              </span>
-              <span className="post-edit edit-immediately">Edit</span>
-            </div>
+            <PublishImmediately
+              day={day}
+              handleCancelDateTime={handleCancelDateTime}
+              handleEditDateTime={handleEditDateTime}
+              handleSaveDateTime={handleSaveDateTime}
+              hour={hour}
+              immediateDisplay={immediateDisplay}
+              isImmediate={isImmediate}
+              minute={minute}
+              month={month}
+              months={months}
+              setDay={setDay}
+              setHour={setHour}
+              setMinute={setMinute}
+              setMonth={setMonth}
+              setYear={setYear}
+              year={year}
+            />
           </div>
-
-          <div className="publish__actions">
-            {postPublished && ( // Render delete button only when post is published
-              <div className="delete-button-container">
-                <Button
-                  type="submit"
-                  onClick={handlePostDelete}
-                  title="Delete"
-                  className="delete-button"
-                />
-              </div>
-            )}
-
-            <span>
-              {publishing && <span className="spinner"></span>}
-
-              <Button
-                type="submit"
-                onClick={handlePostPublish}
-                title="Publish"
-                className="publish__actions__btn"
-                disabled={!networkStatus}
-              />
-            </span>
-          </div>
+          <PublishActions
+            handlePostDelete={handlePostDelete}
+            networkStatus={networkStatus}
+            handlePostPublish={handlePostPublish}
+            postPublished={postPublished}
+            publishing={publishing}
+          />
         </>
       )}
-    </div>
+    </>
   );
 }
