@@ -1,0 +1,76 @@
+.media-upload-section {
+    position: relative;
+    /* margin: 20px 0; */
+    border: 4px dashed #c3c4c7;
+    text-align: center;
+    padding: 2em 0;
+}
+
+.media-cancel {
+    background-color: transparent;
+    border: 0;
+    cursor: pointer;
+    height: 48px;
+    width: 48px;
+    padding: 0;
+    position: absolute;
+    outline: 0;
+    top: 12px;
+    right: 9px;
+}
+
+.media-upload-container {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.media-upload-container.show {
+    opacity: 1;
+}
+
+.media-upload-main {
+    padding: 1.2em 0;
+
+}
+
+
+
+.mediaUpload-main {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    height: auto;
+    background: #fff;
+    /* padding-right: 5px; */
+}
+
+.allMediadata {
+    min-height: 30px;
+    vertical-align: middle;
+    border: 1px solid #8c8f94;
+    padding: 0 24px 0 8px;
+    outline: none;
+    border-radius: 3px;
+    line-height: 2;
+    font-size: 14px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.upload-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 3fr);
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    /* overflow-y: auto */
+}
+
+.media-item img {
+    object-fit: cover;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1);
+    border: 1px solid #8c8f94;
+
+}

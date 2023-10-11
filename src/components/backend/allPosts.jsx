@@ -5,6 +5,7 @@ import { getBlogPosts } from "../blogPosts";
 import Filtered from "./allPosts/filtered";
 import TableData from "./common/tableData";
 import BulkAction from "./allPosts/bulkAction";
+import Header from "./common/header";
 
 export default function AllPosts() {
   const [blogPosts, setBlogPosts] = useState([]);
@@ -282,12 +283,7 @@ export default function AllPosts() {
 
   return (
     <section className="allPost">
-      <div className="allPost-main">
-        <h1 className="allPost-title">Posts</h1>
-        <Link to="/admin/create">
-          <button className="allPost-btn">Add New</button>
-        </Link>
-      </div>
+      <Header headerTitle="Posts" buttonTitle="Add New" to="/admin/create" />
 
       <Filtered
         allPost={totalPosts}

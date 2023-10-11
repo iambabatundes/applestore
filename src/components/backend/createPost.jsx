@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles/createNew.css";
 import "./styles/allPosts.css";
-import Button from "./button";
 import MessageData from "./common/messageData";
-import { Link } from "react-router-dom";
 import PublishHeader from "./common/publishHeader";
 import PublishData from "./common/publishData";
 import FormTitle from "./common/formData/formTitle";

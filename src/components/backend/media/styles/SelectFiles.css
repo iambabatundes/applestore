@@ -1,0 +1,38 @@
+.upload__section {
+    margin: 0 2em 0;
+}
+
+.upload__section h3 {
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 400;
+    color: #1d1e20;
+}
+
+.upload__section p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 10px 0;
+}
+
+.upload__section button {
+    background: #fff;
+    border: 1px solid #2271b1;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #2271b1;
+    cursor: pointer;
+    min-height: 46px;
+    line-height: 3.1;
+    vertical-align: middle;
+    padding: 0 36px;
+}
+
+.upload-maxMain {
+    margin: 1em 0;
+}
+
+.upload-maxSize {
+    font-size: 13px;
+    line-height: 1.5;
+}

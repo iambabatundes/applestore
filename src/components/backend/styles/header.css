@@ -1,0 +1,19 @@
+.headerData-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.headerData-title {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.headerData-btn {
+    padding: 5px;
+    font-size: 13px;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 3px;
+    cursor: pointer;
+}

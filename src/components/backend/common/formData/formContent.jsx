@@ -1,14 +1,53 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "./formContent.css";
 import Button from "../../button";
 import "../../styles/createNew.css";
+import MediaUploadModal from "../../media/MediaUploadModal";
 
 export default function FormContent({ autoSave }) {
-  //   const [selectedText, setSelectedText] = useState("");
-  const [boldActive, setBoldActive] = useState(false);
   const [editorContent, setEditorContent] = useState("");
+  const [isMediaUploadOpen, setIsMediaUploadOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("library");
 
-  const handleBoldClick = () => {
-    document.execCommand("bold", false, null);
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+  //   onUpload(file);
+  // };
+
+  const handleAddMediaOpen = () => {
+    setIsMediaUploadOpen(true);
+  };
+
+  const handleAddMediaClose = () => {
+    setIsMediaUploadOpen(false);
+  };
+
+  const handleChange = (content) => {
+    setEditorContent(content);
+  };
+
+  const toolbarOptions = [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote"],
+
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+
+    [{ color: [] }], // dropdown with defaults from theme
+    // [{ font: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+
+  const modules = {
+    toolbar: toolbarOptions,
   };
 
   return (
@@ -16,113 +55,28 @@ export default function FormContent({ autoSave }) {
       <div>
         <div className="media-main">
           <div className="addMedia__btn">
-            <button>
-              <i class="fa fa-picture-o" aria-hidden="true"></i>
-              Add Media
-            </button>
-          </div>
-        </div>
-
-        <div className="writting__icons">
-          <div className="writing__heading">
-            <select name="heading" id="heading" className="writing-select">
-              <option value="-1">Paragraph</option>
-            </select>
-          </div>
-
-          <div>
-            <span
-              className={`writtenIcon ${boldActive ? "active" : ""}`}
-              onClick={handleBoldClick}
-            >
-              <i className="fa fa-bold" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-italic" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-list-ul" aria-hidden="true"></i>
-            </span>
-          </div>
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-list-ol" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-quote-left" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-align-left" aria-hidden="true"></i>
-            </span>
-          </div>
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-align-center" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-align-right" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-align-justify" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-link" aria-hidden="true"></i>
-            </span>
-          </div>
-
-          <div>
-            <span className="writtenIcon">
-              <i className="fa fa-link" aria-hidden="true"></i>
-            </span>
-          </div>
-        </div>
-
-        <section>
-          <div>
-            {/* <textarea className="textarea"></textarea> */}
-            <textarea
-              id="editor"
-              className="textarea"
-              value={editorContent}
-              onChange={(e) => setEditorContent(e.target.value)}
+            <Button
+              title="Add Media"
+              iconData="fa fa-picture-o"
+              onClick={handleAddMediaOpen}
             />
           </div>
+        </div>
 
-          <div className="">
-            <div>
-              <h4>Word Count</h4>
-              <span>1</span>
-            </div>
+        <MediaUploadModal
+          isMediaUploadOpen={isMediaUploadOpen}
+          onClick={handleAddMediaClose}
+          selectedTab={selectedTab}
+          handleTabChange={handleTabChange}
+        />
 
-            {autoSave && (
-              <div className="autoSave__info">
-                <span>Saving...</span>
-                <span>Error in saving</span>
-              </div>
-            )}
-          </div>
-        </section>
+        <ReactQuill
+          modules={modules}
+          onChange={handleChange}
+          value={editorContent}
+          theme="snow"
+          // formats={formats}
+        />
       </div>
     </section>
   );

@@ -1,0 +1,68 @@
+.mediaUpload {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* overflow: auto; */
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 0.9s all ease;
+}
+
+.mediaUpload-main {
+    width: 100%;
+    height: 88%;
+    max-width: 1100px;
+    overflow: auto;
+    border: 1px solid #888;
+    background-color: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .7);
+}
+
+.mediaUpload-heading {
+    background: #F0F2F2;
+    border-bottom: 1px solid #D5D9D9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+}
+
+.mediaUpload-heading h1 {
+    font-size: 18px;
+}
+
+.mediaUpload-cancel {
+    cursor: pointer;
+}
+
+/* Tabs Section */
+.modal-tabs {
+    display: flex;
+    /* justify-content: center; */
+    margin-bottom: 10px;
+    border: 1px solid #dcdcde;
+}
+
+.modal-tabs button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 10px;
+    padding: 10px 20px;
+    /* border-radius: 4px; */
+    transition: background-color 0.3s;
+}
+
+.modal-tabs button.active {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #dcdcde;
+    border-bottom: none;
+}
