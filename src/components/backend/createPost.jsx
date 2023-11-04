@@ -7,7 +7,7 @@ import PublishData from "./common/publishData";
 import FormTitle from "./common/formData/formTitle";
 import FormContent from "./common/formData/formContent";
 
-export default function CreatePost() {
+export default function CreatePost({ mediaData }) {
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [isContentVisible, setIsContentVisible] = useState(true);
@@ -258,7 +258,7 @@ export default function CreatePost() {
             startEditPermalink={startEditPermalink}
           />
 
-          <FormContent />
+          <FormContent mediaData={mediaData} />
         </div>
 
         <div>

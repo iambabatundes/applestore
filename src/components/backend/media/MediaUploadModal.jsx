@@ -2,12 +2,16 @@ import React from "react";
 import Icon from "../../icon";
 import "./styles/MediaUploadModal.css";
 import Button from "../button";
+import FileUpload from "./FileUpload";
+import MediaLibrary from "./MediaLibrary";
 
 export default function MediaUploadModal({
   isMediaUploadOpen,
   onClick,
   selectedTab,
   handleTabChange,
+  mediaData,
+  handleFileChange,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
@@ -22,6 +26,7 @@ export default function MediaUploadModal({
               <h1>Add Media</h1>
               <Icon cancel className="mediaUpload-cancel" onClick={onClick} />
             </div>
+
             <div className="modal-tabs">
               <Button
                 title="Upload files"
@@ -36,8 +41,12 @@ export default function MediaUploadModal({
               />
             </div>
             <section className="modal-content-area">
-              {/* {selectedTab === "upload" && }
-                {selectedTab === "library" && } */}
+              {selectedTab === "upload" && (
+                <FileUpload handleFileChange={handleFileChange} />
+              )}
+              {selectedTab === "library" && (
+                <MediaLibrary mediaData={mediaData} />
+              )}
               <div></div>
               <div></div>
             </section>

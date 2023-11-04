@@ -9,6 +9,7 @@ export default function FormContent({ autoSave }) {
   const [editorContent, setEditorContent] = useState("");
   const [isMediaUploadOpen, setIsMediaUploadOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("library");
+  const [mediaData, setMediaData] = useState([]);
 
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
@@ -68,6 +69,7 @@ export default function FormContent({ autoSave }) {
           onClick={handleAddMediaClose}
           selectedTab={selectedTab}
           handleTabChange={handleTabChange}
+          mediaData={mediaData}
         />
 
         <ReactQuill

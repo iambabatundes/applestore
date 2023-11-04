@@ -1,19 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import "./styles/upload.css";
 import Header from "./common/header";
-import Button from "./button";
 import { getMediaDatas } from "./mediaData";
 import MediaUpload from "./media/mediaUpload";
+import MediaLibrary from "./media/MediaLibrary";
+import Button from "./button";
 
 export default function Upload() {
   const [mediaData, setMediaData] = useState([]);
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const [maxFileSize, setMaxFileSize] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [uniqueDates, setUniqueDates] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   setMediaData(getMediaDatas);
+  // }, []);
 
   useEffect(() => {
-    setMediaData(getMediaDatas);
-  });
+    setLoading(true);
+    const data = getMediaDatas();
+    setMediaData(data);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
+
+    // Extract unique dates from mediaData
+    const dates = [...new Set(data.map((media) => media.date))];
+    setUniqueDates(dates);
+  }, []);
 
   useEffect(() => {
     // Simulated fetch (replace with actual fetch)
@@ -29,6 +47,34 @@ export default function Upload() {
       return maxFileSizeGB.toFixed(0); // Display with 2 decimal places
     }
     return "N/A"; // Display "N/A" if maxFileSizeMB is not set yet
+  };
+
+  const handleFileChange = (file) => {
+    // Implement file upload logic here and then add it to mediaData
+    const newMedia = {
+      id: mediaData.length + 1, // Generate a unique ID
+      imageUrl: URL.createObjectURL(file), // Use the file for the image URL
+      name: file.name, // Use the file name as the media name
+    };
+    setMediaData([...mediaData, newMedia]);
+  };
+
+  const handleFilterChange = (event) => {
+    setLoading(true); // Show the loading indicator
+    setSelectedFilter(event.target.value);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
+  };
+
+  const handleDateChange = (event) => {
+    setLoading(true); // Show the loading indicator
+    setSelectedDate(event.target.value);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
   };
 
   const handleBulkSelect = () => {
@@ -56,40 +102,61 @@ export default function Upload() {
         getMaxFileSizeGB={getMaxFileSizeGB}
         handleUploadCanel={handleUploadCanel}
         showMediaUpload={showMediaUpload}
+        onChange={handleFileChange}
       />
 
-      <div className="mediaUpload-main">
+      <div className="mediaUpload-mains">
         <div className="mediaSearch">
-          <span>{/* <i class="fa fa-th-large" aria-hidden="true"></i> */}</span>
-          <select
-            name="allMediaItem"
-            id="allMediaItem"
-            className="allMediadata"
-          >
-            <option value="">All media item</option>
-          </select>
+          <div className="allMediaItem-main">
+            <select
+              name="allMediaItem"
+              id="allMediaItem"
+              className="allMediadata"
+              onChange={handleFilterChange}
+              value={selectedFilter}
+            >
+              <option value="">All media item</option>
+              <option value="image">Images</option>
+              <option value="video">Videos</option>
+              <option value="doc">Documents</option>
+              <option value="pdf">PDFs</option>
+            </select>
+          </div>
 
-          <select name="mediaByDate" id="mediaByDate" className="allMediadata">
-            <option value="">All Date</option>
-          </select>
+          <div className="mediaByDate-main">
+            <select
+              name="mediaByDate"
+              id="mediaByDate"
+              className="allMediadata"
+              onChange={handleDateChange}
+              value={selectedDate}
+            >
+              <option value="">All Date</option>
+              {uniqueDates.map((date) => (
+                <option key={date} value={date}>
+                  {date}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <Button
-            title="Bulk select"
-            className="btn"
             onClick={handleBulkSelect}
+            title="Select & Delete"
+            type="button"
+            className="bulk-select-btn"
           />
+
+          {loading && <span className="Imageloading"></span>}
         </div>
       </div>
 
       <div className="upload-grid">
-        {mediaData.map((media) => (
-          <div className="media-item" key={media.key}>
-            <img
-              src={media.imageUrl}
-              alt={`This is the media` + media.imageUrl}
-            />
-          </div>
-        ))}
+        <MediaLibrary
+          mediaData={mediaData}
+          selectedFilter={selectedFilter}
+          selectedDate={selectedDate}
+        />
       </div>
     </section>
   );

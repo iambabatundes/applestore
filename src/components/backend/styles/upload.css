@@ -35,12 +35,61 @@
 
 
 
-.mediaUpload-main {
+.mediaUpload-mains {
     margin-bottom: 15px;
     margin-top: 15px;
-    height: auto;
+    height: 50px;
     background: #fff;
     /* padding-right: 5px; */
+    border: 1px solid #8c8f94
+}
+
+.mediaSearch {
+    padding: 10px 12px;
+    display: flex;
+
+}
+
+.allMediaItem-main {
+    margin: 0 15px;
+}
+
+.allMediaItem-main select {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 2;
+    color: #2c3338;
+}
+
+.mediaByDate-main {
+    margin-right: 15px;
+}
+
+.mediaByDate-main select {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 2;
+    color: #2c3338;
+}
+
+.bulk-select-btn {
+    background: #f6f7f7;
+    border-radius: 5px;
+    border: 1px solid #2271b1;
+    color: #2271b1;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 5px 7px;
+}
+
+.Imageloading {
+    background-image: url(../images/loading.gif);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    padding-top: 10px;
+    margin: 5px 5px;
+
 }
 
 .allMediadata {
@@ -58,19 +107,53 @@
 
 .upload-grid {
     display: grid;
-    grid-template-columns: repeat(7, 3fr);
-    gap: 12px;
+    grid-template-columns: repeat(7, 36.1%);
+    gap: 15px;
     width: 100%;
     height: 100%;
     /* overflow-y: auto */
 }
 
-.media-item img {
+.media-item .media-item-img,
+video,
+.preview {
     object-fit: cover;
     width: 100%;
-    height: 150px;
+    height: 130px;
     overflow: hidden;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1);
     border: 1px solid #8c8f94;
+    cursor: pointer;
+}
 
+.preview {
+    object-fit: cover;
+    width: 100%;
+    height: 130px;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, .1), inset 0 0 0 1px rgba(0, 0, 0, .05);
+    background: #f0f0f1;
+    text-wrap: wrap;
+    position: relative;
+}
+
+.preview img {
+    padding: 25px 45px;
+}
+
+.preview p {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15);
+    position: absolute;
+    text-align: center;
+    background: rgba(255, 255, 255, .8);
+    color: #000;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 100%;
+    bottom: 0px;
+    right: 0;
+    left: 0;
+    word-break: break-word;
+    overflow: hidden;
 }

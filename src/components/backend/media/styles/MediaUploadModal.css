@@ -45,17 +45,20 @@
 .modal-tabs {
     display: flex;
     /* justify-content: center; */
-    margin-bottom: 10px;
-    border: 1px solid #dcdcde;
+    margin: 0px 10px;
+    border-bottom: 1px solid #dcdcde;
 }
 
 .modal-tabs button {
     background: none;
+    outline: none;
     border: none;
+    border-bottom: 1px solid #dcdcde;
     cursor: pointer;
     font-size: 16px;
-    margin: 0 10px;
+    /* margin: 10px 0; */
     padding: 10px 20px;
+
     /* border-radius: 4px; */
     transition: background-color 0.3s;
 }
@@ -64,5 +67,5 @@
     background-color: #fff;
     color: #000;
     border: 1px solid #dcdcde;
-    border-bottom: none;
+    border-bottom-color: #20208a;
 }
