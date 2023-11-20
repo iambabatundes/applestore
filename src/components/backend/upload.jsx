@@ -3,35 +3,29 @@ import "./styles/upload.css";
 import Header from "./common/header";
 import { getMediaDatas } from "./mediaData";
 import MediaUpload from "./media/mediaUpload";
-import MediaLibrary from "./media/MediaLibrary";
+import MediaLibraryUpload from "./media/MediaLibraryUpload";
 import Button from "./button";
+import MediaFilter from "./media/MediaFilter";
+import FilterByDate from "./media/FilterByDate";
+import MediaSearch from "./media/MediaSearch";
 
-export default function Upload() {
-  const [mediaData, setMediaData] = useState([]);
+export default function Upload({
+  mediaData,
+  setMediaData,
+  selectedMedia,
+  maxFileSize,
+  setMaxFileSize,
+  uniqueDates,
+  loading,
+  handleFilterChange,
+  handleDateChange,
+  selectedFilter,
+  selectedDate,
+  handleSearch,
+  mediaSearch,
+  filteredMedia,
+}) {
   const [showMediaUpload, setShowMediaUpload] = useState(false);
-  const [maxFileSize, setMaxFileSize] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-  const [uniqueDates, setUniqueDates] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   setMediaData(getMediaDatas);
-  // }, []);
-
-  useEffect(() => {
-    setLoading(true);
-    const data = getMediaDatas();
-    setMediaData(data);
-
-    setTimeout(() => {
-      setLoading(false); // Hide the loading indicator after 2 seconds
-    }, 1000);
-
-    // Extract unique dates from mediaData
-    const dates = [...new Set(data.map((media) => media.date))];
-    setUniqueDates(dates);
-  }, []);
 
   useEffect(() => {
     // Simulated fetch (replace with actual fetch)
@@ -57,24 +51,6 @@ export default function Upload() {
       name: file.name, // Use the file name as the media name
     };
     setMediaData([...mediaData, newMedia]);
-  };
-
-  const handleFilterChange = (event) => {
-    setLoading(true); // Show the loading indicator
-    setSelectedFilter(event.target.value);
-
-    setTimeout(() => {
-      setLoading(false); // Hide the loading indicator after 2 seconds
-    }, 1000);
-  };
-
-  const handleDateChange = (event) => {
-    setLoading(true); // Show the loading indicator
-    setSelectedDate(event.target.value);
-
-    setTimeout(() => {
-      setLoading(false); // Hide the loading indicator after 2 seconds
-    }, 1000);
   };
 
   const handleBulkSelect = () => {
@@ -106,56 +82,46 @@ export default function Upload() {
       />
 
       <div className="mediaUpload-mains">
-        <div className="mediaSearch">
-          <div className="allMediaItem-main">
-            <select
-              name="allMediaItem"
-              id="allMediaItem"
-              className="allMediadata"
-              onChange={handleFilterChange}
-              value={selectedFilter}
-            >
-              <option value="">All media item</option>
-              <option value="image">Images</option>
-              <option value="video">Videos</option>
-              <option value="doc">Documents</option>
-              <option value="pdf">PDFs</option>
-            </select>
+        <div className="mediaSearch-main">
+          <div className="mediaSearch">
+            <MediaFilter
+              selectedFilter={selectedFilter}
+              handleFilterChange={handleFilterChange}
+            />
+
+            <FilterByDate
+              handleDateChange={handleDateChange}
+              selectedDate={selectedDate}
+              uniqueDates={uniqueDates}
+            />
+
+            <Button
+              onClick={handleBulkSelect}
+              title="Select & Delete"
+              type="button"
+              className="bulk-select-btn"
+              // Todo
+            />
+
+            {loading && <span className="Imageloading"></span>}
           </div>
 
-          <div className="mediaByDate-main">
-            <select
-              name="mediaByDate"
-              id="mediaByDate"
-              className="allMediadata"
-              onChange={handleDateChange}
-              value={selectedDate}
-            >
-              <option value="">All Date</option>
-              {uniqueDates.map((date) => (
-                <option key={date} value={date}>
-                  {date}
-                </option>
-              ))}
-            </select>
+          <div>
+            <MediaSearch
+              handleSearch={handleSearch}
+              mediaSearch={mediaSearch}
+            />
           </div>
-
-          <Button
-            onClick={handleBulkSelect}
-            title="Select & Delete"
-            type="button"
-            className="bulk-select-btn"
-          />
-
-          {loading && <span className="Imageloading"></span>}
         </div>
       </div>
 
       <div className="upload-grid">
-        <MediaLibrary
+        <MediaLibraryUpload
           mediaData={mediaData}
           selectedFilter={selectedFilter}
           selectedDate={selectedDate}
+          selectedMedia={selectedMedia}
+          filteredMedia={filteredMedia}
         />
       </div>
     </section>

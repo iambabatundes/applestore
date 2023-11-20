@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import AdminNavbar from "./adminNavbar";
 import Dashboard from "./dashboard";
@@ -20,8 +20,78 @@ import Settings from "./settings";
 import "./styles/admin.css";
 import AdminSidebar from "./adminSidebar";
 import ProductEdit from "./productEdit";
+import { getMediaDatas } from "./mediaData";
 
 const Admin = ({ companyName, count }) => {
+  const [selectedLink, setSelectedLink] = useState(null);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedDropdownLink, setSelectedDropdownLink] = useState(null);
+  const [mediaData, setMediaData] = useState([]);
+  const [uniqueDates, setUniqueDates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [maxFileSize, setMaxFileSize] = useState("");
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [mediaSearch, setMediaSearch] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    const data = getMediaDatas();
+    setMediaData(data);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
+
+    // Extract unique dates from mediaData
+    const dates = [...new Set(data.map((media) => media.date))];
+    setUniqueDates(dates);
+  }, []);
+
+  useEffect(() => {
+    // Simulated fetch (replace with actual fetch)
+    setTimeout(() => {
+      const maxFileSizeFromServerMB = 2048; // Example: Maximum file size in MB
+      setMaxFileSize(maxFileSizeFromServerMB);
+    }, 1000);
+  }, []);
+
+  const handleFilterChange = (event) => {
+    setLoading(true); // Show the loading indicator
+    setSelectedFilter(event.target.value);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
+  };
+
+  const handleDateChange = (event) => {
+    setLoading(true); // Show the loading indicator
+    setSelectedDate(event.target.value);
+
+    setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 2 seconds
+    }, 1000);
+  };
+
+  // Filter media based on search input
+  const filteredMedia = mediaData.filter(
+    (media) =>
+      (!selectedFilter || media.fileType === selectedFilter) &&
+      (!selectedDate || media.date === selectedDate) &&
+      // Add a condition to check if the media's filename includes the search text
+      (mediaSearch === "" || media.fileName.includes(mediaSearch))
+  );
+
+  const handleSearch = (e) => {
+    setMediaSearch(e.target.value);
+  };
+
+  const handleToggle = () => {
+    setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   const sidebarLinks = [
     {
       label: "Dashboard",
@@ -48,7 +118,19 @@ const Admin = ({ companyName, count }) => {
         {
           label: "Create Post",
           to: "/admin/create",
-          content: <CreatePost />,
+          content: (
+            <CreatePost
+              mediaData={mediaData}
+              selectedFilter={selectedFilter}
+              handleFilterChange={handleFilterChange}
+              handleDateChange={handleDateChange}
+              selectedDate={selectedDate}
+              uniqueDates={uniqueDates}
+              handleSearch={handleSearch}
+              mediaSearch={mediaSearch}
+              filteredMedia={filteredMedia}
+            />
+          ),
         },
       ],
     },
@@ -61,7 +143,26 @@ const Admin = ({ companyName, count }) => {
         {
           label: "Library",
           to: "/admin/upload",
-          content: <Upload />,
+          content: (
+            <Upload
+              loading={loading}
+              setLoading={setLoading}
+              mediaData={mediaData}
+              setMediaData={setMediaData}
+              uniqueDates={uniqueDates}
+              setUniqueDates={setUniqueDates}
+              selectedMedia={selectedMedia}
+              maxFileSize={maxFileSize}
+              setMaxFileSize={setMaxFileSize}
+              handleDateChange={handleDateChange}
+              handleFilterChange={handleFilterChange}
+              selectedDate={selectedDate}
+              selectedFilter={selectedFilter}
+              filteredMedia={filteredMedia}
+              handleSearch={handleSearch}
+              mediaSearch={mediaSearch}
+            />
+          ),
         },
         {
           label: "Add New",
@@ -150,15 +251,6 @@ const Admin = ({ companyName, count }) => {
     },
     // ... other links
   ];
-
-  const [selectedLink, setSelectedLink] = useState(null);
-
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedDropdownLink, setSelectedDropdownLink] = useState(null);
-
-  const handleToggle = () => {
-    setMobileMenuOpen(!isMobileMenuOpen);
-  };
 
   return (
     <section>

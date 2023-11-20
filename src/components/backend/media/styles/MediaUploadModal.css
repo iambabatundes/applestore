@@ -15,18 +15,18 @@
 
 .mediaUpload-main {
     width: 100%;
-    height: 88%;
-    max-width: 1100px;
+    height: 90%;
+    max-width: 1190px;
     overflow: auto;
     border: 1px solid #888;
     background-color: #fefefe;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     box-shadow: 0 5px 15px rgba(0, 0, 0, .7);
 }
 
 .mediaUpload-heading {
-    background: #F0F2F2;
-    border-bottom: 1px solid #D5D9D9;
+    /* background: #F0F2F2; */
+    /* border-bottom: 1px solid #D5D9D9; */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -34,7 +34,8 @@
 }
 
 .mediaUpload-heading h1 {
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 500;
 }
 
 .mediaUpload-cancel {
@@ -45,7 +46,8 @@
 .modal-tabs {
     display: flex;
     /* justify-content: center; */
-    margin: 0px 10px;
+    /* margin: 2px 10px; */
+    /* padding: 2px; */
     border-bottom: 1px solid #dcdcde;
 }
 
@@ -53,7 +55,7 @@
     background: none;
     outline: none;
     border: none;
-    border-bottom: 1px solid #dcdcde;
+    /* border-bottom: 1px solid #dcdcde; */
     cursor: pointer;
     font-size: 16px;
     /* margin: 10px 0; */
@@ -64,8 +66,18 @@
 }
 
 .modal-tabs button.active {
+    border-bottom: none;
+}
+
+.modal-tabs button.active {
     background-color: #fff;
     color: #000;
     border: 1px solid #dcdcde;
-    border-bottom-color: #20208a;
+    border-bottom: none;
+    /* border-bottom-color: #20208a; */
+    z-index: 100;
+}
+
+.mediaModal {
+    /* margin-top: 20px; */
 }

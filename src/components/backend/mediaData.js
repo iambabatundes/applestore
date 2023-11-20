@@ -83,7 +83,7 @@ const mediaData = [
 
   {
     id: 9,
-    fileName: "image",
+    fileName: "images",
     author: "applestore",
     fileType: "image",
     fileSize: "20kb",
@@ -98,7 +98,7 @@ const mediaData = [
     fileType: "video",
     fileSize: "20kb",
     date: "May 2023",
-    dataUrl: "https://www.pexels.com/video/horse-and-foal-in-wyoming-17110950/",
+    dataUrl: "/video3.mp4",
   },
   {
     id: 11,
@@ -107,7 +107,7 @@ const mediaData = [
     fileType: "video",
     fileSize: "20kb",
     date: "July 2023",
-    dataUrl: "https://www.pexels.com/video/wood-nature-forest-winter-17977044/",
+    dataUrl: "/video2.mp4",
   },
 
   {
@@ -117,8 +117,7 @@ const mediaData = [
     fileType: "video",
     fileSize: "20kb",
     date: "Auguest 2023",
-    dataUrl:
-      "https://www.pexels.com/video/person-with-face-mask-using-smartphone-in-airport-6092623/",
+    dataUrl: "/video1.mp4",
   },
   {
     id: 13,

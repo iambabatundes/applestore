@@ -33,8 +33,6 @@
 
 }
 
-
-
 .mediaUpload-mains {
     margin-bottom: 15px;
     margin-top: 15px;
@@ -44,21 +42,27 @@
     border: 1px solid #8c8f94
 }
 
-.mediaSearch {
-    padding: 10px 12px;
+.mediaSearch-main {
+    align-items: center;
     display: flex;
-
+    justify-content: space-between;
+    padding: 10px 12px;
 }
 
-.allMediaItem-main {
+.mediaSearch {
+    display: flex;
+}
+
+/* .allMediaItem-main {
     margin: 0 15px;
-}
+} */
 
 .allMediaItem-main select {
     font-size: 15px;
     font-weight: 400;
     line-height: 2;
     color: #2c3338;
+    margin-right: 15px;
 }
 
 .mediaByDate-main {
@@ -115,7 +119,7 @@
 }
 
 .media-item .media-item-img,
-video,
+.mediaItem-video,
 .preview {
     object-fit: cover;
     width: 100%;
@@ -124,6 +128,15 @@ video,
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1);
     border: 1px solid #8c8f94;
     cursor: pointer;
+}
+
+.media-item:hover {
+    border: 1px solid #007bff;
+}
+
+.media-item.selected {
+    border: 2px solid #4caf50;
+    /* Add your desired selected border color */
 }
 
 .preview {

@@ -12,6 +12,16 @@ export default function MediaUploadModal({
   handleTabChange,
   mediaData,
   handleFileChange,
+  selectedMedia,
+  handleMediaSelection,
+  handleFilterChange,
+  selectedFilter,
+  handleDateChange,
+  selectedDate,
+  uniqueDates,
+  handleSearch,
+  mediaSearch,
+  filteredMedia,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
@@ -45,11 +55,30 @@ export default function MediaUploadModal({
                 <FileUpload handleFileChange={handleFileChange} />
               )}
               {selectedTab === "library" && (
-                <MediaLibrary mediaData={mediaData} />
+                <>
+                  <MediaLibrary
+                    mediaData={mediaData}
+                    selectedMedia={selectedMedia}
+                    handleMediaSelection={handleMediaSelection}
+                    handleFilterChange={handleFilterChange}
+                    selectedFilter={selectedFilter}
+                    handleDateChange={handleDateChange}
+                    selectedDate={selectedDate}
+                    uniqueDates={uniqueDates}
+                    handleSearch={handleSearch}
+                    mediaSearch={mediaSearch}
+                    filteredMedia={filteredMedia}
+                  />
+                </>
               )}
-              <div></div>
-              <div></div>
             </section>
+
+            <Button
+              title="Insert to Post"
+              className="mediaModal"
+              // onClick={handleSelectModal}
+              // disabled
+            />
           </div>
         </section>
       )}

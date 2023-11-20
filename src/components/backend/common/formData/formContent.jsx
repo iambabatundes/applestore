@@ -5,11 +5,23 @@ import Button from "../../button";
 import "../../styles/createNew.css";
 import MediaUploadModal from "../../media/MediaUploadModal";
 
-export default function FormContent({ autoSave }) {
+export default function FormContent({
+  autoSave,
+  mediaData,
+  selectedMedia,
+  setSelectedMedia,
+  handleFilterChange,
+  selectedFilter,
+  handleDateChange,
+  selectedDate,
+  uniqueDates,
+  handleSearch,
+  mediaSearch,
+  filteredMedia,
+}) {
   const [editorContent, setEditorContent] = useState("");
   const [isMediaUploadOpen, setIsMediaUploadOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("library");
-  const [mediaData, setMediaData] = useState([]);
 
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
@@ -31,6 +43,22 @@ export default function FormContent({ autoSave }) {
   const handleChange = (content) => {
     setEditorContent(content);
   };
+
+  const handleMediaSelection = (mediaId) => {
+    // Toggle the selected state of the media item
+    const updatedSelectedMedia = selectedMedia.includes(mediaId)
+      ? selectedMedia.filter((id) => id !== mediaId)
+      : [...selectedMedia, mediaId];
+
+    setSelectedMedia(updatedSelectedMedia);
+  };
+
+  // const handleAttachMedia = () => {
+  //   // Call the onAttachMedia callback with the selected media items
+  //   onAttachMedia(selectedMedia);
+  //   // Close the media selection modal or sidebar
+  //   setIsMediaUploadOpen(false);
+  // };
 
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -70,6 +98,18 @@ export default function FormContent({ autoSave }) {
           selectedTab={selectedTab}
           handleTabChange={handleTabChange}
           mediaData={mediaData}
+          selectedMedia={selectedMedia}
+          setSelectedMedia={setSelectedMedia}
+          handleMediaSelection={handleMediaSelection}
+          // onAttachMedia={handleAttachMedia}
+          handleFilterChange={handleFilterChange}
+          selectedFilter={selectedFilter}
+          handleDateChange={handleDateChange}
+          selectedDate={selectedDate}
+          uniqueDates={uniqueDates}
+          handleSearch={handleSearch}
+          mediaSearch={mediaSearch}
+          filteredMedia={filteredMedia}
         />
 
         <ReactQuill

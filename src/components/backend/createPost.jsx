@@ -7,7 +7,17 @@ import PublishData from "./common/publishData";
 import FormTitle from "./common/formData/formTitle";
 import FormContent from "./common/formData/formContent";
 
-export default function CreatePost({ mediaData }) {
+export default function CreatePost({
+  mediaData,
+  handleFilterChange,
+  selectedFilter,
+  handleDateChange,
+  selectedDate,
+  uniqueDates,
+  handleSearch,
+  mediaSearch,
+  filteredMedia,
+}) {
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [isContentVisible, setIsContentVisible] = useState(true);
@@ -32,6 +42,7 @@ export default function CreatePost({ mediaData }) {
   const [isImmediate, setIsImmediate] = useState(true); // Track if publ
   const [immediateDisplay, setImmediateDisplay] = useState("immediately");
   const [isEditingDateTime, setIsEditingDateTime] = useState(false);
+  const [selectedMedia, setSelectedMedia] = useState([]);
 
   const visibilityOptions = ["Public", "Private"];
 
@@ -258,7 +269,19 @@ export default function CreatePost({ mediaData }) {
             startEditPermalink={startEditPermalink}
           />
 
-          <FormContent mediaData={mediaData} />
+          <FormContent
+            mediaData={mediaData}
+            selectedMedia={selectedMedia}
+            setSelectedMedia={setSelectedMedia}
+            handleFilterChange={handleFilterChange}
+            selectedFilter={selectedFilter}
+            handleDateChange={handleDateChange}
+            selectedDate={selectedDate}
+            uniqueDates={uniqueDates}
+            handleSearch={handleSearch}
+            mediaSearch={mediaSearch}
+            filteredMedia={filteredMedia}
+          />
         </div>
 
         <div>

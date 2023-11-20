@@ -1,0 +1,132 @@
+.mediaLibrary-filter-main {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.mediaLibrary-filter {
+    display: flex;
+    /* margin-left: 10px; */
+}
+
+.MediaSearch {
+    padding: 5px;
+    /* padding-right: 10px; */
+    border-radius: 3px;
+    border: 1px solid #2271b1;
+    font-size: 12px;
+    outline: none;
+    margin-right: 5px;
+    padding-right: 53px;
+}
+
+.mediaLibrary-container {
+    padding: 10px 0px 10px 25px;
+}
+
+.mediaLibrary-media {
+    display: grid;
+    grid-template-columns: 5fr 1.5fr;
+    gap: 15px;
+}
+
+.uploadGrid {
+    display: grid;
+    flex-wrap: wrap;
+    grid-template-columns: repeat(6, 15.6%);
+    gap: 15px;
+    width: 100%;
+    /* height: 100%; */
+    padding-right: 25px;
+    max-height: 370px;
+    overflow-y: scroll;
+    flex: 1;
+
+}
+
+.mediaItem .mediaItem-img,
+.mediaItem-video,
+.preview {
+    object-fit: cover;
+    width: 100%;
+    height: 130px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1);
+    border: 1px solid #8c8f94;
+    cursor: pointer;
+}
+
+.attrachment-detail {
+    background: #f6f7f7;
+    padding: 15px;
+}
+
+.attrachment-detail-main {
+    /* display: flex; */
+    overflow: auto;
+}
+
+.attrachment-detail-header {
+    font-size: 1em;
+}
+
+.attrachment-img {
+    width: 100px;
+    height: 90px;
+    object-fit: cover;
+    margin-right: 8px;
+}
+
+.attrachment-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.selectedMediaDetails-h1 {
+    font-size: 13px;
+}
+
+.delete-parmently {
+    color: #d63638;
+    font-size: 12px;
+    padding-bottom: 10px;
+
+}
+
+.attachment-line {
+    margin-top: 10px;
+}
+
+.media__attachment {
+    margin-top: 15px;
+    /* padding: 10px; */
+    width: 100%;
+}
+
+.attachment-details {
+    display: flex;
+    /* height: 60px; */
+    margin-bottom: 15px;
+}
+
+.attachment-details-main {
+    margin-bottom: 10px;
+}
+
+.attachment-details-label {
+    margin-right: 10px;
+    font-size: 14px;
+    /* margin-top: 10px; */
+}
+
+.attachment-title {
+    display: flex;
+}
+
+.attachment__link {
+    margin-top: 20px;
+    font-size: 14px;
+}
