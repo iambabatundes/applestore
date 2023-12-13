@@ -72,14 +72,14 @@ export default function MediaUploadModal({
                 </>
               )}
             </section>
-
-            <Button
-              title="Insert to Post"
-              className="mediaModal"
-              // onClick={handleSelectModal}
-              // disabled
-            />
           </div>
+
+          <Button
+            title="Insert to Post"
+            className="mediaModal"
+            // onClick={handleSelectModal}
+            // disabled
+          />
         </section>
       )}
     </section>

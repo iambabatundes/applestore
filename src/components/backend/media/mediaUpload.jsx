@@ -19,6 +19,9 @@ export default function MediaUpload({
             <SelectFiles
               getMaxFileSizeGB={getMaxFileSizeGB()}
               onChange={onChange}
+              className="upload__section"
+              uploadMaxMain="upload-maxMain"
+              uploadMaxSize="upload-maxSize"
             />
           </div>
         </section>

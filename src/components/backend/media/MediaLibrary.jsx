@@ -3,6 +3,8 @@ import "./styles/MediaLibrary.css";
 import MediaFilter from "./MediaFilter";
 import FilterByDate from "./FilterByDate";
 import MediaSearch from "./MediaSearch";
+import useCopyToClipboard from "../common/useCopyToClipboard";
+import CopyToClipboard from "../copyToClipboard";
 
 export default function MediaLibrary({
   mediaData,
@@ -20,6 +22,8 @@ export default function MediaLibrary({
   const [altText, setAltText] = useState("");
   const [title, setTitle] = useState("");
   const [fileLink, setFileLink] = useState("");
+  const [inputText, setInputText] = useState("");
+  const [copyToClipboard, copyResult] = useCopyToClipboard();
 
   // const handleMediaItemClick = (media) => {
   //   setSelectedMediaDetails(media);
@@ -46,9 +50,10 @@ export default function MediaLibrary({
     setSelectedMediaDetails(null);
   };
 
-  // const handleDeleteParmently = (media) => {
-  //   setSelectedMediaDetails(media);
-  // };
+  const handleClickCopy = () => {
+    // Copy the text from the input field into the clipboard
+    copyToClipboard(fileLink);
+  };
 
   return (
     <section className="mediaLibrary-media">
@@ -117,12 +122,13 @@ export default function MediaLibrary({
       </div>
 
       <section className="attrachment-detail">
-        <h1 className="attrachment-detail-header">Attrachment Details</h1>
-
         <div className="attrachment-detail-main">
           {selectedMediaDetails && (
             <>
               <div>
+                <h1 className="attrachment-detail-header">
+                  Attrachment Details
+                </h1>
                 {selectedMediaDetails.fileType === "image" && (
                   <img
                     className="attrachment-img"
@@ -209,7 +215,6 @@ export default function MediaLibrary({
                     />
                   </span>
 
-                  {/* <h6>this is the boy</h6> */}
                   <div className="attachment__link">
                     <label
                       htmlFor="attachment-link"
@@ -220,8 +225,13 @@ export default function MediaLibrary({
                     <input
                       type="text"
                       id="attachment-link"
-                      value={fileLink}
-                      // className="attachment__link"
+                      value={inputText !== "" ? inputText : fileLink}
+                      onChange={(e) => setInputText(e.target.value)}
+                    />
+                    <CopyToClipboard
+                      fileLink={fileLink}
+                      copyResult={copyResult}
+                      handleClickCopy={handleClickCopy}
                     />
                   </div>
                 </div>
