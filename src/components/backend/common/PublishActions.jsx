@@ -9,6 +9,9 @@ export default function PublishActions({
   publishing,
   handlePostPublish,
   networkStatus,
+  editingMode,
+  handleUpdatePublish,
+  updating,
 }) {
   return (
     <div className="publish__actions">
@@ -24,14 +27,27 @@ export default function PublishActions({
       )}
 
       <div className="publish__button">
-        {publishing && <Spinner className="spinner" />}
-        <Button
-          type="submit"
-          onClick={handlePostPublish}
-          title="Publish"
-          className="publish__actions__btn"
-          disabled={!networkStatus}
-        />
+        {updating && <Spinner className="spinner" />}
+        {editingMode ? (
+          <Button
+            type="submit"
+            onClick={handleUpdatePublish}
+            title="Update"
+            className="publish__actions__btn"
+            disabled={!networkStatus}
+          />
+        ) : (
+          <>
+            {publishing && <Spinner className="spinner" />}
+            <Button
+              type="submit"
+              onClick={handlePostPublish}
+              title="Publish"
+              className="publish__actions__btn"
+              disabled={!networkStatus}
+            />
+          </>
+        )}
       </div>
     </div>
   );

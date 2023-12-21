@@ -40,6 +40,9 @@ export default function PublishData({
   postPublished,
   setStickToTop,
   months,
+  editingMode,
+  handleUpdatePublish,
+  updating,
 }) {
   return (
     <>
@@ -91,6 +94,9 @@ export default function PublishData({
             handlePostPublish={handlePostPublish}
             postPublished={postPublished}
             publishing={publishing}
+            editingMode={editingMode}
+            handleUpdatePublish={handleUpdatePublish}
+            updating={updating}
           />
         </>
       )}

@@ -22,6 +22,9 @@ export default function MediaUploadModal({
   handleSearch,
   mediaSearch,
   filteredMedia,
+  handleSelectModal,
+  setSelectedMediaDetails,
+  selectedMediaDetails,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
@@ -68,6 +71,8 @@ export default function MediaUploadModal({
                     handleSearch={handleSearch}
                     mediaSearch={mediaSearch}
                     filteredMedia={filteredMedia}
+                    selectedMediaDetails={selectedMediaDetails}
+                    setSelectedMediaDetails={setSelectedMediaDetails}
                   />
                 </>
               )}
@@ -77,7 +82,7 @@ export default function MediaUploadModal({
           <Button
             title="Insert to Post"
             className="mediaModal"
-            // onClick={handleSelectModal}
+            onClick={handleSelectModal}
             // disabled
           />
         </section>

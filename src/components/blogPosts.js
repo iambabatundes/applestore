@@ -8,7 +8,7 @@ const blogPosts = [
     datePosted: "May 15, 2023",
     postedBy: "Admin",
     categories: ["fruit", "bag"],
-    tag: ["apple", "orange", "Mango"],
+    tags: ["apple", "orange", "Mango"],
     status: "published",
   },
   {

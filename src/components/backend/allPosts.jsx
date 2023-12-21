@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./styles/posts.css";
-import { Link } from "react-router-dom";
-import { getBlogPosts } from "../blogPosts";
 import Filtered from "./allPosts/filtered";
 import TableData from "./common/tableData";
 import BulkAction from "./allPosts/bulkAction";
 import Header from "./common/header";
 
-export default function AllPosts() {
-  const [blogPosts, setBlogPosts] = useState([]);
+export default function AllPosts({ blogPosts, setBlogPosts }) {
   const [sortBy, setSortBy] = useState({ column: "title", order: "asc" });
   const [selectAll, setSelectAll] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -25,18 +22,9 @@ export default function AllPosts() {
   const [hoveredPost, setHoveredPost] = useState(null);
 
   useEffect(() => {
-    const fetchedPosts = getBlogPosts();
-    const postsWithSelection = fetchedPosts.map((post) => ({
-      ...post,
-      selected: false,
-    }));
-    setBlogPosts(postsWithSelection);
-  }, []);
-
-  useEffect(() => {
     // Update the trash posts whenever the blogPosts change
     const updatedTrashPosts = blogPosts.filter(
-      (post) => post.status === "trash"
+      (post) => post && post.status === "trash"
     );
     setPostTrash(updatedTrashPosts);
   }, [blogPosts]);
@@ -53,9 +41,11 @@ export default function AllPosts() {
     // Handle preview action (e.g., open a preview modal)
   };
 
-  const uniqueDates = [...new Set(blogPosts.map((post) => post.datePosted))];
+  const uniqueDates = [
+    ...new Set(blogPosts.map((post) => post && post.datePosted)),
+  ];
   const uniqueCategories = [
-    ...new Set(blogPosts.flatMap((post) => post.categories)),
+    ...new Set(blogPosts.flatMap((post) => post && post.categories)),
   ];
 
   const resetIndividualPostCheckboxes = () => {
@@ -187,6 +177,7 @@ export default function AllPosts() {
     })
     .filter((post) => {
       return (
+        post &&
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
         (selectedDate === "All Dates" || post.datePosted === selectedDate) &&
         (selectedCategory === "All Categories" ||
@@ -198,7 +189,7 @@ export default function AllPosts() {
   const filteredPosts =
     activeTab === "trash"
       ? filteredBlogPosts
-      : filteredBlogPosts.filter((post) => post.status !== "trash");
+      : filteredBlogPosts.filter((post) => post && post.status !== "trash");
 
   const sortedBlogPosts = [...filteredPosts].sort((a, b) => {
     const column = sortBy.column;
@@ -259,14 +250,18 @@ export default function AllPosts() {
 
   // const totalPosts = blogPosts.length;
   // const allPostsCount = filteredPosts.length;
-  const totalPosts = blogPosts.filter((post) => post.status !== "trash").length;
+  const totalPosts = blogPosts.filter(
+    (post) => post && post.status !== "trash"
+  ).length;
   const publishedPosts = blogPosts.filter(
-    (post) => post.status === "published" && post.status !== "trash"
+    (post) => post && post.status === "published" && post.status !== "trash"
   ).length;
   const draftPosts = blogPosts.filter(
-    (post) => post.status === "draft" && post.status !== "trash"
+    (post) => post && post.status === "draft" && post.status !== "trash"
   ).length;
-  const trashPosts = blogPosts.filter((post) => post.status === "trash").length;
+  const trashPosts = blogPosts.filter(
+    (post) => post && post.status === "trash"
+  ).length;
 
   const renderPageNumbers = [...Array(totalPages).keys()].map((number) => {
     const pageNumber = number + 1;

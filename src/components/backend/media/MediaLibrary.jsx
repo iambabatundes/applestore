@@ -17,8 +17,10 @@ export default function MediaLibrary({
   mediaSearch,
   handleSearch,
   filteredMedia,
+  setSelectedMediaDetails,
+  selectedMediaDetails,
 }) {
-  const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
+  // const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
   const [altText, setAltText] = useState("");
   const [title, setTitle] = useState("");
   const [fileLink, setFileLink] = useState("");

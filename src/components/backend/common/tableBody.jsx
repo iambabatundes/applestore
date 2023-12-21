@@ -59,7 +59,7 @@ export default function TableBody({
             </span>
           </td>
           <td id={`date-${post.title}`} scope="col">
-            {post.datePosted}
+            {post && post.datePosted}
           </td>
           <td id={`featuredImage-${post.title}`} scope="col">
             <img src={post.image} alt="" className="featuredImage" />

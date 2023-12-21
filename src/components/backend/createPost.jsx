@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./styles/createNew.css";
 import "./styles/allPosts.css";
 import MessageData from "./common/messageData";
-import PublishHeader from "./common/publishHeader";
 import PublishData from "./common/publishData";
 import FormTitle from "./common/formData/formTitle";
 import FormContent from "./common/formData/formContent";
+import Header from "./common/header";
+import PublishHeader from "./common/publishHeader";
+import CategoriesHeader from "./common/CategoriesHeader";
+import TagsHeader from "./common/TagsHeader";
+import FeaturedImageHeader from "./common/featuredImageHeader";
+import PostCategories from "./common/postCategories";
 
 export default function CreatePost({
   mediaData,
@@ -17,10 +22,18 @@ export default function CreatePost({
   handleSearch,
   mediaSearch,
   filteredMedia,
+  setBlogPosts,
+  addNewPost,
+  blogPosts,
 }) {
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const [isContentVisible, setIsContentVisible] = useState(true);
+  const [isCategoriesVisible, setIsCategoriesVisible] = useState(true);
+  const [isTagsVisible, setIsTagsVisible] = useState(true);
+  const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
+  const [selectedTab, setSelectedTab] = useState("All Categories");
   const [message, setMessage] = useState("");
   const [networkMessage, setNetworkMessage] = useState("");
   const [localStorageNotice, setLocalStorageNotice] = useState("");
@@ -43,6 +56,47 @@ export default function CreatePost({
   const [immediateDisplay, setImmediateDisplay] = useState("immediately");
   const [isEditingDateTime, setIsEditingDateTime] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
+  const [newPost, setNewPost] = useState({
+    title: "",
+    content: "",
+    tags: "",
+    image: "",
+    categories: "",
+    postedBy: "",
+    datePosted: "", // Add datePosted property
+  });
+  const [editingMode, setEditingMode] = useState(false);
+  const [postToEdit, setPostToEdit] = useState(null);
+
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  const handleDateChanges = (e) => {
+    const selectedDate = e.target.value;
+    // Update the state with the selected date
+    setNewPost((prevPost) => ({ ...prevPost, datePosted: selectedDate }));
+  };
+
+  const handleHourChange = (e) => {
+    const selectedHour = e.target.value;
+    // Update the state with the selected hour
+    setNewPost((prevPost) => ({ ...prevPost, hour: selectedHour }));
+  };
+
+  const handleMinuteChange = (e) => {
+    const selectedMinute = e.target.value;
+    // Update the state with the selected minute
+    setNewPost((prevPost) => ({ ...prevPost, minute: selectedMinute }));
+  };
+
+  const handleTitleChange = (e) => {
+    setNewPost((prevPost) => ({ ...prevPost, title: e.target.value }));
+  };
+
+  const handleContentChange = (e) => {
+    setNewPost((prevPost) => ({ ...prevPost, content: e.target.value }));
+  };
 
   const visibilityOptions = ["Public", "Private"];
 
@@ -86,6 +140,22 @@ export default function CreatePost({
     }
   }, [networkStatus]);
 
+  useEffect(() => {
+    // If in edit mode, initialize newPost state with post details
+    if (editingMode && postToEdit) {
+      setNewPost({
+        title: postToEdit.title,
+        content: postToEdit.content,
+        tags: postToEdit.tags,
+        categories: postToEdit.categories,
+        datePosted: postToEdit.datePosted,
+        image: postToEdit.image,
+        postedBy: postToEdit.postby,
+        // ... other fields
+      });
+    }
+  }, [editingMode, postToEdit]);
+
   const handleSaveDraft = () => {
     if (!networkStatus) {
       setMessage("No network. Try to connect to a network.");
@@ -103,6 +173,46 @@ export default function CreatePost({
     }, 2000);
   };
 
+  const handleUpdatePublish = () => {
+    // Perform validation if needed
+
+    if (!networkStatus) {
+      setMessage(
+        "Connection lost. Saving has been disabled until you are reconnected."
+      );
+      return;
+    }
+
+    // Format date and time
+    const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
+
+    // Update the datePosted property in the newPost state
+    setNewPost((prevPost) => ({ ...prevPost, datePosted: formattedDate }));
+
+    // Check if postToEdit is not null before accessing its properties
+    if (postToEdit && postToEdit.id) {
+      // Update the existing post in the list
+      const updatedPosts = blogPosts.map((post) => {
+        if (post.id === postToEdit.id) {
+          return { ...post, ...newPost };
+        }
+        return post;
+      });
+
+      setBlogPosts(updatedPosts);
+    }
+
+    // Perform other update actions if needed
+
+    // Save user action to local storage
+    saveUserAction("Published");
+    setTimeout(() => {
+      setMessage("Post updated"); // Update message
+      setUpdating(false);
+      setSavingDraft(false);
+    }, 2000);
+  };
+
   const handlePostPublish = () => {
     if (!networkStatus) {
       setMessage(
@@ -110,6 +220,32 @@ export default function CreatePost({
       );
       return;
     }
+
+    // Format date and time
+    const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
+
+    // Update the datePosted property in the newPost state
+    setNewPost((prevPost) => ({ ...prevPost, datePosted: formattedDate }));
+
+    setBlogPosts((prevPosts) => [
+      ...prevPosts,
+      newPost,
+      // Add the details of the new post here (e.g., title, date, etc.)
+      console.log("Before adding new post:", blogPosts),
+    ]);
+
+    // Call the addNewPost function to add the new post to the list
+    addNewPost(newPost);
+    // Reset the form after adding the post
+    setNewPost({
+      title: "",
+      content: "",
+      tags: "",
+      image: "",
+      categories: "",
+      postedBy: "",
+      datePosted: "",
+    });
 
     // Simulate publishing with a 2-second delay
     setPublishing(true);
@@ -121,6 +257,8 @@ export default function CreatePost({
       setSavingDraft(false);
       setShowPermalink(true); // Show permalink after publish
     }, 2000);
+
+    setEditingMode(true);
   };
 
   const saveUserAction = (action) => {
@@ -145,6 +283,18 @@ export default function CreatePost({
 
   const toggleContent = () => {
     setIsContentVisible(!isContentVisible);
+  };
+
+  const toggleCategories = () => {
+    setIsCategoriesVisible(!isCategoriesVisible);
+  };
+
+  const toggleTags = () => {
+    setIsTagsVisible(!isTagsVisible);
+  };
+
+  const toggleFeaturedImage = () => {
+    setIsFeaturedImageVisible(!isFeaturedImageVisible);
   };
 
   const handlePostDelete = () => {
@@ -242,7 +392,14 @@ export default function CreatePost({
 
   return (
     <section className="padding">
-      <h1 className="title">Add New Post</h1>
+      <h1 className="title">
+        <Header
+          headerTitle={editingMode ? "Edit Post" : "Add New Post"}
+          buttonTitle={editingMode ? "Add New" : ""}
+          to="/admin/create"
+        />
+      </h1>
+      {/* <h1 className="title">Add New Post</h1> */}
 
       <MessageData
         handleCloseMessage={handleCloseMessage}
@@ -267,6 +424,7 @@ export default function CreatePost({
             setEditedPermalink={setEditedPermalink}
             showPermalink={showPermalink}
             startEditPermalink={startEditPermalink}
+            handleTitleChange={handleTitleChange}
           />
 
           <FormContent
@@ -289,7 +447,7 @@ export default function CreatePost({
             <PublishHeader
               isContentVisible={isContentVisible}
               publishTitle="Public"
-              toggleContent={toggleContent}
+              onClick={toggleContent}
             />
 
             {isContentVisible && (
@@ -315,6 +473,7 @@ export default function CreatePost({
                   networkStatus={networkStatus}
                   postPublished={postPublished}
                   publishing={publishing}
+                  updating={updating}
                   savingDraft={savingDraft}
                   setDay={setDay}
                   setHour={setHour}
@@ -328,16 +487,62 @@ export default function CreatePost({
                   visibilityOptions={visibilityOptions}
                   year={year}
                   months={months}
+                  editingMode={editingMode}
+                  handleUpdatePublish={handleUpdatePublish}
                 />
               </>
             )}
           </div>
 
-          <div>
-            <span className="">
-              <h3>Publish</h3>
-              <i className="fa fa-caret-down" aria-hidden="true"></i>
-            </span>
+          <div className="createPost-publish">
+            <CategoriesHeader
+              isCategoriesVisible={isCategoriesVisible}
+              CategoryTitle="Categories"
+              onClick={toggleCategories}
+            />
+
+            {isCategoriesVisible && (
+              <PostCategories
+                handleTabChange={handleTabChange}
+                selectedTab={selectedTab}
+                isCategoriesVisible={isCategoriesVisible}
+                blogPosts={blogPosts}
+              />
+            )}
+          </div>
+
+          <div className="createPost-publish">
+            <TagsHeader
+              isTagsVisible={isTagsVisible}
+              TagsTitle="Tags"
+              onClick={toggleTags}
+            />
+
+            {isTagsVisible && (
+              <div>
+                <span className="">
+                  <h3>Tags</h3>
+                  <i className="fa fa-caret-down" aria-hidden="true"></i>
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="createPost-publish">
+            <FeaturedImageHeader
+              isFeaturedImageVisible={isFeaturedImageVisible}
+              FeaturedImageTitle="Featured Image"
+              onClick={toggleFeaturedImage}
+            />
+
+            {isFeaturedImageVisible && (
+              <div>
+                <span className="">
+                  <h3>Featured image</h3>
+                  <i className="fa fa-caret-down" aria-hidden="true"></i>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </section>

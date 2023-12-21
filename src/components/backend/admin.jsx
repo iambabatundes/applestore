@@ -3,9 +3,9 @@ import { Link, Route, Routes } from "react-router-dom";
 import AdminNavbar from "./adminNavbar";
 import Dashboard from "./dashboard";
 import CreatePost from "./createPost";
+import AllPosts from "./allPosts";
 import AddProduct from "./addProduct";
 import AllProduct from "./allProducts";
-import AllPosts from "./allPosts";
 import GeneralSettings from "./generalSettings";
 import AppearanceSettings from "./appearanceSettings";
 import Upload from "./upload";
@@ -21,6 +21,7 @@ import "./styles/admin.css";
 import AdminSidebar from "./adminSidebar";
 import ProductEdit from "./productEdit";
 import { getMediaDatas } from "./mediaData";
+import { getBlogPosts } from "../blogPosts";
 
 const Admin = ({ companyName, count }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -34,11 +35,24 @@ const Admin = ({ companyName, count }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [mediaSearch, setMediaSearch] = useState("");
+  const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
+
+  useEffect(() => {
+    const fetchedPosts = getBlogPosts();
+    // const postsWithSelection = fetchedPosts.map((post) => ({
+    //   ...post,
+    //   selected: false,
+    // }));
+    setBlogPosts(fetchedPosts);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
     const data = getMediaDatas();
     setMediaData(data);
+
+    // Initialize blog posts with the existing data
+    // setBlogPosts(data);
 
     setTimeout(() => {
       setLoading(false); // Hide the loading indicator after 2 seconds
@@ -113,7 +127,9 @@ const Admin = ({ companyName, count }) => {
         {
           label: "All Posts",
           to: "/admin/posts",
-          content: <AllPosts />,
+          content: (
+            <AllPosts blogPosts={blogPosts} setBlogPosts={setBlogPosts} />
+          ),
         },
         {
           label: "Create Post",
@@ -129,6 +145,12 @@ const Admin = ({ companyName, count }) => {
               handleSearch={handleSearch}
               mediaSearch={mediaSearch}
               filteredMedia={filteredMedia}
+              blogPosts={blogPosts}
+              setBlogPosts={setBlogPosts}
+              addNewPost={(newPost) => {
+                setBlogPosts((prevPosts) => [...prevPosts, newPost]);
+                // console.log("The post has been published", blogPosts);
+              }}
             />
           ),
         },
