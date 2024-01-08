@@ -85,26 +85,6 @@ export default function FormContent({
     toolbar: toolbarOptions,
   };
 
-  // const handleInsertMedia = () => {
-  //   if (selectedMediaDetails) {
-  //     const { dataUrl, fileName } = selectedMediaDetails;
-
-  //     // Set the desired width and height values
-  //     const width = 100; // Example width in pixels
-  //     const height = 50; // Example height in pixels
-
-  //     // Create the HTML for the resized image
-  //     const imageHtml = `<img src="${dataUrl}" alt="${fileName}" style="width: ${width}px; height: ${height}px;" />`;
-
-  //     // Update the editor content
-  //     setEditorContent((prevContent) => prevContent + imageHtml);
-
-  //     // Clear the selected media details after insertion
-  //     setSelectedMediaDetails(null);
-  //     setIsMediaUploadOpen(false);
-  //   }
-  // };
-
   const handleInsertMedia = () => {
     if (selectedMediaDetails) {
       const { dataUrl, fileName, fileType } = selectedMediaDetails;

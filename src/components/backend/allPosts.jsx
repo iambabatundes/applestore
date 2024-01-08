@@ -30,7 +30,8 @@ export default function AllPosts({ blogPosts, setBlogPosts }) {
   }, [blogPosts]);
 
   const handleEditClick = (postId) => {
-    // Handle edit action (e.g., redirect to edit page)
+    // Assuming you are using React Router
+    // history.push(`/admin/edit/${postId}`);
   };
 
   const handleTrashClick = (postId) => {

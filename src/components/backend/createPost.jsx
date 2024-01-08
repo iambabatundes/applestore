@@ -11,6 +11,8 @@ import CategoriesHeader from "./common/CategoriesHeader";
 import TagsHeader from "./common/TagsHeader";
 import FeaturedImageHeader from "./common/featuredImageHeader";
 import PostCategories from "./common/postCategories";
+import PostTags from "./common/postTags";
+import FeaturedMedia from "./common/FeaturedMedia";
 
 export default function CreatePost({
   mediaData,
@@ -67,6 +69,13 @@ export default function CreatePost({
   });
   const [editingMode, setEditingMode] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedThumbnail, setSelectedThumbnail] = useState([]);
+
+  const handleTagsChange = (tags) => {
+    setSelectedTags(tags);
+  };
 
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
@@ -92,6 +101,18 @@ export default function CreatePost({
 
   const handleTitleChange = (e) => {
     setNewPost((prevPost) => ({ ...prevPost, title: e.target.value }));
+
+    // Function to update permalink based on title input
+    const updatePermalink = (title) => {
+      // Remove leading and trailing spaces and convert to lowercase
+      const cleanedTitle = title.trim().toLowerCase();
+      // Replace spaces with hyphens
+      const permalink = cleanedTitle.replace(/\s+/g, "-");
+      setPermalink(permalink);
+    };
+
+    // Call updatePermalink with the new title value
+    updatePermalink(e.target.value);
   };
 
   const handleContentChange = (e) => {
@@ -221,28 +242,39 @@ export default function CreatePost({
       return;
     }
 
+    // Validate that categories and tags are not empty
+    if (!selectedCategories.length || !selectedTags.length) {
+      setMessage("Please select at least one category and one tag.");
+      return;
+    }
+
     // Format date and time
     const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
 
     // Update the datePosted property in the newPost state
     setNewPost((prevPost) => ({ ...prevPost, datePosted: formattedDate }));
 
-    setBlogPosts((prevPosts) => [
-      ...prevPosts,
-      newPost,
-      // Add the details of the new post here (e.g., title, date, etc.)
-      console.log("Before adding new post:", blogPosts),
-    ]);
+    // Add the details of the new post
+    const newPosted = {
+      ...newPost,
+      title: newPost.title,
+      categories: [...selectedCategories],
+      tags: [...selectedTags],
+      image: selectedThumbnail,
+    };
+
+    setBlogPosts((prevPosts) => [...prevPosts, newPosted]);
 
     // Call the addNewPost function to add the new post to the list
-    addNewPost(newPost);
+    addNewPost(newPosted);
+
     // Reset the form after adding the post
     setNewPost({
       title: "",
       content: "",
-      tags: "",
-      image: "",
-      categories: "",
+      tags: [],
+      image: newPost.image,
+      categories: [],
       postedBy: "",
       datePosted: "",
     });
@@ -335,15 +367,6 @@ export default function CreatePost({
   const permalinkBase = window.location.origin + "/blog/";
   const permalinkURL = permalinkBase + permalink;
 
-  // Function to update permalink based on title input
-  const updatePermalink = (title) => {
-    // Remove leading and trailing spaces and convert to lowercase
-    const cleanedTitle = title.trim().toLowerCase();
-    // Replace spaces with hyphens
-    const permalink = cleanedTitle.replace(/\s+/g, "-");
-    setPermalink(permalink);
-  };
-
   const months = [
     "Jan",
     "Feb",
@@ -415,7 +438,7 @@ export default function CreatePost({
       <section className="createPost-grid">
         <div className="blog__post">
           <FormTitle
-            updatePermalink={updatePermalink}
+            // updatePermalink={updatePermalink}
             cancelEditPermalink={cancelEditPermalink}
             editedPermalink={editedPermalink}
             isEditingPermalink={isEditingPermalink}
@@ -507,6 +530,8 @@ export default function CreatePost({
                 selectedTab={selectedTab}
                 isCategoriesVisible={isCategoriesVisible}
                 blogPosts={blogPosts}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
               />
             )}
           </div>
@@ -519,12 +544,13 @@ export default function CreatePost({
             />
 
             {isTagsVisible && (
-              <div>
-                <span className="">
-                  <h3>Tags</h3>
-                  <i className="fa fa-caret-down" aria-hidden="true"></i>
-                </span>
-              </div>
+              <PostTags
+                blogPosts={blogPosts}
+                isTagsVisible={isTagsVisible}
+                onTagsChange={handleTagsChange}
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
+              />
             )}
           </div>
 
@@ -536,12 +562,21 @@ export default function CreatePost({
             />
 
             {isFeaturedImageVisible && (
-              <div>
-                <span className="">
-                  <h3>Featured image</h3>
-                  <i className="fa fa-caret-down" aria-hidden="true"></i>
-                </span>
-              </div>
+              <FeaturedMedia
+                isFeaturedImageVisible={isFeaturedImageVisible}
+                filteredMedia={filteredMedia}
+                selectedMedia={selectedMedia}
+                setSelectedMedia={setSelectedMedia}
+                mediaData={mediaData}
+                handleSearch={handleSearch}
+                handleFilterChange={handleFilterChange}
+                mediaSearch={mediaSearch}
+                selectedFilter={selectedFilter}
+                selectedDate={selectedDate}
+                uniqueDates={uniqueDates}
+                selectedThumbnail={selectedThumbnail}
+                setSelectedThumbnail={setSelectedThumbnail}
+              />
             )}
           </div>
         </div>

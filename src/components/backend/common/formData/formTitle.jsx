@@ -19,10 +19,10 @@ export default function FormTitle({
     <div>
       <Input
         type="text"
-        id="AddTile"
+        id="AddTitle"
         className="createPost__title"
         name="Add title"
-        onChange={(e) => updatePermalink(e.target.value)}
+        onChange={(e) => handleTitleChange(e)}
         placeholder="Add title"
         size="28"
         spellCheck="true"
@@ -44,7 +44,7 @@ export default function FormTitle({
                 type="text"
                 value={editedPermalink}
                 className="edit-permalink__input"
-                onClick={handleTitleChange}
+                // onClick={handleTitleChange}
                 onChange={(e) => setEditedPermalink(e.target.value)} // Update edited permalink
               />
               <button className="dataBtn" onClick={saveEditedPermalink}>

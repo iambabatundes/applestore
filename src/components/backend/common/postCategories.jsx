@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../button";
 
-export default function PostCategories({ isCategoriesVisible, blogPosts }) {
-  const [allCategories, setAllCategories] = useState(
-    Array.from(new Set(blogPosts.flatMap((post) => post.categories || [])))
-  );
+export default function PostCategories({
+  isCategoriesVisible,
+  blogPosts,
+  selectedCategories,
+  setSelectedCategories,
+}) {
+  const [allCategories, setAllCategories] = useState(() => {
+    // Load categories from local storage or default to an empty array
+    const storedCategories =
+      JSON.parse(localStorage.getItem("categories")) || [];
+    return Array.from(
+      new Set([
+        ...storedCategories,
+        ...blogPosts.flatMap((post) => post.categories || []),
+      ])
+    );
+  });
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  // const [selectedCategories, setSelectedCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
 
@@ -35,10 +48,20 @@ export default function PostCategories({ isCategoriesVisible, blogPosts }) {
       // Update allCategories state
       setAllCategories(updatedCategories);
 
+      // Save categories to local storage
+      localStorage.setItem("categories", JSON.stringify(updatedCategories));
+
       // Clear the newCategory input
       setNewCategory("");
     }
   };
+
+  // Clear categories from local storage when the component unmounts
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("categories");
+    };
+  }, []);
 
   return (
     <>
@@ -46,12 +69,13 @@ export default function PostCategories({ isCategoriesVisible, blogPosts }) {
         <section>
           {allCategories.map((category) => (
             <div key={category}>
-              <label htmlFor="">
+              <label htmlFor={category}>
                 <input
                   type="checkbox"
                   name={category}
                   id={category}
                   value={category}
+                  checked={selectedCategories.includes(category)}
                   onChange={() => handleCategoryChange(category)}
                 />
                 {category}
@@ -59,7 +83,7 @@ export default function PostCategories({ isCategoriesVisible, blogPosts }) {
             </div>
           ))}
           <Button
-            title={isAddingNewCategory ? "Cancel" : "+Add New Category"}
+            title={isAddingNewCategory ? "Cancel" : "+ Add New Category"}
             onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
           />
           {isAddingNewCategory && (
