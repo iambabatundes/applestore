@@ -5,7 +5,11 @@ import TableData from "./common/tableData";
 import BulkAction from "./allPosts/bulkAction";
 import Header from "./common/header";
 
-export default function AllPosts({ blogPosts, setBlogPosts }) {
+export default function AllPosts({
+  blogPosts,
+  setBlogPosts,
+  selectedThumbnail,
+}) {
   const [sortBy, setSortBy] = useState({ column: "title", order: "asc" });
   const [selectAll, setSelectAll] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -333,6 +337,7 @@ export default function AllPosts({ blogPosts, setBlogPosts }) {
           hoveredPost={hoveredPost}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
+          selectedThumbnail={selectedThumbnail}
         />
       </section>
       <div className="pagination">{renderPageNumbers}</div>

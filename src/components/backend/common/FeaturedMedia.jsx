@@ -67,30 +67,26 @@ export default function FeaturedMedia({
       {isFeaturedImageVisible && (
         <section>
           <div className="featured-media-items">
-            {insertedMedia.map((media, index) => (
-              <div
-                key={index}
-                className={`featured-media-item ${
-                  media === selectedThumbnail ? "selected-thumbnail" : ""
-                }`}
-                onClick={() => setSelectedThumbnail(media)}
-              >
-                {media.type === "image" ? (
-                  // Render image
-                  <img
-                    src={media.src}
-                    alt={`Featured Media ${index + 1}`}
-                    width="100"
-                    height="100"
-                  />
-                ) : (
-                  // Render video
-                  <video controls width="150" height="150">
-                    <source src={media.src} type={media.fileType} />
-                  </video>
-                )}
-              </div>
-            ))}
+            {insertedMedia.map(
+              (media, index) =>
+                // Only render if it's an image
+                media.type === "image" && (
+                  <div
+                    key={index}
+                    className={`featured-media-item ${
+                      media === selectedThumbnail ? "selected-thumbnail" : ""
+                    }`}
+                    onClick={() => setSelectedThumbnail(media)}
+                  >
+                    <img
+                      src={media.src}
+                      alt={`Featured Media ${index + 1}`}
+                      width="100"
+                      height="100"
+                    />
+                  </div>
+                )
+            )}
           </div>
 
           {/* Button to open the MediaUploadModal */}
@@ -106,9 +102,6 @@ export default function FeaturedMedia({
             handleTabChange={handleTabChange}
             filteredMedia={filteredMedia}
             handleMediaSelection={handleMediaSelection}
-            // handleInsertMedia={handleInsertMedia}
-            // // handleDateChange={handleDateChange}
-            // handleFileChange={handleFileChange}
             mediaData={mediaData}
             handleSearch={handleSearch}
             handleFilterChange={handleFilterChange}

@@ -36,6 +36,7 @@ const Admin = ({ companyName, count }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [mediaSearch, setMediaSearch] = useState("");
   const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
+  const [selectedThumbnail, setSelectedThumbnail] = useState([]);
 
   useEffect(() => {
     const fetchedPosts = getBlogPosts();
@@ -128,7 +129,11 @@ const Admin = ({ companyName, count }) => {
           label: "All Posts",
           to: "/admin/posts",
           content: (
-            <AllPosts blogPosts={blogPosts} setBlogPosts={setBlogPosts} />
+            <AllPosts
+              blogPosts={blogPosts}
+              setBlogPosts={setBlogPosts}
+              selectedThumbnail={selectedThumbnail}
+            />
           ),
         },
         {
@@ -151,6 +156,8 @@ const Admin = ({ companyName, count }) => {
                 setBlogPosts((prevPosts) => [...prevPosts, newPost]);
                 // console.log("The post has been published", blogPosts);
               }}
+              selectedThumbnail={selectedThumbnail}
+              setSelectedThumbnail={setSelectedThumbnail}
             />
           ),
         },

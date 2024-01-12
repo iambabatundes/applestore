@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./styles/createNew.css";
 import "./styles/allPosts.css";
 import MessageData from "./common/messageData";
@@ -27,6 +28,8 @@ export default function CreatePost({
   setBlogPosts,
   addNewPost,
   blogPosts,
+  selectedThumbnail,
+  setSelectedThumbnail,
 }) {
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -65,13 +68,12 @@ export default function CreatePost({
     image: "",
     categories: "",
     postedBy: "",
-    datePosted: "", // Add datePosted property
+    datePosted: new Date().toISOString(),
   });
   const [editingMode, setEditingMode] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedThumbnail, setSelectedThumbnail] = useState([]);
 
   const handleTagsChange = (tags) => {
     setSelectedTags(tags);
@@ -79,24 +81,6 @@ export default function CreatePost({
 
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
-  };
-
-  const handleDateChanges = (e) => {
-    const selectedDate = e.target.value;
-    // Update the state with the selected date
-    setNewPost((prevPost) => ({ ...prevPost, datePosted: selectedDate }));
-  };
-
-  const handleHourChange = (e) => {
-    const selectedHour = e.target.value;
-    // Update the state with the selected hour
-    setNewPost((prevPost) => ({ ...prevPost, hour: selectedHour }));
-  };
-
-  const handleMinuteChange = (e) => {
-    const selectedMinute = e.target.value;
-    // Update the state with the selected minute
-    setNewPost((prevPost) => ({ ...prevPost, minute: selectedMinute }));
   };
 
   const handleTitleChange = (e) => {
@@ -242,12 +226,6 @@ export default function CreatePost({
       return;
     }
 
-    // Validate that categories and tags are not empty
-    if (!selectedCategories.length || !selectedTags.length) {
-      setMessage("Please select at least one category and one tag.");
-      return;
-    }
-
     // Format date and time
     const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
 
@@ -260,10 +238,38 @@ export default function CreatePost({
       title: newPost.title,
       categories: [...selectedCategories],
       tags: [...selectedTags],
+      postedBy: newPost.postedBy,
       image: selectedThumbnail,
     };
 
     setBlogPosts((prevPosts) => [...prevPosts, newPosted]);
+
+    const generateUniqueId = () => {
+      return uuidv4();
+    };
+
+    const addNewPost = (newPost) => {
+      // Generate a unique identifier for the new post
+      const postId = generateUniqueId(); // Implement a function to generate a unique ID
+
+      // Add the identifier to the new post
+      const postWithId = { ...newPost, id: postId };
+
+      // Check if the new post already exists in the list
+      const existingPostIndex = blogPosts.findIndex(
+        (post) => post.id === postId
+      );
+
+      if (existingPostIndex !== -1) {
+        // If it exists, update the existing post
+        const updatedPosts = [...blogPosts];
+        updatedPosts[existingPostIndex] = postWithId;
+        setBlogPosts(updatedPosts);
+      } else {
+        // If it doesn't exist, add the new post
+        setBlogPosts((prevPosts) => [postWithId, ...prevPosts]);
+      }
+    };
 
     // Call the addNewPost function to add the new post to the list
     addNewPost(newPosted);
@@ -273,10 +279,10 @@ export default function CreatePost({
       title: "",
       content: "",
       tags: [],
-      image: newPost.image,
+      image: selectedThumbnail,
       categories: [],
       postedBy: "",
-      datePosted: "",
+      datePosted: formattedDate,
     });
 
     // Simulate publishing with a 2-second delay
@@ -422,7 +428,6 @@ export default function CreatePost({
           to="/admin/create"
         />
       </h1>
-      {/* <h1 className="title">Add New Post</h1> */}
 
       <MessageData
         handleCloseMessage={handleCloseMessage}

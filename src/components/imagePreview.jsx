@@ -1,12 +1,12 @@
 import React from "react";
-import ReactImageMagnify from "react-image-magnify";
+// import ReactImageMagnify from "react-image-magnify";
 
 export default function ImagePreview() {
   const images = "/brandNew21.webp";
   return (
     <section style={{ width: 500, height: 800 }}>
       <div className="imageMagnify">
-        <ReactImageMagnify
+        {/* <ReactImageMagnify
           {...{
             smallImage: {
               alt: "Wristwatch by Ted Baker London",
@@ -24,7 +24,7 @@ export default function ImagePreview() {
               height: 900,
             },
           }}
-        />
+        /> */}
       </div>
     </section>
   );

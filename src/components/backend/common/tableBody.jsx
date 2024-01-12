@@ -11,6 +11,7 @@ export default function TableBody({
   onPreview,
   handleMouseEnter,
   handleMouseLeave,
+  selectedThumbnail,
 }) {
   return (
     <tbody>
@@ -61,8 +62,13 @@ export default function TableBody({
           <td id={`date-${post.title}`} scope="col">
             {post && post.datePosted}
           </td>
+
           <td id={`featuredImage-${post.title}`} scope="col">
-            <img src={post.image} alt="" className="featuredImage" />
+            <img
+              src={post.image || selectedThumbnail.image}
+              alt={post.title}
+              className="featuredImage"
+            />
           </td>
         </tr>
       ))}

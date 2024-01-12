@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./styles/singleProduct.css";
 import { getProduct } from "./productData";
-import ReactImageMagnify from "react-image-magnify";
+// import ReactImageMagnify from "react-image-magnify";
 import SingleProductModal from "./singleProductModal";
 
 export default function SingleProduct() {
@@ -146,7 +146,7 @@ export default function SingleProduct() {
             })}
           </div>
 
-          <div
+          {/* <div
             className="product-image-container"
             onClick={() =>
               hoveredImage && hoveredImage.includes(".mp4")
@@ -215,7 +215,7 @@ export default function SingleProduct() {
                 }}
               />
             )}
-          </div>
+          </div> */}
         </section>
 
         <div>
