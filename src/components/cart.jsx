@@ -103,7 +103,7 @@ export default function Cart({
     return (
       <section className="cart cart-main">
         <section className="cart-right">
-          <img src="/apple.png" alt="Apple" width={50} />
+          <img src="../apple.png" alt="Apple" width={50} />
           <h2>Your AppleStore Cart is empty</h2>
           <h3>Shop today's deals</h3>
 
