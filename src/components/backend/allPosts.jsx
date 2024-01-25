@@ -5,11 +5,7 @@ import TableData from "./common/tableData";
 import BulkAction from "./allPosts/bulkAction";
 import Header from "./common/header";
 
-export default function AllPosts({
-  blogPosts,
-  setBlogPosts,
-  selectedThumbnail,
-}) {
+export default function AllPosts({ blogPosts, setBlogPosts }) {
   const [sortBy, setSortBy] = useState({ column: "title", order: "asc" });
   const [selectAll, setSelectAll] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
@@ -24,6 +20,7 @@ export default function AllPosts({
   const [postTrash, setPostTrash] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [hoveredPost, setHoveredPost] = useState(null);
+  const [userInitiatedSort, setUserInitiatedSort] = useState(false);
 
   useEffect(() => {
     // Update the trash posts whenever the blogPosts change
@@ -106,67 +103,6 @@ export default function AllPosts({
     setSearchResults(filteredPosts);
   };
 
-  const handleBulkAction = () => {
-    // Check if a bulk action is selected
-    if (selectedBulkAction === "-1") {
-      // Handle case where no action is selected
-      alert("Please select a bulk action.");
-      return;
-    }
-
-    // Find the posts that are checked (selected)
-    const selectedPosts = blogPosts.filter((post) => post.selected);
-
-    if (selectedPosts.length === 0) {
-      // Handle case where no posts are selected
-      alert("Please select one or more posts to apply the bulk action.");
-      return;
-    }
-
-    // Apply the selected bulk action
-    if (selectedBulkAction === "edit") {
-      // Handle the "Edit" action
-      console.log("Editing selected posts:", selectedPosts);
-    } else if (selectedBulkAction === "trash") {
-      // Handle the "Trash" action by calling handleTrashAction
-      handleTrashAction(selectedPosts); // This should call your handleTrashAction function
-    }
-
-    // Reset the bulk action dropdown to its default value
-    setSelectedBulkAction("-1");
-
-    // Uncheck all selected posts
-    const updatedPosts = blogPosts.map((post) => ({
-      ...post,
-      selected: false,
-    }));
-    setBlogPosts(updatedPosts);
-  };
-
-  const handleTrashAction = (selectedPosts) => {
-    if (selectedPosts.length === 0) {
-      // Handle case where no posts are selected
-      alert("Please select one or more posts to move to the trash.");
-      return;
-    }
-
-    // Create a set of IDs for selected posts for efficient lookup
-    const selectedPostIds = selectedPosts.map((post) => post.id);
-
-    // Update the status of selected posts to "trash"
-    const updatedPosts = blogPosts.map((post) => ({
-      ...post,
-      status: selectedPostIds.has(post.id) ? "trash" : post.status,
-    }));
-
-    // Update the state with the new status
-    setBlogPosts(updatedPosts);
-
-    // Clear the selection (optional)
-    resetIndividualPostCheckboxes();
-    setSelectAll(false);
-  };
-
   const filteredBlogPosts = blogPosts
     .filter((post) => {
       if (activeTab === "all") {
@@ -200,22 +136,18 @@ export default function AllPosts({
     const column = sortBy.column;
     const order = sortBy.order;
 
-    if (column === "title") {
-      const titleA = a.title.toLowerCase();
-      const titleB = b.title.toLowerCase();
-      if (order === "asc") {
-        return titleA.localeCompare(titleB);
-      } else {
-        return titleB.localeCompare(titleA);
-      }
-    } else if (column === "date") {
+    // if (column === "title") {
+    //   const titleA = a.title.toLowerCase();
+    //   const titleB = b.title.toLowerCase();
+    //   return order === "asc"
+    //     ? titleA.localeCompare(titleB)
+    //     : titleB.localeCompare(titleA);
+    // } else
+
+    if (column === "date") {
       const dateA = new Date(a.datePosted).getTime();
       const dateB = new Date(b.datePosted).getTime();
-      if (order === "asc") {
-        return dateA - dateB;
-      } else {
-        return dateB - dateA;
-      }
+      return order === "asc" ? dateA - dateB : dateB - dateA;
     }
 
     return 0;
@@ -315,7 +247,7 @@ export default function AllPosts({
         uniqueCategories={uniqueCategories}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-        handleBulkAction={handleBulkAction}
+        // handleBulkAction={handleBulkAction}
         selectedBulkAction={selectedBulkAction}
         setSelectedBulkAction={setSelectedBulkAction}
         // handleTrashAction={handleTrashAction}
@@ -337,7 +269,6 @@ export default function AllPosts({
           hoveredPost={hoveredPost}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
-          selectedThumbnail={selectedThumbnail}
         />
       </section>
       <div className="pagination">{renderPageNumbers}</div>

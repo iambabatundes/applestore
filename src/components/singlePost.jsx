@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getBlogPost } from "./blogPosts";
 import "../components/styles/singleBlog.css";
 import Comments from "./comments/Comments";
 
-export default function SinglePost() {
-  const [blogPost, setBlogPost] = useState([]);
+export default function SinglePost({ blogPosts, setBlogPosts }) {
   const initialComments = {
     currentUser: {
       username: "juliusomo",
@@ -60,6 +58,26 @@ export default function SinglePost() {
 
   const { title } = useParams();
 
+  function formatPermalink(title) {
+    return title.toLowerCase().replaceAll(" ", "-");
+  }
+
+  useEffect(() => {
+    // Fetch the updated blog posts when the component mounts
+    const updatedBlogPosts = blogPosts;
+
+    // Check if blogPosts is not undefined and not empty
+    if (updatedBlogPosts && updatedBlogPosts.length > 0) {
+      // Find and set the specific blog post by title
+      const post = updatedBlogPosts.find(
+        (post) => formatPermalink(post.title) === title
+      );
+
+      // Set the individual post, not the entire list
+      setBlogPosts(post);
+    }
+  }, [title, setBlogPosts, blogPosts]); // Add blogPosts as a dependency
+
   useEffect(() => {
     localStorage.getItem("comments") !== null
       ? updateComments(JSON.parse(localStorage.getItem("comments")))
@@ -73,11 +91,7 @@ export default function SinglePost() {
       : document.body.classList.remove("overflow--hidden");
   }, [comments, deleteModalState]);
 
-  useEffect(() => {
-    setBlogPost(getBlogPost(title));
-  }, []);
-
-  if (!blogPost) {
+  if (!blogPosts) {
     return <div>Loading...</div>;
   }
 
@@ -166,22 +180,22 @@ export default function SinglePost() {
     <section>
       <header
         className="singlePost__main"
-        style={{ backgroundImage: `url(${blogPost.image})` }}
+        style={{ backgroundImage: `url(${blogPosts.image})` }}
       >
         <div className="singlePost__container">
-          <h2 className="single-blog-post__title">{blogPost.title}</h2>
+          <h2 className="single-blog-post__title">{blogPosts.title}</h2>
           <div className="singlePost__tags">
             <span>
               <i className="fa fa-clock-o" aria-hidden="true"></i>
               <span className="single-blog-post__date">
-                {blogPost.datePosted}
+                {blogPosts.datePosted}
               </span>
             </span>
 
             <div className="singlePost__postedBy">
               <i className="fa fa-user" aria-hidden="true"></i>
               <span className="single-blog-post__author">
-                {blogPost.postedBy}
+                {blogPosts.postedBy}
               </span>
             </div>
 
@@ -200,10 +214,10 @@ export default function SinglePost() {
         <section className="singlePost__left">
           <img
             className="single-blog-post__image"
-            src={blogPost.image}
-            alt={blogPost.title}
+            src={blogPosts.image}
+            alt={blogPosts.title}
           />
-          <p className="single-blog-post__content">{blogPost.content}</p>
+          <p className="single-blog-post__content">{blogPosts.content}</p>
 
           <Comments
             updateReplies={updateReplies}
@@ -224,28 +238,28 @@ export default function SinglePost() {
             <div className="singlePost__recent">
               <img
                 className="singleBlog-recent__image"
-                src={blogPost.image}
-                alt={blogPost.title}
+                src={blogPosts.image}
+                alt={blogPosts.title}
               />
 
               <div className="singlePost__recent-main">
                 <Link>
                   <h2 className="singleBlog__recent-post__title">
-                    {blogPost.title}
+                    {blogPosts.title}
                   </h2>
                 </Link>
                 <div className="singlePost__recent-tag">
                   <section>
                     <i className="fa fa-clock-o" aria-hidden="true"></i>
                     <span className="single-blog-post__date">
-                      {blogPost.datePosted}
+                      {blogPosts.datePosted}
                     </span>
                   </section>
 
                   <section className="singlePost__recent-icon">
-                    <i class="fa fa-user" aria-hidden="true"></i>
+                    <i className="fa fa-user" aria-hidden="true"></i>
                     <span className="singlePost__recent-post__author">
-                      {blogPost.postedBy}
+                      {blogPosts.postedBy}
                     </span>
                   </section>
                 </div>

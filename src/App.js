@@ -17,8 +17,11 @@ import SingleProduct from "./components/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
 import Admin from "./components/backend/admin";
+import { getBlogPosts } from "../src/components/blogPosts";
+import Blog from "./components/blog";
 
 function App() {
+  const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
@@ -66,26 +69,6 @@ function App() {
     }
   };
 
-  // const addToCart = (item, quantity) => {
-  //   const updatedQuantities = {
-  //     ...selectedQuantities,
-  //     [item.id]: (selectedQuantities[item.id] || 0) + parseInt(quantity),
-  //   };
-
-  //   setCartItems((prevCartItems) => [
-  //     ...prevCartItems,
-  //     { ...item, quantity: parseInt(quantity) },
-  //   ]);
-  //   setSelectedQuantities(updatedQuantities);
-
-  //   // Reset QuantityTenPlus to default when an item is added
-  //   setQuantityTenPlus((prevQuantityTenPlus) => {
-  //     const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
-  //     updatedQuantityTenPlus[item.id] = undefined; // Reset QuantityTenPlus to default
-  //     return updatedQuantityTenPlus;
-  //   });
-  // };
-
   const handleDelete = (itemId) => {
     setCartItems((prevCartItems) => {
       const updatedCartItems = prevCartItems.filter(
@@ -118,6 +101,15 @@ function App() {
       return updatedQuantityTenPlus;
     });
   };
+
+  useEffect(() => {
+    const fetchedPosts = getBlogPosts();
+    const postsWithSelection = fetchedPosts.map((post) => ({
+      ...post,
+      selected: false,
+    }));
+    setBlogPosts(postsWithSelection);
+  }, []);
 
   useEffect(() => {
     const initialQuantities = {};
@@ -167,16 +159,36 @@ function App() {
               <Route
                 path="/"
                 exact
-                element={<Home addToCart={addToCart} cartItems={cartItems} />}
+                element={
+                  <Home
+                    addToCart={addToCart}
+                    cartItems={cartItems}
+                    blogPosts={blogPosts}
+                  />
+                }
               />
               <Route path="/shop" element={<Shop />} />
+              <Route
+                path="/blog"
+                element={
+                  <Blog blogPosts={blogPosts} setBlogPosts={setBlogPosts} />
+                }
+              />
               <Route
                 path="/product"
                 element={
                   <Product addToCart={addToCart} cartItems={cartItems} />
                 }
               />
-              <Route path="/blog/:title" element={<SinglePost />} />
+              <Route
+                path="/blog/:title"
+                element={
+                  <SinglePost
+                    blogPosts={blogPosts}
+                    setBlogPosts={setBlogPosts}
+                  />
+                }
+              />
               <Route path="/:title" exact element={<SingleProduct />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

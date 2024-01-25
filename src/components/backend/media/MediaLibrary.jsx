@@ -20,7 +20,6 @@ export default function MediaLibrary({
   setSelectedMediaDetails,
   selectedMediaDetails,
 }) {
-  // const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
   const [altText, setAltText] = useState("");
   const [title, setTitle] = useState("");
   const [fileLink, setFileLink] = useState("");
@@ -40,9 +39,14 @@ export default function MediaLibrary({
 
   const generateFileLink = (media) => {
     const siteOrigin = window.location.origin;
-    const fileName = media.fileName;
-    const fileExtension = media.fileType;
-    return `${siteOrigin}/admin/upload/${fileName}.${fileExtension}`;
+    const fileName = media.fileName; // Use the fileName property instead of dataUrl
+    const fileExtension =
+      media.fileType === "image"
+        ? ".jpg"
+        : media.fileType === "video"
+        ? ".mp4"
+        : ""; // Adjust based on your file types
+    return `${siteOrigin}/admin/upload/${fileName}${fileExtension}`;
   };
 
   const handleDeletePermanently = (mediaId) => {
@@ -75,6 +79,7 @@ export default function MediaLibrary({
           </div>
           <MediaSearch handleSearch={handleSearch} mediaSearch={mediaSearch} />
         </div>
+
         <div className="uploadGrid">
           {filteredMedia.map((media) => (
             <div
@@ -178,9 +183,9 @@ export default function MediaLibrary({
                 <p>{selectedMediaDetails.fileSize}</p>
                 <span
                   className="delete-parmently"
-                  onClick={() =>
-                    handleDeletePermanently(selectedMediaDetails.id)
-                  }
+                  // onClick={() =>
+                  //   handleDeletePermanently(selectedMediaDetails.id)
+                  // }
                 >
                   Delete parmently
                 </span>
@@ -197,6 +202,8 @@ export default function MediaLibrary({
                       id="attachment-details"
                       value={altText}
                       onChange={(e) => setAltText(e.target.value)}
+                      defaultValue={altText}
+                      // onChange={(e) => setAltText(e.target.value)}
                       // cols="10"
                       // rows="10"
                     ></textarea>
@@ -212,7 +219,7 @@ export default function MediaLibrary({
                     <input
                       type="text"
                       id="attachment-title"
-                      value={title || selectedMediaDetails.fileName}
+                      value={title || selectedMediaDetails.dataUrl}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </span>

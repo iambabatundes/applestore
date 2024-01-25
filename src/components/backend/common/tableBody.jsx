@@ -34,10 +34,10 @@ export default function TableBody({
             id={`title-${post.title}`}
             scope="col"
           >
-            <Link to={`/post/${formatPermalink(post.title)}`}>
-              {post.title}
+            <Link to={`/blog/${formatPermalink(post.title)}`}>
+              {post.title || "(notitle)"}
             </Link>
-            {hoveredPost === post && ( // Show options only when post is being hovered
+            {hoveredPost === post && (
               <div className="allPost-options">
                 <span onClick={() => onEdit(post.id)}>Edit</span>
                 <span onClick={() => onTrash(post.id)}>Trash</span>
@@ -64,11 +64,7 @@ export default function TableBody({
           </td>
 
           <td id={`featuredImage-${post.title}`} scope="col">
-            <img
-              src={post.image || selectedThumbnail.image}
-              alt={post.title}
-              className="featuredImage"
-            />
+            <img src={post.image} alt={post.title} className="featuredImage" />
           </td>
         </tr>
       ))}

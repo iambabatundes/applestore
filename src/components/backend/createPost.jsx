@@ -25,11 +25,9 @@ export default function CreatePost({
   handleSearch,
   mediaSearch,
   filteredMedia,
-  setBlogPosts,
   addNewPost,
   blogPosts,
-  selectedThumbnail,
-  setSelectedThumbnail,
+  setBlogPosts,
 }) {
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -74,6 +72,7 @@ export default function CreatePost({
   const [postToEdit, setPostToEdit] = useState(null);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedThumbnail, setSelectedThumbnail] = useState();
 
   const handleTagsChange = (tags) => {
     setSelectedTags(tags);
@@ -117,6 +116,10 @@ export default function CreatePost({
     setIsEditingVisibility(false);
   };
 
+  const handleThumbnailSelection = (media) => {
+    setSelectedThumbnail(media);
+  };
+
   useEffect(() => {
     // Check the network status when the component mounts
     setNetworkStatus(window.navigator.onLine);
@@ -155,7 +158,7 @@ export default function CreatePost({
         categories: postToEdit.categories,
         datePosted: postToEdit.datePosted,
         image: postToEdit.image,
-        postedBy: postToEdit.postby,
+        postedBy: postToEdit.postedby,
         // ... other fields
       });
     }
@@ -230,19 +233,19 @@ export default function CreatePost({
     const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
 
     // Update the datePosted property in the newPost state
-    setNewPost((prevPost) => ({ ...prevPost, datePosted: formattedDate }));
 
     // Add the details of the new post
     const newPosted = {
       ...newPost,
+      id: uuidv4(),
       title: newPost.title,
       categories: [...selectedCategories],
       tags: [...selectedTags],
       postedBy: newPost.postedBy,
-      image: selectedThumbnail,
+      image: [selectedThumbnail],
     };
 
-    setBlogPosts((prevPosts) => [...prevPosts, newPosted]);
+    setBlogPosts((prevPosts) => [newPosted, ...prevPosts]);
 
     const generateUniqueId = () => {
       return uuidv4();
@@ -272,9 +275,10 @@ export default function CreatePost({
     };
 
     // Call the addNewPost function to add the new post to the list
-    addNewPost(newPosted);
+    // addNewPost(newPosted);
 
     // Reset the form after adding the post
+
     setNewPost({
       title: "",
       content: "",
@@ -580,7 +584,7 @@ export default function CreatePost({
                 selectedDate={selectedDate}
                 uniqueDates={uniqueDates}
                 selectedThumbnail={selectedThumbnail}
-                setSelectedThumbnail={setSelectedThumbnail}
+                setSelectedThumbnail={handleThumbnailSelection}
               />
             )}
           </div>

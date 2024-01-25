@@ -2,6 +2,7 @@ const blogPosts = [
   {
     id: 1,
     title: "The Benefits of Eating Apples",
+    fileType: "image",
     content:
       "Apples are packed with nutrients and offer various health benefits. They are rich in antioxidants, fiber...",
     image: "/apple6.jpg",
@@ -14,6 +15,7 @@ const blogPosts = [
   {
     id: 2,
     title: "Delicious Apple Recipes for Every Occasion",
+    fileType: "image",
     content:
       "From mouth-watering apple pies to refreshing apple salads, there are countless ways to enjoy this versatile fruit...",
     image: "/apple3.jpg",
@@ -29,6 +31,7 @@ const blogPosts = [
     content:
       "Have you ever wondered how apples make their way from the orchard to your table? Join us on a fascinating journey as we explore the apple harvesting process, sorting...",
     image: "/apple1.jpg",
+    fileType: "image",
     datePosted: "May 25, 2023",
     categories: ["fruit", "bag"],
     tags: ["apple", "orange", "Mango"],
@@ -39,6 +42,18 @@ const blogPosts = [
     id: 4,
     title: "I want to get is done",
     content: "Understanding the process",
+    fileType: "image",
+    image: "/apple1.jpg",
+    datePosted: "May 25, 2023",
+    postedBy: "Admin",
+    status: "trash",
+  },
+
+  {
+    id: 4,
+    title: "I want to get is done",
+    content: "Understanding the process",
+    fileType: "image",
     image: "/apple1.jpg",
     datePosted: "May 25, 2023",
     postedBy: "Admin",

@@ -17,7 +17,7 @@ export default function MediaLibraryUpload({
             className={`media-item ${
               selectedMedia.includes(media.id) ? "selected" : ""
             }`}
-            // onClick={() => uploadMediaModel(media.id)}
+            onClick={() => uploadMediaModel(media.id)}
           >
             {media.fileType === "image" && (
               <img

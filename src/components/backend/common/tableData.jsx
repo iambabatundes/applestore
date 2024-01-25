@@ -17,7 +17,6 @@ export default function TableData({
   hoveredPost,
   handleMouseEnter,
   handleMouseLeave,
-  selectedThumbnail,
 }) {
   return (
     <table className="allPost-table post-list">
@@ -38,7 +37,6 @@ export default function TableData({
         onTrash={onTrash}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
-        selectedThumbnail={selectedThumbnail}
       />
     </table>
   );

@@ -87,22 +87,12 @@ export default function SingleProduct() {
     // Get at least 6 images and one video for the thumbnail display
     const thumbnailMedia = Object.values(product?.productDatas || {});
 
-    if (product.video) {
+    if (product?.video) {
       thumbnailMedia.push(product.video.video);
     }
 
     return thumbnailMedia.slice(0, 7);
   };
-
-  // const mainVideo = product.video
-  //   ? { src: product?.video.video, title: product.video.title }
-  //   : product.image;
-
-  // const mainVideo = product
-  //   ? product.video
-  //     ? { src: product?.video.video, title: product.video.title }
-  //     : product.image
-  //   : null; // or a default value
 
   const mainVideo = product?.video
     ? { src: product?.video?.video, title: product?.video?.title }
@@ -219,7 +209,7 @@ export default function SingleProduct() {
         </section>
 
         <div>
-          <h1>{product.title}</h1>
+          <h1>{product?.title}</h1>
         </div>
         <div>
           <h1>This is for the AddCart side</h1>

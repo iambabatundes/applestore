@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { getBlogPosts } from "./blogPosts";
 import "../components/styles/blog.css";
+import { getBlogPosts } from "./blogPosts";
 
 export default function Blog() {
   const [blogPosts, setBlogPosts] = useState([]);
 
   useEffect(() => {
-    setBlogPosts(getBlogPosts);
+    // Fetch blog posts from the fake backend
+    const fetchedBlogPosts = getBlogPosts();
+    setBlogPosts(fetchedBlogPosts);
   }, []);
 
   function formatPermalink(title) {

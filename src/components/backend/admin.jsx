@@ -36,7 +36,7 @@ const Admin = ({ companyName, count }) => {
   const [selectedDate, setSelectedDate] = useState("");
   const [mediaSearch, setMediaSearch] = useState("");
   const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
-  const [selectedThumbnail, setSelectedThumbnail] = useState([]);
+  // const [selectedThumbnail, setSelectedThumbnail] = useState([]);
 
   useEffect(() => {
     const fetchedPosts = getBlogPosts();
@@ -111,7 +111,7 @@ const Admin = ({ companyName, count }) => {
     {
       label: "Dashboard",
       to: "/admin/home",
-      content: null,
+      content: <Dashboard />,
       icon: "fa-tachometer",
       dropdown: [
         { label: "Home", to: "/admin/home", content: <Dashboard /> },
@@ -123,17 +123,13 @@ const Admin = ({ companyName, count }) => {
       label: "Posts",
       to: "/admin/posts",
       icon: "fa-pencil-square-o",
-      content: null,
+      content: <AllPosts blogPosts={blogPosts} setBlogPosts={setBlogPosts} />,
       dropdown: [
         {
           label: "All Posts",
           to: "/admin/posts",
           content: (
-            <AllPosts
-              blogPosts={blogPosts}
-              setBlogPosts={setBlogPosts}
-              selectedThumbnail={selectedThumbnail}
-            />
+            <AllPosts blogPosts={blogPosts} setBlogPosts={setBlogPosts} />
           ),
         },
         {
@@ -153,11 +149,8 @@ const Admin = ({ companyName, count }) => {
               blogPosts={blogPosts}
               setBlogPosts={setBlogPosts}
               addNewPost={(newPost) => {
-                setBlogPosts((prevPosts) => [...prevPosts, newPost]);
-                // console.log("The post has been published", blogPosts);
+                setBlogPosts((prevPosts) => [newPost, ...prevPosts]);
               }}
-              selectedThumbnail={selectedThumbnail}
-              setSelectedThumbnail={setSelectedThumbnail}
             />
           ),
         },
@@ -176,7 +169,7 @@ const Admin = ({ companyName, count }) => {
             <Upload
               loading={loading}
               setLoading={setLoading}
-              mediaData={mediaData}
+              // mediaData={mediaData}
               setMediaData={setMediaData}
               uniqueDates={uniqueDates}
               setUniqueDates={setUniqueDates}
@@ -190,6 +183,7 @@ const Admin = ({ companyName, count }) => {
               filteredMedia={filteredMedia}
               handleSearch={handleSearch}
               mediaSearch={mediaSearch}
+              blogPosts={blogPosts}
             />
           ),
         },
@@ -203,7 +197,7 @@ const Admin = ({ companyName, count }) => {
     {
       label: "Products",
       to: "/admin/products",
-      content: null,
+      content: <ProductEdit />,
       icon: "fa-tag",
       dropdown: [
         {
@@ -223,7 +217,7 @@ const Admin = ({ companyName, count }) => {
       label: "Pages",
       to: "/admin/all-pages", // Corrected URL
       icon: "fa-file",
-      content: null,
+      content: <AllPages />,
       dropdown: [
         {
           label: "All Pages",
@@ -241,7 +235,7 @@ const Admin = ({ companyName, count }) => {
       label: "Users",
       to: "/admin/all-users", // Corrected URL
       icon: "fa-users",
-      content: null,
+      content: <AllUsers />,
       dropdown: [
         {
           label: "All Users",
@@ -264,7 +258,7 @@ const Admin = ({ companyName, count }) => {
       label: "Settings",
       to: "/admin/general", // Corrected URL
       icon: "fa-cog",
-      content: null,
+      content: <GeneralSettings />,
       dropdown: [
         {
           label: "General Settings",
@@ -304,9 +298,6 @@ const Admin = ({ companyName, count }) => {
             {sidebarLinks.map((link) => (
               <Route key={link.to} path={link.to} element={link.content} />
             ))}
-          </Routes>
-
-          <Routes>
             {sidebarLinks.flatMap((link) =>
               link.dropdown.map((submenu) => (
                 <Route

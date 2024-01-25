@@ -9,7 +9,7 @@ import FaqSection from "./faqSection";
 import Blog from "./blog";
 import Newsletter from "./Newsletter";
 
-function Home({ addToCart, cartItems }) {
+function Home({ addToCart, cartItems, blogPosts }) {
   return (
     <section>
       <HomeSlider />
@@ -17,7 +17,7 @@ function Home({ addToCart, cartItems }) {
       <Feactured />
       <Product addToCart={addToCart} cartItems={cartItems} />
       <FaqSection />
-      <Blog />
+      <Blog blogPosts={blogPosts} />
       <Newsletter />
     </section>
   );

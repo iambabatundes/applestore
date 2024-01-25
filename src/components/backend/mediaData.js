@@ -22,27 +22,25 @@ const mediaData = [
   },
   {
     id: 3,
-    fileName: "image",
+    fileName: "",
     author: "applestore",
     fileSize: "20kb",
     fileType: "image",
     date: "October 2022",
-    dataUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    dataUrl: "/apple3.jpg",
   },
   {
     id: 4,
-    fileName: "image",
+    // fileName: "image",
     fileType: "image",
     author: "applestore",
     fileSize: "20kb",
     date: "November 2023",
-    dataUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    dataUrl: "/apple1.jpg",
   },
   {
     id: 5,
-    fileName: "image",
+    // fileName: "image",
     fileType: "image",
     author: "applestore",
     fileSize: "20kb",
@@ -52,7 +50,7 @@ const mediaData = [
   },
   {
     id: 6,
-    fileName: "image",
+    // fileName: "image",
     author: "applestore",
     fileSize: "20kb",
     fileType: "image",
@@ -62,7 +60,7 @@ const mediaData = [
   },
   {
     id: 7,
-    fileName: "image",
+    // fileName: "image",
     author: "applestore",
     fileType: "image",
     fileSize: "20kb",
@@ -72,7 +70,7 @@ const mediaData = [
   },
   {
     id: 8,
-    fileName: "image",
+    // fileName: "image",
     author: "applestore",
     fileType: "image",
     fileSize: "20kb",
@@ -83,7 +81,7 @@ const mediaData = [
 
   {
     id: 9,
-    fileName: "images",
+    // fileName: "images",
     author: "applestore",
     fileType: "image",
     fileSize: "20kb",
