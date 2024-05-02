@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/posts.css";
+import "../../backend/styles/dataTable.css";
 import { Link } from "react-router-dom";
 import Table from "../common/table";
 
@@ -14,13 +14,13 @@ export default function TagTable({
 }) {
   const columns = [
     {
-      label: "name",
+      label: "Name",
       path: "name",
       sortable: true,
       content: (tag) => <Link to={`/tags/${tag._id}`}>{tag.name}</Link>,
     },
 
-    { label: "Description", path: "Description" },
+    { label: "Description", path: "description" },
     { label: "Slug", path: "slug" },
     {
       label: "Count",

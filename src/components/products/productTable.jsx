@@ -1,10 +1,10 @@
 import React from "react";
-import "../../backend/styles/dataTable.css";
+// import "../styles/posts.css";
+import "../backend/styles/dataTable.css";
 import { Link } from "react-router-dom";
-import Table from "./table";
+import Table from "../backend/common/table";
 
-export default function TableData({
-  handleSort,
+export default function ProductTable({
   currentPosts,
   onDelete,
   onPreview,
@@ -17,9 +17,14 @@ export default function TableData({
       label: "Title",
       path: "title",
       sortable: true,
-      content: (post) => <Link to={`/blog/${post._id}`}>{post.title}</Link>,
+      content: (product) => (
+        <Link to={`/blog/${product._id}`}>{product.title}</Link>
+      ),
     },
-    { label: "Author", path: "postedBy" },
+    { label: "SKU", path: "sku" },
+    { label: "In Stock", path: "numberInStock" },
+    { label: "Price", path: "price" },
+    { label: "Sale Price", path: "salePrice" },
     { label: "Categories", path: "categories" },
     { label: "Tags", path: "tags" },
     { label: "Review", path: "review" },
@@ -58,7 +63,6 @@ export default function TableData({
     <Table
       columns={columns}
       data={currentPosts}
-      handleSort={handleSort}
       onSort={onSort}
       sortColumn={sortColumn}
     />

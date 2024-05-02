@@ -15,7 +15,14 @@ export default function Input({
   type,
   textarea,
   fieldInput,
+  select,
+  options,
+  flattenedCategories,
 }) {
+  const handleChange = (e) => {
+    const selectedValue = e.target.value;
+    setFieldValue(name, selectedValue);
+  };
   return (
     <div className={`checkout-add__address ${className}`}>
       {fieldInput && (
@@ -47,6 +54,19 @@ export default function Input({
           rows="10"
           // className="textareas"
         ></textarea>
+      )}
+
+      {select && (
+        <select name={name} id={name} value={value} onChange={handleChange}>
+          <option value="">{placeholder}</option>
+          {flattenedCategories.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.depth > 0
+                ? `${"\u00A0".repeat(item.depth * 2)}${item.name}`
+                : item.name}
+            </option>
+          ))}
+        </select>
       )}
       {tooltip && <span className={`tooltip-title`}>{tooltipTitle}</span>}
     </div>

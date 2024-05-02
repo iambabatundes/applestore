@@ -12,6 +12,9 @@ export default function InputField({
   className,
   textarea,
   fieldInput,
+  select,
+  // options,
+  flattenedCategories,
 }) {
   return (
     <section>
@@ -31,6 +34,9 @@ export default function InputField({
               input={input}
               type={type}
               textarea={textarea}
+              select={select}
+              // options={options}
+              flattenedCategories={flattenedCategories}
             />
 
             <ErrorMessage name={name} component="div" />

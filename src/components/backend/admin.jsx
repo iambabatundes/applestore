@@ -23,6 +23,7 @@ import ProductEdit from "./productEdit";
 import { getMediaDatas } from "./mediaData";
 import { getBlogPosts } from "../blogPosts";
 import AddTags from "./addTags";
+import AddCategories from "./categories/addCategory";
 
 const Admin = ({ companyName, count }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -223,13 +224,7 @@ const Admin = ({ companyName, count }) => {
       dropdown: [
         {
           label: "All Products",
-          to: "/admin/products",
-          content: <ProductEdit />,
-        },
-
-        {
-          label: "All Products",
-          to: "/admin/products",
+          to: "/admin/all-products",
           content: <AllProduct />,
         },
 
@@ -238,6 +233,12 @@ const Admin = ({ companyName, count }) => {
           to: "/admin/add-product",
           content: <AddProduct />,
         },
+        {
+          label: "Categories",
+          to: "/admin/add-categories",
+          content: <AddCategories />,
+        },
+
         {
           label: "Tags",
           to: "/admin/add-tags",

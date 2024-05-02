@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 
-import Header from "./common/header";
-// import "./tags/styles/styles.css";
-// import "../common/styles/cateTagStyle.css";
-import "../backend/styles/cateTagStyle.css";
-import InputForm from "../common/inputForm";
-import InputText from "../common/inputText";
-import InputField from "../common/inputField";
+import Header from "../common/header";
+// import "../tags/styles/styles.css";
+import "../../backend/styles/cateTagStyle.css";
+import InputForm from "../../common/inputForm";
+import InputText from "../../common/inputText";
+import InputField from "../../common/inputField";
 import { ErrorMessage } from "formik";
-import Button from "../common/button";
-import TagTable from "./tags/tagTable";
-import SearchBox from "./common/searchBox";
-import { paginate } from "../utils/paginate";
-import Pagination from "./common/pagination";
-import { getTags } from "../tags";
+import Button from "../../common/button";
+import TagTable from "../tags/tagTable";
+import SearchBox from "../common/searchBox";
+import { paginate } from "../../utils/paginate";
+import Pagination from "../common/pagination";
+import { getCategories } from "../../categoryData";
 
-export default function AddTags({ className }) {
-  const [tags, setTags] = useState([]);
+export default function AddCategories({ className }) {
+  const [categories, setCategories] = useState([]);
   const [sortColumn, setSortColumn] = useState({ path: "name", order: "asc" });
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(2);
 
   useEffect(() => {
-    setTags(getTags);
-  }, [tags]);
+    setCategories(getCategories);
+  }, [categories]);
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -40,10 +39,26 @@ export default function AddTags({ className }) {
   function handlePreview() {}
   function handleEdit() {}
 
-  let filtered = tags;
+  const flattenCategories = (categories, depth = 0) => {
+    let flatCategories = [];
+    categories.forEach((category) => {
+      flatCategories.push({ ...category, depth });
+      if (category.subcategories) {
+        flatCategories = [
+          ...flatCategories,
+          ...flattenCategories(category.subcategories, depth + 1),
+        ];
+      }
+    });
+    return flatCategories;
+  };
+
+  const flattenedCategories = flattenCategories(categories);
+
+  let filtered = categories;
   if (searchQuery)
-    filtered = tags.filter((t) =>
-      t.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    filtered = categories.filter((c) =>
+      c.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
   const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
@@ -51,22 +66,23 @@ export default function AddTags({ className }) {
   const totalItems = filtered.length;
   const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
 
-  const alltags = paginationEnabled
+  const allCategories = paginationEnabled
     ? paginate(sorted, currentPage, pageSize)
     : sorted;
 
   return (
     <section className="padding">
-      <Header headerTitle="Product Tags" />
+      <Header headerTitle="Product Categories" />
 
       <section className={`${className} tag-header`}>
         <article>
           {/* <ModalHeading title="Add New Tag" /> */}
-          <h1>Add New Tag</h1>
+          <h1>Add New Category</h1>
           <InputForm
             initialValues={{
               name: "",
               slug: "",
+              parentCategory: "",
               description: "",
             }}
             // validationSchema={val}
@@ -110,6 +126,25 @@ export default function AddTags({ className }) {
                 />
 
                 <InputText
+                  name="parentCategory"
+                  labelTitle="Parent Category"
+                  className="labelTitle"
+                />
+
+                <InputField
+                  name="category"
+                  placeholder="None"
+                  setFieldValue={setFieldValue}
+                  tooltip
+                  select
+                  flattenedCategories={flattenedCategories}
+                  //   options={categories}
+                  className="category-select tooltip"
+                  type="select"
+                  tooltipTitle="Assign a parent term to create a hierarchy. The term Jazz, for example, would be the parent of Bebop and Big Band."
+                />
+
+                <InputText
                   name="description"
                   labelTitle="Description"
                   className="labelTitle"
@@ -127,7 +162,7 @@ export default function AddTags({ className }) {
                   disabled={isSubmitting}
                   className="addButton"
                 >
-                  Add new tag
+                  Add new category
                 </Button>
               </>
             )}
@@ -148,7 +183,7 @@ export default function AddTags({ className }) {
             onDelete={handleDelete}
             onEdit={handleEdit}
             onPreview={handlePreview}
-            currentPosts={alltags}
+            currentPosts={allCategories}
           />
 
           <Pagination

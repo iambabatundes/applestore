@@ -1,40 +1,40 @@
-.allPost {
+.dataTable {
     padding: 15px 18px;
 }
 
 /* Filter the Post by All, Publish, Trash, Draft and search bar */
 
-.allPost-filtered {
+.dataTable-filtered {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 10px;
 }
 
-.allPost__filter {
+.dataTable__filter {
     display: flex;
     gap: 10px;
     color: #2271b1;
     font-size: 15px;
 }
 
-.allPost__filter li {
+.dataTable__filter li {
     cursor: pointer;
 }
 
-/* .allPost-search {
+/* .dataTable-search {
     padding: 5px 5px;
 } */
 
-.allPost-input,
-.allPost-search-btn {
+.dataTable-input,
+.dataTable-search-btn {
     padding: 5px;
     border-radius: 3px;
     border: 1px solid #2271b1;
     font-size: 15px;
 }
 
-.allPost-search-btn {
+.dataTable-search-btn {
     margin-left: 5px;
     color: #2271b1;
     cursor: pointer;
@@ -42,14 +42,14 @@
 
 /* Filter all post by date and categories and also bulk actions */
 
-.allPost-post__filtered {
+.dataTable-post__filtered {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 8px;
 }
 
-.allPost-filter__action {
+.dataTable-filter__action {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -58,22 +58,22 @@
 
 }
 
-.allPost-filtered__action select,
-.allPost-filter__action-btn {
+.dataTable-filtered__action select,
+.dataTable-filter__action-btn {
     border: 1px solid #2271b1;
     border-radius: 5px;
     color: #2271b1;
     cursor: pointer;
 }
 
-.allPost-filtered__action select {
+.dataTable-filtered__action select {
     padding: 7px 6px;
     border-radius: 5px;
     margin-right: 5px;
     color: #2271b1;
 }
 
-.allPost-filter__action-btn {
+.dataTable-filter__action-btn {
     padding: 4px 8px;
     border-radius: 5px;
     background: #fff;
@@ -87,7 +87,7 @@
 
 /* table section */
 
-.allPost-table {
+.dataTable-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
@@ -96,17 +96,17 @@
     padding: 15px 0;
 }
 
-.allPost-table thead {
+.dataTable-table thead {
     background: #fff;
     padding: 10px;
 }
 
-.allPost-table thead th {
+.dataTable-table thead th {
     padding: 10px 15px;
 }
 
-.allPost-table th,
-.allPost-table td {
+.dataTable-table th,
+.dataTable-table td {
     border: 1px solid #e5e5e5;
     padding: 10px;
     text-align: left;
@@ -116,16 +116,16 @@
     width: 35%;
 }
 
-.allPost-table th {
+.dataTable-table th {
     background-color: #f5f5f5;
     font-weight: bold;
 }
 
-.allPost-table tbody tr:nth-child(even) {
+.dataTable-table tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
-.allPost-table tbody tr:hover {
+.dataTable-table tbody tr:hover {
     background-color: #e5e5e5;
 }
 

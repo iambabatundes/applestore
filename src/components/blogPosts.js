@@ -2,9 +2,9 @@ const blogPosts = [
   {
     id: 1,
     title: "The Benefits of Eating Apples",
-    fileType: "image",
     content:
       "Apples are packed with nutrients and offer various health benefits. They are rich in antioxidants, fiber...",
+    fileType: "image",
     image: "/apple6.jpg",
     datePosted: "May 15, 2023",
     postedBy: "Admin",
