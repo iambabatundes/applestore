@@ -1,0 +1,81 @@
+.tag-header {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    grid-gap: 20px;
+}
+
+.labelTitle {
+    margin-top: 14px;
+    height: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.labelTitle {
+    margin-top: 14px;
+    /* margin-bottom: 50px; */
+    /* width: 80%; */
+    height: 20px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.tooltip {
+    display: flex;
+    flex-direction: column;
+    /* height: 35px; */
+}
+
+.tooltip input {
+    width: 95%;
+    height: 35px;
+    outline: 0;
+    padding: 3px 7px;
+    border: 1px solid #888C8C;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.tooltip input:focus {
+    border-color: dodgerblue;
+    border-width: 1.5px;
+}
+
+.textareas textarea {
+    border-radius: 5px;
+    padding: 10px;
+    line-height: 100%;
+    border: 1px solid hsl(218, 4%, 56%);
+    outline: none;
+    box-shadow: 0 1px 2px rgba(15, 17, 17, .15) inset;
+    transition: border-color 0.2s ease-in-out;
+
+    /* height: 30px; */
+}
+
+.textareas textarea:focus {
+    border-color: dodgerblue;
+    border-width: 1.5px;
+}
+
+.tooltip-title {
+    font-size: 10px;
+}
+
+.addButton {
+    background: #cc1c39;
+    border: 1px solid #cc1c39;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+    margin-top: 20px;
+    padding: 5px 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(15, 17, 17, .15);
+
+}
+
+.addButton:hover {
+    background: #9b0a22;
+}

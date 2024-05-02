@@ -202,7 +202,7 @@ export default function MediaLibrary({
                       id="attachment-details"
                       value={altText}
                       onChange={(e) => setAltText(e.target.value)}
-                      defaultValue={altText}
+                      // defaultValue={altText}
                       // onChange={(e) => setAltText(e.target.value)}
                       // cols="10"
                       // rows="10"

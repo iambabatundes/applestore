@@ -1,6 +1,5 @@
 import React from "react";
 import { Field, ErrorMessage } from "formik";
-import InputText from "./inputText";
 import Input from "./input";
 
 export default function InputField({
@@ -11,6 +10,8 @@ export default function InputField({
   input,
   type,
   className,
+  textarea,
+  fieldInput,
 }) {
   return (
     <section>
@@ -23,12 +24,15 @@ export default function InputField({
               className={`${className}`}
               setFieldValue={form.setFieldValue}
               value={field.value}
+              fieldInput={fieldInput}
               tooltip={tooltip}
               tooltipTitle={tooltipTitle}
               placeholder={placeholder}
               input={input}
               type={type}
+              textarea={textarea}
             />
+
             <ErrorMessage name={name} component="div" />
           </div>
         )}

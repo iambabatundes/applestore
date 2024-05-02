@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { ErrorMessage } from "formik";
 import { AddressSchema } from "./utils/validation";
 import AutoFillForm from "./autoFillForm";
 import "../../components/styles/checkout.css";
@@ -50,7 +50,7 @@ export default function AddAddress({
                 labelTitle="Country/Region"
                 className="checkout-address"
               />
-              <InputField name="country" type="country" />
+              <InputField name="country" type="country" fieldInput />
               <ErrorMessage name="country" />
 
               <InputText
@@ -58,7 +58,7 @@ export default function AddAddress({
                 labelTitle="Full name (First and Last name)"
                 className="checkout-address"
               />
-              <InputField name="fullName" type="text" />
+              <InputField name="fullName" type="text" fieldInput />
 
               <InputText
                 name="phoneNumber"
@@ -67,6 +67,7 @@ export default function AddAddress({
               />
               <InputField
                 name="phoneNumber"
+                fieldInput
                 tooltip
                 tooltipTitle="May be used to assist delivery"
                 type="number"
@@ -80,6 +81,7 @@ export default function AddAddress({
               />
               <InputField
                 name="address"
+                fieldInput
                 placeholder="Street Address, P.O. Box or company name, c/o"
                 input
                 type="text"
@@ -91,26 +93,36 @@ export default function AddAddress({
                 labelTitle="State / Province / Region"
                 className="checkout-address"
               />
-              <InputField name="state" type="state" />
+              <InputField
+                name="state"
+                type="state"
+                fieldInput
+                className="checkout-add__address"
+              />
 
               <InputText
                 name="city"
                 labelTitle="City"
                 className="checkout-address"
               />
-              <InputField name="city" />
+              <InputField
+                name="city"
+                fieldInput
+                className="checkout-add__address"
+              />
 
               <InputText
                 name="zipCode"
                 labelTitle="Zip Code"
                 className="checkout-address"
               />
-              <InputField name="zipCode" />
+              <InputField name="zipCode" fieldInput />
 
               <InputField
                 name="makeDefault"
                 type="checkbox"
                 className="makeDefault"
+                fieldInput
               />
               <InputText
                 name="makeDefault"

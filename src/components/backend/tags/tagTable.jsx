@@ -1,9 +1,9 @@
 import React from "react";
 import "../styles/posts.css";
 import { Link } from "react-router-dom";
-import Table from "./table";
+import Table from "../common/table";
 
-export default function TableData({
+export default function TagTable({
   handleSort,
   currentPosts,
   onDelete,
@@ -14,39 +14,37 @@ export default function TableData({
 }) {
   const columns = [
     {
-      label: "Title",
-      path: "title",
+      label: "name",
+      path: "name",
       sortable: true,
-      content: (post) => <Link to={`/blog/${post._id}`}>{post.title}</Link>,
+      content: (tag) => <Link to={`/tags/${tag._id}`}>{tag.name}</Link>,
     },
-    { label: "Author", path: "postedBy" },
-    { label: "Categories", path: "categories" },
-    { label: "Tags", path: "tags" },
-    { label: "Review", path: "review" },
-    { label: "Date", path: "datePosted" },
+
+    { label: "Description", path: "Description" },
+    { label: "Slug", path: "slug" },
     {
-      label: "Thumbnail",
-      path: "image",
-      content: (data) => <img src={data.image} alt={data.title} width={50} />,
+      label: "Count",
+      path: "count",
+      content: (tag) => <Link to={`/product/${tag._id}`}>{tag.count}</Link>,
     },
 
     {
-      content: (post) => (
+      content: (tag) => (
         <>
           <i
             className="fa fa-edit"
             aria-hidden="true"
-            onClick={() => onEdit(post)}
+            onClick={() => onEdit(tag)}
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
-            onClick={() => onPreview(post)}
+            onClick={() => onPreview(tag)}
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
-            onClick={() => onDelete(post)}
+            onClick={() => onDelete(tag)}
           ></i>
         </>
       ),

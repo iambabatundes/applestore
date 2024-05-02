@@ -22,6 +22,7 @@ import AdminSidebar from "./adminSidebar";
 import ProductEdit from "./productEdit";
 import { getMediaDatas } from "./mediaData";
 import { getBlogPosts } from "../blogPosts";
+import AddTags from "./addTags";
 
 const Admin = ({ companyName, count }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -159,7 +160,27 @@ const Admin = ({ companyName, count }) => {
     {
       label: "Media",
       to: "/admin/upload",
-      content: null,
+      content: (
+        <Upload
+          loading={loading}
+          setLoading={setLoading}
+          // mediaData={mediaData}
+          setMediaData={setMediaData}
+          uniqueDates={uniqueDates}
+          setUniqueDates={setUniqueDates}
+          selectedMedia={selectedMedia}
+          maxFileSize={maxFileSize}
+          setMaxFileSize={setMaxFileSize}
+          handleDateChange={handleDateChange}
+          handleFilterChange={handleFilterChange}
+          selectedDate={selectedDate}
+          selectedFilter={selectedFilter}
+          filteredMedia={filteredMedia}
+          handleSearch={handleSearch}
+          mediaSearch={mediaSearch}
+          blogPosts={blogPosts}
+        />
+      ),
       icon: "fa-tag",
       dropdown: [
         {
@@ -196,8 +217,8 @@ const Admin = ({ companyName, count }) => {
     },
     {
       label: "Products",
-      to: "/admin/products",
-      content: <ProductEdit />,
+      to: "/admin/all-products",
+      content: <AllProduct />,
       icon: "fa-tag",
       dropdown: [
         {
@@ -205,10 +226,22 @@ const Admin = ({ companyName, count }) => {
           to: "/admin/products",
           content: <ProductEdit />,
         },
+
+        {
+          label: "All Products",
+          to: "/admin/products",
+          content: <AllProduct />,
+        },
+
         {
           label: "Add Product",
           to: "/admin/add-product",
           content: <AddProduct />,
+        },
+        {
+          label: "Tags",
+          to: "/admin/add-tags",
+          content: <AddTags />,
         },
       ],
     },

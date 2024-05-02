@@ -242,7 +242,7 @@ export default function CreatePost({
       categories: [...selectedCategories],
       tags: [...selectedTags],
       postedBy: newPost.postedBy,
-      image: [selectedThumbnail],
+      image: selectedThumbnail,
     };
 
     setBlogPosts((prevPosts) => [newPosted, ...prevPosts]);
@@ -283,7 +283,7 @@ export default function CreatePost({
       title: "",
       content: "",
       tags: [],
-      image: selectedThumbnail,
+      image: "",
       categories: [],
       postedBy: "",
       datePosted: formattedDate,

@@ -219,7 +219,7 @@ li {
     flex-direction: column;
 }
 
-.phoneNumber-tooltip {
+.tooltip-title {
     font-size: 10px;
 }
 
@@ -237,7 +237,7 @@ li {
 } */
 
 .checkout-add__address input {
-    width: 80%;
+    width: 90%;
     height: 35px;
     outline: 0;
     padding: 3px 7px;
@@ -255,13 +255,13 @@ li {
 }
 
 /* Style the focus state of the inputs */
-.active-input:focus {
+/* .active-input:focus {
     border-color: dodgerblue;
-}
+} */
 
-input:focus {
+/* input:focus {
     border-color: dodgerblue;
-}
+} */
 
 .error-input {
     border-color: #cc1c39;

@@ -13,27 +13,42 @@ export default function Input({
   placeholder,
   input,
   type,
+  textarea,
+  fieldInput,
 }) {
   return (
     <div className={`checkout-add__address ${className}`}>
-      <input
-        className={`${
-          meta.touched && meta.error ? "error-input" : "active-input"
-        }`}
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={(e) => setFieldValue(name, e.target.value)}
-        placeholder={placeholder}
-      />
+      {fieldInput && (
+        <input
+          className={`${
+            meta.touched && meta.error ? "error-input" : "active-input"
+          }`}
+          type={type}
+          id={name}
+          name={name}
+          value={value}
+          onChange={(e) => setFieldValue(name, e.target.value)}
+          placeholder={placeholder}
+        />
+      )}
       {input && (
         <input
           className="address-field"
           placeholder="Apt, suite, unit, building, floor, etc."
         />
       )}
-      {tooltip && <span className="phoneNumber-tooltip">{tooltipTitle}</span>}
+
+      {textarea && (
+        <textarea
+          id={name}
+          name={name}
+          cols="30"
+          key={name}
+          rows="10"
+          // className="textareas"
+        ></textarea>
+      )}
+      {tooltip && <span className={`tooltip-title`}>{tooltipTitle}</span>}
     </div>
   );
 }
