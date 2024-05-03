@@ -9,18 +9,19 @@ import InputText from "../../common/inputText";
 import InputField from "../../common/inputField";
 import { ErrorMessage } from "formik";
 import Button from "../../common/button";
-import TagTable from "../tags/tagTable";
+import TagTable from "../tags/TagTable";
 import SearchBox from "../common/searchBox";
 import { paginate } from "../../utils/paginate";
 import Pagination from "../common/pagination";
 import { getCategories } from "../../categoryData";
+import CategoryTable from "./categoryTable";
 
 export default function AddCategories({ className }) {
   const [categories, setCategories] = useState([]);
   const [sortColumn, setSortColumn] = useState({ path: "name", order: "asc" });
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(2);
+  const [pageSize] = useState(8);
 
   useEffect(() => {
     setCategories(getCategories);
@@ -55,9 +56,9 @@ export default function AddCategories({ className }) {
 
   const flattenedCategories = flattenCategories(categories);
 
-  let filtered = categories;
+  let filtered = flattenedCategories;
   if (searchQuery)
-    filtered = categories.filter((c) =>
+    filtered = flattenedCategories.filter((c) =>
       c.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
@@ -103,7 +104,7 @@ export default function AddCategories({ className }) {
                 <InputField
                   name="name"
                   type="name"
-                  placeholder="Tags name hear"
+                  placeholder=""
                   fieldInput
                   tooltip
                   tooltipTitle="The name is how it appears on your site."
@@ -177,13 +178,13 @@ export default function AddCategories({ className }) {
             </span>
           </span>
 
-          <TagTable
+          <CategoryTable
             onSort={handleSort}
             sortColumn={sortColumn}
             onDelete={handleDelete}
             onEdit={handleEdit}
             onPreview={handlePreview}
-            currentPosts={allCategories}
+            data={allCategories}
           />
 
           <Pagination

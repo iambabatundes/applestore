@@ -5,7 +5,7 @@ import Table from "../common/table";
 
 export default function TagTable({
   handleSort,
-  currentPosts,
+  data,
   onDelete,
   onPreview,
   onEdit,
@@ -55,7 +55,7 @@ export default function TagTable({
   return (
     <Table
       columns={columns}
-      data={currentPosts}
+      data={data}
       handleSort={handleSort}
       onSort={onSort}
       sortColumn={sortColumn}

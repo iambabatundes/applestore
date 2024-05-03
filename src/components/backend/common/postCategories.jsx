@@ -1,99 +1,154 @@
 import React, { useState, useEffect } from "react";
+import { getCategories, getCategory } from "../../categoryData";
 import Button from "../button";
+import InputForm from "../../common/inputForm";
+import InputField from "../../common/inputField";
 
 export default function PostCategories({
   isCategoriesVisible,
-  blogPosts,
   selectedCategories,
   setSelectedCategories,
 }) {
-  const [allCategories, setAllCategories] = useState(() => {
-    // Load categories from local storage or default to an empty array
-    const storedCategories =
-      JSON.parse(localStorage.getItem("categories")) || [];
-    return Array.from(
-      new Set([
-        ...storedCategories,
-        ...blogPosts.flatMap((post) => post.categories || []),
-      ])
-    );
-  });
-
-  // const [selectedCategories, setSelectedCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
 
+  // Fetch categories from the backend on component mount
+  useEffect(() => {
+    const fetchedCategories = getCategories();
+    setAllCategories(fetchedCategories);
+  }, []);
+
   const handleCategoryChange = (category) => {
-    setSelectedCategories((prevSelected) => {
-      if (prevSelected.includes(category)) {
-        return prevSelected.filter((selected) => selected !== category);
-      } else {
-        return [...prevSelected, category];
-      }
-    });
+    if (selectedCategories.length === 1) {
+      setSelectedCategories([category]);
+    } else {
+      setSelectedCategories((prevSelected) => {
+        if (prevSelected.includes(category)) {
+          return prevSelected.filter((selected) => selected !== category);
+        } else {
+          return [category, prevSelected[0]];
+        }
+      });
+    }
   };
 
   const handleAddNewCategory = () => {
     if (newCategory.trim() !== "") {
-      const updatedCategories = Array.from(
-        new Set([...allCategories, newCategory.trim()])
-      );
-
-      // Update allCategories with the new category
-      setSelectedCategories((prevSelected) => [
-        ...prevSelected,
-        newCategory.trim(),
-      ]);
-
-      // Update allCategories state
-      setAllCategories(updatedCategories);
-
-      // Save categories to local storage
-      localStorage.setItem("categories", JSON.stringify(updatedCategories));
-
-      // Clear the newCategory input
+      const existingCategory = getCategory(newCategory.trim());
+      if (existingCategory) {
+        if (selectedCategories.length === 1) {
+          setSelectedCategories([newCategory.trim()]);
+        } else {
+          setSelectedCategories([newCategory.trim(), selectedCategories[0]]);
+        }
+      } else {
+        const updatedCategories = [...selectedCategories, newCategory.trim()];
+        setSelectedCategories(updatedCategories);
+        setAllCategories([
+          ...allCategories,
+          { id: allCategories.length + 1, name: newCategory.trim() },
+        ]);
+      }
       setNewCategory("");
     }
   };
 
-  // Clear categories from local storage when the component unmounts
+  const flattenCategories = (categories, depth = 0) => {
+    let flatCategories = [];
+    categories.forEach((category) => {
+      flatCategories.push({ ...category, depth });
+      if (category.subcategories) {
+        flatCategories = [
+          ...flatCategories,
+          ...flattenCategories(category.subcategories, depth + 1),
+        ];
+      }
+    });
+    return flatCategories;
+  };
+
+  const flattenedCategories = flattenCategories(allCategories);
+
   useEffect(() => {
-    return () => {
-      localStorage.removeItem("categories");
-    };
-  }, []);
+    handleCategoriesChange(selectedCategories);
+  }, [selectedCategories]);
+
+  const handleCategoriesChange = (selectedCategories) => {
+    console.log("Selected categories:", selectedCategories);
+  };
 
   return (
     <>
       {isCategoriesVisible && (
         <section>
-          {allCategories.map((category) => (
-            <div key={category}>
-              <label htmlFor={category}>
+          {flattenedCategories.map((category) => (
+            <div key={category.id} style={{ marginLeft: category.depth * 20 }}>
+              <label>
                 <input
                   type="checkbox"
-                  name={category}
-                  id={category}
-                  value={category}
-                  checked={selectedCategories.includes(category)}
-                  onChange={() => handleCategoryChange(category)}
+                  value={category.name}
+                  checked={selectedCategories.includes(category.name)}
+                  onChange={() => handleCategoryChange(category.name)}
                 />
-                {category}
+                {category.name}
               </label>
             </div>
           ))}
+          {selectedCategories.length === 2 && (
+            <p>
+              The first selected category will be used as the primary category.
+            </p>
+          )}
           <Button
             title={isAddingNewCategory ? "Cancel" : "+ Add New Category"}
             onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
           />
           {isAddingNewCategory && (
             <div>
-              <input
+              <InputForm
+                initialValues={{
+                  name: "",
+                  parentCategory: "",
+                }}
+                // validationSchema={val}
+                onSubmit={handleAddNewCategory}
+              >
+                {(values, isSubmitting, setFieldValue) => (
+                  <>
+                    <InputField
+                      type="text"
+                      placeholder="Parent Category"
+                      name="category"
+                      fieldInput
+                      // value={newCategory}
+                      // value={values}
+                      // setFieldValue={setFieldValue}
+                    />
+                    <InputField
+                      select
+                      flattenedCategories={flattenedCategories}
+                      // name="category"
+                      placeholder="Parent Category"
+                    />
+
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="addButton"
+                      title="Add new category"
+                    ></Button>
+                  </>
+                )}
+              </InputForm>
+              {/* <input
                 type="text"
+                placeholder="Enter new category..."
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
-              />
-              <Button title="Add New Category" onClick={handleAddNewCategory} />
+              /> */}
+
+              {/* <Button title="Add New Category" onClick={handleAddNewCategory} /> */}
             </div>
           )}
         </section>

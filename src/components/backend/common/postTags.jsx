@@ -1,65 +1,55 @@
 import React, { useState, useEffect } from "react";
+import { getTags, getTag } from "../../tags";
 
 export default function PostTags({
   isTagsVisible,
-  blogPosts,
   onTagsChange,
   selectedTags,
   setSelectedTags,
 }) {
-  const [allTags, setAllTags] = useState(() => {
-    // Load tags from local storage or default to an empty array
-    const storedTags = JSON.parse(localStorage.getItem("tags")) || [];
-    return Array.from(
-      new Set([...storedTags, ...blogPosts.flatMap((post) => post.tags || [])])
-    );
-  });
-
+  const [allTags, setAllTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);
-  // const [selectedTags, setSelectedTags] = useState([]);
+  const [filteredTags, setFilteredTags] = useState([]);
+
+  // Fetch tags from the backend on component mount
+  useEffect(() => {
+    const fetchedTags = getTags();
+    setAllTags(fetchedTags);
+    setFilteredTags(fetchedTags);
+  }, []);
 
   const handleAddNewTag = () => {
     if (newTag.trim() !== "") {
-      const updatedTags = Array.from(new Set([...allTags, newTag.trim()]));
-
-      // Update allTags state
-      setAllTags(updatedTags);
-
-      // Save tags to local storage
-      localStorage.setItem("tags", JSON.stringify(updatedTags));
-
-      // Update selectedTags state
-      setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
-
-      // Clear the newTag input
+      const existingTag = getTag(newTag.trim());
+      if (existingTag) {
+        setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
+      } else {
+        const updatedTags = [...selectedTags, newTag.trim()];
+        setSelectedTags(updatedTags);
+        setAllTags([
+          ...allTags,
+          { id: allTags.length + 1, name: newTag.trim() },
+        ]);
+      }
       setNewTag("");
     }
   };
 
   const handleRemoveTag = (tagToRemove) => {
-    const updatedTags = allTags.filter((tag) => tag !== tagToRemove);
-
-    // Update allTags state
-    setAllTags(updatedTags);
-
-    // Save tags to local storage
-    localStorage.setItem("tags", JSON.stringify(updatedTags));
-
-    // Update selectedTags state
-    setSelectedTags((prevTags) =>
-      prevTags.filter((tag) => tag !== tagToRemove)
-    );
+    const updatedTags = selectedTags.filter((tag) => tag !== tagToRemove);
+    setSelectedTags(updatedTags);
   };
 
-  // Clear tags from local storage when the component unmounts
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("tags");
-    };
-  }, []);
+  const handleInputChange = (e) => {
+    const input = e.target.value.toLowerCase();
+    const filtered = allTags.filter((tag) =>
+      tag.name.toLowerCase().includes(input)
+    );
+    setFilteredTags(filtered);
+    setNewTag(e.target.value);
+  };
 
-  // Notify the parent component about the selected tags
   useEffect(() => {
     onTagsChange(selectedTags);
   }, [selectedTags, onTagsChange]);
@@ -68,6 +58,7 @@ export default function PostTags({
     <>
       {isTagsVisible && (
         <section>
+          {selectedTags.length === 0 && <p>No Tags Found</p>}
           {selectedTags.map((tag) => (
             <div key={tag} className="tag">
               {tag}
@@ -75,21 +66,55 @@ export default function PostTags({
                 className="cancel-icon"
                 onClick={() => handleRemoveTag(tag)}
               >
-                &#x2715; {/* Unicode character for 'X' */}
+                &#x2715;
               </span>
             </div>
           ))}
-          <button onClick={() => setIsAddingNewTag(!isAddingNewTag)}>
-            + Add New Tag
-          </button>
+          <div>
+            <input
+              type="text"
+              placeholder="Search tags..."
+              value={newTag}
+              onChange={handleInputChange}
+            />
+            <ul>
+              {filteredTags.map((tag) => (
+                <li key={tag.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value={tag.name}
+                      checked={selectedTags.includes(tag.name)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedTags((prevTags) => [
+                            ...prevTags,
+                            e.target.value,
+                          ]);
+                        } else {
+                          setSelectedTags((prevTags) =>
+                            prevTags.filter((t) => t !== e.target.value)
+                          );
+                        }
+                      }}
+                    />
+                    {tag.name}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <button onClick={() => setIsAddingNewTag(true)}>Add New Tag</button>
           {isAddingNewTag && (
             <div>
               <input
                 type="text"
+                placeholder="Enter new tag..."
                 value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
+                onChange={handleInputChange}
               />
               <button onClick={handleAddNewTag}>Add</button>
+              <button onClick={() => setIsAddingNewTag(false)}>Cancel</button>
             </div>
           )}
         </section>

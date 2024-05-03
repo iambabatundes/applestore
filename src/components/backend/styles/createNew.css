@@ -2,14 +2,14 @@
     padding: 15px 18px;
 } */
 
-.createPost-grid {
+.createNew-grid {
     display: grid;
     grid-template-columns: 3fr 1.1fr;
     gap: 10px;
 }
 
 /* title */
-.createPost__title {
+.createNew__title {
     padding: 3px 5px;
     font-size: 1.4rem;
     line-height: 100%;

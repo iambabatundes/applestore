@@ -13,7 +13,7 @@ export default function AllProduct() {
   const [productData, setProductData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize] = useState(4);
   const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
 
   useEffect(() => {

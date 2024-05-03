@@ -10,7 +10,7 @@ import InputText from "../common/inputText";
 import InputField from "../common/inputField";
 import { ErrorMessage } from "formik";
 import Button from "../common/button";
-import TagTable from "./tags/tagTable";
+import TagTable from "./tags/TagTable";
 import SearchBox from "./common/searchBox";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
@@ -148,7 +148,7 @@ export default function AddTags({ className }) {
             onDelete={handleDelete}
             onEdit={handleEdit}
             onPreview={handlePreview}
-            currentPosts={alltags}
+            data={alltags}
           />
 
           <Pagination

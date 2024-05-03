@@ -20,7 +20,7 @@ export default function FormTitle({
       <Input
         type="text"
         id="AddTitle"
-        className="createPost__title"
+        className="createNew__title"
         name="Add title"
         onChange={(e) => handleTitleChange(e)}
         placeholder="Add title"

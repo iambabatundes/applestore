@@ -444,7 +444,7 @@ export default function CreatePost({
         localStorageNotice={localStorageNotice}
       />
 
-      <section className="createPost-grid">
+      <section className="createNew-grid">
         <div className="blog__post">
           <FormTitle
             // updatePermalink={updatePermalink}

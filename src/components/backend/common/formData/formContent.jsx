@@ -85,86 +85,54 @@ export default function FormContent({
     toolbar: toolbarOptions,
   };
 
-  const handleInsertMedia = () => {
-    if (selectedMediaDetails) {
-      const { dataUrl, fileName, fileType } = selectedMediaDetails;
+  // const handleInsertMedia = () => {
+  //   if (selectedMediaDetails) {
+  //     const { dataUrl, fileName, fileType } = selectedMediaDetails;
 
-      let mediaDetails;
+  //     let mediaDetails;
 
-      switch (fileType) {
-        case "image":
-          mediaDetails = `<img src="${dataUrl}" alt="${fileName}" />`;
-          break;
-        case "video":
-          mediaDetails = insertVideo(selectedMediaDetails);
-          // (
-          //   <video key={fileName} controls>
-          //     <source src={dataUrl} type="video/mp4" />
-          //   </video>
-          // );
-          break;
-        case "audio":
-          mediaDetails = insertAudio(selectedMediaDetails);
-          break;
-        case "pdf":
-          mediaDetails = insertPdf(selectedMediaDetails);
-          break;
-        case "doc":
-          mediaDetails = insertDocument(selectedMediaDetails);
-          break;
-        // Add more cases for other media types if needed
-        default:
-          // Handle unknown file types
-          break;
-      }
+  //     switch (fileType) {
+  //       case "image":
+  //         mediaDetails = `<img src="${dataUrl}" alt="${fileName}" />`;
+  //         break;
+  //       case "video":
+  //         mediaDetails = insertVideo(selectedMediaDetails);
+  //         // (
+  //         //   <video key={fileName} controls>
+  //         //     <source src={dataUrl} type="video/mp4" />
+  //         //   </video>
+  //         // );
+  //         break;
+  //       case "audio":
+  //         mediaDetails = insertAudio(selectedMediaDetails);
+  //         break;
+  //       case "pdf":
+  //         mediaDetails = insertPdf(selectedMediaDetails);
+  //         break;
+  //       case "doc":
+  //         mediaDetails = insertDocument(selectedMediaDetails);
+  //         break;
+  //       // Add more cases for other media types if needed
+  //       default:
+  //         // Handle unknown file types
+  //         break;
+  //     }
 
-      // Update the state with the new media details
-      setInsertedMedia((prevMedia) => [...prevMedia, mediaDetails]);
+  //     // Update the state with the new media details
+  //     setInsertedMedia((prevMedia) => [...prevMedia, mediaDetails]);
 
-      // Clear the selected media details after insertion
-      setSelectedMediaDetails(null);
-      setIsMediaUploadOpen(false);
+  //     // Clear the selected media details after insertion
+  //     setSelectedMediaDetails(null);
+  //     setIsMediaUploadOpen(false);
 
-      // Update the editor content
-      setEditorContent((prevContent) => prevContent + mediaDetails);
+  //     // Update the editor content
+  //     setEditorContent((prevContent) => prevContent + mediaDetails);
 
-      // Clear the selected media details after insertion
-      // setSelectedMediaDetails(null);
-      // setIsMediaUploadOpen(false);
-    }
-  };
-
-  const insertVideo = (media) => {
-    const { dataUrl, fileName } = media;
-    // You can customize the video HTML based on your requirements
-    return `<video controls><source src="${dataUrl}" type="video/mp4" /></video>`;
-  };
-
-  const insertAudio = (media) => {
-    const { dataUrl, fileName } = media;
-    // You can customize the audio HTML based on your requirements
-    return `<audio src="${dataUrl}" alt="${fileName}" controls></audio>`;
-  };
-
-  const insertPdf = (media) => {
-    const { dataUrl, fileName } = media;
-    // You can customize the PDF HTML based on your requirements
-    return `<embed src="${dataUrl}" type="application/pdf" title="${fileName}" width="100%" height="600px" /> <div>
-    <img src="/document.png" alt="PDF" />
-    <a
-      href=${dataUrl}
-      title="${fileName}"
-      target="_blank"
-      rel="noopener noreferrer"
-    ></a>
-  </div>`;
-  };
-
-  const insertDocument = (media) => {
-    const { dataUrl, fileName } = media;
-    // You can customize the document HTML based on your requirements
-    return `<iframe src="${dataUrl}" title="${fileName}" width="100%" height="600px"></iframe>`;
-  };
+  //     // Clear the selected media details after insertion
+  //     // setSelectedMediaDetails(null);
+  //     // setIsMediaUploadOpen(false);
+  //   }
+  // };
 
   return (
     <section className="formContent__main">
@@ -197,7 +165,7 @@ export default function FormContent({
           handleSearch={handleSearch}
           mediaSearch={mediaSearch}
           filteredMedia={filteredMedia}
-          handleSelectModal={handleInsertMedia}
+          // handleSelectModal={handleInsertMedia}
           selectedMediaDetails={selectedMediaDetails}
           setSelectedMediaDetails={setSelectedMediaDetails}
         />
