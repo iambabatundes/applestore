@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
+import { toast } from "react-toastify";
 
 import Header from "./common/header";
 // import "./tags/styles/styles.css";
@@ -14,18 +15,29 @@ import TagTable from "./tags/TagTable";
 import SearchBox from "./common/searchBox";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
-import { getTags } from "../tags";
+import {
+  deleteTag,
+  getTags,
+  saveTag,
+  updateTag,
+} from "../../services/tagService";
+import TagForm from "./tags/tagForm";
 
 export default function AddTags({ className }) {
   const [tags, setTags] = useState([]);
   const [sortColumn, setSortColumn] = useState({ path: "name", order: "asc" });
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(2);
+  const [pageSize] = useState(5);
 
   useEffect(() => {
-    setTags(getTags);
-  }, [tags]);
+    async function getTag() {
+      const { data: tags } = await getTags();
+      setTags(tags);
+    }
+
+    getTag();
+  }, []);
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -36,9 +48,41 @@ export default function AddTags({ className }) {
     setCurrentPage(1);
   }
 
-  function handleDelete() {}
+  async function handleDelete(tag) {
+    const originalTag = tags;
+    const tagId = originalTag.filter((t) => t._id !== tag._id);
+    setTags(tagId);
+
+    try {
+      await deleteTag(tag._id);
+    } catch (error) {
+      if (error.response && error.response.status === 404)
+        toast.info("This tag has already been deleted");
+
+      setTags(originalTag);
+    }
+  }
+
+  async function handleSubmit(tag) {
+    try {
+      if (tag._id) {
+        // Update existing tag
+        await updateTag(tag);
+        toast.success("Tag updated successfully");
+      } else {
+        // Create new tag
+        await saveTag(tag);
+        toast.success("Tag created successfully");
+      }
+      const { data: updatedTags } = await getTags();
+      setTags(updatedTags);
+    } catch (error) {
+      toast.error("Failed to save tag");
+      console.error("Error saving tag:", error);
+    }
+  }
   function handlePreview() {}
-  function handleEdit() {}
+  // function handleEdit() {}
 
   let filtered = tags;
   if (searchQuery)
@@ -60,79 +104,7 @@ export default function AddTags({ className }) {
       <Header headerTitle="Product Tags" />
 
       <section className={`${className} tag-header`}>
-        <article>
-          {/* <ModalHeading title="Add New Tag" /> */}
-          <h1>Add New Tag</h1>
-          <InputForm
-            initialValues={{
-              name: "",
-              slug: "",
-              description: "",
-            }}
-            // validationSchema={val}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
-            }}
-          >
-            {(values, isSubmitting, setFieldValue) => (
-              <>
-                <InputText
-                  name="name"
-                  labelTitle="Name"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="name"
-                  type="name"
-                  placeholder="Tags name hear"
-                  fieldInput
-                  tooltip
-                  tooltipTitle="The name is how it appears on your site."
-                  className="tooltip"
-                />
-                <ErrorMessage name="name" />
-
-                <InputText
-                  name="slug"
-                  labelTitle="Slug"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="slug"
-                  type="slug"
-                  fieldInput
-                  tooltip
-                  className="tooltip"
-                  tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-                />
-
-                <InputText
-                  name="description"
-                  labelTitle="Description"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="description"
-                  textarea
-                  tooltip
-                  className="textareas tooltip"
-                  tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-                />
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="addButton"
-                >
-                  Add new tag
-                </Button>
-              </>
-            )}
-          </InputForm>
-        </article>
+        <TagForm onSubmit={handleSubmit} />
 
         <article>
           <span>
@@ -146,7 +118,7 @@ export default function AddTags({ className }) {
             onSort={handleSort}
             sortColumn={sortColumn}
             onDelete={handleDelete}
-            onEdit={handleEdit}
+            onEdit={handleSubmit}
             onPreview={handlePreview}
             data={alltags}
           />

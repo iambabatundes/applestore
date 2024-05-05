@@ -63,7 +63,7 @@ export default function AllProduct() {
         </span>
 
         <ProductTable
-          currentPosts={allProductData}
+          productData={allProductData}
           onSort={handleSort}
           sortColumn={sortColumn}
           onDelete={handleDelete}

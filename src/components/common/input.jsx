@@ -52,6 +52,7 @@ export default function Input({
           cols="30"
           key={name}
           rows="10"
+          value={value}
           // className="textareas"
         ></textarea>
       )}

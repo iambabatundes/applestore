@@ -19,6 +19,7 @@ import "./styles/admin.css";
 import AddCategories from "./categories/addCategory";
 import AddTags from "./addTags";
 import Orders from "./orders";
+import Payments from "./payments";
 
 export default function adminSideBarLinks({
   blogPosts,
@@ -162,6 +163,20 @@ export default function adminSideBarLinks({
       to: "/admin/orders", // Corrected URL
       icon: "fa-file",
       content: <Orders />,
+      dropdown: [
+        {
+          label: "All Pages",
+          to: "/admin/all-pages", // Set the appropriate URLs
+          content: <AllPages />, // Use your specific components here
+        },
+      ],
+    },
+
+    {
+      label: "Payments",
+      to: "/admin/payments", // Corrected URL
+      icon: "fa-file",
+      content: <Payments />,
       dropdown: [
         {
           label: "All Pages",

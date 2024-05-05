@@ -20,12 +20,14 @@ export default function TagTable({
       content: (tag) => <Link to={`/tags/${tag._id}`}>{tag.name}</Link>,
     },
 
-    { label: "Description", path: "description" },
+    { label: "Description", path: `${"description" || "—"}` },
     { label: "Slug", path: "slug" },
     {
       label: "Count",
       path: "count",
-      content: (tag) => <Link to={`/product/${tag._id}`}>{tag.count}</Link>,
+      content: (tag) => (
+        <Link to={`/product/${tag._id}`}>{tag.count || 0}</Link>
+      ),
     },
 
     {

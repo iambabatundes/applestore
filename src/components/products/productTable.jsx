@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Table from "../backend/common/table";
 
 export default function ProductTable({
-  currentPosts,
+  productData,
   onDelete,
   onPreview,
   onEdit,
@@ -62,7 +62,7 @@ export default function ProductTable({
   return (
     <Table
       columns={columns}
-      data={currentPosts}
+      data={productData}
       onSort={onSort}
       sortColumn={sortColumn}
     />
