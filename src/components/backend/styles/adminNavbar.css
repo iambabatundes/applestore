@@ -4,13 +4,20 @@
     display: flex;
     color: #fff;
     justify-content: space-between;
-    padding: 4px 8px;
+    /* padding: 4px 8px; */
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    padding: 0.3rem 0.4rem;
+    width: 100%;
+
+    /* background-color: #cae8ca; */
+
 }
 
 .admin-navbar {
     display: flex;
     align-items: center;
-
 }
 
 .adminLogo {

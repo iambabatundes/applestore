@@ -1,4 +1,5 @@
 import React from "react";
+import "./styles/table.css";
 
 function TableHeader({ sortColumn, columns, onSort }) {
   const raiseSort = (path) => {
@@ -24,7 +25,7 @@ function TableHeader({ sortColumn, columns, onSort }) {
 
   return (
     <thead>
-      <tr className="clickable">
+      <tr className="tableHeader clickable">
         {columns.map((column) => (
           <th
             key={column.path || column.key}

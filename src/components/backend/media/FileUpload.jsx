@@ -11,7 +11,7 @@ export default function FileUpload({ handleFileChange }) {
         uploadMaxMain="filemain-maxSize"
         selectfilebtn="fileUploadBtn"
       />
-      {/* <input type="file" onChange={handleFileChange} /> */}
+      <input type="file" onChange={handleFileChange} />
       {/* Add additional UI elements as needed */}
     </div>
   );

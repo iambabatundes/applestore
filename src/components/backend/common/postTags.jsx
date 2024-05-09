@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getTags, getTag } from "../../tags";
+import { getTags, getTag, saveTag } from "../../../services/tagService";
 
 export default function PostTags({
   isTagsVisible,
@@ -7,32 +7,41 @@ export default function PostTags({
   selectedTags,
   setSelectedTags,
 }) {
-  const [allTags, setAllTags] = useState([]);
+  const [tagsData, setTagsData] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);
-  const [filteredTags, setFilteredTags] = useState([]);
+  // const [filteredTags, setFilteredTags] = useState([]);
 
   // Fetch tags from the backend on component mount
   useEffect(() => {
-    const fetchedTags = getTags();
-    setAllTags(fetchedTags);
-    setFilteredTags(fetchedTags);
+    async function fetchTags() {
+      try {
+        const fetchedTags = await getTags();
+        setTagsData(fetchedTags);
+        // setFilteredTags(fetchedTags); // set filtered tags initially
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
+    }
+
+    fetchTags();
   }, []);
 
-  const handleAddNewTag = () => {
+  const handleAddNewTag = async () => {
     if (newTag.trim() !== "") {
-      const existingTag = getTag(newTag.trim());
-      if (existingTag) {
-        setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
-      } else {
-        const updatedTags = [...selectedTags, newTag.trim()];
-        setSelectedTags(updatedTags);
-        setAllTags([
-          ...allTags,
-          { id: allTags.length + 1, name: newTag.trim() },
-        ]);
+      try {
+        const existingTag = await getTag(newTag.trim());
+        if (existingTag) {
+          setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
+        } else {
+          const savedTag = await saveTag({ name: newTag.trim() });
+          setSelectedTags((prevTags) => [...prevTags, savedTag.name]);
+          setTagsData([...tagsData, savedTag]); // update tagsData with the saved tag
+        }
+        setNewTag("");
+      } catch (error) {
+        console.error("Error adding new tag:", error);
       }
-      setNewTag("");
     }
   };
 
@@ -43,16 +52,12 @@ export default function PostTags({
 
   const handleInputChange = (e) => {
     const input = e.target.value.toLowerCase();
-    const filtered = allTags.filter((tag) =>
+    const filtered = tagsData.filter((tag) =>
       tag.name.toLowerCase().includes(input)
     );
-    setFilteredTags(filtered);
+    setTagsData(filtered);
     setNewTag(e.target.value);
   };
-
-  useEffect(() => {
-    onTagsChange(selectedTags);
-  }, [selectedTags, onTagsChange]);
 
   return (
     <>
@@ -71,37 +76,41 @@ export default function PostTags({
             </div>
           ))}
           <div>
-            <input
+            {/* <input
               type="text"
               placeholder="Search tags..."
               value={newTag}
               onChange={handleInputChange}
-            />
+            /> */}
             <ul>
-              {filteredTags.map((tag) => (
-                <li key={tag.id}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value={tag.name}
-                      checked={selectedTags.includes(tag.name)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedTags((prevTags) => [
-                            ...prevTags,
-                            e.target.value,
-                          ]);
-                        } else {
-                          setSelectedTags((prevTags) =>
-                            prevTags.filter((t) => t !== e.target.value)
-                          );
-                        }
-                      }}
-                    />
-                    {tag.name}
-                  </label>
-                </li>
-              ))}
+              {tagsData.length > 0 && (
+                <ul>
+                  {tagsData.map((tag) => (
+                    <li key={tag._id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          value={tag.name}
+                          checked={selectedTags.includes(tag.name)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedTags((prevTags) => [
+                                ...prevTags,
+                                e.target.value,
+                              ]);
+                            } else {
+                              setSelectedTags((prevTags) =>
+                                prevTags.filter((t) => t !== e.target.value)
+                              );
+                            }
+                          }}
+                        />
+                        {tag.name}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </ul>
           </div>
           <button onClick={() => setIsAddingNewTag(true)}>Add New Tag</button>

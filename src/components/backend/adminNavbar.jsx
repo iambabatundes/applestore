@@ -24,7 +24,7 @@ export default function AdminNavbar({ companyName, count, handleToggle }) {
       <div className="admin-navbar__user">
         <h4>Hi,</h4>
         <span className="admin__companyName">{companyName}</span>
-        <img src={userImage} alt="User image" />
+        <img src={userImage} alt="User" />
       </div>
     </section>
   );

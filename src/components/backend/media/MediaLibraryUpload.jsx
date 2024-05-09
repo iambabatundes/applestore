@@ -1,56 +1,39 @@
 import React from "react";
+import config from "../../../config.json";
 
 export default function MediaLibraryUpload({
-  mediaData,
-  selectedFilter,
-  selectedDate,
+  filteredMedia,
   selectedMedia,
   uploadMediaModel,
-  filteredMedia,
 }) {
   return (
     <section>
       <div className="upload-grid">
         {filteredMedia.map((media) => (
           <div
-            key={media.id}
+            key={media._id}
             className={`media-item ${
-              selectedMedia.includes(media.id) ? "selected" : ""
+              selectedMedia.includes(media.filename) ? "selected" : ""
             }`}
-            onClick={() => uploadMediaModel(media.id)}
+            onClick={() => uploadMediaModel(media._id)}
           >
-            {media.fileType === "image" && (
+            {media.mimeType.startsWith("image/") && ( // Check if it's an image
               <img
                 className="media-item-img"
-                src={media.dataUrl}
-                alt={media.fileName}
-                type="image"
+                // crossorigin="anonymous"
+                src={config.mediaUrl + `/uploads/${media.filename}`} // Assuming images are stored in the root directory
+                content="form-meta"
+                alt={media.originalName} // Use originalName as alt text
               />
             )}
-
-            {media.fileType === "video" && (
+            {media.mimeType.startsWith("video/") && ( // Check if it's a video
               <div className="preview">
                 <img src="/video.png" alt="Video" />
-                <p>{media.fileName}</p>
-                {media.fileType === "video" && (
-                  <video className="mediaItem-video" src={media.dataUrl} />
-                )}
-              </div>
-            )}
-
-            {media.fileType === "doc" && (
-              <div className="preview">
-                <img src="/document.png" alt="Video" />
-                <p>{media.fileName}</p>
-                {media.fileType === "doc" && <a href={media.dataUrl} />}
-              </div>
-            )}
-
-            {media.fileType === "pdf" && (
-              <div className="preview">
-                <img src="/document.png" alt="Video" />
-                <p>{media.fileName}</p>
-                {media.fileType === "pdf" && <a href={media.dataUrl} />}
+                <p>{media.originalName}</p>
+                <video className="mediaItem-video" controls>
+                  <source src={`/${media.filename}`} type={media.mimeType} />
+                  Your browser does not support the video tag.
+                </video>
               </div>
             )}
           </div>

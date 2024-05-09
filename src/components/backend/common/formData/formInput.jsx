@@ -1,5 +1,5 @@
 import React from "react";
-import "./modal.css";
+// import "./modal.css";
 
 export default function Input({
   name,

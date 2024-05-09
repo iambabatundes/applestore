@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Modal from "react-modal";
 
 // Define modal styles
@@ -20,25 +20,10 @@ const customStyles = {
   },
 };
 
-export default function OrderDetails({ orderNumber, onClose, getOrderData }) {
-  const [orderDetails, setOrderDetails] = useState([]);
-
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      try {
-        const data = await getOrderData(orderNumber);
-        setOrderDetails(data);
-      } catch (error) {
-        console.log(error); // Set error state if there's an issue fetching data
-      }
-    };
-
-    fetchOrderDetails();
-  }, [orderNumber, getOrderData]);
-
+export default function OrderDetails({ onClose, getOrderData }) {
   return (
     <Modal
-      isOpen={getOrderData !== null} // Open modal when orderDetails are fetched
+      isOpen={getOrderData !== null}
       onRequestClose={onClose}
       style={customStyles}
       ariaHideApp={false}

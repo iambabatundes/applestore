@@ -95,13 +95,35 @@ export default function adminSideBarLinks({
       label: "Media",
       to: "/admin/upload",
       icon: "fa-tag",
-      content: <Upload />,
+      content: (
+        <Upload
+          mediaData={mediaData}
+          loading={loading}
+          setLoading={setLoading}
+          // mediaData={mediaData}
+          setMediaData={setMediaData}
+          uniqueDates={uniqueDates}
+          setUniqueDates={setUniqueDates}
+          selectedMedia={selectedMedia}
+          maxFileSize={maxFileSize}
+          setMaxFileSize={setMaxFileSize}
+          handleDateChange={handleDateChange}
+          handleFilterChange={handleFilterChange}
+          selectedDate={selectedDate}
+          selectedFilter={selectedFilter}
+          filteredMedia={filteredMedia}
+          handleSearch={handleSearch}
+          mediaSearch={mediaSearch}
+          blogPosts={blogPosts}
+        />
+      ),
       dropdown: [
         {
           label: "Library",
           to: "/admin/upload",
           content: (
             <Upload
+              mediaData={mediaData}
               loading={loading}
               setLoading={setLoading}
               // mediaData={mediaData}

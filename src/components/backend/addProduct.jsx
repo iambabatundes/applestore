@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Header from "./common/header";
-import MessageData from "./common/messageData";
-import FormTitle from "./common/formData/formTitle";
 import Button from "./button";
 import TagsHeader from "./common/TagsHeader";
 import PostTags from "./common/postTags";
-import { getProducts } from "../productData";
 import CategoryHeader from "./common/CategoriesHeader";
 import PostCategories from "./common/postCategories";
 import FeaturedImageHeader from "./common/featuredImageHeader";
 import FeaturedMedia from "./common/FeaturedMedia";
-import ProductForm from "./common/formData/productContent";
+import ProductForm from "./common/formData/productForm";
+import {
+  saveProduct,
+  updateProduct,
+  getProducts,
+} from "../../services/productService";
+import { toast } from "react-toastify";
+import ProductImage from "./common/formData/ProductImage";
+import { getTags } from "../../services/tagService";
 
 export default function AddProduct({
   editingMode,
@@ -20,37 +25,112 @@ export default function AddProduct({
   filteredMedia,
   selectedFilter,
 }) {
-  const [product, setProduct] = useState("");
-  const [message, setMessage] = useState("");
-  const [networkMessage, setNetworkMessage] = useState("");
-  const [networkStatus, setNetworkStatus] = useState(true);
-  const [localStorageRestore, setLocalStorageRestore] = useState(null);
-  const [localStorageNotice, setLocalStorageNotice] = useState("");
-  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [productDetails, setProductDetails] = useState({
+    name: "",
+    weight: "",
+    sku: "",
+    price: "",
+    salePrice: "",
+    numberInStock: "",
+    description: "",
+    tags: [],
+    categories: [],
+    featureImage: {},
+    media: [],
+  });
+  // const [productData, setProductData] = useState([]);
   const [isTagsVisible, setIsTagsVisible] = useState(true);
   const [selectedTags, setSelectedTags] = useState([]);
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
+  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [featureImage, setFeatureImage] = useState({});
+  const [editorContent, setEditorContent] = useState("");
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
-    setProduct(getProducts);
-  }, [product]);
+    async function getTag() {
+      const tags = await getTags();
+      setTags(tags);
+    }
 
-  const handleCloseMessage = () => {
-    setMessage(""); // Clear the message
-  };
-  const handleCloseNetworkMessage = () => {
-    setNetworkMessage(""); // Clear the message
+    getTag();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProductDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const restoreBackup = () => {
-    // Restore the backup from sessionStorage
-    const sessionBackup = sessionStorage.getItem("backup");
-    if (sessionBackup) {
-      // Clear the sessionStorage backup after restoration
-      sessionStorage.removeItem("backup");
-      setLocalStorageRestore(null); // Clear the state
+  const handleChange = (content) => {
+    setEditorContent(content);
+  };
+
+  // Function to handle the selection of the featured image
+  const handleSelectFeaturedImage = (selectedImage) => {
+    setProductDetails((prevState) => ({
+      ...prevState,
+      featureImage: selectedImage,
+    }));
+  };
+
+  // Function to handle image upload
+  const handleImageChange = (e) => {
+    console.log(e.target.files);
+    setFeatureImage(URL.createObjectURL(e.target.files[0]));
+    // const file = e.target.files[0];
+    // setFeatureImage(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const productData = {
+        ...productDetails,
+        description: editorContent,
+        tags: selectedTags,
+        categories: selectedCategories,
+        featureImage: featureImage,
+      };
+
+      if (editingMode) {
+        // If editing, update existing product
+        await updateProduct(productData);
+        toast.success("Product updated successfully");
+      } else {
+        // If adding new, save as a new product
+        await saveProduct(productData);
+        toast.success("Product created successfully");
+      }
+
+      // Optionally, you can reset form fields after successful submission
+      setProductDetails({
+        name: "",
+        weight: "",
+        sku: "",
+        price: "",
+        salePrice: "",
+        numberInStock: "",
+        description: "",
+        tags: [],
+        categories: [],
+        featureImage: {},
+        media: [],
+      });
+      setEditorContent("");
+      setSelectedTags([]);
+      setSelectedCategories([]);
+      setFeatureImage({});
+
+      // Optionally, you can redirect the user after successful submission
+      // history.push("/products"); // Assuming you're using react-router
+    } catch (error) {
+      toast.error("Failed to save product");
+      console.error("Error saving product:", error);
     }
   };
 
@@ -74,20 +154,16 @@ export default function AddProduct({
         to="/admin/add-product"
       />
 
-      <MessageData
-        handleCloseMessage={handleCloseMessage}
-        handleCloseNetworkMessage={handleCloseNetworkMessage}
-        message={message}
-        networkMessage={networkMessage}
-        networkStatus={networkStatus}
-        localStorageRestore={localStorageRestore}
-        restoreBackup={restoreBackup}
-        localStorageNotice={localStorageNotice}
-      />
-
       <section className="createNew-grid">
         <section className="blog__post">
-          <ProductForm />
+          <ProductForm
+            onChange={handleInputChange}
+            data={productDetails}
+            onSubmit={handleSubmit}
+            setEditorContent={setEditorContent}
+            editorContent={editorContent}
+            handleChange={handleChange}
+          />
         </section>
 
         <div>
@@ -130,7 +206,15 @@ export default function AddProduct({
               isFeaturedImageVisible={isFeaturedImageVisible}
             />
 
-            <FeaturedMedia />
+            {/* Pass necessary props to ProductImage component */}
+            <ProductImage
+              isFeaturedImageVisible={isFeaturedImageVisible}
+              insertedMedia={productDetails.media}
+              selectedThumbnail={productDetails.featureImage}
+              setSelectedThumbnail={handleSelectFeaturedImage}
+              handleImageChange={handleImageChange}
+              featureImage={featureImage}
+            />
           </div>
         </div>
       </section>

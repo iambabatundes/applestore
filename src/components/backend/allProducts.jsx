@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
+import { Link } from "react-router-dom";
 
 // import "./styles/posts.css";
-import Header from "./common/header";
-import { getProducts } from "../productData";
-import ProductTable from "../products/productTable";
+import "../backend/products/styles/product.css";
+import ProductTable from "./products/productTable";
+import { getProducts } from "../../services/productService";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
 import SearchBox from "./common/searchBox";
@@ -13,12 +14,17 @@ export default function AllProduct() {
   const [productData, setProductData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(4);
+  const [pageSize] = useState(8);
   const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
 
   useEffect(() => {
-    setProductData(getProducts);
-  }, [productData]);
+    async function getProduct() {
+      const { data: productData } = await getProducts();
+      setProductData(productData);
+    }
+
+    getProduct();
+  }, []);
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -49,35 +55,50 @@ export default function AllProduct() {
     : sorted;
 
   return (
-    <section className="padding">
-      <Header
-        headerTitle="Products"
-        buttonTitle="Add New"
-        to="/admin/add-product"
-      />
-
+    <>
       <section>
-        <span>
-          <SearchBox onChange={handleSearch} value={searchQuery} />
-          Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
-        </span>
+        <header className="product__header">
+          <h1 className="headerData-title">Products</h1>
+          <Link to="/admin/add-product">
+            <button className="headerData-btn">Add New</button>
+          </Link>
 
-        <ProductTable
-          productData={allProductData}
-          onSort={handleSort}
-          sortColumn={sortColumn}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-          onPreview={handlePreview}
-        />
+          <Link to="/admin/add-product">
+            <button className="headerData-btn">Import</button>
+          </Link>
 
-        <Pagination
-          itemsCount={filtered.length}
-          pageSize={pageSize}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-        />
+          <Link to="/admin/add-product">
+            <button className="headerData-btn">Export</button>
+          </Link>
+
+          <span>
+            <button className="headerData-btn">Download Sample</button>
+          </span>
+        </header>
+
+        <section className="padding" style={{ marginTop: 80 }}>
+          <span>
+            <SearchBox onChange={handleSearch} value={searchQuery} />
+            Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
+          </span>
+
+          <ProductTable
+            productData={allProductData}
+            onSort={handleSort}
+            sortColumn={sortColumn}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+            onPreview={handlePreview}
+          />
+
+          <Pagination
+            itemsCount={filtered.length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
+        </section>
       </section>
-    </section>
+    </>
   );
 }

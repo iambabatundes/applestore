@@ -18,7 +18,8 @@ export default function Orders() {
     path: "orderNumber",
     order: "asc",
   });
-  const [selectedOrderNumber, setSelectedOrderNumber] = useState(null); // Track selected order number
+  const [selectedOrder, setSelectedOrder] = useState(null); // Track selected order number
+  const [isModalOpen, setIsModalOpen] = useState(null); // Track selected order number
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +40,18 @@ export default function Orders() {
   }
 
   function handleDelete() {}
-  // function handlePreview() {}
+
+  function handlePreview(order) {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  }
+
+  // Function to close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrder(null);
+  };
+
   function handleEdit() {}
 
   let filtered = orderData;
@@ -71,10 +83,6 @@ export default function Orders() {
     }
   };
 
-  const handleCloseOrderDetails = () => {
-    setSelectedOrderNumber(null);
-  };
-
   return (
     <section className="padding">
       <Header headerTitle="Order" />
@@ -84,19 +92,11 @@ export default function Orders() {
         Showing {totalItems} Order{totalItems !== 1 ? "s" : ""}{" "}
       </span>
 
-      {selectedOrderNumber && (
-        <OrderDetails
-          orderNumber={selectedOrderNumber}
-          onClose={handleCloseOrderDetails}
-          getOrderData={getOrderDataById}
-        />
-      )}
-
       <OrderTable
         data={allOrderData}
         onEdit={handleEdit}
         onDelete={handleDelete}
-        onPreview={(orderNumber) => setSelectedOrderNumber(orderNumber)}
+        onPreview={handlePreview}
         onSort={handleSort}
         sortColumn={sortColumn}
       />
@@ -107,6 +107,10 @@ export default function Orders() {
         currentPage={currentPage}
         onPageChange={setCurrentPage}
       />
+
+      {isModalOpen && selectedOrder && (
+        <OrderDetails onClose={closeModal} getOrderData={selectedOrder} />
+      )}
     </section>
   );
 }

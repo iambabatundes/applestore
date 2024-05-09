@@ -13,8 +13,13 @@ import TagTable from "../tags/TagTable";
 import SearchBox from "../common/searchBox";
 import { paginate } from "../../utils/paginate";
 import Pagination from "../common/pagination";
-import { getCategories } from "../../categoryData";
+// import { getCategories } from "../../categoryData";
 import CategoryTable from "./categoryTable";
+import {
+  getCategories,
+  getCategory,
+  saveCategory,
+} from "../../../services/categoryService";
 
 export default function AddCategories({ className }) {
   const [categories, setCategories] = useState([]);
@@ -24,7 +29,12 @@ export default function AddCategories({ className }) {
   const [pageSize] = useState(8);
 
   useEffect(() => {
-    setCategories(getCategories);
+    async function getCategory() {
+      const categories = await getCategories();
+      setCategories(categories);
+    }
+
+    getCategory();
   }, [categories]);
 
   function handleSort(sortColumns) {

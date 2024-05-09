@@ -15,7 +15,12 @@ export default function OrderTable({
       label: "Order ID",
       path: "orderNumber",
       content: (order) => (
-        <Link to={`/order/${order.orderNumber}`}>{order.orderNumber}</Link>
+        <span
+          onClick={() => onPreview(order)}
+          style={{ cursor: "pointer", color: "blue" }}
+        >
+          {order.orderNumber}
+        </span>
       ),
     },
 
@@ -32,16 +37,19 @@ export default function OrderTable({
             className="fa fa-edit"
             aria-hidden="true"
             onClick={() => onEdit(post)}
+            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
             onClick={() => onPreview(post)}
+            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
             onClick={() => onDelete(post)}
+            style={{ cursor: "pointer" }}
           ></i>
         </>
       ),

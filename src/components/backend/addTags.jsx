@@ -3,15 +3,7 @@ import _ from "lodash";
 import { toast } from "react-toastify";
 
 import Header from "./common/header";
-// import "./tags/styles/styles.css";
-// import "../common/styles/cateTagStyle.css";
 import "../backend/styles/cateTagStyle.css";
-import InputForm from "../common/inputForm";
-import InputText from "../common/inputText";
-import InputField from "../common/inputField";
-import { ErrorMessage } from "formik";
-import Button from "../common/button";
-import TagTable from "./tags/TagTable";
 import SearchBox from "./common/searchBox";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
@@ -22,6 +14,8 @@ import {
   updateTag,
 } from "../../services/tagService";
 import TagForm from "./tags/tagForm";
+import TagTable from "./tags/TagTable";
+import TagModal from "./tags/tagModal";
 
 export default function AddTags({ className }) {
   const [tags, setTags] = useState([]);
@@ -29,15 +23,39 @@ export default function AddTags({ className }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editTag, setEditTag] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTag, setSelectedTag] = useState(null);
+
+  // Function to close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTag(null);
+  };
 
   useEffect(() => {
-    async function getTag() {
-      const { data: tags } = await getTags();
-      setTags(tags);
+    async function fetchData() {
+      try {
+        const { data: fetchedTags } = await getTags();
+        setTags(fetchedTags);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
     }
 
-    getTag();
+    fetchData();
   }, []);
+
+  function handleEdit(tag) {
+    setIsEditMode(true);
+    setEditTag(tag);
+  }
+
+  function handlePreview(tag) {
+    setSelectedTag(tag);
+    setIsModalOpen(true);
+  }
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -49,87 +67,117 @@ export default function AddTags({ className }) {
   }
 
   async function handleDelete(tag) {
-    const originalTag = tags;
-    const tagId = originalTag.filter((t) => t._id !== tag._id);
+    const originalTags = tags;
+    const tagId = originalTags.filter((t) => t._id !== tag._id);
     setTags(tagId);
 
     try {
       await deleteTag(tag._id);
+
+      toast.success("Tag deleted successfully");
     } catch (error) {
       if (error.response && error.response.status === 404)
-        toast.info("This tag has already been deleted");
+        toast.error("This tag has already been deleted");
 
-      setTags(originalTag);
+      setTags(originalTags);
     }
   }
 
   async function handleSubmit(tag) {
     try {
-      if (tag._id) {
+      let updatedTags;
+      if (isEditMode) {
         // Update existing tag
-        await updateTag(tag);
+        const updatedTag = await updateTag(editTag._id, tag);
+        updatedTags = tags.map((t) =>
+          t._id === updatedTag._id ? updatedTag : t
+        );
+        setTags(updatedTags);
+        setIsEditMode(false);
+        setEditTag(null);
         toast.success("Tag updated successfully");
       } else {
         // Create new tag
-        await saveTag(tag);
+        const savedTag = await saveTag(tag);
+        setTags([savedTag, ...tags]); // Add the newly created tag to the beginning of the tags array
         toast.success("Tag created successfully");
       }
-      const { data: updatedTags } = await getTags();
-      setTags(updatedTags);
     } catch (error) {
-      toast.error("Failed to save tag");
       console.error("Error saving tag:", error);
+      toast.error("Failed to save tag");
     }
   }
-  function handlePreview() {}
-  // function handleEdit() {}
 
-  let filtered = tags;
-  if (searchQuery)
-    filtered = tags.filter((t) =>
-      t.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+  let initialValues = {
+    name: "",
+    // slug: "",
+    // description: "",
+  };
+
+  if (isEditMode && editTag) {
+    initialValues = {
+      name: editTag.name,
+      slug: editTag.slug,
+      description: editTag.description,
+    };
+    console.log(initialValues);
+  }
+
+  let filteredTags = tags;
+  if (searchQuery) {
+    filteredTags = tags.filter((t) =>
+      t.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  }
 
-  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
-  const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
-
-  const alltags = paginationEnabled
-    ? paginate(sorted, currentPage, pageSize)
-    : sorted;
+  const sortedTags = _.orderBy(
+    filteredTags,
+    [sortColumn.path],
+    [sortColumn.order]
+  );
+  const paginatedTags = paginate(sortedTags, currentPage, pageSize);
 
   return (
     <section className="padding">
       <Header headerTitle="Product Tags" />
-
       <section className={`${className} tag-header`}>
-        <TagForm onSubmit={handleSubmit} />
+        <TagForm
+          onSubmit={handleSubmit}
+          isEditMode={isEditMode}
+          initialValues={initialValues}
+        />
 
         <article>
           <span>
             <SearchBox onChange={handleSearch} value={searchQuery} />
             <span>
-              Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
+              Showing {filteredTags.length} item
+              {filteredTags.length !== 1 ? "s" : ""}
             </span>
           </span>
-
           <TagTable
             onSort={handleSort}
             sortColumn={sortColumn}
             onDelete={handleDelete}
-            onEdit={handleSubmit}
+            onEdit={handleEdit}
             onPreview={handlePreview}
-            data={alltags}
+            data={paginatedTags}
           />
-
           <Pagination
-            itemsCount={filtered.length}
+            itemsCount={filteredTags.length}
             pageSize={pageSize}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
           />
         </article>
+
+        {isModalOpen && selectedTag && (
+          <TagModal
+            tag={selectedTag}
+            products={selectedTag.products}
+            onClose={closeModal}
+          />
+        )}
       </section>
     </section>
   );

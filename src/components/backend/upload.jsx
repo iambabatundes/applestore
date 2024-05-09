@@ -8,10 +8,11 @@ import Button from "./button";
 import MediaFilter from "./media/MediaFilter";
 import FilterByDate from "./media/FilterByDate";
 import MediaSearch from "./media/MediaSearch";
+import { getUploads } from "../../services/mediaService";
 
 export default function Upload({
-  mediaData,
-  setMediaData,
+  // mediaData,
+  // setMediaData,
   selectedMedia,
   maxFileSize,
   setMaxFileSize,
@@ -26,6 +27,20 @@ export default function Upload({
   filteredMedia,
 }) {
   const [showMediaUpload, setShowMediaUpload] = useState(false);
+  const [mediaData, setMediaData] = useState([]);
+
+  useEffect(() => {
+    async function fetchMediaData() {
+      try {
+        const { data } = await getUploads();
+        setMediaData(data);
+      } catch (error) {
+        console.error("Error fetching media data:", error);
+      }
+    }
+
+    fetchMediaData();
+  }, []);
 
   useEffect(() => {
     // Simulated fetch (replace with actual fetch)
@@ -33,7 +48,7 @@ export default function Upload({
       const maxFileSizeFromServerMB = 2048; // Example: Maximum file size in MB
       setMaxFileSize(maxFileSizeFromServerMB);
     }, 1000);
-  }, []);
+  }, [setMaxFileSize]);
 
   const getMaxFileSizeGB = () => {
     if (maxFileSize !== null) {
@@ -121,7 +136,7 @@ export default function Upload({
           selectedFilter={selectedFilter}
           selectedDate={selectedDate}
           selectedMedia={selectedMedia}
-          filteredMedia={filteredMedia}
+          filteredMedia={mediaData}
         />
       </div>
     </section>

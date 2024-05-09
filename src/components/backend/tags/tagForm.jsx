@@ -5,19 +5,23 @@ import InputText from "../../common/inputText";
 import Button from "../../common/button";
 import { TagFormSchema } from "./validation";
 
-export default function TagForm({ onSubmit }) {
+export default function TagForm({ onSubmit, isEditMode, initialValues }) {
   return (
     <article>
-      {/* <ModalHeading title="Add New Tag" /> */}
-      <h1>Add New Tag</h1>
+      <h1>{isEditMode ? "Edit Tag" : "Add New Tag"}</h1>
       <InputForm
-        initialValues={{
-          name: "",
-          slug: "",
-          description: "",
-        }}
+        initialValues={initialValues}
         validationSchema={TagFormSchema}
-        onSubmit={onSubmit}
+        onSubmit={async (values, { setSubmitting, resetForm }) => {
+          try {
+            await onSubmit(values);
+            resetForm();
+            setSubmitting(false);
+          } catch (error) {
+            console.error("Error submitting form:", error);
+            setSubmitting(false);
+          }
+        }}
       >
         {(values, isSubmitting, setFieldValue) => (
           <>
@@ -25,24 +29,25 @@ export default function TagForm({ onSubmit }) {
             <InputField
               name="name"
               type="text"
-              placeholder="Tags name hear"
+              // onChange={setFieldValue}
+              placeholder="Tags name here"
+              value={values.name || initialValues.name || ""}
               fieldInput
               tooltip
               tooltipTitle="The name is how it appears on your site."
               className="tooltip"
             />
-            {/* <ErrorMessage name="name" /> */}
-
             <InputText name="slug" labelTitle="Slug" className="labelTitle" />
             <InputField
               name="slug"
               type="text"
               fieldInput
+              value={values.slug || initialValues.slug || ""}
+              // onChange={setFieldValue}
               tooltip
               className="tooltip"
               tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
             />
-
             <InputText
               name="description"
               labelTitle="Description"
@@ -50,16 +55,16 @@ export default function TagForm({ onSubmit }) {
             />
             <InputField
               name="description"
-              //   textarea
-              fieldInput
               type="text"
+              fieldInput
               tooltip
-              className="textareas tooltip"
+              value={values.description || initialValues.description || ""}
+              // onChange={setFieldValue}
+              className="tooltip"
               tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
             />
-
             <Button type="submit" disabled={isSubmitting} className="addButton">
-              Add new tag
+              {isEditMode ? "Update Tag" : "Add New Tag"}
             </Button>
           </>
         )}

@@ -16,8 +16,10 @@ export default function Input({
   textarea,
   fieldInput,
   select,
-  options,
+  // options,
+  onChange,
   flattenedCategories,
+  // handleChange,
 }) {
   const handleChange = (e) => {
     const selectedValue = e.target.value;
@@ -34,6 +36,7 @@ export default function Input({
           id={name}
           name={name}
           value={value}
+          // onChange={onChange}
           onChange={(e) => setFieldValue(name, e.target.value)}
           placeholder={placeholder}
         />

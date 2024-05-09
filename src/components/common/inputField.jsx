@@ -14,6 +14,8 @@ export default function InputField({
   fieldInput,
   select,
   // options,
+  onChange,
+  value,
   flattenedCategories,
 }) {
   return (
@@ -25,8 +27,10 @@ export default function InputField({
               name={name}
               meta={meta}
               className={`${className}`}
+              onChange={onChange}
               setFieldValue={form.setFieldValue}
-              value={field.value}
+              // value={field.value}
+              value={value}
               fieldInput={fieldInput}
               tooltip={tooltip}
               tooltipTitle={tooltipTitle}

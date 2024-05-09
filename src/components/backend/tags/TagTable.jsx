@@ -17,16 +17,29 @@ export default function TagTable({
       label: "Name",
       path: "name",
       sortable: true,
-      content: (tag) => <Link to={`/tags/${tag._id}`}>{tag.name}</Link>,
+      content: (tag) => (
+        <span
+          // to={`/tags/${tag._id}`}
+          onClick={() => onPreview(tag)}
+          style={{ cursor: "pointer" }}
+        >
+          {tag.name}
+        </span>
+      ),
     },
 
     { label: "Description", path: `${"description" || "—"}` },
     { label: "Slug", path: "slug" },
     {
       label: "Count",
-      path: "count",
+      path: "productCount",
       content: (tag) => (
-        <Link to={`/product/${tag._id}`}>{tag.count || 0}</Link>
+        <span
+          onClick={() => onPreview(tag)}
+          style={{ cursor: "pointer", color: "blue" }}
+        >
+          {tag.productCount}
+        </span>
       ),
     },
 
