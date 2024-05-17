@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { getCategories, getCategory } from "../../categoryData";
 import Button from "../button";
 import InputForm from "../../common/inputForm";
 import InputField from "../../common/inputField";
@@ -8,16 +7,12 @@ export default function PostCategories({
   isCategoriesVisible,
   selectedCategories,
   setSelectedCategories,
+  categories,
+  setCategories,
+  getCategory,
 }) {
-  const [allCategories, setAllCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
-
-  // Fetch categories from the backend on component mount
-  useEffect(() => {
-    const fetchedCategories = getCategories();
-    setAllCategories(fetchedCategories);
-  }, []);
 
   const handleCategoryChange = (category) => {
     if (selectedCategories.length === 1) {
@@ -45,9 +40,9 @@ export default function PostCategories({
       } else {
         const updatedCategories = [...selectedCategories, newCategory.trim()];
         setSelectedCategories(updatedCategories);
-        setAllCategories([
-          ...allCategories,
-          { id: allCategories.length + 1, name: newCategory.trim() },
+        setCategories([
+          ...categories,
+          { id: categories.length + 1, name: newCategory.trim() },
         ]);
       }
       setNewCategory("");
@@ -68,7 +63,7 @@ export default function PostCategories({
     return flatCategories;
   };
 
-  const flattenedCategories = flattenCategories(allCategories);
+  const flattenedCategories = flattenCategories(categories);
 
   useEffect(() => {
     handleCategoriesChange(selectedCategories);

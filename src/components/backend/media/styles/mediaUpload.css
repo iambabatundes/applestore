@@ -1,0 +1,97 @@
+/* styles/mediaUpload.css */
+.media-upload-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.media-upload-container.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.media-upload-main {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+
+.media-upload-main.dragging {
+    background: #f0f0f0;
+    border: 2px dashed #3f51b5;
+}
+
+.media-upload-section {
+    position: relative;
+}
+
+.media-cancel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.upload-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-label {
+    display: inline-block;
+    background: #3f51b5;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.upload-label:hover {
+    background: #303f9f;
+}
+
+.upload-info {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    background: #f1f1f1;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 20px;
+    position: relative;
+}
+
+.progress-bar-fill {
+    background: #3f51b5;
+    height: 10px;
+    transition: width 0.3s;
+}
+
+.progress-bar-text {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 12px;
+}

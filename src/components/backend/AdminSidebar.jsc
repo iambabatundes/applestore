@@ -1,0 +1,56 @@
+import React from "react";
+import { Drawer, List, ListItem, ListItemText } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAdminContext } from "./AdminProvider";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import ImageIcon from "@mui/icons-material/Image";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import SettingsIcon from "@mui/icons-material/Settings";
+import PeopleIcon from "@mui/icons-material/People";
+
+const AdminSidebar = () => {
+  const { isMobileMenuOpen, setMobileMenuOpen, selectedLink, setSelectedLink } =
+    useAdminContext();
+  const navigate = useNavigate();
+
+  const handleLinkClick = (link) => {
+    setSelectedLink(link);
+    navigate(link.to);
+    setMobileMenuOpen(false);
+  };
+
+  const sidebarLinks = [
+    { label: "Dashboard", to: "/admin/home", icon: <DashboardIcon /> },
+    { label: "Posts", to: "/admin/posts", icon: <PostAddIcon /> },
+    { label: "Media", to: "/admin/upload", icon: <ImageIcon /> },
+    {
+      label: "Products",
+      to: "/admin/all-products",
+      icon: <ShoppingCartIcon />,
+    },
+    { label: "Orders", to: "/admin/orders", icon: <ShoppingCartIcon /> },
+    { label: "Pages", to: "/admin/all-pages", icon: <ShoppingCartIcon /> },
+    { label: "Users", to: "/admin/all-users", icon: <PeopleIcon /> },
+    { label: "Settings", to: "/admin/general", icon: <SettingsIcon /> },
+  ];
+
+  return (
+    <Drawer
+      anchor="left"
+      open={isMobileMenuOpen}
+      onClose={() => setMobileMenuOpen(false)}
+    >
+      <List>
+        {sidebarLinks.map((link) => (
+          <ListItem button key={link.to} onClick={() => handleLinkClick(link)}>
+            {link.icon}
+            <ListItemText primary={link.label} />
+          </ListItem>
+        ))}
+      </List>
+    </Drawer>
+  );
+};
+
+export default AdminSidebar;

@@ -51,19 +51,16 @@ export default function ProductTable({
             className="fa fa-edit"
             aria-hidden="true"
             onClick={() => onEdit(product)}
-            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
             onClick={() => onPreview(product)}
-            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
             onClick={() => onDelete(product)}
-            style={{ cursor: "pointer" }}
           ></i>
         </section>
       ),
@@ -73,10 +70,17 @@ export default function ProductTable({
   ];
   return (
     <Table
+      className="ProductTable"
       columns={columns}
       data={productData}
       onSort={onSort}
       sortColumn={sortColumn}
+      table="product__table"
+      tbody="product__tbody"
+      tbodyTr="product__tbodytr"
+      td="product__td"
+      th="product__th"
+      thead="product__thead"
     />
   );
 }

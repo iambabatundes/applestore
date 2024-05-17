@@ -16,15 +16,8 @@ export default function Input({
   textarea,
   fieldInput,
   select,
-  // options,
-  onChange,
-  flattenedCategories,
-  // handleChange,
+  options,
 }) {
-  const handleChange = (e) => {
-    const selectedValue = e.target.value;
-    setFieldValue(name, selectedValue);
-  };
   return (
     <div className={`checkout-add__address ${className}`}>
       {fieldInput && (
@@ -56,18 +49,23 @@ export default function Input({
           key={name}
           rows="10"
           value={value}
+          onChange={(e) => setFieldValue(name, e.target.value)}
           // className="textareas"
         ></textarea>
       )}
 
       {select && (
-        <select name={name} id={name} value={value} onChange={handleChange}>
+        <select
+          name={name}
+          id={name}
+          value={value}
+          onChange={(e) => setFieldValue(name, e.target.value)}
+        >
           <option value="">{placeholder}</option>
-          {flattenedCategories.map((item) => (
+
+          {options.map((item) => (
             <option key={item.id} value={item.id}>
-              {item.depth > 0
-                ? `${"\u00A0".repeat(item.depth * 2)}${item.name}`
-                : item.name}
+              {item.name}
             </option>
           ))}
         </select>

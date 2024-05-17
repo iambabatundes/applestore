@@ -7,6 +7,7 @@ import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import UserTable from "./users/UserTable";
 import Pagination from "./common/pagination";
+import UserHeader from "./users/userHeader";
 
 export default function AllUsers() {
   const [userData, setUserData] = useState([]);
@@ -56,28 +57,30 @@ export default function AllUsers() {
     : sorted;
 
   return (
-    <section className="padding">
-      <Header headerTitle="Users" buttonTitle="Add New" to="/admin/add-users" />
+    <section>
+      <UserHeader />
 
-      <span>
-        <SearchBox onChange={handleSearch} value={searchQuery} />
-        Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
-      </span>
-      <UserTable
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-        onPreview={handlePreview}
-        onSort={handleSort}
-        sortColumn={sortColumn}
-        userData={allUserData}
-      />
+      <section className="padding" style={{ marginTop: 80 }}>
+        <span>
+          <SearchBox onChange={handleSearch} value={searchQuery} />
+          Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
+        </span>
+        <UserTable
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onPreview={handlePreview}
+          onSort={handleSort}
+          sortColumn={sortColumn}
+          userData={allUserData}
+        />
 
-      <Pagination
-        itemsCount={filtered.length}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+        <Pagination
+          itemsCount={filtered.length}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      </section>
     </section>
   );
 }

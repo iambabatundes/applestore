@@ -1,6 +1,5 @@
 import React from "react";
 import "../../backend/styles/dataTable.css";
-import { Link } from "react-router-dom";
 import Table from "../common/table";
 
 export default function TagTable({
@@ -45,7 +44,7 @@ export default function TagTable({
 
     {
       content: (tag) => (
-        <>
+        <section className="tag__icon">
           <i
             className="fa fa-edit"
             aria-hidden="true"
@@ -61,7 +60,7 @@ export default function TagTable({
             aria-hidden="true"
             onClick={() => onDelete(tag)}
           ></i>
-        </>
+        </section>
       ),
     },
 
@@ -74,6 +73,13 @@ export default function TagTable({
       handleSort={handleSort}
       onSort={onSort}
       sortColumn={sortColumn}
+      table="tag__table"
+      tbody="tag__tbody"
+      tbodyTr="tag__tbodytr"
+      td="tag__td"
+      th="tag__th"
+      thead="tag__thead"
+      className="tagTable"
     />
   );
 }

@@ -15,34 +15,33 @@ export default function CategoryTable({
   const renderCategoryName = (category) => {
     const indentation = "—".repeat(category.depth); // Append dashes based on depth
     return (
-      <span style={{ marginLeft: `${category.depth * 10}px` }}>
+      <span style={{ marginLeft: `${category.depth * 20}px` }}>
         {indentation} {category.name}
       </span>
     );
   };
+
   const columns = [
     {
       label: "Name",
       path: "name",
       sortable: true,
-      content: (cateory) => (
-        <Link to={`/tags/${cateory._id}`}>{renderCategoryName(cateory)}</Link>
+      content: (category) => (
+        <Link to={`/tags/${category._id}`}>{renderCategoryName(category)}</Link>
       ),
     },
-
     { label: "Description", path: "description" },
     { label: "Slug", path: "slug" },
     {
       label: "Count",
-      path: "count",
+      path: "productCount",
       content: (category) => (
-        <Link to={`/product/${category._id}`}>{category.count}</Link>
+        <Link to={`/product/${category._id}`}>{category.productCount}</Link>
       ),
     },
-
     {
       content: (category) => (
-        <>
+        <section className="category__icon">
           <i
             className="fa fa-edit"
             aria-hidden="true"
@@ -58,12 +57,12 @@ export default function CategoryTable({
             aria-hidden="true"
             onClick={() => onDelete(category)}
           ></i>
-        </>
+        </section>
       ),
     },
-
     // Add more headings as needed
   ];
+
   return (
     <Table
       columns={columns}
@@ -71,6 +70,13 @@ export default function CategoryTable({
       handleSort={handleSort}
       onSort={onSort}
       sortColumn={sortColumn}
+      table="category__table"
+      tbody="category__tbody"
+      tbodyTr="category__tbodytr"
+      td="category__td"
+      th="category__th"
+      thead="category__thead"
+      className="categorgTable"
     />
   );
 }

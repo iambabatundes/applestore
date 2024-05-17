@@ -41,10 +41,5 @@ export const AddressSchema = Yup.object().shape({
       Please enter a state
     </span>
   ),
-  zipCode: Yup.string().required(
-    <span className="checkout-address__alert">
-      <i className="fa fa-exclamation-circle" aria-hidden="true"></i>
-      Please enter a zip code
-    </span>
-  ),
+  zipCode: Yup.string(),
 });

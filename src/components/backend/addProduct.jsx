@@ -166,9 +166,9 @@ export default function AddProduct({
           />
         </section>
 
-        <div>
+        <div className="" style={{ width: 250 }}>
           <div className="createPost-publish">
-            <Button title="Publish" />
+            <Button title="Publish" className="" />
           </div>
 
           <div className="createPost-publish">
@@ -203,6 +203,23 @@ export default function AddProduct({
           <div className="createPost-publish">
             <FeaturedImageHeader
               FeaturedImageTitle="Product Image"
+              isFeaturedImageVisible={isFeaturedImageVisible}
+            />
+
+            {/* Pass necessary props to ProductImage component */}
+            <ProductImage
+              isFeaturedImageVisible={isFeaturedImageVisible}
+              insertedMedia={productDetails.media}
+              selectedThumbnail={productDetails.featureImage}
+              setSelectedThumbnail={handleSelectFeaturedImage}
+              handleImageChange={handleImageChange}
+              featureImage={featureImage}
+            />
+          </div>
+
+          <div className="createPost-publish">
+            <FeaturedImageHeader
+              FeaturedImageTitle="Product Gallary"
               isFeaturedImageVisible={isFeaturedImageVisible}
             />
 

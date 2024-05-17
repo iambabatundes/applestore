@@ -10,6 +10,17 @@ export const TagFormSchema = Yup.object().shape({
     )
     .min(3)
     .max(255),
-  slug: Yup.string(),
-  description: Yup.string().min(3).max(255),
+
+  slug: Yup.string()
+    .notRequired()
+    .nullable()
+    .optional()
+    .transform((value, originalValue) => {
+      if (!value) {
+        return null;
+      }
+      return originalValue;
+    }),
+
+  description: Yup.string().min(3).max(255).notRequired().nullable().optional(),
 });

@@ -4,11 +4,36 @@ import "../../backend/styles/dataTable.css";
 import TableHeader from "./tableHeader";
 import TableBody from "./tableBody";
 
-export default function Table({ columns, onSort, sortColumn, data }) {
+export default function Table({
+  columns,
+  onSort,
+  sortColumn,
+  data,
+  className,
+  table,
+  th,
+  thead,
+  tbody,
+  td,
+  tbodyTr,
+}) {
   return (
-    <table className="dataTable-table post-list">
-      <TableHeader columns={columns} onSort={onSort} sortColumn={sortColumn} />
-      <TableBody columns={columns} data={data} />
+    <table className={`${table} dataTable-table post-list`}>
+      <TableHeader
+        className={`${className}`}
+        columns={columns}
+        onSort={onSort}
+        sortColumn={sortColumn}
+        th={th}
+        thead={thead}
+      />
+      <TableBody
+        columns={columns}
+        data={data}
+        tbody={tbody}
+        tbodyTr={tbodyTr}
+        td={td}
+      />
     </table>
   );
 }

@@ -1,0 +1,149 @@
+.order__header {
+    position: fixed;
+    /* padding: 5px; */
+    width: calc(100% - 140px);
+    /* width: calc(100% - 160px); */
+    height: 60px;
+    top: 38px;
+    z-index: 1001;
+    background-color: #cae8ca;
+    box-shadow: 0 8px 16px 0 rgba(85, 93, 102, .3);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.order__header h1 {
+    font-size: 20px;
+    font-weight: 400;
+    padding-left: 20px;
+}
+
+.order-btn {
+    padding: 5px;
+    font-size: 13px;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+
+/* For product image */
+
+/* .orderTable__img {
+    width: 50%;
+    object-fit: cover;
+} */
+
+
+.orderTable {
+    font-size: 0.9rem;
+    cursor: pointer;
+    overflow-y: auto;
+}
+
+.orderTable .orderTh {
+    font-weight: 500;
+    position: sticky;
+    top: 105px;
+    /* height: 10px; */
+    box-shadow: 0 8px 16px 0 rgba(85, 93, 102, .3);
+    width: calc(100% - 130px);
+    z-index: 1001;
+    background: #ABDD93;
+}
+
+
+.orderTbody__className {
+    font-size: 0.8rem;
+    overflow: auto;
+    height: 3rem;
+    /* text-align: left; */
+}
+
+
+.Ordertable__className .orderTh:nth-child(1),
+.orderTd:nth-child(1) {
+    min-width: 60px;
+    max-width: 60px;
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(2),
+.orderTd:nth-child(2) {
+    min-width: 40px;
+    max-width: 40px;
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(3),
+.orderTd:nth-child(3) {
+    min-width: 130px;
+    max-width: 130px;
+    word-wrap: break-word;
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(4),
+.orderTd:nth-child(4) {
+    min-width: 60px;
+    max-width: 60px;
+    table-layout: fixed;
+    /* color: green; */
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(5),
+.orderTd:nth-child(5) {
+    min-width: 40px;
+    max-width: 40px;
+    table-layout: fixed;
+    text-align: left;
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(6),
+.orderTd:nth-child(6) {
+    min-width: 50px;
+    max-width: 50px;
+    table-layout: fixed;
+}
+
+.orderTable,
+.Ordertable__className .orderTh:nth-child(7),
+.orderTd:nth-child(7) {
+    min-width: 60px;
+    max-width: 60px;
+    word-wrap: break-word;
+}
+
+.order__icon i {
+    font-size: 1rem;
+    padding: 0.4rem;
+    cursor: pointer;
+}
+
+.order__icon i:nth-child(1) {
+    color: #2271b1;
+}
+
+.order__icon i:nth-child(1):hover {
+    color: #003663;
+}
+
+.order__icon i:nth-child(2) {
+    color: #024717;
+}
+
+.order__icon i:nth-child(2):hover {
+    color: #022c0f;
+}
+
+.order__icon i:nth-child(3) {
+    color: #ec0606;
+}
+
+.order__icon i:nth-child(3):hover {
+    color: #480000;
+}

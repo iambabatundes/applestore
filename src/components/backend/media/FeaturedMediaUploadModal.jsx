@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Icon from "../../icon";
 import "./styles/MediaUploadModal.css";
 import Button from "../button";
@@ -8,26 +8,44 @@ import MediaLibrary from "./MediaLibrary";
 export default function FeaturedMediaUploadModal({
   isFeaturdMediaOpen,
   onClick,
-  selectedTab,
-  handleTabChange,
-  mediaData,
-  handleFileChange,
   selectedMedia,
   handleMediaSelection,
   handleFilterChange,
   selectedFilter,
   handleDateChange,
   selectedDate,
-  uniqueDates,
   handleSearch,
   mediaSearch,
   filteredMedia,
   handleFeaturdMedia,
   setSelectedMediaDetails,
   selectedMediaDetails,
+  setUploadProgress,
+  uploadProgress,
+  setMediaData,
+  setNotification,
+  setSelectedFiles,
+  handleUploadDelete,
 }) {
+  const [selectedTab, setSelectedTab] = useState("upload");
+  // const [showFileUpload, setShowFileUpload] = useState(true);
+
   const handleFormClick = (e) => {
     e.stopPropagation();
+  };
+
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
+  };
+
+  // const handleUploadCancel = () => {
+  //   setShowFileUpload(false);
+  // };
+
+  const handleUploadSuccess = (newMedia) => {
+    setSelectedTab("library");
+    setMediaData((prevMedia) => [newMedia, ...prevMedia]);
+    handleMediaSelection(newMedia);
   };
 
   return (
@@ -55,26 +73,32 @@ export default function FeaturedMediaUploadModal({
             </div>
             <section className="modal-content-area">
               {selectedTab === "upload" && (
-                <FileUpload handleFileChange={handleFileChange} />
+                <FileUpload
+                  // handleUploadCancel={handleUploadCancel}
+                  // showFileUpload={showFileUpload}
+                  setMediaData={setMediaData}
+                  setNotification={setNotification}
+                  setUploadProgress={setUploadProgress}
+                  uploadProgress={uploadProgress}
+                  setSelectedFiles={setSelectedFiles}
+                  onUploadSuccess={handleUploadSuccess}
+                />
               )}
               {selectedTab === "library" && (
-                <>
-                  <MediaLibrary
-                    mediaData={mediaData}
-                    selectedMedia={selectedMedia}
-                    handleMediaSelection={handleMediaSelection}
-                    handleFilterChange={handleFilterChange}
-                    selectedFilter={selectedFilter}
-                    handleDateChange={handleDateChange}
-                    selectedDate={selectedDate}
-                    uniqueDates={uniqueDates}
-                    handleSearch={handleSearch}
-                    mediaSearch={mediaSearch}
-                    filteredMedia={filteredMedia}
-                    selectedMediaDetails={selectedMediaDetails}
-                    setSelectedMediaDetails={setSelectedMediaDetails}
-                  />
-                </>
+                <MediaLibrary
+                  selectedMedia={selectedMedia}
+                  handleMediaSelection={handleMediaSelection}
+                  handleFilterChange={handleFilterChange}
+                  selectedFilter={selectedFilter}
+                  handleDateChange={handleDateChange}
+                  selectedDate={selectedDate}
+                  handleSearch={handleSearch}
+                  mediaSearch={mediaSearch}
+                  filteredMedia={filteredMedia}
+                  selectedMediaDetails={selectedMediaDetails}
+                  setSelectedMediaDetails={setSelectedMediaDetails}
+                  handleUploadDelete={handleUploadDelete}
+                />
               )}
             </section>
           </div>
@@ -83,7 +107,6 @@ export default function FeaturedMediaUploadModal({
             title="Set Featured Media"
             className="mediaModal"
             onClick={handleFeaturdMedia}
-            // disabled
           />
         </section>
       )}

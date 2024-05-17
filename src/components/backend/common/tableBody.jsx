@@ -11,7 +11,11 @@ function renderCell(item, column) {
     return "—";
   }
 
-  if (column.path === "category") {
+  // if (column.path === "category") {
+  //   return item.category.name;
+  // }
+
+  if (column.path === "category" && item.category) {
     return item.category.name;
   }
 
@@ -30,13 +34,15 @@ function createKey(item, column) {
   return item._id + (column.path || column.key);
 }
 
-function TableBody({ data, columns }) {
+function TableBody({ data, columns, tbody, tbodyTr, td }) {
   return (
-    <tbody>
+    <tbody className={`${tbody}`}>
       {data.map((item) => (
-        <tr key={item._id} className="tableBody">
+        <tr key={item._id} className={`${tbodyTr}`}>
           {columns.map((column) => (
-            <td key={createKey(item, column)}>{renderCell(item, column)}</td>
+            <td className={`${td}`} key={createKey(item, column)}>
+              {renderCell(item, column)}
+            </td>
           ))}
         </tr>
       ))}

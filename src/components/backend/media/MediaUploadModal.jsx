@@ -10,7 +10,6 @@ export default function MediaUploadModal({
   onClick,
   selectedTab,
   handleTabChange,
-  mediaData,
   handleFileChange,
   selectedMedia,
   handleMediaSelection,
@@ -60,7 +59,6 @@ export default function MediaUploadModal({
               {selectedTab === "library" && (
                 <>
                   <MediaLibrary
-                    mediaData={mediaData}
                     selectedMedia={selectedMedia}
                     handleMediaSelection={handleMediaSelection}
                     handleFilterChange={handleFilterChange}

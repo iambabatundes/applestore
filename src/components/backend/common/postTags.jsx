@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { getTags, getTag, saveTag } from "../../../services/tagService";
+// import { getTags, getTag, saveTag } from "../../../services/tagService";
 
 export default function PostTags({
   isTagsVisible,
   onTagsChange,
   selectedTags,
   setSelectedTags,
+  tags,
+  setTags,
+  getTags,
+  getTag,
+  saveTag,
 }) {
-  const [tagsData, setTagsData] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);
   // const [filteredTags, setFilteredTags] = useState([]);
@@ -16,8 +20,8 @@ export default function PostTags({
   useEffect(() => {
     async function fetchTags() {
       try {
-        const fetchedTags = await getTags();
-        setTagsData(fetchedTags);
+        const { data: tags } = await getTags();
+        setTags(tags);
         // setFilteredTags(fetchedTags); // set filtered tags initially
       } catch (error) {
         console.error("Error fetching tags:", error);
@@ -36,7 +40,7 @@ export default function PostTags({
         } else {
           const savedTag = await saveTag({ name: newTag.trim() });
           setSelectedTags((prevTags) => [...prevTags, savedTag.name]);
-          setTagsData([...tagsData, savedTag]); // update tagsData with the saved tag
+          setTags([...tags, savedTag]);
         }
         setNewTag("");
       } catch (error) {
@@ -52,10 +56,10 @@ export default function PostTags({
 
   const handleInputChange = (e) => {
     const input = e.target.value.toLowerCase();
-    const filtered = tagsData.filter((tag) =>
+    const filtered = tags.filter((tag) =>
       tag.name.toLowerCase().includes(input)
     );
-    setTagsData(filtered);
+    setTags(filtered);
     setNewTag(e.target.value);
   };
 
@@ -83,9 +87,9 @@ export default function PostTags({
               onChange={handleInputChange}
             /> */}
             <ul>
-              {tagsData.length > 0 && (
+              {tags.length > 0 && (
                 <ul>
-                  {tagsData.map((tag) => (
+                  {tags.map((tag) => (
                     <li key={tag._id}>
                       <label>
                         <input

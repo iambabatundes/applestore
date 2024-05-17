@@ -1,0 +1,22 @@
+import React from "react";
+import { AppBar, Toolbar, IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+
+const AdminNavbar = ({ companyName, count, handleToggle }) => (
+  <AppBar position="static">
+    <Toolbar>
+      <IconButton
+        edge="start"
+        color="inherit"
+        aria-label="menu"
+        onClick={handleToggle}
+      >
+        <MenuIcon />
+      </IconButton>
+      <h1>{companyName}</h1>
+      <div>{count}</div>
+    </Toolbar>
+  </AppBar>
+);
+
+export default AdminNavbar;

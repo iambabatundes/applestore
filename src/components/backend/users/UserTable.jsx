@@ -1,6 +1,7 @@
 import React from "react";
 import Table from "../common/table";
 import { Link } from "react-router-dom";
+import "./styles/user.css";
 
 export default function UserTable({
   userData,
@@ -38,7 +39,7 @@ export default function UserTable({
 
     {
       content: (user) => (
-        <>
+        <section className="user__icon">
           <i
             className="fa fa-edit"
             aria-hidden="true"
@@ -57,7 +58,7 @@ export default function UserTable({
             onClick={() => onDelete(user)}
             style={{ cursor: "pointer" }}
           ></i>
-        </>
+        </section>
       ),
     },
 
@@ -65,10 +66,17 @@ export default function UserTable({
   ];
   return (
     <Table
+      className="UserTable"
       data={userData}
       columns={columns}
       onSort={onSort}
       sortColumn={sortColumn}
+      table="user__table"
+      tbody="user__tbody"
+      tbodyTr="userTbody__tr"
+      td="user__td"
+      thead="user__thead"
+      th="userTh"
     />
   );
 }

@@ -146,11 +146,12 @@ function App() {
 
   const isAdminMode = location.pathname.includes("/admin");
   const countComment = 5;
+  const companyName = "AppStore";
 
   return (
     <>
       {isAdminMode ? (
-        <Admin companyName="Apple Store" count={countComment} />
+        <Admin companyName={companyName} count={countComment} />
       ) : (
         <>
           {renderNavbar()}

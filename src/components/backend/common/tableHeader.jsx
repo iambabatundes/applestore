@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/table.css";
 
-function TableHeader({ sortColumn, columns, onSort }) {
+function TableHeader({ sortColumn, columns, onSort, className, thead, th }) {
   const raiseSort = (path) => {
     const sortColumns = { ...sortColumn };
     if (sortColumns.path === path)
@@ -24,10 +24,11 @@ function TableHeader({ sortColumn, columns, onSort }) {
   };
 
   return (
-    <thead>
-      <tr className="tableHeader clickable">
+    <thead className={`${thead}`}>
+      <tr className={`${className}`}>
         {columns.map((column) => (
           <th
+            className={`${th}`}
             key={column.path || column.key}
             onClick={() => raiseSort(column.path)}
           >

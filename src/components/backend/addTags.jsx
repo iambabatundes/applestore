@@ -45,7 +45,7 @@ export default function AddTags({ className }) {
     }
 
     fetchData();
-  }, []);
+  }, [tags]);
 
   function handleEdit(tag) {
     setIsEditMode(true);
@@ -110,8 +110,8 @@ export default function AddTags({ className }) {
 
   let initialValues = {
     name: "",
-    // slug: "",
-    // description: "",
+    slug: "",
+    description: "",
   };
 
   if (isEditMode && editTag) {

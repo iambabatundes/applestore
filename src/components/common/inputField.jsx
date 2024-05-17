@@ -13,10 +13,8 @@ export default function InputField({
   textarea,
   fieldInput,
   select,
-  // options,
+  options,
   onChange,
-  value,
-  flattenedCategories,
 }) {
   return (
     <section>
@@ -29,8 +27,8 @@ export default function InputField({
               className={`${className}`}
               onChange={onChange}
               setFieldValue={form.setFieldValue}
-              // value={field.value}
-              value={value}
+              value={field.value}
+              // value={value}
               fieldInput={fieldInput}
               tooltip={tooltip}
               tooltipTitle={tooltipTitle}
@@ -39,8 +37,7 @@ export default function InputField({
               type={type}
               textarea={textarea}
               select={select}
-              // options={options}
-              flattenedCategories={flattenedCategories}
+              options={options}
             />
 
             <ErrorMessage name={name} component="div" />

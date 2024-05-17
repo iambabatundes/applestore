@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
+import { toast } from "react-toastify";
 
 import Header from "../common/header";
-// import "../tags/styles/styles.css";
 import "../../backend/styles/cateTagStyle.css";
-import InputForm from "../../common/inputForm";
-import InputText from "../../common/inputText";
-import InputField from "../../common/inputField";
-import { ErrorMessage } from "formik";
-import Button from "../../common/button";
-import TagTable from "../tags/TagTable";
 import SearchBox from "../common/searchBox";
 import { paginate } from "../../utils/paginate";
 import Pagination from "../common/pagination";
-// import { getCategories } from "../../categoryData";
 import CategoryTable from "./categoryTable";
 import {
   getCategories,
-  getCategory,
+  updateCategory,
   saveCategory,
+  deleteCategory,
 } from "../../../services/categoryService";
+import CategoryForm from "./categoryForm";
 
 export default function AddCategories({ className }) {
   const [categories, setCategories] = useState([]);
@@ -27,15 +22,65 @@ export default function AddCategories({ className }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(8);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     async function getCategory() {
-      const categories = await getCategories();
-      setCategories(categories);
+      const { data: fetchedCategories } = await getCategories();
+      setCategories(fetchedCategories);
     }
 
     getCategory();
-  }, [categories]);
+  }, []);
+
+  async function handleSaveOrUpdate(data) {
+    try {
+      // Update UI immediately
+      if (isEditMode) {
+        // Update existing category
+        const updatedCategories = categories.map((c) =>
+          c._id === selectedCategory._id ? { ...c, ...data } : c
+        );
+        setCategories(updatedCategories);
+      } else {
+        // Create new category
+        setCategories([data, ...categories]);
+      }
+
+      // Send request to server
+      const response = isEditMode
+        ? await updateCategory(selectedCategory._id, data)
+        : await saveCategory(data);
+
+      // Handle success (no action needed)
+      toast.success(
+        `Category ${isEditMode ? "updated" : "created"} successfully`
+      );
+      setIsEditMode(false);
+      setSelectedCategory(null);
+    } catch (error) {
+      // Handle failure
+      console.error("Error saving Category:", error);
+      toast.error("Failed to save Category");
+
+      // Revert changes made on the UI
+      if (isEditMode) {
+        // Fetch categories from server to get the latest data
+        const { data: fetchedCategories } = await getCategories();
+        setCategories(fetchedCategories);
+      } else {
+        // Remove newly added category from the UI
+        const updatedCategories = categories.filter((c) => c._id !== data._id);
+        setCategories(updatedCategories);
+      }
+    }
+  }
+
+  function handleEdit(category) {
+    setIsEditMode(true);
+    setSelectedCategory(category);
+  }
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -46,36 +91,35 @@ export default function AddCategories({ className }) {
     setCurrentPage(1);
   }
 
-  function handleDelete() {}
+  async function handleDelete(category) {
+    const originalCategories = [...categories];
+    const updatedCategories = originalCategories.filter(
+      (c) => c._id !== category._id
+    );
+    setCategories(updatedCategories);
+
+    try {
+      await deleteCategory(category._id);
+      toast.success("Category deleted successfully");
+    } catch (error) {
+      console.error("Error deleting Category:", error);
+      toast.error("Failed to delete Category");
+      setCategories(originalCategories);
+    }
+  }
+
   function handlePreview() {}
-  function handleEdit() {}
 
-  const flattenCategories = (categories, depth = 0) => {
-    let flatCategories = [];
-    categories.forEach((category) => {
-      flatCategories.push({ ...category, depth });
-      if (category.subcategories) {
-        flatCategories = [
-          ...flatCategories,
-          ...flattenCategories(category.subcategories, depth + 1),
-        ];
-      }
-    });
-    return flatCategories;
-  };
-
-  const flattenedCategories = flattenCategories(categories);
-
-  let filtered = flattenedCategories;
+  let filtered = categories;
   if (searchQuery)
-    filtered = flattenedCategories.filter((c) =>
+    filtered = categories.filter((c) =>
       c.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
   const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
   const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
+  const paginationEnabled = totalItems > 1;
 
   const allCategories = paginationEnabled
     ? paginate(sorted, currentPage, pageSize)
@@ -84,102 +128,16 @@ export default function AddCategories({ className }) {
   return (
     <section className="padding">
       <Header headerTitle="Product Categories" />
-
       <section className={`${className} tag-header`}>
-        <article>
-          {/* <ModalHeading title="Add New Tag" /> */}
-          <h1>Add New Category</h1>
-          <InputForm
-            initialValues={{
-              name: "",
-              slug: "",
-              parentCategory: "",
-              description: "",
-            }}
-            // validationSchema={val}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
-            }}
-          >
-            {(values, isSubmitting, setFieldValue) => (
-              <>
-                <InputText
-                  name="name"
-                  labelTitle="Name"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="name"
-                  type="name"
-                  placeholder=""
-                  fieldInput
-                  tooltip
-                  tooltipTitle="The name is how it appears on your site."
-                  className="tooltip"
-                />
-                <ErrorMessage name="name" />
-
-                <InputText
-                  name="slug"
-                  labelTitle="Slug"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="slug"
-                  type="slug"
-                  fieldInput
-                  tooltip
-                  className="tooltip"
-                  tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-                />
-
-                <InputText
-                  name="parentCategory"
-                  labelTitle="Parent Category"
-                  className="labelTitle"
-                />
-
-                <InputField
-                  name="category"
-                  placeholder="None"
-                  setFieldValue={setFieldValue}
-                  tooltip
-                  select
-                  flattenedCategories={flattenedCategories}
-                  //   options={categories}
-                  className="category-select tooltip"
-                  type="select"
-                  tooltipTitle="Assign a parent term to create a hierarchy. The term Jazz, for example, would be the parent of Bebop and Big Band."
-                />
-
-                <InputText
-                  name="description"
-                  labelTitle="Description"
-                  className="labelTitle"
-                />
-                <InputField
-                  name="description"
-                  textarea
-                  tooltip
-                  className="textareas tooltip"
-                  tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-                />
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="addButton"
-                >
-                  Add new category
-                </Button>
-              </>
-            )}
-          </InputForm>
-        </article>
-
+        <CategoryForm
+          // flattenedCategories={flattenedCategories}
+          categories={categories}
+          isEditMode={isEditMode}
+          onSubmit={handleSaveOrUpdate}
+          // onSaveOrUpdate={handleSaveOrUpdate}
+          selectedCategory={selectedCategory}
+          handleSaveOrUpdate={handleSaveOrUpdate}
+        />
         <article>
           <span>
             <SearchBox onChange={handleSearch} value={searchQuery} />
@@ -187,7 +145,6 @@ export default function AddCategories({ className }) {
               Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
             </span>
           </span>
-
           <CategoryTable
             onSort={handleSort}
             sortColumn={sortColumn}
@@ -196,7 +153,6 @@ export default function AddCategories({ className }) {
             onPreview={handlePreview}
             data={allCategories}
           />
-
           <Pagination
             itemsCount={filtered.length}
             pageSize={pageSize}

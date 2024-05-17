@@ -1,10 +1,11 @@
 import React from "react";
 import config from "../../../config.json";
+import "./styles/MediaLibraryUpload.css";
 
 export default function MediaLibraryUpload({
   filteredMedia,
   selectedMedia,
-  uploadMediaModel,
+  handleFileSelect,
 }) {
   return (
     <section>
@@ -13,25 +14,36 @@ export default function MediaLibraryUpload({
           <div
             key={media._id}
             className={`media-item ${
-              selectedMedia.includes(media.filename) ? "selected" : ""
+              selectedMedia.includes(media._id) ? "selected" : ""
             }`}
-            onClick={() => uploadMediaModel(media._id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFileSelect(media._id);
+            }}
           >
-            {media.mimeType.startsWith("image/") && ( // Check if it's an image
+            {selectedMedia.includes(media._id) && (
+              <div className="check-icon">
+                <i className="fas fa-check"></i>
+              </div>
+            )}
+            {media.mimeType && media.mimeType.startsWith("image/") && (
               <img
                 className="media-item-img"
-                // crossorigin="anonymous"
-                src={config.mediaUrl + `/uploads/${media.filename}`} // Assuming images are stored in the root directory
-                content="form-meta"
-                alt={media.originalName} // Use originalName as alt text
+                src={`${config.mediaUrl}/uploads/${
+                  media.filename
+                }?${new Date().getTime()}`} // Add cache-busting query parameter
+                alt={media.originalName}
               />
             )}
-            {media.mimeType.startsWith("video/") && ( // Check if it's a video
+            {media.mimeType && media.mimeType.startsWith("video/") && (
               <div className="preview">
                 <img src="/video.png" alt="Video" />
                 <p>{media.originalName}</p>
                 <video className="mediaItem-video" controls>
-                  <source src={`/${media.filename}`} type={media.mimeType} />
+                  <source
+                    src={config.mediaUrl + `/uploads/${media.filename}`}
+                    type={media.mimeType}
+                  />
                   Your browser does not support the video tag.
                 </video>
               </div>

@@ -6,12 +6,13 @@ const apiEndPoint = config.apiUrl + "/categories";
 export function getCategories() {
   return http.get(apiEndPoint);
 }
+
 export function getCategory(categoryId) {
   return http.get(apiEndPoint + "/" + categoryId);
 }
 
 export function saveCategory(category) {
-  console.log("Saving tag:", category); //
+  console.log("Saving Category:", category); //
   return http.post(apiEndPoint, category);
 }
 

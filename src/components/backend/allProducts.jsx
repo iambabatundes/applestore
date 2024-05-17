@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
-import { Link } from "react-router-dom";
 
 // import "./styles/posts.css";
 import "../backend/products/styles/product.css";
@@ -9,6 +8,7 @@ import { getProducts } from "../../services/productService";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
 import SearchBox from "./common/searchBox";
+import ProductHeader from "./products/productHeader";
 
 export default function AllProduct() {
   const [productData, setProductData] = useState([]);
@@ -57,24 +57,7 @@ export default function AllProduct() {
   return (
     <>
       <section>
-        <header className="product__header">
-          <h1 className="headerData-title">Products</h1>
-          <Link to="/admin/add-product">
-            <button className="headerData-btn">Add New</button>
-          </Link>
-
-          <Link to="/admin/add-product">
-            <button className="headerData-btn">Import</button>
-          </Link>
-
-          <Link to="/admin/add-product">
-            <button className="headerData-btn">Export</button>
-          </Link>
-
-          <span>
-            <button className="headerData-btn">Download Sample</button>
-          </span>
-        </header>
+        <ProductHeader />
 
         <section className="padding" style={{ marginTop: 80 }}>
           <span>

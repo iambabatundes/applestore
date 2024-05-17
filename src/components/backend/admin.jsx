@@ -20,11 +20,13 @@ import Settings from "./settings";
 import "./styles/admin.css";
 import AdminSidebar from "./adminSidebar";
 import ProductEdit from "./productEdit";
-import { getMediaDatas } from "./mediaData";
 import { getBlogPosts } from "../blogPosts";
 import AddTags from "./addTags";
 import AddCategories from "./categories/addCategory";
 import Orders from "./orders";
+import Promotion from "./promotion";
+// import { getUploads, uploadFile } from "../../services/mediaService";
+// import { handleFileChange } from "./media/fileUploadHandler";
 
 const Admin = ({ companyName, count }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -34,46 +36,25 @@ const Admin = ({ companyName, count }) => {
   const [uniqueDates, setUniqueDates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [maxFileSize, setMaxFileSize] = useState("");
-  const [selectedMedia, setSelectedMedia] = useState([]);
+  // const [selectedMedia, setSelectedMedia] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [mediaSearch, setMediaSearch] = useState("");
   const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
   // const [selectedThumbnail, setSelectedThumbnail] = useState([]);
 
-  useEffect(() => {
-    const fetchedPosts = getBlogPosts();
-    // const postsWithSelection = fetchedPosts.map((post) => ({
-    //   ...post,
-    //   selected: false,
-    // }));
-    setBlogPosts(fetchedPosts);
-  }, []);
+  // useEffect(() => {
+  //   async function fetchMediaData() {
+  //     try {
+  //       const { data: mediaData } = await getUploads();
+  //       setMediaData(mediaData);
+  //     } catch (error) {
+  //       console.error("Error fetching media data:", error);
+  //     }
+  //   }
 
-  useEffect(() => {
-    setLoading(true);
-    const data = getMediaDatas();
-    setMediaData(data);
-
-    // Initialize blog posts with the existing data
-    // setBlogPosts(data);
-
-    setTimeout(() => {
-      setLoading(false); // Hide the loading indicator after 2 seconds
-    }, 1000);
-
-    // Extract unique dates from mediaData
-    const dates = [...new Set(data.map((media) => media.date))];
-    setUniqueDates(dates);
-  }, []);
-
-  useEffect(() => {
-    // Simulated fetch (replace with actual fetch)
-    setTimeout(() => {
-      const maxFileSizeFromServerMB = 2048; // Example: Maximum file size in MB
-      setMaxFileSize(maxFileSizeFromServerMB);
-    }, 1000);
-  }, []);
+  //   fetchMediaData();
+  // }, []);
 
   const handleFilterChange = (event) => {
     setLoading(true); // Show the loading indicator
@@ -120,6 +101,7 @@ const Admin = ({ companyName, count }) => {
         { label: "Home", to: "/admin/home", content: <Dashboard /> },
         { label: "Updates", to: "/admin/updates", content: <Updates /> },
         { label: "SEO", to: "/admin/seo", content: <SEO /> },
+        { label: "Promotion", to: "/admin/promotion", content: <Promotion /> },
       ],
     },
     {
@@ -140,15 +122,14 @@ const Admin = ({ companyName, count }) => {
           to: "/admin/create",
           content: (
             <CreatePost
-              mediaData={mediaData}
               selectedFilter={selectedFilter}
               handleFilterChange={handleFilterChange}
               handleDateChange={handleDateChange}
               selectedDate={selectedDate}
-              uniqueDates={uniqueDates}
               handleSearch={handleSearch}
               mediaSearch={mediaSearch}
-              filteredMedia={filteredMedia}
+              setMediaData={setMediaData}
+              // filteredMedia={filteredMedia}
               blogPosts={blogPosts}
               setBlogPosts={setBlogPosts}
               addNewPost={(newPost) => {
@@ -166,18 +147,13 @@ const Admin = ({ companyName, count }) => {
         <Upload
           loading={loading}
           setLoading={setLoading}
-          // mediaData={mediaData}
-          setMediaData={setMediaData}
-          uniqueDates={uniqueDates}
-          setUniqueDates={setUniqueDates}
-          selectedMedia={selectedMedia}
-          maxFileSize={maxFileSize}
-          setMaxFileSize={setMaxFileSize}
+          // selectedMedia={selectedMedia}
           handleDateChange={handleDateChange}
           handleFilterChange={handleFilterChange}
           selectedDate={selectedDate}
           selectedFilter={selectedFilter}
-          filteredMedia={filteredMedia}
+          filteredMedia={mediaData}
+          mediaData={mediaData}
           handleSearch={handleSearch}
           mediaSearch={mediaSearch}
           blogPosts={blogPosts}
@@ -194,18 +170,11 @@ const Admin = ({ companyName, count }) => {
               setLoading={setLoading}
               // mediaData={mediaData}
               setMediaData={setMediaData}
-              uniqueDates={uniqueDates}
-              setUniqueDates={setUniqueDates}
-              selectedMedia={selectedMedia}
+              // selectedMedia={selectedMedia}
               maxFileSize={maxFileSize}
               setMaxFileSize={setMaxFileSize}
               handleDateChange={handleDateChange}
               handleFilterChange={handleFilterChange}
-              selectedDate={selectedDate}
-              selectedFilter={selectedFilter}
-              filteredMedia={filteredMedia}
-              handleSearch={handleSearch}
-              mediaSearch={mediaSearch}
               blogPosts={blogPosts}
             />
           ),

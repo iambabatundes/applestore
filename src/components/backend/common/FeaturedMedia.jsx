@@ -1,21 +1,27 @@
 import React, { useState } from "react";
-import Button from "../button";
+import "./styles/featureMedia.css";
 import FeaturedMediaUploadModal from "../media/FeaturedMediaUploadModal";
+import config from "../../../config.json";
 
 export default function FeaturedMedia({
   isFeaturedImageVisible,
   filteredMedia,
   selectedMedia,
   setSelectedMedia,
-  mediaData,
   handleFilterChange,
   mediaSearch,
   selectedFilter,
   selectedDate,
-  uniqueDates,
+  handleFileChange,
   handleSearch,
   selectedThumbnail,
   setSelectedThumbnail,
+  setMediaData,
+  setNotification,
+  setUploadProgress,
+  setSelectedFiles,
+  uploadProgress,
+  handleUploadDelete,
 }) {
   const [isFeaturdMediaOpen, setIsFeaturdMediaOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("library");
@@ -36,28 +42,25 @@ export default function FeaturedMedia({
 
   const handleInsertMedia = () => {
     if (selectedMediaDetails) {
-      const { dataUrl, fileType } = selectedMediaDetails;
+      const { filename, mimeType } = selectedMediaDetails;
 
-      // Check if the media type is an image
-      if (fileType.startsWith("image")) {
-        // Update the state with the new image details
-        setInsertedMedia((prevMedia) => [
-          ...prevMedia,
-          { type: "image", src: dataUrl, fileType },
-        ]);
-
-        // Set the selected thumbnail to the newly inserted image
-        setSelectedThumbnail({ type: "image", src: dataUrl, fileType });
+      if (mimeType && mimeType.startsWith("image")) {
+        const mediaObj = {
+          type: "image",
+          src: `${config.mediaUrl}/uploads/${filename}`,
+          mimeType,
+          filename,
+        };
+        setInsertedMedia((prevMedia) => [...prevMedia, mediaObj]);
+        setSelectedThumbnail(mediaObj);
       }
 
-      // Clear the selected media details after insertion
       setSelectedMediaDetails(null);
       setIsFeaturdMediaOpen(false);
     }
   };
 
   const handleMediaSelection = (mediaId) => {
-    // Toggle the selected state of the media item
     const updatedSelectedMedia = selectedMedia.includes(mediaId)
       ? selectedMedia.filter((id) => id !== mediaId)
       : [...selectedMedia, mediaId];
@@ -65,10 +68,14 @@ export default function FeaturedMedia({
     setSelectedMedia(updatedSelectedMedia);
   };
 
+  const handleRemoveImage = () => {
+    setSelectedThumbnail(null);
+  };
+
   return (
     <>
       {isFeaturedImageVisible && (
-        <section>
+        <section className="featured-media-section">
           <div className="featured-media-items">
             {insertedMedia.map((media, index) => (
               <div
@@ -78,27 +85,54 @@ export default function FeaturedMedia({
                     ? "selected-thumbnail"
                     : ""
                 }`}
-                onClick={() => setSelectedThumbnail(media.src)}
+                onClick={() => setSelectedThumbnail(media)}
               >
-                {media.type === "image" && (
+                {media.mimeType === "image" && (
                   <img
-                    src={media.src}
+                    src={`${config.mediaUrl}/uploads/${media.filename}`}
                     alt={`Featured Media ${index + 1}`}
                     width="100"
                     height="100"
-                    className="featuredImage"
+                    className="featured-image"
                   />
                 )}
               </div>
             ))}
           </div>
 
-          {/* Button to open the MediaUploadModal */}
-          <div>
-            <Button title="Select Featured Media" onClick={handleSelectMedia} />
-          </div>
+          {selectedThumbnail ? (
+            <div
+              className="featureImage__container"
+              onClick={handleSelectMedia}
+            >
+              <img
+                src={selectedThumbnail.src}
+                alt="Selected Featured Thumbnail"
+                className="featureImage__thumbnail"
+              />
+            </div>
+          ) : (
+            <div
+              className="featureImage__container"
+              onClick={handleSelectMedia}
+            >
+              <i className="fa fa-image featureImage__icon"></i>
+              <h1 className="featureImage__text">Select Featured Image</h1>
+            </div>
+          )}
 
-          {/* Render the MediaUploadModal component */}
+          {selectedThumbnail && (
+            <div className="featureImage__instructions">
+              <p>Click on the image to change or update</p>
+              <span
+                className="featureImage__remove-span"
+                onClick={handleRemoveImage}
+              >
+                Remove this image
+              </span>
+            </div>
+          )}
+
           <FeaturedMediaUploadModal
             isFeaturdMediaOpen={isFeaturdMediaOpen}
             onClick={handleCloseMediaUploadModal}
@@ -106,18 +140,22 @@ export default function FeaturedMedia({
             handleTabChange={handleTabChange}
             filteredMedia={filteredMedia}
             handleMediaSelection={handleMediaSelection}
-            mediaData={mediaData}
             handleSearch={handleSearch}
             handleFilterChange={handleFilterChange}
             mediaSearch={mediaSearch}
             selectedFilter={selectedFilter}
-            uniqueDates={uniqueDates}
             setSelectedMediaDetails={setSelectedMediaDetails}
             selectedMediaDetails={selectedMediaDetails}
             selectedDate={selectedDate}
             selectedMedia={selectedMedia}
             handleFeaturdMedia={handleInsertMedia}
-            // Pass any other necessary props here
+            handleFileChange={handleFileChange}
+            setMediaData={setMediaData}
+            setNotification={setNotification}
+            setUploadProgress={setUploadProgress}
+            uploadProgress={uploadProgress}
+            setSelectedFiles={setSelectedFiles}
+            handleUploadDelete={handleUploadDelete}
           />
         </section>
       )}

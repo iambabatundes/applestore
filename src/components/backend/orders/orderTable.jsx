@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import Table from "./common/table";
+import "./styles/order.css";
+import Table from "../common/table";
 
 export default function OrderTable({
   onEdit,
@@ -32,26 +32,23 @@ export default function OrderTable({
 
     {
       content: (post) => (
-        <>
+        <section className="order__icon">
           <i
             className="fa fa-edit"
             aria-hidden="true"
             onClick={() => onEdit(post)}
-            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
             onClick={() => onPreview(post)}
-            style={{ cursor: "pointer" }}
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
             onClick={() => onDelete(post)}
-            style={{ cursor: "pointer" }}
           ></i>
-        </>
+        </section>
       ),
     },
 
@@ -61,10 +58,17 @@ export default function OrderTable({
   return (
     <section>
       <Table
+        className="orderTable"
         columns={columns}
         data={data}
         onSort={onSort}
         sortColumn={sortColumn}
+        table="Ordertable__className"
+        thead="orderThead__className"
+        tbody="orderTbody__className"
+        tbodyTr="orderTbodyTr"
+        th="orderTh"
+        td="orderTd"
       />
     </section>
   );

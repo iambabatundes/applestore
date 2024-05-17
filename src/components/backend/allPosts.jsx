@@ -8,23 +8,27 @@ import TableData from "./common/tableData";
 import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
+import { getPost, getPosts } from "../../services/postService";
+import PostTable from "./allPosts/postTable";
 
-export default function AllPosts({ blogPosts, setBlogPosts }) {
+export default function AllPosts() {
+  const [postData, setPostData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(4);
   const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
   const [selectedDate, setSelectedDate] = useState("All Dates");
 
-  const [postTrash, setPostTrash] = useState([]);
+  // const [postTrash, setPostTrash] = useState([]);
 
   useEffect(() => {
-    // Update the trash posts whenever the blogPosts change
-    const updatedTrashPosts = blogPosts.filter(
-      (post) => post && post.status === "trash"
-    );
-    setPostTrash(updatedTrashPosts);
-  }, [blogPosts]);
+    async function getPost() {
+      const { data: postData } = await getPosts();
+      setPostData(postData);
+    }
+
+    getPost();
+  }, []);
 
   function handleSort(sortColumns) {
     setSortColumn(sortColumns);
@@ -39,9 +43,9 @@ export default function AllPosts({ blogPosts, setBlogPosts }) {
   function handlePreview() {}
   function handleEdit() {}
 
-  let filtered = blogPosts;
+  let filtered = postData;
   if (searchQuery)
-    filtered = blogPosts.filter((b) =>
+    filtered = postData.filter((b) =>
       b.title.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
@@ -67,8 +71,8 @@ export default function AllPosts({ blogPosts, setBlogPosts }) {
       </p>
 
       <section>
-        <TableData
-          currentPosts={allblogPosts}
+        <PostTable
+          data={allblogPosts}
           sortColumn={sortColumn}
           onSort={handleSort}
           onDelete={handleDelete}

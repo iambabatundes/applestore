@@ -14,12 +14,12 @@ export default function FilterByDate({
         onChange={handleDateChange}
         value={selectedDate}
       >
-        <option value="">All Date</option>
+        {/* <option value="">All Date</option>
         {uniqueDates.map((date) => (
           <option key={date} value={date}>
             {date}
           </option>
-        ))}
+        ))} */}
       </select>
     </div>
   );

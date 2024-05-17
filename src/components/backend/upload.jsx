@@ -1,78 +1,44 @@
 import React, { useState, useEffect } from "react";
 import "./styles/upload.css";
 import Header from "./common/header";
-import { getMediaDatas } from "./mediaData";
 import MediaUpload from "./media/mediaUpload";
 import MediaLibraryUpload from "./media/MediaLibraryUpload";
 import Button from "./button";
 import MediaFilter from "./media/MediaFilter";
 import FilterByDate from "./media/FilterByDate";
 import MediaSearch from "./media/MediaSearch";
-import { getUploads } from "../../services/mediaService";
+import { getUploads, deleteUpload } from "../../services/mediaService";
+import { handleFileChange } from "./media/fileUploadHandler";
 
 export default function Upload({
-  // mediaData,
-  // setMediaData,
-  selectedMedia,
-  maxFileSize,
-  setMaxFileSize,
-  uniqueDates,
-  loading,
+  // selectedMedia,
   handleFilterChange,
-  handleDateChange,
   selectedFilter,
   selectedDate,
   handleSearch,
   mediaSearch,
-  filteredMedia,
 }) {
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const [mediaData, setMediaData] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [notification, setNotification] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  // const [selectedMedia, setSelectedMedia] = useState([]);
 
   useEffect(() => {
     async function fetchMediaData() {
       try {
-        const { data } = await getUploads();
-        setMediaData(data);
+        const { data: originalMedia } = await getUploads();
+        setMediaData(originalMedia);
       } catch (error) {
         console.error("Error fetching media data:", error);
       }
     }
 
     fetchMediaData();
-  }, []);
+  }, [mediaData]);
 
-  useEffect(() => {
-    // Simulated fetch (replace with actual fetch)
-    setTimeout(() => {
-      const maxFileSizeFromServerMB = 2048; // Example: Maximum file size in MB
-      setMaxFileSize(maxFileSizeFromServerMB);
-    }, 1000);
-  }, [setMaxFileSize]);
-
-  const getMaxFileSizeGB = () => {
-    if (maxFileSize !== null) {
-      const maxFileSizeGB = maxFileSize / 1024; // Convert MB to GB
-      return maxFileSizeGB.toFixed(0); // Display with 2 decimal places
-    }
-    return "N/A"; // Display "N/A" if maxFileSizeMB is not set yet
-  };
-
-  const handleFileChange = (file) => {
-    // Implement file upload logic here and then add it to mediaData
-    const newMedia = {
-      id: mediaData.length + 1, // Generate a unique ID
-      imageUrl: URL.createObjectURL(file), // Use the file for the image URL
-      name: file.name, // Use the file name as the media name
-    };
-    setMediaData([...mediaData, newMedia]);
-  };
-
-  const handleBulkSelect = () => {
-    // do something
-  };
-
-  const handleUploadCanel = () => {
+  const handleUploadCancel = () => {
     setShowMediaUpload(false);
   };
 
@@ -80,20 +46,54 @@ export default function Upload({
     setShowMediaUpload(true);
   };
 
+  const handleFileSelect = (fileId) => {
+    setSelectedFiles((prevSelectedFiles) =>
+      prevSelectedFiles.includes(fileId)
+        ? prevSelectedFiles.filter((id) => id !== fileId)
+        : [...prevSelectedFiles, fileId]
+    );
+  };
+
+  const handleDeleteSelected = async () => {
+    try {
+      await deleteUpload(selectedFiles);
+      setMediaData((prevMediaData) =>
+        prevMediaData.filter((media) => !selectedFiles.includes(media._id))
+      );
+      setSelectedFiles([]);
+      setNotification("Selected files deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting files:", error);
+      setNotification("Error deleting files. Please try again.");
+    }
+
+    setTimeout(() => setNotification(""), 3000); // Clear notification after 3 seconds
+  };
+
   return (
     <section className="padding">
       <Header
         headerTitle="Media Library"
         buttonTitle="Add New"
-        // to="/admin/new-media"
         onClick={handleAddNewClick}
       />
 
+      {notification && <div className="notification">{notification}</div>}
+
       <MediaUpload
-        getMaxFileSizeGB={getMaxFileSizeGB}
-        handleUploadCanel={handleUploadCanel}
+        handleUploadCancel={handleUploadCancel}
         showMediaUpload={showMediaUpload}
-        onChange={handleFileChange}
+        onChange={(event) =>
+          handleFileChange(
+            event,
+            setUploadProgress,
+            setMediaData,
+            setSelectedFiles,
+            setShowMediaUpload,
+            setNotification
+          )
+        } // Use the function
+        uploadProgress={uploadProgress}
       />
 
       <div className="mediaUpload-mains">
@@ -104,21 +104,15 @@ export default function Upload({
               handleFilterChange={handleFilterChange}
             />
 
-            <FilterByDate
-              handleDateChange={handleDateChange}
-              selectedDate={selectedDate}
-              uniqueDates={uniqueDates}
-            />
+            <FilterByDate selectedDate={selectedDate} />
 
             <Button
-              onClick={handleBulkSelect}
-              title="Select & Delete"
+              title="Delete Selected"
               type="button"
               className="bulk-select-btn"
-              // Todo
+              onClick={handleDeleteSelected}
+              disabled={selectedFiles.length === 0}
             />
-
-            {loading && <span className="Imageloading"></span>}
           </div>
 
           <div>
@@ -132,11 +126,9 @@ export default function Upload({
 
       <div className="upload-grid">
         <MediaLibraryUpload
-          mediaData={mediaData}
-          selectedFilter={selectedFilter}
-          selectedDate={selectedDate}
-          selectedMedia={selectedMedia}
           filteredMedia={mediaData}
+          selectedMedia={selectedFiles}
+          handleFileSelect={handleFileSelect}
         />
       </div>
     </section>

@@ -2,10 +2,14 @@ import React from "react";
 import ReactQuill from "react-quill";
 // import "./productForm.css";
 import Input from "./formInput";
+import InputForm from "../../../common/inputForm";
+import InputText from "../../../common/inputText";
+import InputField from "../../../common/inputField";
+import { validationSchema } from "../../products/validateForm";
 
 export default function ProductForm({
   data,
-  onChange,
+  productSchema,
   editorContent,
   handleChange,
   handleSubmit,
@@ -27,76 +31,127 @@ export default function ProductForm({
 
   return (
     <section className="productForm__main">
-      <form onSubmit={handleSubmit}>
-        <div className="productForm__container">
-          <Input
-            name="name"
-            label="Name"
-            autoFocus
-            onChange={onChange}
-            placeholder="Product Name"
-            type="text"
-            value={data.name}
-          />
-          <Input
-            name="sku"
-            label="SKU"
-            onChange={onChange}
-            placeholder="Product SKU"
-            type="text"
-            value={data.sku}
-          />
+      <section>
+        <InputForm
+          initialValues={{
+            name: "",
+            sku: "",
+            description: "",
+            numberInStock: "",
+            price: "",
+            salePrice: "",
+            saleStartDate: "",
+            saleEndDate: "",
+            weight: "",
+            discountPercentage: "",
+            featureImage: "",
+            media: [],
+            category: "",
+            tags: [],
+            subcategory: [],
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {(values, isSubmitting, setFieldValue) => (
+            <>
+              <InputText labelTitle="Name" name="name" />
+              <InputField
+                name="name"
+                type="text"
+                fieldInput
+                placeholder="Product name"
+                // value={values.name}
+                // onChange={setFieldValue}
+              />
 
-          <Input
-            name="weight"
-            label="Weight"
-            onChange={onChange}
-            placeholder="Weight"
-            type="text"
-            value={data.weight}
-          />
+              <section style={{ display: "flex", alignItems: "center" }}>
+                <InputText labelTitle="SKU" name="sku" />
+                <InputField
+                  name="sku"
+                  type="text"
+                  fieldInput
+                  placeholder="Sku"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
 
-          <Input
-            name="price"
-            label="Price"
-            onChange={onChange}
-            placeholder="Product price"
-            type="number"
-            value={data.price}
-          />
+                <InputText labelTitle="Weight" name="weight" />
+                <InputField
+                  name="weight"
+                  type="text"
+                  fieldInput
+                  placeholder="weight"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
+              </section>
 
-          <Input
-            name="salePrice"
-            label="Sale Price"
-            onChange={onChange}
-            placeholder="Sale Price"
-            type="number"
-            value={data.salePrice}
-          />
-          <Input
-            name="quantity"
-            label="Quantity"
-            onChange={onChange}
-            placeholder="Product Quantity"
-            type="number"
-            value={data.quantity}
-          />
+              <section style={{ display: "flex", alignItems: "center" }}>
+                <InputText labelTitle="Sale Price" name="salePrice" />
+                <InputField
+                  name="salePrice"
+                  type="text"
+                  fieldInput
+                  placeholder="Sale Price"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
 
-          {/* Add other input fields as needed */}
-        </div>
+                <InputText labelTitle="Sale Start Date" name="saleStartDate" />
+                <InputField
+                  name="saleStartDate"
+                  type="text"
+                  fieldInput
+                  placeholder="price"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
+                <InputText labelTitle="Sale End Date" name="saleEndDate" />
+                <InputField
+                  name="saleEndDate"
+                  type="text"
+                  fieldInput
+                  placeholder="price"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
+              </section>
+              <section style={{ display: "flex", alignItems: "center" }}>
+                <InputText labelTitle="Quantity" name="numberInStock" />
+                <InputField
+                  name="numberInStock"
+                  type="text"
+                  fieldInput
+                  placeholder="Quantity"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
 
-        <div>
-          <h1>Product Description</h1>
-          <ReactQuill
-            modules={modules}
-            onChange={handleChange}
-            value={editorContent}
-            theme="snow"
-          />
-        </div>
+                <InputText labelTitle="Price" name="price" />
+                <InputField
+                  name="price"
+                  type="text"
+                  fieldInput
+                  placeholder="price"
+                  // value={values.name}
+                  // onChange={setFieldValue}
+                />
+              </section>
+            </>
+          )}
+        </InputForm>
+      </section>
 
-        <button type="submit">Submit</button>
-      </form>
+      <div>
+        <h1>Product Description</h1>
+        <ReactQuill
+          modules={modules}
+          onChange={handleChange}
+          value={editorContent}
+          theme="snow"
+        />
+      </div>
     </section>
   );
 }

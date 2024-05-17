@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 
-import OrderTable from "./orderTable";
-import Header from "./common/header";
 import { paginate } from "../utils/paginate";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
+import OrderTable from "./orders/orderTable";
 import OrderDetails from "./orderDetails";
-import { getOrderDatas, getOrderData } from "./orderData";
+import { getOrderDatas } from "./orderData";
+import OrderHeader from "./orders/orderHeader";
 
 export default function Orders() {
   const [orderData, setOrderData] = useState([]);
@@ -69,48 +69,36 @@ export default function Orders() {
     ? paginate(sorted, currentPage, pageSize)
     : sorted;
 
-  const getOrderDataById = async (orderNumber) => {
-    try {
-      // Fetch order details based on the orderNumber
-      const orderDetails = getOrderData(orderNumber);
-
-      // Return the order details
-      return orderDetails;
-    } catch (error) {
-      // Handle any errors that occur during the fetch request
-      console.error("Error fetching order details:", error);
-      return null; // Return null if an error occurs
-    }
-  };
-
   return (
-    <section className="padding">
-      <Header headerTitle="Order" />
+    <section>
+      <OrderHeader />
 
-      <span>
-        <SearchBox onChange={handleSearch} value={searchQuery} />
-        Showing {totalItems} Order{totalItems !== 1 ? "s" : ""}{" "}
-      </span>
+      <section className="padding" style={{ marginTop: 80 }}>
+        <span>
+          <SearchBox onChange={handleSearch} value={searchQuery} />
+          Showing {totalItems} Order{totalItems !== 1 ? "s" : ""}{" "}
+        </span>
 
-      <OrderTable
-        data={allOrderData}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onPreview={handlePreview}
-        onSort={handleSort}
-        sortColumn={sortColumn}
-      />
+        <OrderTable
+          data={allOrderData}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onPreview={handlePreview}
+          onSort={handleSort}
+          sortColumn={sortColumn}
+        />
 
-      <Pagination
-        itemsCount={filtered.length}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-      />
+        <Pagination
+          itemsCount={filtered.length}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
 
-      {isModalOpen && selectedOrder && (
-        <OrderDetails onClose={closeModal} getOrderData={selectedOrder} />
-      )}
+        {isModalOpen && selectedOrder && (
+          <OrderDetails onClose={closeModal} getOrderData={selectedOrder} />
+        )}
+      </section>
     </section>
   );
 }

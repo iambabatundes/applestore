@@ -1,32 +1,31 @@
 import React from "react";
-import Button from "../button";
 import "./styles/SelectFiles.css";
 
 export default function SelectFiles({
-  getMaxFileSizeGB,
   onChange,
   className,
   uploadMaxMain,
   uploadMaxSize,
-  selectfilebtn,
 }) {
   return (
-    <div>
-      <article className={`${className}`}>
-        <h3>Drop files to upload</h3>
-        <p>or</p>
-        <Button
-          title="Select files"
-          onChange={onChange}
+    <div className={`${className}`}>
+      <div className="upload-container">
+        <label htmlFor="file-input" className="upload-label">
+          <i className="fas fa-file upload-icon"></i>
+          <span className="upload-text">Choose files to upload</span>
+        </label>
+        <input
           type="file"
-          className={`${selectfilebtn}`}
+          id="file-input"
+          onChange={onChange}
+          className="file-input"
+          multiple // Allow multiple file selection
         />
-        {/* <button onChange={}>Select files</button> */}
-      </article>
+      </div>
 
       <div className={`${uploadMaxMain}`}>
         <h4 className={`${uploadMaxSize}`}>
-          Maximum upload file size: <span>{getMaxFileSizeGB} GB</span>
+          Maximum upload file size: <span>2 GB</span>
         </h4>
       </div>
     </div>
