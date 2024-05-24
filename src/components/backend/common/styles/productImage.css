@@ -1,0 +1,113 @@
+.selected-image-container {
+    align-items: center;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    transition: all 0.3s ease-in-out;
+    padding: 2px;
+    /* border: 1px solid #ddd; */
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.selected-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.drop-zone {
+    background-color: #f9f9f9;
+    /* background-color: #fff; */
+    border: 2px dashed transparent;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    text-align: center;
+    transition: border 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+.drop-zone:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.drop-zone.dragging {
+    border-color: #000;
+}
+
+.productImage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.productImage-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+    background-color: #fafafa;
+}
+
+.productImage-label:hover {
+    border-color: #aaa;
+}
+
+.productImage-icon {
+    font-size: 2rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.productImage-text {
+    font-size: 1rem;
+    color: #666;
+}
+
+.file-input-product {
+    display: none;
+}
+
+.productImage-instruction {
+    font-size: 0.7rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* .productImage__container {
+    width: 25px;
+    height: 25px;
+} */
+
+.productImage__cancel-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    cursor: pointer;
+    /* padding: 5px; */
+    font-size: 2rem;
+    fill: #ff0000;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.productImage__cancel-icon:hover {
+    fill: #fff;
+    background: #7a0202;
+    box-shadow: 0 4px 8px rgba(44, 167, 81, 0.1);
+    transition: all 0.3s ease-in-out;
+}

@@ -45,3 +45,43 @@ export const handleFileChange = async (
 
   setTimeout(() => setNotification(""), 3000);
 };
+
+export const handleFileChangeWrapper = async (
+  event,
+  setUploadProgress,
+  setMediaData,
+  setSelectedFiles,
+  setNotification,
+  setBlogPost
+) => {
+  const files = event.target.files;
+  const imageFiles = Array.from(files).filter((file) =>
+    file.type.startsWith("image/")
+  );
+
+  if (imageFiles.length === 0) {
+    setNotification("Only image files are allowed.");
+    setTimeout(() => setNotification(""), 3000);
+    return;
+  }
+
+  const imageFile = imageFiles[0]; // Only handle the first image file
+
+  await handleFileChange(
+    { target: { files: [imageFile] } }, // Pass the single image file
+    setUploadProgress,
+    setMediaData,
+    setSelectedFiles,
+    null,
+    setNotification
+  );
+
+  if (imageFile) {
+    const formData = new FormData();
+    formData.append("postMainImage", imageFile);
+    setBlogPost((prevPost) => ({
+      ...prevPost,
+      postMainImage: formData,
+    }));
+  }
+};

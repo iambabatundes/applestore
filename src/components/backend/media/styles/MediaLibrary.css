@@ -34,53 +34,57 @@
     cursor: pointer;
 }
 
-.media-item-content {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+.mediaLibrary-item.selected {
+    border: 4px solid #043d6f;
 }
 
-.media-item:hover .media-item-content {
+.mediaLibrary-item-content {
+    position: relative;
+    overflow: hidden;
+    /* border-radius: 10px; */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    height: 100px;
+}
+
+.mediaLibrary-item:hover .media-item-content {
     transform: scale(1.05);
 }
 
-.media-item-img {
+.mediaLibrary-item-img {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
+    height: 110px;
+    /* height: auto; */
+    /* border-radius: 10px; */
 }
 
-.previews {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #f4f4f4;
-    border-radius: 10px;
-}
-
-.previews img {
-    width: 80px;
-}
-
-.mediaItem-video {
-    width: 100%;
-    max-height: 200px;
-    border-radius: 10px;
-}
-
-.selection-overlay {
+.mediaLibrary__check-icon,
+.mediaLibrary__cancel-icon {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    padding: 5px;
+    top: 60px;
+    right: 350px;
+    font-size: 20px;
+    color: #f0f0f0;
+    background-color: #096dd9;
+    padding: 5px 5px;
+    cursor: pointer;
+    border: 2px solid #096dd9;
+}
+
+.media-item.selected .check-icon:hover {
+    display: none;
+}
+
+.media-item.selected .cancel-icon {
+    display: none;
+}
+
+.media-item.selected:hover .cancel-icon {
+    display: block;
+}
+
+.media-item.selected:hover .check-icon {
+    display: none;
 }
 
 .attachment-detail {
@@ -92,7 +96,7 @@
 .attachment-detail-main {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /* gap: 20px; */
 }
 
 .attachment-detail-header {
@@ -100,14 +104,13 @@
     margin-bottom: 10px;
 }
 
-.attachment-img,
-.attachment-video {
-    max-width: 30%;
-    border-radius: 10px;
+.attachment-img {
+    max-width: 40%;
+    /* border-radius: 10px; */
 }
 
 .attachment-line {
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .attachment-details {
@@ -141,7 +144,6 @@
 }
 
 /* Modern, clean styling for the attachment details section */
-
 .attachment-detail-main {
     background-color: #ffffff;
     border-radius: 10px;
@@ -149,7 +151,7 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /* gap: 20px; */
 }
 
 .attachment-detail-header {
@@ -242,9 +244,9 @@ input#attachment-link:focus {
     transition: background-color 0.3s ease;
 }
 
-.copy-to-clipboard-btn:hover {
+/* .copy-to-clipboard-btn:hover {
     background-color: #0056b3;
-}
+} */
 
 
 @media (max-width: 768px) {

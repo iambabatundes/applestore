@@ -1,6 +1,5 @@
 import React from "react";
 import "./styles/input.css";
-// import { ErrorMessage } from "formik";
 
 export default function Input({
   name,
@@ -18,6 +17,18 @@ export default function Input({
   select,
   options,
 }) {
+  const renderOptions = (options) => {
+    return options.map((item) => (
+      <option
+        key={item.id}
+        value={item.id}
+        style={{ marginLeft: `${item.depth * 20}px` }}
+      >
+        {"—".repeat(item.depth)} {item.name}
+      </option>
+    ));
+  };
+
   return (
     <div className={`checkout-add__address ${className}`}>
       {fieldInput && (
@@ -29,7 +40,6 @@ export default function Input({
           id={name}
           name={name}
           value={value}
-          // onChange={onChange}
           onChange={(e) => setFieldValue(name, e.target.value)}
           placeholder={placeholder}
         />
@@ -50,7 +60,6 @@ export default function Input({
           rows="10"
           value={value}
           onChange={(e) => setFieldValue(name, e.target.value)}
-          // className="textareas"
         ></textarea>
       )}
 
@@ -62,12 +71,7 @@ export default function Input({
           onChange={(e) => setFieldValue(name, e.target.value)}
         >
           <option value="">{placeholder}</option>
-
-          {options.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
+          {renderOptions(options)}
         </select>
       )}
       {tooltip && <span className={`tooltip-title`}>{tooltipTitle}</span>}

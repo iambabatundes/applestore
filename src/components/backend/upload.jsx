@@ -36,7 +36,7 @@ export default function Upload({
     }
 
     fetchMediaData();
-  }, [mediaData]);
+  }, []);
 
   const handleUploadCancel = () => {
     setShowMediaUpload(false);

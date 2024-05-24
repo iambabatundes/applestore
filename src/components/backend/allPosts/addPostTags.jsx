@@ -2,29 +2,30 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
 
-import Header from "./common/header";
-import "../backend/styles/cateTagStyle.css";
-import SearchBox from "./common/searchBox";
-import { paginate } from "../utils/paginate";
-import Pagination from "./common/pagination";
-import {
-  deleteTag,
-  getTags,
-  saveTag,
-  updateTag,
-} from "../../services/tagService";
-import TagForm from "./tags/tagForm";
-import TagTable from "./tags/TagTable";
-import TagModal from "./tags/tagModal";
+import Header from "../common/header";
+// import "../backend/styles/cateTagStyle.css";
+import SearchBox from "../common/searchBox";
+import { paginate } from "../../utils/paginate";
+import Pagination from "../common/pagination";
+import TagForm from "../tags/tagForm";
 
-export default function AddTags({ className }) {
-  const [tags, setTags] = useState([]);
+import {
+  deletePostTag,
+  getPostTags,
+  savePostTag,
+  updatePostTag,
+} from "../../../services/postTagsServices";
+import PostTagTable from "./common/postTagTable";
+import PostTagModal from "./common/postTagModal";
+
+export default function AddPostTags({ className }) {
+  const [postTags, setPostTags] = useState([]);
   const [sortColumn, setSortColumn] = useState({ path: "name", order: "asc" });
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(5);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editTag, setEditTag] = useState("");
+  const [editPostTag, setPostEditTag] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
 
@@ -35,24 +36,24 @@ export default function AddTags({ className }) {
   };
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchPostTag() {
       try {
-        const { data: fetchedTags } = await getTags();
-        setTags(fetchedTags);
+        const { data: fetchedPostTags } = await getPostTags();
+        setPostTags(fetchedPostTags);
       } catch (error) {
-        console.error("Error fetching tags:", error);
+        console.error("Error fetching post tags:", error);
       }
     }
 
-    fetchData();
-  }, [setTags]);
+    fetchPostTag();
+  }, []);
 
   function handleEdit(tag) {
     setIsEditMode(true);
-    setEditTag(tag);
+    setPostEditTag(tag);
   }
 
-  function handlePreview(tag) {
+  function handlePostPreview(tag) {
     setSelectedTag(tag);
     setIsModalOpen(true);
   }
@@ -66,41 +67,41 @@ export default function AddTags({ className }) {
     setCurrentPage(1);
   }
 
-  async function handleDelete(tag) {
-    const originalTags = tags;
-    const tagId = originalTags.filter((t) => t._id !== tag._id);
-    setTags(tagId);
+  async function handlePostDelete(tag) {
+    const originalPostTags = postTags;
+    const tagId = originalPostTags.filter((t) => t._id !== tag._id);
+    setPostTags(tagId);
 
     try {
-      await deleteTag(tag._id);
+      await deletePostTag(tag._id);
 
-      toast.success("Tag deleted successfully");
+      toast.success("Post Tag deleted successfully");
     } catch (error) {
       if (error.response && error.response.status === 404)
         toast.error("This tag has already been deleted");
 
-      setTags(originalTags);
+      setPostTags(originalPostTags);
     }
   }
 
-  async function handleSubmit(tag) {
+  async function handlePostSubmit(tag) {
     try {
       let updatedTags;
       if (isEditMode) {
         // Update existing tag
-        const updatedTag = await updateTag(editTag._id, tag);
-        updatedTags = tags.map((t) =>
+        const updatedTag = await updatePostTag(editPostTag._id, tag);
+        updatedTags = postTags.map((t) =>
           t._id === updatedTag._id ? updatedTag : t
         );
-        setTags(updatedTags);
+        setPostTags(updatedTags);
         setIsEditMode(false);
-        setEditTag(null);
+        setPostEditTag(null);
         toast.success("Tag updated successfully");
       } else {
         // Create new tag
-        const savedTag = await saveTag(tag);
-        setTags([savedTag, ...tags]); // Add the newly created tag to the beginning of the tags array
-        toast.success("Tag created successfully");
+        const savedTag = await savePostTag(tag);
+        setPostTags([savedTag, ...postTags]); // Add the newly created tag to the beginning of the tags array
+        toast.success("Post Tag created successfully");
       }
     } catch (error) {
       console.error("Error saving tag:", error);
@@ -114,18 +115,18 @@ export default function AddTags({ className }) {
     // description: "",
   };
 
-  if (isEditMode && editTag) {
+  if (isEditMode && editPostTag) {
     initialValues = {
-      name: editTag.name,
-      slug: editTag.slug,
-      description: editTag.description,
+      name: editPostTag.name,
+      slug: editPostTag.slug,
+      description: editPostTag.description,
     };
     console.log(initialValues);
   }
 
-  let filteredTags = tags;
+  let filteredTags = postTags;
   if (searchQuery) {
-    filteredTags = tags.filter((t) =>
+    filteredTags = postTags.filter((t) =>
       t.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
@@ -139,10 +140,10 @@ export default function AddTags({ className }) {
 
   return (
     <section className="padding">
-      <Header headerTitle="Product Tags" />
+      <Header headerTitle="Post Tags" />
       <section className={`${className} tag-header`}>
         <TagForm
-          onSubmit={handleSubmit}
+          onSubmit={handlePostSubmit}
           isEditMode={isEditMode}
           initialValues={initialValues}
         />
@@ -155,12 +156,13 @@ export default function AddTags({ className }) {
               {filteredTags.length !== 1 ? "s" : ""}
             </span>
           </span>
-          <TagTable
+
+          <PostTagTable
             onSort={handleSort}
             sortColumn={sortColumn}
-            onDelete={handleDelete}
+            onDelete={handlePostDelete}
             onEdit={handleEdit}
-            onPreview={handlePreview}
+            onPreview={handlePostPreview}
             data={paginatedTags}
           />
           <Pagination
@@ -172,9 +174,9 @@ export default function AddTags({ className }) {
         </article>
 
         {isModalOpen && selectedTag && (
-          <TagModal
+          <PostTagModal
             tag={selectedTag}
-            products={selectedTag.products}
+            posts={selectedTag.posts}
             onClose={closeModal}
           />
         )}

@@ -6,19 +6,17 @@ import "../styles/createNew.css";
 export default function PublishActions({
   postPublished,
   handlePostDelete,
-  publishing,
   handlePostPublish,
   networkStatus,
   editingMode,
   handleUpdatePublish,
-  updating,
 }) {
   return (
     <div className="publish__actions">
       {postPublished && (
         <div className="delete-button-container">
           <Button
-            type="submit"
+            type="button"
             onClick={handlePostDelete}
             title="Delete"
             className="publish__actions__btn delete-button"
@@ -27,10 +25,9 @@ export default function PublishActions({
       )}
 
       <div className="publish__button">
-        {updating && <Spinner className="spinner" />}
         {editingMode ? (
           <Button
-            type="submit"
+            type="button"
             onClick={handleUpdatePublish}
             title="Update"
             className="publish__actions__btn"
@@ -38,9 +35,8 @@ export default function PublishActions({
           />
         ) : (
           <>
-            {publishing && <Spinner className="spinner" />}
             <Button
-              type="submit"
+              type="button"
               onClick={handlePostPublish}
               title="Publish"
               className="publish__actions__btn"

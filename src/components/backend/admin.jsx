@@ -25,6 +25,8 @@ import AddTags from "./addTags";
 import AddCategories from "./categories/addCategory";
 import Orders from "./orders";
 import Promotion from "./promotion";
+import AddPostTags from "./allPosts/addPostTags";
+import AddPostCategories from "./allPosts/addPostCategories";
 // import { getUploads, uploadFile } from "../../services/mediaService";
 // import { handleFileChange } from "./media/fileUploadHandler";
 
@@ -120,23 +122,17 @@ const Admin = ({ companyName, count }) => {
         {
           label: "Create Post",
           to: "/admin/create",
-          content: (
-            <CreatePost
-              selectedFilter={selectedFilter}
-              handleFilterChange={handleFilterChange}
-              handleDateChange={handleDateChange}
-              selectedDate={selectedDate}
-              handleSearch={handleSearch}
-              mediaSearch={mediaSearch}
-              setMediaData={setMediaData}
-              // filteredMedia={filteredMedia}
-              blogPosts={blogPosts}
-              setBlogPosts={setBlogPosts}
-              addNewPost={(newPost) => {
-                setBlogPosts((prevPosts) => [newPost, ...prevPosts]);
-              }}
-            />
-          ),
+          content: <CreatePost />,
+        },
+        {
+          label: "Categories",
+          to: "/admin/posts-categories",
+          content: <AddPostCategories />,
+        },
+        {
+          label: "Tags",
+          to: "/admin/posts-tags",
+          content: <AddPostTags />,
         },
       ],
     },

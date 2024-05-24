@@ -1,7 +1,7 @@
 import React from "react";
 import Input from "../input";
 
-export default function FormTitle({ handleTitleChange }) {
+export default function FormTitle({ handleTitleChange, value }) {
   return (
     <div>
       <Input
@@ -13,7 +13,8 @@ export default function FormTitle({ handleTitleChange }) {
         placeholder="Add title"
         size="28"
         spellCheck="true"
-        autoComplete="off"
+        // autoComplete="off"
+        value={value}
       />
     </div>
   );

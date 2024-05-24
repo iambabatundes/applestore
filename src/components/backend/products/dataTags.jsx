@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from "react";
-import "./styles/postTags.css";
+// import "./styles/postTags.css";
+import "../../backend/common/styles/dataTags.css";
 
-export default function PostTags({
+export default function DataTags({
   isTagsVisible,
   selectedTags,
   setSelectedTags,
-  postTags,
-  setPostTags,
-  getPostTags,
-  getPostTag,
-  savePostTag,
+  dataTags,
+  setDataTags,
+  getDataTags,
+  saveDataTag,
 }) {
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);
-  const [filteredTags, setFilteredTags] = useState(postTags);
+  const [filteredTags, setFilteredTags] = useState(dataTags);
 
   useEffect(() => {
-    setFilteredTags(postTags);
-  }, [postTags]);
+    setFilteredTags(dataTags);
+  }, [dataTags]);
 
   const handleAddNewTag = async () => {
     if (newTag.trim() !== "") {
       try {
-        const existingTag = await getPostTags(newTag.trim());
+        const existingTag = await getDataTags(newTag.trim());
         if (existingTag) {
           setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
         } else {
-          const savedTag = await savePostTag({ name: newTag.trim() });
+          const savedTag = await saveDataTag({ name: newTag.trim() });
           setSelectedTags((prevTags) => [...prevTags, savedTag.name]);
-          setPostTags((prevTags) => [...prevTags, savedTag]);
+          setDataTags((prevTags) => [...prevTags, savedTag]);
         }
         setNewTag("");
         setIsAddingNewTag(false);
@@ -45,7 +45,7 @@ export default function PostTags({
 
   const handleInputChange = (e) => {
     const input = e.target.value.toLowerCase();
-    const filtered = postTags.filter((tag) =>
+    const filtered = dataTags.filter((tag) =>
       tag.name.toLowerCase().includes(input)
     );
     setFilteredTags(filtered);

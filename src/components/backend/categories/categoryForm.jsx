@@ -10,7 +10,7 @@ export default function CategoryForm({
   isEditMode,
   onSubmit,
   categories,
-  flattenedCategories,
+  // flattenedCategories,
 }) {
   return (
     <article>
@@ -34,9 +34,6 @@ export default function CategoryForm({
             setSubmitting(false);
           }
         }}
-        // onSubmit={(values, { resetForm }) => {
-        //   handleSaveOrUpdate(values, { resetForm });
-        // }}
       >
         {(values, isSubmitting, setFieldValue) => (
           <>
@@ -68,7 +65,7 @@ export default function CategoryForm({
               setFieldValue={setFieldValue}
               tooltip
               select
-              flattenedCategories={flattenedCategories}
+              // flattenedCategories={flattenedCategories}
               options={categories}
               className="category-select tooltip"
               type="select"

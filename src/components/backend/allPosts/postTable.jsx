@@ -4,6 +4,15 @@ import config from "../../../config.json";
 import Table from "../common/table";
 import "./styles/post.css";
 
+// Utility function to truncate content
+function truncateContent(content, wordLimit) {
+  const words = content.split(" ");
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }
+  return content;
+}
+
 export default function PostTable({
   data,
   onDelete,
@@ -20,7 +29,17 @@ export default function PostTable({
       content: (post) => <Link to={`/product/${post._id}`}>{post.title}</Link>,
     },
 
-    { label: "Description", path: "description" },
+    {
+      label: "Content",
+      path: "content",
+      content: (post) => (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: truncateContent(post.content, 20),
+          }}
+        ></div>
+      ),
+    },
     { label: "Category", path: "category" },
     { label: "Tags", path: "tags" },
     { label: "Comment", path: "comment" },
@@ -38,22 +57,22 @@ export default function PostTable({
     },
 
     {
-      content: (product) => (
+      content: (post) => (
         <section className="post__icon">
           <i
             className="fa fa-edit"
             aria-hidden="true"
-            onClick={() => onEdit(product)}
+            onClick={() => onEdit(post)}
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
-            onClick={() => onPreview(product)}
+            onClick={() => onPreview(post)}
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
-            onClick={() => onDelete(product)}
+            onClick={() => onDelete(post)}
           ></i>
         </section>
       ),

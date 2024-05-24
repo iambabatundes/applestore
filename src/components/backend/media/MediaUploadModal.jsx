@@ -24,6 +24,7 @@ export default function MediaUploadModal({
   handleSelectModal,
   setSelectedMediaDetails,
   selectedMediaDetails,
+  handleFileSelect,
 }) {
   const handleFormClick = (e) => {
     e.stopPropagation();
@@ -71,6 +72,7 @@ export default function MediaUploadModal({
                     filteredMedia={filteredMedia}
                     selectedMediaDetails={selectedMediaDetails}
                     setSelectedMediaDetails={setSelectedMediaDetails}
+                    handleFileSelect={handleFileSelect}
                   />
                 </>
               )}

@@ -1,16 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "../styles/createNew.css";
 import PublishActions from "./PublishActions";
-import PublishVisibility from "./publishVisibility";
 import PublishImmediately from "./publishImmediately";
-import PublishStatus from "./publishStatus";
-import SavePreviewAction from "./savePreviewAction";
 
 export default function PublishData({
   isContentVisible,
-  handleSaveDraft,
   networkStatus,
-  savingDraft,
   handlePostPublish,
   handlePostDelete,
   publishing,
@@ -19,19 +14,36 @@ export default function PublishData({
   handleUpdatePublish,
   updating,
 }) {
+  const [isImmediate, setIsImmediate] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [immediateDisplay, setImmediateDisplay] = useState("Immediately");
+
+  const handleEditDateTime = () => {
+    setIsImmediate(false);
+  };
+
+  const handleSaveDateTime = () => {
+    setIsImmediate(true);
+    setImmediateDisplay(selectedDate.toLocaleString()); // Format as needed
+  };
+
+  const handleCancelDateTime = () => {
+    setIsImmediate(true);
+  };
+
   return (
     <>
       {isContentVisible && (
         <>
-          <SavePreviewAction
-            handlePostPublish={handlePostPublish}
-            handleSaveDraft={handleSaveDraft}
-            networkStatus={networkStatus}
-            savingDraft={savingDraft}
+          <PublishImmediately
+            isImmediate={isImmediate}
+            immediateDisplay={immediateDisplay}
+            handleEditDateTime={handleEditDateTime}
+            handleSaveDateTime={handleSaveDateTime}
+            handleCancelDateTime={handleCancelDateTime}
+            setDate={setSelectedDate}
+            selectedDate={selectedDate}
           />
-          <div className="publishing-actions">
-            <PublishStatus />
-          </div>
           <PublishActions
             handlePostDelete={handlePostDelete}
             networkStatus={networkStatus}

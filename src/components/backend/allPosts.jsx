@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
-
-// import "./styles/posts.css";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"; // Add this import
 import "../backend/styles/dataTable.css";
 import { paginate } from "../utils/paginate";
-import TableData from "./common/tableData";
 import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
-import { getPost, getPosts } from "../../services/postService";
+import { getPosts, deletePost } from "../../services/postService";
 import PostTable from "./allPosts/postTable";
 
 export default function AllPosts() {
@@ -18,20 +17,34 @@ export default function AllPosts() {
   const [pageSize] = useState(4);
   const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
   const [selectedDate, setSelectedDate] = useState("All Dates");
-
-  // const [postTrash, setPostTrash] = useState([]);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
-    async function getPost() {
-      const { data: postData } = await getPosts();
-      setPostData(postData);
+    async function fetchPosts() {
+      const { data: posts } = await getPosts();
+      setPostData(posts);
     }
 
-    getPost();
+    fetchPosts();
   }, []);
 
-  function handleSort(sortColumns) {
-    setSortColumn(sortColumns);
+  async function handleDelete(post) {
+    const originalPosts = [...postData];
+    const updatedPosts = originalPosts.filter((t) => t._id !== post._id);
+    setPostData(updatedPosts);
+
+    try {
+      await deletePost(post._id);
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      if (error.response && error.response.status === 404)
+        toast.error("This post has already been deleted");
+      setPostData(originalPosts);
+    }
+  }
+
+  function handleSort(sortColumn) {
+    setSortColumn(sortColumn);
   }
 
   function handleSearch(query) {
@@ -39,9 +52,11 @@ export default function AllPosts() {
     setCurrentPage(1);
   }
 
-  function handleDelete() {}
   function handlePreview() {}
-  function handleEdit() {}
+
+  function handleEdit(post) {
+    navigate("/admin/create", { state: { post } });
+  }
 
   let filtered = postData;
   if (searchQuery)
@@ -52,13 +67,11 @@ export default function AllPosts() {
   const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
   const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
+  const paginationEnabled = totalItems > 1;
 
-  const allblogPosts = paginationEnabled
+  const allBlogPosts = paginationEnabled
     ? paginate(sorted, currentPage, pageSize)
     : sorted;
-
-  // const allblogPosts = paginate(sorted, currentPage, pageSize);
 
   return (
     <section className="dataTable">
@@ -72,7 +85,7 @@ export default function AllPosts() {
 
       <section>
         <PostTable
-          data={allblogPosts}
+          data={allBlogPosts}
           sortColumn={sortColumn}
           onSort={handleSort}
           onDelete={handleDelete}

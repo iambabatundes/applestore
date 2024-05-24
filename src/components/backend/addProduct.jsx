@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import Header from "./common/header";
 import Button from "./button";
 import TagsHeader from "./common/TagsHeader";
 import PostTags from "./common/postTags";
 import CategoryHeader from "./common/CategoriesHeader";
-import PostCategories from "./common/postCategories";
 import FeaturedImageHeader from "./common/featuredImageHeader";
 import FeaturedMedia from "./common/FeaturedMedia";
 import ProductForm from "./common/formData/productForm";
@@ -13,18 +15,16 @@ import {
   updateProduct,
   getProducts,
 } from "../../services/productService";
-import { toast } from "react-toastify";
 import ProductImage from "./common/formData/ProductImage";
-import { getTags } from "../../services/tagService";
+import { getTags, saveTag } from "../../services/tagService";
+import { getCategories, saveCategory } from "../../services/categoryService";
+import DataCategory from "./products/dataCategory";
+import DataTags from "./products/dataTags";
+import ProductGallary from "./common/formData/productGallary";
+import ProductGallaryHeader from "./common/productGallaryHeader";
+import { validationSchema } from "./products/validateForm";
 
-export default function AddProduct({
-  editingMode,
-  handleSearch,
-  mediaData,
-  mediaSearch,
-  filteredMedia,
-  selectedFilter,
-}) {
+export default function AddProduct() {
   const [productDetails, setProductDetails] = useState({
     name: "",
     weight: "",
@@ -38,24 +38,36 @@ export default function AddProduct({
     featureImage: {},
     media: [],
   });
-  // const [productData, setProductData] = useState([]);
+
   const [isTagsVisible, setIsTagsVisible] = useState(true);
   const [selectedTags, setSelectedTags] = useState([]);
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
-  const [selectedMedia, setSelectedMedia] = useState([]);
+  const [isProductGallaryVisible, setIsProductGallaryVisible] = useState(true);
+
   const [featureImage, setFeatureImage] = useState({});
+  const [media, setMedia] = useState([]);
+  const [editingMode, setEditingMode] = useState({});
   const [editorContent, setEditorContent] = useState("");
   const [tags, setTags] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getTag() {
-      const tags = await getTags();
+      const { data: tags } = await getTags();
       setTags(tags);
     }
 
+    async function getCategory() {
+      const { data: categories } = await getCategories();
+      setCategories(categories);
+    }
+
     getTag();
+    getCategory();
   }, []);
 
   const handleInputChange = (e) => {
@@ -66,24 +78,32 @@ export default function AddProduct({
     }));
   };
 
-  const handleChange = (content) => {
+  const handleEditorChange = (content) => {
     setEditorContent(content);
   };
 
-  // Function to handle the selection of the featured image
-  const handleSelectFeaturedImage = (selectedImage) => {
-    setProductDetails((prevState) => ({
-      ...prevState,
-      featureImage: selectedImage,
-    }));
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFeatureImage(URL.createObjectURL(e.target.files[0]));
+      setProductDetails((prevState) => ({
+        ...prevState,
+        featureImage: e.target.files[0],
+      }));
+    } else {
+      setFeatureImage(null);
+      setProductDetails((prevState) => ({
+        ...prevState,
+        featureImage: {},
+      }));
+    }
   };
 
-  // Function to handle image upload
-  const handleImageChange = (e) => {
-    console.log(e.target.files);
-    setFeatureImage(URL.createObjectURL(e.target.files[0]));
-    // const file = e.target.files[0];
-    // setFeatureImage(file);
+  const handleProductImagesChange = (e) => {
+    const files = Array.from(e.target.files);
+    setProductDetails((prevState) => ({
+      ...prevState,
+      media: [...prevState.media, ...files],
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -98,16 +118,13 @@ export default function AddProduct({
       };
 
       if (editingMode) {
-        // If editing, update existing product
         await updateProduct(productData);
         toast.success("Product updated successfully");
       } else {
-        // If adding new, save as a new product
         await saveProduct(productData);
         toast.success("Product created successfully");
       }
 
-      // Optionally, you can reset form fields after successful submission
       setProductDetails({
         name: "",
         weight: "",
@@ -125,12 +142,12 @@ export default function AddProduct({
       setSelectedTags([]);
       setSelectedCategories([]);
       setFeatureImage({});
-
-      // Optionally, you can redirect the user after successful submission
-      // history.push("/products"); // Assuming you're using react-router
+      alert("Post submitted successfully!");
+      navigate("/admin/posts");
     } catch (error) {
       toast.error("Failed to save product");
       console.error("Error saving product:", error);
+      alert("An error occurred while submitting the product.");
     }
   };
 
@@ -140,6 +157,14 @@ export default function AddProduct({
 
   const toggleTags = () => {
     setIsTagsVisible(!isTagsVisible);
+  };
+
+  const togglefeatureImage = () => {
+    setIsFeaturedImageVisible(!isFeaturedImageVisible);
+  };
+
+  const toggleProductGallary = () => {
+    setIsProductGallaryVisible(!isProductGallaryVisible);
   };
 
   const handleTagsChange = (tags) => {
@@ -156,17 +181,28 @@ export default function AddProduct({
 
       <section className="createNew-grid">
         <section className="blog__post">
-          <ProductForm
-            onChange={handleInputChange}
-            data={productDetails}
-            onSubmit={handleSubmit}
-            setEditorContent={setEditorContent}
-            editorContent={editorContent}
-            handleChange={handleChange}
-          />
+          <section className="productForm__main">
+            <Formik
+              initialValues={productDetails}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting, setFieldValue, values }) => (
+                <Form>
+                  <ProductForm
+                    editorContent={editorContent}
+                    handleEditorChange={handleEditorChange}
+                  />
+                  <button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
+                </Form>
+              )}
+            </Formik>
+          </section>
         </section>
 
-        <div className="" style={{ width: 250 }}>
+        <div className="" style={{ width: 285 }}>
           <div className="createPost-publish">
             <Button title="Publish" className="" />
           </div>
@@ -178,10 +214,14 @@ export default function AddProduct({
               onClick={toggleCategories}
             />
 
-            <PostCategories
+            <DataCategory
               isCategoriesVisible={isCategoriesVisible}
               selectedCategories={selectedCategories}
               setSelectedCategories={setSelectedCategories}
+              categories={categories}
+              setCategories={setCategories}
+              getCategories={getCategories}
+              saveCategory={saveCategory}
             />
           </div>
 
@@ -192,11 +232,15 @@ export default function AddProduct({
               onClick={toggleTags}
             />
 
-            <PostTags
+            <DataTags
               isTagsVisible={isTagsVisible}
               onTagsChange={handleTagsChange}
               selectedTags={selectedTags}
               setSelectedTags={setSelectedTags}
+              dataTags={tags}
+              getDataTags={getTags}
+              saveDataTag={saveTag}
+              setDataTags={setTags}
             />
           </div>
 
@@ -204,33 +248,30 @@ export default function AddProduct({
             <FeaturedImageHeader
               FeaturedImageTitle="Product Image"
               isFeaturedImageVisible={isFeaturedImageVisible}
+              onClick={togglefeatureImage}
             />
 
-            {/* Pass necessary props to ProductImage component */}
             <ProductImage
-              isFeaturedImageVisible={isFeaturedImageVisible}
-              insertedMedia={productDetails.media}
-              selectedThumbnail={productDetails.featureImage}
-              setSelectedThumbnail={handleSelectFeaturedImage}
+              isFeaturedImageVisible={true}
               handleImageChange={handleImageChange}
               featureImage={featureImage}
+              // setFeatureImage={setFeatureImage}
             />
           </div>
 
           <div className="createPost-publish">
-            <FeaturedImageHeader
-              FeaturedImageTitle="Product Gallary"
-              isFeaturedImageVisible={isFeaturedImageVisible}
+            <ProductGallaryHeader
+              dataImageVisible={isProductGallaryVisible}
+              productGallaryTitle="Product Gallary"
+              onClick={toggleProductGallary}
             />
 
-            {/* Pass necessary props to ProductImage component */}
-            <ProductImage
-              isFeaturedImageVisible={isFeaturedImageVisible}
-              insertedMedia={productDetails.media}
-              selectedThumbnail={productDetails.featureImage}
-              setSelectedThumbnail={handleSelectFeaturedImage}
+            <ProductGallary
               handleImageChange={handleImageChange}
-              featureImage={featureImage}
+              handleProductImagesChange={handleProductImagesChange}
+              isProductGalleryVisible={isProductGallaryVisible}
+              media={media}
+              setMedia={setMedia}
             />
           </div>
         </div>

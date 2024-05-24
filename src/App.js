@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
@@ -150,6 +153,7 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
       {isAdminMode ? (
         <Admin companyName={companyName} count={countComment} />
       ) : (

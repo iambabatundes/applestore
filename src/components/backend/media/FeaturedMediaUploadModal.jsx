@@ -26,6 +26,9 @@ export default function FeaturedMediaUploadModal({
   setNotification,
   setSelectedFiles,
   handleUploadDelete,
+  selectedThumbnail,
+  setSelectedMedia,
+  handleFileSelect,
 }) {
   const [selectedTab, setSelectedTab] = useState("upload");
   // const [showFileUpload, setShowFileUpload] = useState(true);
@@ -37,10 +40,6 @@ export default function FeaturedMediaUploadModal({
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
   };
-
-  // const handleUploadCancel = () => {
-  //   setShowFileUpload(false);
-  // };
 
   const handleUploadSuccess = (newMedia) => {
     setSelectedTab("library");
@@ -74,8 +73,6 @@ export default function FeaturedMediaUploadModal({
             <section className="modal-content-area">
               {selectedTab === "upload" && (
                 <FileUpload
-                  // handleUploadCancel={handleUploadCancel}
-                  // showFileUpload={showFileUpload}
                   setMediaData={setMediaData}
                   setNotification={setNotification}
                   setUploadProgress={setUploadProgress}
@@ -98,6 +95,9 @@ export default function FeaturedMediaUploadModal({
                   selectedMediaDetails={selectedMediaDetails}
                   setSelectedMediaDetails={setSelectedMediaDetails}
                   handleUploadDelete={handleUploadDelete}
+                  selectedThumbnail={selectedThumbnail}
+                  setSelectedMedia={setSelectedMedia}
+                  handleFileSelect={handleFileSelect}
                 />
               )}
             </section>

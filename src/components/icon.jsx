@@ -29,6 +29,9 @@ export default function Icon({
   build,
   customizing,
   className,
+  width,
+  height,
+  fill,
 }) {
   return (
     <section>
@@ -425,11 +428,11 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
       {cancel && (
         <span onClick={onClick} className={`${className}`}>
           <svg
-            width="12"
-            height="12"
+            width={`${width}`}
+            height={`${height}`}
             viewBox="0 0 14 14"
             xmlns="http://www.w3.org/2000/svg"
-            fill="#74767E"
+            fill={`${fill} #74767E`}
           >
             <path d="m8.485 7 4.487-4.487.926-.925a.35.35 0 0 0 0-.495l-.99-.99a.35.35 0 0 0-.495 0L7 5.515 1.588.102a.35.35 0 0 0-.495 0l-.99.99a.35.35 0 0 0 0 .495L5.514 7 .102 12.413a.35.35 0 0 0 0 .495l.99.99a.35.35 0 0 0 .495 0L7 8.485l4.487 4.487.926.926a.35.35 0 0 0 .495 0l.99-.99a.35.35 0 0 0 0-.495L8.485 7Z"></path>
           </svg>

@@ -1,24 +1,17 @@
 import React from "react";
-import Input from "./input";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Button from "../button";
+import "../styles/createNew.css";
 
 export default function PublishImmediately({
   isImmediate,
   immediateDisplay,
   handleEditDateTime,
-  months,
-  month,
-  day,
-  year,
-  hour,
-  minute,
   handleSaveDateTime,
   handleCancelDateTime,
-  setMinute,
-  setDay,
-  setHour,
-  setYear,
-  setMonth,
+  setDate,
+  selectedDate,
 }) {
   return (
     <div className="post-actions postbox post-immediately">
@@ -37,81 +30,23 @@ export default function PublishImmediately({
         </span>
       ) : (
         <div className="date-time-select">
-          <select
-            value={String(month).padStart(2, "0")}
-            onChange={(e) => setMonth(e.target.value)}
-            className="dateTime__select"
-          >
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i} value={String(i + 1).padStart(2, "0")}>
-                {String(i + 1).padStart(2, "0")} - {months[i]}
-              </option>
-            ))}
-          </select>
-
-          <Input
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            className="dataTime__input"
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setDate(date)}
+            showTimeSelect
+            dateFormat="Pp"
+            className="dateTime__input"
           />
-          {/* <input
-            // type="number"
-            value={day}
-            onChange={(e) => setDay(e.target.value)}
-            className="dataTime__input"
-          /> */}
-          {","}
-
-          <Input
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="dataTime__input year__input"
-          />
-          {/* <input
-            // type="datetime-local"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="dataTime__input year__input"
-          /> */}
-
-          {"at"}
-
-          <Input // type="number"
-            value={hour}
-            onChange={(e) => setHour(e.target.value)}
-            className="dataTime__input"
-          />
-
-          {/* <input
-            // type="number"
-            value={hour}
-            onChange={(e) => setHour(e.target.value)}
-            className="dataTime__input"
-          /> */}
-          {":"}
-
-          <Input // type="number"
-            value={minute}
-            onChange={(e) => setMinute(e.target.value)}
-            className="dataTime__input"
-          />
-          {/* <input
-            // type="number"
-            value={minute}
-            onChange={(e) => setMinute(e.target.value)}
-            className="dataTime__input"
-          /> */}
-
-          <div className="datasBtn">
+          <div className="dateTime__buttons">
             <Button
               onClick={handleSaveDateTime}
               title="Save"
-              className="dataBtn"
+              className="dateTime__button"
             />
             <Button
               onClick={handleCancelDateTime}
               title="Cancel"
-              className="dataBtn cancelData"
+              className="dateTime__button dateTime__button--cancel"
             />
           </div>
         </div>

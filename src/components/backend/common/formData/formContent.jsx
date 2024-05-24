@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactQuill from "react-quill";
 import "./formContent.css";
 import Button from "../../button";
 import "../../styles/createNew.css";
 import MediaUploadModal from "../../media/MediaUploadModal";
+import FeaturedMediaUploadModal from "../../media/FeaturedMediaUploadModal";
 
 export default function FormContent({
   selectedMedia,
@@ -15,8 +16,13 @@ export default function FormContent({
   handleSearch,
   mediaSearch,
   filteredMedia,
+  handleFileChange,
+  handleFileSelect,
+  handleEditorChange,
+  initialContent,
+  editorContent,
+  setEditorContent,
 }) {
-  const [editorContent, setEditorContent] = useState("");
   const [isMediaUploadOpen, setIsMediaUploadOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("library");
   const [insertedMedia, setInsertedMedia] = useState([]); // Track inserted media
@@ -36,6 +42,7 @@ export default function FormContent({
 
   const handleChange = (content) => {
     setEditorContent(content);
+    handleEditorChange(content); // Pass the content back to the parent component
   };
 
   const handleMediaSelection = (mediaId) => {
@@ -59,7 +66,7 @@ export default function FormContent({
 
     [{ color: [] }], // dropdown with defaults from theme
     // [{ font: [] }],
-    [("link", "image", "video")],
+    ["link", "image", "video"],
 
     ["clean"], // remove formatting button
   ];
@@ -98,6 +105,8 @@ export default function FormContent({
           filteredMedia={filteredMedia}
           selectedMediaDetails={selectedMediaDetails}
           setSelectedMediaDetails={setSelectedMediaDetails}
+          handleFileChange={handleFileChange}
+          handleFileSelect={handleFileSelect}
         />
 
         <ReactQuill
@@ -105,6 +114,7 @@ export default function FormContent({
           onChange={handleChange}
           value={editorContent}
           theme="snow"
+          placeholder={"Write something awesome..."}
           // formats={formats}
         />
       </div>

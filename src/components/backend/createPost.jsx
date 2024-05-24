@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/createNew.css";
 import "./styles/allPosts.css";
 import { savePost, updatePost } from "../../services/postService";
@@ -13,122 +13,116 @@ import FeaturedImageHeader from "./common/featuredImageHeader";
 import PostCategories from "./common/postCategories";
 import PostTags from "./common/postTags";
 import FeaturedMedia from "./common/FeaturedMedia";
-import PublishData from "./common/publishData";
 import Button from "../common/button";
-import { getUploads, deleteUpload } from "../../services/mediaService";
-import { handleFileChange } from "./media/fileUploadHandler";
-import { getTags, getTag, saveTag } from "../../services/tagService";
-import { getCategories, getCategory } from "../../services/categoryService";
+import { getUploads } from "../../services/mediaService";
+import { handleFileChangeWrapper } from "./media/fileUploadHandler";
 
-export default function CreatePost({
-  handleFilterChange,
-  handleDateChange,
-  handleSearch,
-  mediaSearch,
-}) {
+import {
+  getPostTags,
+  savePostTag,
+  getPostTag,
+} from "../../services/postTagsServices";
+import {
+  getPostCategories,
+  getPostCategory,
+  savePostCategory,
+} from "../../services/postCategoryServices";
+
+export default function CreatePost() {
   const [isContentVisible, setIsContentVisible] = useState(true);
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
-  const [isTagsVisible, setIsTagsVisible] = useState(false);
+  const [isTagsVisible, setIsTagsVisible] = useState(true);
   const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
-  const [selectedTab, setSelectedTab] = useState("All Categories");
   const [networkStatus, setNetworkStatus] = useState("");
 
-  const [blogPost, setBlogPost] = useState({
-    title: "",
-    content: "",
-    categories: "",
-    tags: "",
-    postedBy: "",
-    datePosted: "",
-    postMainImage: "",
-  });
-  const [editingMode, setEditingMode] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const location = useLocation();
+  const editingMode = location.state && location.state.post;
+  const initialPost = editingMode
+    ? location.state.post
+    : {
+        title: "",
+        content: "",
+        category: [],
+        tags: [],
+        postMainImage: null,
+      };
+
+  const [blogPost, setBlogPost] = useState(initialPost);
+  const [errors, setErrors] = useState({});
+  const [selectedCategories, setSelectedCategories] = useState(
+    initialPost.category || []
+  );
+  const [selectedTags, setSelectedTags] = useState(initialPost.tags || []);
+  const [selectedThumbnail, setSelectedThumbnail] = useState(
+    initialPost.postMainImage || null
+  );
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mediaData, setMediaData] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [postTags, setPostTags] = useState([]);
+  const [category, setCategory] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [notification, setNotification] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [editorContent, setEditorContent] = useState(blogPost.content);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchMediaData() {
+    async function fetchData() {
       try {
         const { data: mediaData } = await getUploads();
         setMediaData(mediaData);
+
+        const { data: tags } = await getPostTags();
+        setPostTags(tags);
+
+        const { data: category } = await getPostCategories();
+        setCategory(category);
       } catch (error) {
-        console.error("Error fetching media data:", error);
+        console.error("Error fetching data:", error);
       }
     }
 
-    fetchMediaData();
-
-    async function fetchTag() {
-      const { data: tags } = await getTags();
-      setTags(tags);
-    }
-
-    fetchTag();
-
-    async function getCategory() {
-      const { data: categories } = await getCategories();
-      setCategories(categories);
-    }
-
-    getCategory();
-  }, [mediaData]);
+    fetchData();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    const postToSubmit = {
+      ...blogPost,
+      category: selectedCategories,
+      tags: selectedTags,
+      postMainImage: selectedThumbnail,
+    };
+
     try {
       if (editingMode) {
-        await updatePost(blogPost);
+        await updatePost(postToSubmit._id, postToSubmit); // Pass the post ID and post data
       } else {
-        await savePost(blogPost);
+        await savePost(postToSubmit);
       }
       alert("Post submitted successfully!");
+      navigate("/admin/posts");
     } catch (error) {
       console.error("Error occurred while submitting post:", error);
-      alert(
-        "An error occurred while submitting the post. Please try again later."
-      );
+      alert("An error occurred while submitting the post.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  async function handleUploadDelete(uploadId) {
-    const originalMedia = [...mediaData];
-    const originalMedias = originalMedia.filter((u) => u._id !== uploadId._id);
-    setMediaData(originalMedias);
-
-    try {
-      await deleteUpload(uploadId._id);
-    } catch (error) {}
-  }
-
   const handleTagsChange = (tags) => {
     setSelectedTags(tags);
-  };
-
-  const handleTabChange = (tab) => {
-    setSelectedTab(tab);
-  };
-
-  const handleTitleChange = (e) => {
-    setBlogPost((prevPost) => ({ ...prevPost, title: e.target.value }));
   };
 
   const handleThumbnailSelection = (media) => {
     setSelectedThumbnail(media);
   };
 
-  const toggleContent = () => {
+  const handlePublishOpen = () => {
     setIsContentVisible(!isContentVisible);
   };
 
@@ -156,23 +150,42 @@ export default function CreatePost({
 
       <section className="createNew-grid">
         <div className="blog__post">
-          <FormTitle handleTitleChange={handleTitleChange} />
+          <FormTitle
+            value={blogPost.title} // Set the value
+            handleTitleChange={(e) =>
+              setBlogPost({ ...blogPost, title: e.target.value })
+            }
+          />
+          {errors.title && (
+            <div className="alert alert-danger">{errors.title}</div>
+          )}
 
           <FormContent
             selectedMedia={selectedMedia}
             setSelectedMedia={setSelectedMedia}
-            handleFilterChange={handleFilterChange}
-            handleDateChange={handleDateChange}
-            handleSearch={handleSearch}
-            mediaSearch={mediaSearch}
             filteredMedia={mediaData}
+            handleFileChange={handleFileChangeWrapper}
+            handleEditorChange={(content) =>
+              setBlogPost({ ...blogPost, content })
+            }
+            initialContent={blogPost.content}
+            editorContent={editorContent}
+            setEditorContent={setEditorContent}
+            handleFileSelect={(fileId) =>
+              setSelectedMedia((prevSelectedFiles) =>
+                prevSelectedFiles.includes(fileId) ? [] : [fileId]
+              )
+            }
           />
         </div>
 
         <div>
-          <div className="createPost-publish">
-            {/* <Button title="Publish" /> */}
-            <button onClick={handleSubmit}>Publish</button>
+          <div className="createPost-publishs">
+            <div className="publish__button">
+              <button onClick={handleSubmit}>
+                {editingMode ? "Update" : "Publish"}
+              </button>
+            </div>
           </div>
 
           <div className="createPost-publish">
@@ -184,15 +197,14 @@ export default function CreatePost({
 
             {isCategoriesVisible && (
               <PostCategories
-                handleTabChange={handleTabChange}
-                selectedTab={selectedTab}
                 isCategoriesVisible={isCategoriesVisible}
-                blogPosts={blogPost}
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
-                categories={categories}
-                setCategories={setCategories}
-                getCategory={getCategory}
+                categories={category}
+                setCategories={setCategory}
+                getCategory={getPostCategory}
+                savePostCategory={savePostCategory}
+                getPostCategories={getPostCategories}
               />
             )}
           </div>
@@ -206,16 +218,15 @@ export default function CreatePost({
 
             {isTagsVisible && (
               <PostTags
-                blogPosts={blogPost}
                 isTagsVisible={isTagsVisible}
                 onTagsChange={handleTagsChange}
                 selectedTags={selectedTags}
                 setSelectedTags={setSelectedTags}
-                tags={tags}
-                setTags={setTags}
-                getTag={getTag}
-                saveTag={saveTag}
-                getTags={getTags}
+                getPostTag={getPostTag}
+                savePostTag={savePostTag}
+                getPostTags={getPostTags}
+                postTags={postTags}
+                setPostTags={setPostTags}
               />
             )}
           </div>
@@ -233,22 +244,35 @@ export default function CreatePost({
                 filteredMedia={mediaData}
                 selectedMedia={selectedMedia}
                 setSelectedMedia={setSelectedMedia}
-                handleSearch={handleSearch}
-                handleFilterChange={handleFilterChange}
-                mediaSearch={mediaSearch}
                 selectedThumbnail={selectedThumbnail}
                 setSelectedThumbnail={handleThumbnailSelection}
-                handleFileChange={handleFileChange}
+                handleFileChange={handleFileChangeWrapper}
                 setMediaData={setMediaData}
                 setNotification={setNotification}
                 setUploadProgress={setUploadProgress}
                 uploadProgress={uploadProgress}
                 setSelectedFiles={setSelectedFiles}
-                handleUploadDelete={handleUploadDelete}
+                handleFileSelect={(fileId) =>
+                  setSelectedMedia((prevSelectedFiles) =>
+                    prevSelectedFiles.includes(fileId) ? [] : [fileId]
+                  )
+                }
               />
             )}
 
+            {errors.postMainImage && (
+              <div className="alert alert-danger">{errors.postMainImage}</div>
+            )}
+
             {notification && <div className="notification">{notification}</div>}
+          </div>
+
+          <div className="createPost-publishs">
+            <div className="publish__button">
+              <button onClick={handleSubmit}>
+                {editingMode ? "Update" : "Publish"}
+              </button>
+            </div>
           </div>
         </div>
       </section>

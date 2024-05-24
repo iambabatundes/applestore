@@ -22,11 +22,14 @@ export default function FeaturedMedia({
   setSelectedFiles,
   uploadProgress,
   handleUploadDelete,
+  handleFileSelect,
+  // selectedMediaDetails,
+  // setSelectedMediaDetails,
 }) {
   const [isFeaturdMediaOpen, setIsFeaturdMediaOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("library");
-  const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
   const [insertedMedia, setInsertedMedia] = useState([]); // Track inserted media
+  const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
 
   const handleSelectMedia = () => {
     setIsFeaturdMediaOpen(true);
@@ -53,9 +56,10 @@ export default function FeaturedMedia({
         };
         setInsertedMedia((prevMedia) => [...prevMedia, mediaObj]);
         setSelectedThumbnail(mediaObj);
+        // setSelectedMedia(setSelectedMediaDetails);
       }
 
-      setSelectedMediaDetails(null);
+      setSelectedMediaDetails(selectedMediaDetails);
       setIsFeaturdMediaOpen(false);
     }
   };
@@ -70,6 +74,8 @@ export default function FeaturedMedia({
 
   const handleRemoveImage = () => {
     setSelectedThumbnail(null);
+    setSelectedMedia("");
+    setSelectedMediaDetails(null);
   };
 
   return (
@@ -156,6 +162,7 @@ export default function FeaturedMedia({
             uploadProgress={uploadProgress}
             setSelectedFiles={setSelectedFiles}
             handleUploadDelete={handleUploadDelete}
+            handleFileSelect={handleFileSelect}
           />
         </section>
       )}
