@@ -1,0 +1,137 @@
+/* General Styles */
+.productForm__main {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+    max-width: 800px;
+    margin: auto;
+}
+
+.productForm__main:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Title Styles */
+.productForm__label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+::placeholder {
+    font-size: 1rem;
+}
+
+.productForm__input input[type="number"],
+input[type="date"] {
+    font-size: 0.8rem;
+
+}
+
+/* Input Field Styles */
+.productForm__input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.productForm__input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Input Group Styles */
+.productForm__group-two {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    /* flex-wrap: wrap; */
+}
+
+.productForm__group-three {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* Tooltip Styles */
+.productForm__tooltip {
+    display: none;
+    background: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 10;
+    /* top: 100%;
+    left: 50%; */
+    top: 85%;
+    left: 30%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.productForm__field-container {
+    position: relative;
+    width: 100%;
+}
+
+.productForm__field-container:hover .productForm__tooltip {
+    display: block;
+}
+
+/* Editor Container */
+.productForm__editor-container {
+    margin-top: 20px;
+}
+
+.productForm__editor-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.ql-toolbar.ql-snow {
+    border-radius: 6px;
+}
+
+.ql-container.ql-snow {
+    border-radius: 6px;
+    min-height: 100px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+    .productForm__group-two,
+    .productForm__group-three {
+        flex-direction: column;
+    }
+}

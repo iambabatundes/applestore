@@ -80,6 +80,10 @@ body::-webkit-scrollbar-thumb {
   overflow-y: hidden;
 }
 
+/* table {
+  border-collapse: collapse;
+} */
+
 /* To do list */
 
 /* ::selection {

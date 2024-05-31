@@ -1,42 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "../button";
-import InputForm from "../../common/inputForm";
-import InputField from "../../common/inputField";
+import "./styles/dataCategory.css";
 
 export default function DataCategory({
   isCategoriesVisible,
-  selectedCategories,
+  selectedCategories = [],
   setSelectedCategories,
-  categories: dataCategory,
-  getCategories: getData,
-  saveCategory: saveData,
-  setCategories: setDataCategory,
+  categories = [],
+  setCategories,
+  saveCategory,
+  getCategories,
 }) {
-  const [newCategory, setNewCategory] = useState({ name: "", parent: "" });
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    parent: "",
+  });
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
   const [error, setError] = useState("");
 
   const handleCategoryChange = (category) => {
-    if (selectedCategories.length === 1) {
-      setSelectedCategories([category]);
-    } else {
-      setSelectedCategories((prevSelected) => {
-        if (prevSelected.includes(category)) {
-          return prevSelected.filter((selected) => selected !== category);
-        } else {
-          return [category, prevSelected[0]];
-        }
-      });
-    }
+    setSelectedCategories((prevSelected) => {
+      const isSelected = prevSelected.some(
+        (selected) => selected._id === category._id
+      );
+
+      if (isSelected) {
+        return prevSelected.filter((selected) => selected._id !== category._id);
+      } else {
+        return [...prevSelected, category];
+      }
+    });
   };
 
   const handleAddNewCategory = async (e) => {
     e.preventDefault();
     if (newCategory.name.trim() !== "") {
       try {
-        const response = await saveData(newCategory);
-        const updatedCategories = await getData();
-        setDataCategory(updatedCategories.data);
+        const response = await saveCategory(newCategory);
+        const updatedCategories = await getCategories();
+        setCategories(updatedCategories.data);
         setSelectedCategories([...selectedCategories, response.data]);
         setNewCategory({ name: "", parent: "" });
         setIsAddingNewCategory(false);
@@ -49,7 +51,11 @@ export default function DataCategory({
   const flattenCategories = (categories, depth = 0) => {
     let flatCategories = [];
     categories.forEach((category) => {
-      flatCategories.push({ ...category, depth });
+      flatCategories.push({
+        ...category,
+        depth,
+        label: `${"—".repeat(depth)} ${category.name}`,
+      });
       if (category.subcategories) {
         flatCategories = [
           ...flatCategories,
@@ -60,89 +66,85 @@ export default function DataCategory({
     return flatCategories;
   };
 
-  const flattenedCategories = flattenCategories(dataCategory);
-
-  useEffect(() => {
-    handleCategoriesChange(selectedCategories);
-  }, [selectedCategories]);
-
-  const handleCategoriesChange = (selectedCategories) => {
-    console.log("Selected categories:", selectedCategories);
-  };
+  const flattenedCategories = flattenCategories(categories);
 
   return (
     <>
       {isCategoriesVisible && (
-        <section>
-          {flattenedCategories.map((category) => (
-            <div key={category.id} style={{ marginLeft: category.depth * 20 }}>
-              <label>
-                <input
-                  type="checkbox"
-                  value={category.name}
-                  checked={selectedCategories.includes(category.name)}
-                  onChange={() => handleCategoryChange(category.name)}
-                />
-                {category.name}
-              </label>
-            </div>
-          ))}
-          {selectedCategories.length === 2 && (
-            <p>
+        <section className="categories">
+          <div className="categories__list">
+            {flattenedCategories.map((category) => (
+              <div
+                key={category._id}
+                className="categories__item"
+                style={{ marginLeft: category.depth * 20 }}
+              >
+                <label>
+                  <input
+                    className="categories__checkbox"
+                    type="checkbox"
+                    value={category._id}
+                    checked={selectedCategories.some(
+                      (selected) => selected._id === category._id
+                    )}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                  {category.label}
+                </label>
+              </div>
+            ))}
+          </div>
+          {selectedCategories.length > 0 && (
+            <p className="categories__info">
               The first selected category will be used as the primary category.
             </p>
           )}
           <Button
-            title={isAddingNewCategory ? "Cancel" : "+ Add New Category"}
+            title={isAddingNewCategory ? null : "+ Add New Category"}
             onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
+            className="categories__add-button"
           />
           {isAddingNewCategory && (
-            <div>
-              <InputForm
-                initialValues={{
-                  name: "",
-                  parentCategory: "",
-                }}
-                // validationSchema={val}
-                onSubmit={handleAddNewCategory}
-              >
-                {(values, isSubmitting, setFieldValue) => (
-                  <>
-                    <InputField
-                      type="text"
-                      placeholder="Parent Category"
-                      name="category"
-                      fieldInput
-                      // value={newCategory}
-                      // value={values}
-                      // setFieldValue={setFieldValue}
-                    />
-                    <InputField
-                      select
-                      flattenedCategories={flattenedCategories}
-                      // name="category"
-                      placeholder="Parent Category"
-                    />
-
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="addButton"
-                      title="Add new category"
-                    ></Button>
-                  </>
-                )}
-              </InputForm>
-              {/* <input
+            <form onSubmit={handleAddNewCategory} className="categories__form">
+              <input
                 type="text"
-                placeholder="Enter new category..."
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-              /> */}
-
-              {/* <Button title="Add New Category" onClick={handleAddNewCategory} /> */}
-              {error && <p className="error-message">{error}</p>}
-            </div>
+                placeholder="Search or add Category..."
+                value={newCategory.name}
+                onChange={(e) =>
+                  setNewCategory({ ...newCategory, name: e.target.value })
+                }
+                className="categories__input"
+              />
+              <select
+                value={newCategory.parent}
+                onChange={(e) =>
+                  setNewCategory({ ...newCategory, parent: e.target.value })
+                }
+                className="categories__select"
+              >
+                <option value="">No Parent</option>
+                {flattenedCategories.map((category) => (
+                  <option
+                    key={category._id}
+                    value={category._id}
+                    style={{ marginLeft: category.depth * 20 }}
+                  >
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+              <Button
+                type="submit"
+                title="Add New Category"
+                className="categories__submit-button"
+              />
+              <Button
+                title={isAddingNewCategory ? "Cancel" : ""}
+                onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
+                className="categories__cancel-button"
+              />
+              {error && <p className="categories__error">{error}</p>}
+            </form>
           )}
         </section>
       )}

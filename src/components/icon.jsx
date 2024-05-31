@@ -32,11 +32,13 @@ export default function Icon({
   width,
   height,
   fill,
+  menuClassname,
 }) {
   return (
     <section>
       {menu && (
         <span>
+          {/* <span className={`${menuClassname} toggle-icon`} onClick={onClick}> */}
           <span className="toggle-icon" onClick={onClick}>
             <svg
               xmlns="http://www.w3.org/2000/svg"

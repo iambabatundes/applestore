@@ -83,12 +83,9 @@ export default function PostCategories({
                   <input
                     type="checkbox"
                     value={category._id}
-                    checked={
-                      selectedCategories &&
-                      selectedCategories.include(
-                        (selected) => selected._id === category._id
-                      )
-                    }
+                    checked={selectedCategories.include(
+                      (selected) => selected._id === category._id
+                    )}
                     onChange={() => handleCategoryChange(category)}
                   />
                   {category.name}

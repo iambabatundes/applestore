@@ -7,11 +7,10 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <h1 className="dashboard-title">Dashboard</h1>
-
       <section className="dashboard-content">
         <div className="dashboard-content__main">
           <h1 className="dashboard-content__title">Welcome to Appstore</h1>
-          <Link to="learn-more-version">
+          <Link to="learn-more-version" className="dashboard-link">
             Learn more about the latest version
           </Link>
         </div>
@@ -25,7 +24,9 @@ export default function Dashboard() {
                 Block patterns are pre-configured block layouts. Use them to get
                 inspired or create new pages in a flash.
               </p>
-              <Link to="/admin/add-product">Add a new product</Link>
+              <Link to="/admin/add-product" className="dashboard-link">
+                Add a new product
+              </Link>
             </article>
           </div>
           <div className="dashboard-panel-column">
@@ -36,8 +37,9 @@ export default function Dashboard() {
                 Configure your site's logo, header, menus, and more in the
                 Customizer.
               </p>
-
-              <Link to="/admin/settings">Open the settings</Link>
+              <Link to="/admin/settings" className="dashboard-link">
+                Open the settings
+              </Link>
             </article>
           </div>
           <div className="dashboard-panel-column">
@@ -49,7 +51,9 @@ export default function Dashboard() {
                 that lets you build the site you've always wanted — with blocks
                 and styles.
               </p>
-              <Link>Learn more about editing themes</Link>
+              <Link className="dashboard-link">
+                Learn more about editing themes
+              </Link>
             </article>
           </div>
         </section>

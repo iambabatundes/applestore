@@ -1,8 +1,7 @@
-.dataTable {
+/* .dataTable {
     padding: 15px 18px;
 }
 
-/* Filter the Post by All, Publish, Trash, Draft and search bar */
 
 .dataTable-filtered {
     display: flex;
@@ -22,9 +21,9 @@
     cursor: pointer;
 }
 
-/* .dataTable-search {
+.dataTable-search {
     padding: 5px 5px;
-} */
+}
 
 .dataTable-input,
 .dataTable-search-btn {
@@ -40,7 +39,7 @@
     cursor: pointer;
 }
 
-/* Filter all post by date and categories and also bulk actions */
+
 
 .dataTable-post__filtered {
     display: flex;
@@ -54,7 +53,7 @@
     align-items: center;
     gap: 10px;
     font-size: 14px;
-    /* border-radius: 5px; */
+    border-radius: 5px;
 
 }
 
@@ -83,9 +82,6 @@
     color: #000;
     cursor: pointer;
 }
-
-
-/* table section */
 
 .dataTable-table {
     width: 100%;
@@ -169,4 +165,4 @@ input[type=radio] {
 .pagination button.active {
     background-color: #007bff;
     color: #fff;
-}
+} */

@@ -9,50 +9,53 @@ export default function OrderTable({
   data,
   onSort,
   sortColumn,
+  onStatusChange,
 }) {
   const columns = [
     {
       label: "Order ID",
       path: "orderNumber",
       content: (order) => (
-        <span
-          onClick={() => onPreview(order)}
-          style={{ cursor: "pointer", color: "blue" }}
-        >
+        <span onClick={() => onPreview(order)} className="order-number">
           {order.orderNumber}
         </span>
       ),
     },
-
     { label: "Price", path: "price" },
     { label: "Items", path: "items" },
     { label: "Date", path: "orderDate" },
     { label: "User", path: "user" },
-    { label: "Status", path: "status" },
-
+    {
+      label: "Status",
+      path: "status",
+      content: (order) => (
+        <select
+          value={order.status}
+          onChange={(e) => onStatusChange(order, e.target.value)}
+          className="status-dropdown"
+        >
+          <option value="pending">Pending</option>
+          <option value="successful">Successful</option>
+          <option value="shipping">Shipping</option>
+          <option value="failed">Failed</option>
+        </select>
+      ),
+    },
     {
       content: (post) => (
         <section className="order__icon">
+          <i className="fa fa-edit edit-icon" onClick={() => onEdit(post)}></i>
           <i
-            className="fa fa-edit"
-            aria-hidden="true"
-            onClick={() => onEdit(post)}
-          ></i>
-          <i
-            className="fa fa-eye"
-            aria-hidden="true"
+            className="fa fa-eye view-icon"
             onClick={() => onPreview(post)}
           ></i>
           <i
-            className="fa fa-trash"
-            aria-hidden="true"
+            className="fa fa-trash delete-icon"
             onClick={() => onDelete(post)}
           ></i>
         </section>
       ),
     },
-
-    // Add more headings as needed
   ];
 
   return (

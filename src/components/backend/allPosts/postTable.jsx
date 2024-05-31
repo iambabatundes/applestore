@@ -35,7 +35,7 @@ export default function PostTable({
       content: (post) => (
         <div
           dangerouslySetInnerHTML={{
-            __html: truncateContent(post.content, 20),
+            __html: truncateContent(post.content, 15),
           }}
         ></div>
       ),

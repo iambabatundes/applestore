@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../styles/productImage.css";
 import Icon from "../../../icon";
+import config from "../../../../config.json";
 
 export default function ProductImage({
   isFeaturedImageVisible,
@@ -9,6 +10,7 @@ export default function ProductImage({
   setFeatureImage,
 }) {
   const [dragging, setDragging] = useState(false);
+  const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -29,14 +31,40 @@ export default function ProductImage({
     setDragging(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleImageChange({ target: { files: e.dataTransfer.files } });
+      validateAndAddFile(e.dataTransfer.files[0]);
       e.dataTransfer.clearData();
     }
+  };
+
+  const validateAndAddFile = (file) => {
+    if (!file.type.startsWith("image/")) {
+      setError("Only image files are allowed.");
+      return;
+    }
+
+    const maxFileSize = 50 * 1024 * 1024; // 50 MB
+    if (file.size > maxFileSize) {
+      setError("File size should not exceed 50 MB.");
+      return;
+    }
+
+    setError("");
+    const fileUrl = URL.createObjectURL(file);
+    setFeatureImage({ file, preview: fileUrl });
+    handleImageChange({ target: { files: [file] } });
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      validateAndAddFile(e.target.files[0]);
+    }
+    fileInputRef.current.value = null; // Reset the file input
   };
 
   const handleRemoveImage = () => {
     if (window.confirm("Are you sure you want to remove this image?")) {
       setFeatureImage(null);
+      handleImageChange({ target: { files: [] } });
     }
   };
 
@@ -45,6 +73,24 @@ export default function ProductImage({
       fileInputRef.current.click();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      // Revoke object URLs to avoid memory leaks
+      if (featureImage && featureImage.preview) {
+        URL.revokeObjectURL(featureImage.preview);
+      }
+    };
+  }, [featureImage]);
+
+  let imageUrl = "";
+  if (featureImage) {
+    if (featureImage.preview && featureImage) {
+      imageUrl = featureImage.preview;
+    } else if (featureImage.filename) {
+      imageUrl = `${config.mediaUrl}/uploads/${featureImage.filename}`;
+    }
+  }
 
   return (
     <>
@@ -55,15 +101,14 @@ export default function ProductImage({
           onDrop={handleDrop}
           className={`drop-zone ${dragging ? "dragging" : ""}`}
         >
-          {featureImage ? (
+          {imageUrl ? (
             <div className="selected-image-container">
               <img
-                src={featureImage}
+                src={imageUrl}
                 alt="Uploaded"
                 className="selected-image"
                 onClick={handleImageClick}
               />
-
               <Icon
                 onClick={handleRemoveImage}
                 cancel
@@ -72,7 +117,6 @@ export default function ProductImage({
                 fill={"#fff"}
                 className="productImage__cancel-icon"
               />
-
               <div className="productImage-instruction">
                 Click on the image to change or update
               </div>
@@ -96,17 +140,17 @@ export default function ProductImage({
               </label>
             </div>
           )}
-          {/* Move input outside of conditional rendering to ensure ref assignment */}
           <input
             accept="image/*"
             type="file"
             id="file-input-product"
-            onChange={handleImageChange}
+            onChange={handleFileChange}
             className="file-input-product"
             ref={fileInputRef}
           />
         </section>
       )}
+      {error && <div className="productImage__error-message">{error}</div>}
     </>
   );
 }

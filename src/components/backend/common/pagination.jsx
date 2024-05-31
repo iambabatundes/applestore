@@ -1,6 +1,8 @@
 import React from "react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+// import "../styles/pagination.css";
+import "../../backend/common/styles/pagination.css";
 
 function Pagination({ itemsCount, pageSize, onPageChange, currentPage }) {
   console.log(currentPage);
@@ -9,7 +11,7 @@ function Pagination({ itemsCount, pageSize, onPageChange, currentPage }) {
   const pages = _.range(1, pagesCount + 1);
 
   return (
-    <nav>
+    <nav className="pagination-container">
       <ul className="pagination">
         {pages.map((page) => (
           <li

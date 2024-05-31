@@ -1,9 +1,17 @@
 import React from "react";
 import "./styles/product.css";
-import "../../backend/styles/dataTable.css";
 import { Link } from "react-router-dom";
 import Table from "../common/table";
 import config from "../../../config.json";
+
+// Utility function to truncate content
+function truncateContent(content, wordLimit) {
+  const words = content.split(" ");
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }
+  return content;
+}
 
 export default function ProductTable({
   productData,
@@ -23,14 +31,24 @@ export default function ProductTable({
       ),
     },
     { label: "SKU", path: "sku" },
-    { label: "Description", path: "description" },
+    {
+      label: "Description",
+      path: "description",
+      content: (product) => (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: truncateContent(product.description, 15),
+          }}
+        ></div>
+      ),
+    },
+
     { label: "In Stock", path: "numberInStock" },
     { label: "Price", path: "price" },
     { label: "Sale Price", path: "salePrice" },
     { label: "%", path: "discountPercentage" },
     { label: "Category", path: "category" },
     { label: "Tags", path: "tags" },
-    // { label: "Review", path: "review" },
     { label: "Date", path: "createdAt" },
     {
       label: "Thumbnail",

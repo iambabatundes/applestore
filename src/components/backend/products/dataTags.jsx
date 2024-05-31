@@ -55,13 +55,13 @@ export default function DataTags({
   return (
     <>
       {isTagsVisible && (
-        <section className="post-tags">
+        <section className="data-tags">
           {selectedTags.length === 0 && (
-            <p className="post-tags__no-tags">No Tags Found</p>
+            <p className="data-tags__no-tags">No Tags Found</p>
           )}
           <div className="tags-list">
             {selectedTags.map((tag) => (
-              <div key={tag} className="tag">
+              <div key={tag} className="tags">
                 {tag.name || tag}
                 <span
                   className="cancel-icon"
@@ -99,6 +99,7 @@ export default function DataTags({
               <li key={tag._id} className="tag-item">
                 <label>
                   <input
+                    className="category__checkbox"
                     type="checkbox"
                     value={tag.name || tag}
                     checked={selectedTags.includes(tag.name || tag)}

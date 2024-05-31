@@ -4,28 +4,31 @@ import logo from "../../logo.svg";
 import "./styles/adminNavbar.css";
 import Icon from "../icon";
 
-export default function AdminNavbar({ companyName, count, handleToggle }) {
+export default function AdminNavbar({
+  companyName,
+  count,
+  handleToggle,
+  userName,
+}) {
   return (
-    <section className="admin-navbar__main">
-      <div className="admin-navbar">
-        <div className="adminLogo">
-          <Icon menu onClick={handleToggle} className="admin-menu__icon" />
-          <img src={logo} alt="Company logo" />
-          <h1>{companyName}</h1>
-        </div>
-
+    <header className="admin-navbar">
+      <div className="admin-navbar__left">
+        <Icon menu onClick={handleToggle} menuClassname="admin-menu__icon" />
+        {/* <Icon menu onClick={handleToggle} className="admin-menu__icon" /> */}
+        <img src={logo} alt="Company logo" className="company-logo" />
+        <h1 className="company-name">{companyName}</h1>
+      </div>
+      <div className="admin-navbar__center">
         <div className="admin-navbar__comments">
           <i className="fa fa-comment" aria-hidden="true"></i>
-          {/* <Icon comment /> */}
           <span>{count}</span>
         </div>
       </div>
-
-      <div className="admin-navbar__user">
+      <div className="admin-navbar__right">
         <h4>Hi,</h4>
-        <span className="admin__companyName">{companyName}</span>
-        <img src={userImage} alt="User" />
+        <span className="admin__userName">{userName}</span>
+        <img src={userImage} alt="User" className="user-image" />
       </div>
-    </section>
+    </header>
   );
 }

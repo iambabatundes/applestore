@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import _ from "lodash";
+import { toast } from "react-toastify";
 
-// import "./styles/posts.css";
 import "../backend/products/styles/product.css";
 import ProductTable from "./products/productTable";
-import { getProducts } from "../../services/productService";
+import { deleteProduct, getProducts } from "../../services/productService";
 import { paginate } from "../utils/paginate";
 import Pagination from "./common/pagination";
 import SearchBox from "./common/searchBox";
@@ -15,7 +16,9 @@ export default function AllProduct() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(8);
-  const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
+  const [sortColumn, setSortColumn] = useState({ path: "", order: "asc" });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getProduct() {
@@ -35,9 +38,27 @@ export default function AllProduct() {
     setCurrentPage(1);
   }
 
-  function handleDelete() {}
+  async function handleDelete(product) {
+    const originalProducts = productData;
+    const updatedProducts = originalProducts.filter(
+      (p) => p._id !== product._id
+    );
+    setProductData(updatedProducts);
+
+    try {
+      await deleteProduct(product._id);
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      if (error.response && error.response.status === 404)
+        toast.error("This product has already been deleted");
+      setProductData(updatedProducts);
+    }
+  }
   function handlePreview() {}
-  function handleEdit() {}
+
+  const handleEdit = (product) => {
+    navigate(`/admin/add-product/${product._id}`);
+  };
 
   let filtered = productData;
   if (searchQuery)
@@ -45,7 +66,12 @@ export default function AllProduct() {
       p.title.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
-  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+  let sorted = filtered;
+  if (sortColumn.path) {
+    sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+  } else {
+    sorted = _.orderBy(filtered, ["createdAt", "updatedAt"], ["desc"]);
+  }
 
   const totalItems = filtered.length;
   const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
@@ -56,7 +82,7 @@ export default function AllProduct() {
 
   return (
     <>
-      <section>
+      <section className="fade-in-up">
         <ProductHeader />
 
         <section className="padding" style={{ marginTop: 80 }}>

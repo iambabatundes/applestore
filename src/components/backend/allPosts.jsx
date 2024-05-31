@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; // Add this import
-import "../backend/styles/dataTable.css";
 import { paginate } from "../utils/paginate";
 import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
 import { getPosts, deletePost } from "../../services/postService";
 import PostTable from "./allPosts/postTable";
+import "./allPosts/styles/post.css";
 
 export default function AllPosts() {
   const [postData, setPostData] = useState([]);

@@ -24,18 +24,18 @@
     text-align: center;
 }
 
-h4 {
+.promotion-content h4 {
     margin-bottom: 20px;
     font-size: 24px;
     color: #333;
 }
 
-label {
+.promotion-content label {
     display: block;
     margin-bottom: 15px;
 }
 
-input[type="checkbox"] {
+.promotion-content input[type="checkbox"] {
     margin-right: 10px;
 }
 
@@ -46,6 +46,7 @@ input[type="date"] {
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 0.6rem;
 }
 
 .promotion__btn {

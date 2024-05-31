@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
-
 import { paginate } from "../utils/paginate";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
@@ -8,6 +7,7 @@ import OrderTable from "./orders/orderTable";
 import OrderDetails from "./orderDetails";
 import { getOrderDatas } from "./orderData";
 import OrderHeader from "./orders/orderHeader";
+import "../backend/orders/styles/order.css";
 
 export default function Orders() {
   const [orderData, setOrderData] = useState([]);
@@ -18,8 +18,8 @@ export default function Orders() {
     path: "orderNumber",
     order: "asc",
   });
-  const [selectedOrder, setSelectedOrder] = useState(null); // Track selected order number
-  const [isModalOpen, setIsModalOpen] = useState(null); // Track selected order number
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,20 +39,30 @@ export default function Orders() {
     setCurrentPage(1);
   }
 
-  function handleDelete() {}
+  function handleDelete() {
+    // Delete logic here
+  }
 
   function handlePreview(order) {
     setSelectedOrder(order);
     setIsModalOpen(true);
   }
 
-  // Function to close modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedOrder(null);
   };
 
-  function handleEdit() {}
+  function handleEdit() {
+    // Edit logic here
+  }
+
+  function handleStatusChange(order, status) {
+    const updatedOrderData = orderData.map((o) =>
+      o.orderNumber === order.orderNumber ? { ...o, status } : o
+    );
+    setOrderData(updatedOrderData);
+  }
 
   let filtered = orderData;
   if (searchQuery)
@@ -63,7 +73,7 @@ export default function Orders() {
   const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
   const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
+  const paginationEnabled = totalItems > 1;
 
   const allOrderData = paginationEnabled
     ? paginate(sorted, currentPage, pageSize)
@@ -86,6 +96,7 @@ export default function Orders() {
           onPreview={handlePreview}
           onSort={handleSort}
           sortColumn={sortColumn}
+          onStatusChange={handleStatusChange}
         />
 
         <Pagination

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../styles/productGallery.css";
 import Icon from "../../../icon";
 
@@ -11,6 +11,7 @@ export default function ProductGallery({
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [progress, setProgress] = useState(0);
+
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -75,6 +76,7 @@ export default function ProductGallery({
           setTimeout(simulateUpload, 100);
         } else {
           setMedia((prevMedia) => [...prevMedia, file]);
+          handleProductImagesChange({ target: { files: [file] } }); // Call the parent handler
         }
       };
       simulateUpload();
@@ -117,6 +119,17 @@ export default function ProductGallery({
     setDragging(false);
   };
 
+  useEffect(() => {
+    return () => {
+      // Revoke object URLs to avoid memory leaks
+      media.forEach((file) => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
+  }, [media]);
+
   return (
     <>
       {isProductGalleryVisible && (
@@ -129,7 +142,15 @@ export default function ProductGallery({
           {media.length > 0 ? (
             <div className="media-container">
               {media.map((file, index) => {
-                const fileUrl = URL.createObjectURL(file);
+                let fileUrl;
+                if (file instanceof File) {
+                  fileUrl = URL.createObjectURL(file);
+                } else if (file.filename) {
+                  fileUrl = `http://localhost:4000/uploads/${file.filename}`;
+                } else {
+                  fileUrl = "";
+                }
+
                 return (
                   <div
                     className="mediaItems"
@@ -139,7 +160,8 @@ export default function ProductGallery({
                     onDragOver={() => handleDragOverMedia(index)}
                     onDragEnd={handleDragEnd}
                   >
-                    {file.type.startsWith("image/") ? (
+                    {file.type?.startsWith("image/") ||
+                    file.mimeType?.startsWith("image/") ? (
                       <img
                         src={fileUrl}
                         alt={`Media ${index}`}
@@ -171,7 +193,6 @@ export default function ProductGallery({
               >
                 <div className="add-more-content">
                   <i className="fa fa-plus-circle"></i>
-                  {/* <span>Click to add more images/video</span> */}
                 </div>
               </div>
               <div className="productGallery-instruction">
