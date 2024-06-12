@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import { paginate } from "../utils/paginate";
-import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
 import { getPosts, deletePost } from "../../services/postService";
 import PostTable from "./allPosts/postTable";
 import "./allPosts/styles/post.css";
+import PostHeader from "./allPosts/postHeader";
 
-export default function AllPosts() {
+export default function AllPosts({ darkMode }) {
   const [postData, setPostData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(4);
-  const [sortColumn, setSortColumn] = useState({ path: "title", order: "asc" });
-  const [selectedDate, setSelectedDate] = useState("All Dates");
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [sortColumn, setSortColumn] = useState({
+    path: "createdAt",
+    order: "desc",
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPosts() {
       const { data: posts } = await getPosts();
-      setPostData(posts);
+      const sortedPosts = _.orderBy(posts, ["createdAt"], ["desc"]);
+      setPostData(sortedPosts);
     }
 
     fetchPosts();
@@ -54,9 +58,9 @@ export default function AllPosts() {
 
   function handlePreview() {}
 
-  function handleEdit(post) {
-    navigate("/admin/create", { state: { post } });
-  }
+  const handleEdit = (post) => {
+    navigate(`/admin/create/${post._id}`);
+  };
 
   let filtered = postData;
   if (searchQuery)
@@ -64,7 +68,12 @@ export default function AllPosts() {
       b.title.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
-  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+  let sorted = filtered;
+  if (sortColumn.path) {
+    sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+  } else {
+    sorted = _.orderBy(filtered, ["createdAt"], ["desc"]);
+  }
 
   const totalItems = filtered.length;
   const paginationEnabled = totalItems > 1;
@@ -74,16 +83,16 @@ export default function AllPosts() {
     : sorted;
 
   return (
-    <section className="dataTable">
-      <Header headerTitle="Posts" buttonTitle="Add New" to="/admin/create" />
+    <section className={`allPost__fade-in-up ${darkMode ? "dark-mode" : ""}`}>
+      <PostHeader />
 
-      <SearchBox onChange={handleSearch} value={searchQuery} />
+      <section className="padding" style={{ marginTop: 80 }}>
+        <SearchBox onChange={handleSearch} value={searchQuery} />
 
-      <p>
-        Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
-      </p>
+        <p>
+          Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
+        </p>
 
-      <section>
         <PostTable
           data={allBlogPosts}
           sortColumn={sortColumn}

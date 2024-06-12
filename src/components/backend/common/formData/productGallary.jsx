@@ -7,6 +7,7 @@ export default function ProductGallery({
   handleProductImagesChange,
   media,
   setMedia,
+  darkMode,
 }) {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -89,7 +90,9 @@ export default function ProductGallery({
     }
   };
 
-  const handleMediaClick = (index) => {
+  const handleMediaClick = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (fileInputRef.current) {
       fileInputRef.current.dataset.index = index;
       fileInputRef.current.click();
@@ -137,7 +140,10 @@ export default function ProductGallery({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`drop-zone ${dragging ? "dragging" : ""}`}
+          // className={`drop-zone ${dragging ? "dragging" : ""}`}
+          className={`productGallery__drop-zone ${dragging ? "dragging" : ""} ${
+            darkMode ? "dark-mode" : ""
+          }`}
         >
           {media.length > 0 ? (
             <div className="media-container">
@@ -153,7 +159,8 @@ export default function ProductGallery({
 
                 return (
                   <div
-                    className="mediaItems"
+                    // className="mediaItems"
+                    className={`mediaItems ${darkMode ? "dark-mode" : ""}`}
                     key={index}
                     draggable
                     onDragStart={() => handleDragStart(index)}
@@ -166,19 +173,20 @@ export default function ProductGallery({
                         src={fileUrl}
                         alt={`Media ${index}`}
                         className="media-preview"
-                        onClick={() => handleMediaClick(index)}
+                        onClick={(e) => handleMediaClick(e, index)}
                       />
                     ) : (
                       <video
                         src={fileUrl}
                         className="media-preview"
                         controls
-                        onClick={() => handleMediaClick(index)}
+                        onClick={(e) => handleMediaClick(e, index)}
                       />
                     )}
                     <Icon
                       cancel
-                      className="remove-icon"
+                      // className="remove-icon"
+                      className={`remove-icon ${darkMode ? "dark-mode" : ""}`}
                       width={8}
                       height={8}
                       fill={"#fff"}
@@ -202,12 +210,24 @@ export default function ProductGallery({
           ) : (
             <div className="productGallery-container">
               <label
-                htmlFor="file-input-product"
-                className="productGallery-label"
-                onClick={() => fileInputRef.current.click()}
+                htmlFor="file-input-product-gallery"
+                // className="productGallery-label"
+                className={`productGallery-label ${
+                  darkMode ? "dark-mode" : ""
+                }`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  fileInputRef.current.click();
+                }}
               >
                 <i className="fas fa-file-upload productGallery-icon"></i>
-                <span className="productGallery-text">
+                <span
+                  // className="productGallery-text"
+                  className={`productGallery-text ${
+                    darkMode ? "dark-mode" : ""
+                  }`}
+                >
                   {dragging
                     ? "Drop files here"
                     : "Choose files to upload or drag and drop"}
@@ -221,23 +241,25 @@ export default function ProductGallery({
           <input
             accept="image/*,video/*"
             type="file"
-            id="file-input-product"
+            id="file-input-product-gallery"
             multiple
             onChange={handleFileChange}
             className="file-input-product"
             ref={fileInputRef}
+            style={{ display: "none" }}
           />
           {progress > 0 && progress < 100 && (
-            <div className="progress-bar">
+            <div className={`progress-bar ${darkMode ? "dark-mode" : ""}`}>
               <div
-                className="progress-bar-fill"
+                // className="progress-bar-fill"
+                className={`progress-bar-fill ${darkMode ? "dark-mode" : ""}`}
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
           )}
         </section>
       )}
-      {error && <div className="productGallary__error-message">{error}</div>}
+      {error && <div className="productGallery__error-message">{error}</div>}
     </>
   );
 }

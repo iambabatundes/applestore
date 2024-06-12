@@ -1,6 +1,7 @@
 import React from "react";
 import "./styles/order.css";
 import Table from "../common/table";
+import config from "../../../config.json";
 
 export default function OrderTable({
   onEdit,
@@ -21,10 +22,74 @@ export default function OrderTable({
         </span>
       ),
     },
-    { label: "Price", path: "price" },
-    { label: "Items", path: "items" },
-    { label: "Date", path: "orderDate" },
-    { label: "User", path: "user" },
+
+    { label: "Date", path: "createdAt" },
+
+    {
+      label: "Items",
+      path: "items",
+      content: (order) => (
+        <ul className="orderItem__item-main">
+          {order.items.map((item) => (
+            <li key={item._id} className="orderItem-item">
+              {item.product.featureImage &&
+              item.product.featureImage.filename ? (
+                <img
+                  src={`${config.mediaUrl}/uploads/${item.product.featureImage.filename}`}
+                  alt={item.product.featureImage.originalName || "Item Image"}
+                  className="orderItem-image"
+                />
+              ) : (
+                <span className="no-image">No image</span>
+              )}
+              <span className="orderItem__items">
+                {item.product.name} (Qty: {item.quantity}){" "}
+                <span className="orderItem__product_price">
+                  ($
+                  {item.product.price})
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+
+    {
+      label: "Total",
+      path: "total",
+      content: (order) => (
+        <span className="orderItem__order-total">{`$${order.total.toFixed(
+          2
+        )}`}</span>
+      ),
+    },
+
+    {
+      label: "Customer",
+      path: "user.username",
+      content: (order) => (
+        <div className="orderItem__user-info">
+          <div>
+            {order.user.profileImage && (
+              <img
+                src={`${config.mediaUrl}/uploads/${order.user.profileImage.filename}`}
+                alt={order.user.username}
+                className="OrderItem__user-image"
+              />
+            )}
+          </div>
+          <section className="orderItem__user-main">
+            <span className="orderItem__user-username">
+              {order.user.username}
+            </span>
+            <span className="orderItem__user-orderNumber">
+              {order.orderNumber}
+            </span>
+          </section>
+        </div>
+      ),
+    },
     {
       label: "Status",
       path: "status",
@@ -42,16 +107,16 @@ export default function OrderTable({
       ),
     },
     {
-      content: (post) => (
+      content: (order) => (
         <section className="order__icon">
-          <i className="fa fa-edit edit-icon" onClick={() => onEdit(post)}></i>
+          <i className="fa fa-edit edit-icon" onClick={() => onEdit(order)}></i>
           <i
             className="fa fa-eye view-icon"
-            onClick={() => onPreview(post)}
+            onClick={() => onPreview(order)}
           ></i>
           <i
             className="fa fa-trash delete-icon"
-            onClick={() => onDelete(post)}
+            onClick={() => onDelete(order)}
           ></i>
         </section>
       ),
@@ -61,7 +126,6 @@ export default function OrderTable({
   return (
     <section>
       <Table
-        className="orderTable"
         columns={columns}
         data={data}
         onSort={onSort}

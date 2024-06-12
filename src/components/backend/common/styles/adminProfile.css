@@ -1,0 +1,255 @@
+/* adminProfile.css */
+.adminProfile__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.adminProfileModal-content {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 950px;
+    height: 600px;
+    /* Adjust max-width for mobile */
+    position: relative;
+    animation: fadeIn 0.4s ease;
+    color: #000;
+    /* overflow: auto; */
+    /* Add overflow for smaller screens */
+}
+
+.adminProfile__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    padding: 0px 8px;
+    font-size: 1.5rem;
+    color: red;
+    background: none;
+    border: none;
+}
+
+.adminProfile__heading {
+    /* text-align: center; */
+    /* font-size: 1.5rem; */
+    margin: 24px 0;
+}
+
+.adminProfile__icon {
+    display: flex;
+    align-self: center;
+    justify-content: flex-end;
+    margin-top: 1.3rem;
+    font-size: 20px;
+    color: #0056b3;
+}
+
+.edit-icon {
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.adminProfile__heading {
+    margin-top: 0;
+}
+
+.adminProfile__modal-body {
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.profile-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.adminProfile__form {
+    width: 50%;
+}
+
+.profile-image-container {
+    /* flex: 0 0 30%; */
+}
+
+.dropzone {
+    /* position: relative; */
+    /* width: 100%; */
+    /* max-width: 150px; */
+    /* height: 150px; */
+    /* border: 2px dashed #007bff; */
+    /* border-radius: 50%; */
+    /* overflow: hidden; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+.dropzone:hover {
+    border: 2px dashed #0056b3;
+}
+
+.profile-label-image {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #007bff;
+}
+
+.modal-user-image {
+    width: 100%;
+    border-radius: 50%;
+}
+
+.profile-info {
+    flex: 0 0 65%;
+}
+
+
+.profile-label input,
+.profile-label textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-label input:focus,
+.profile-label textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.profile-field {
+    margin-bottom: 10px;
+    padding: 15px 15px;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+.save-button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.save-button:hover {
+    background: #0056b3;
+}
+
+.modal-body {
+    /* width: 100%; */
+    /* display: flex; */
+}
+
+.adminProfile__formMain {
+    display: flex;
+    justify-content: space-between;
+}
+
+.adminProfile__image-container {
+    display: flex;
+    flex-direction: column;
+    width: 48%;
+}
+
+.modal-userImage {
+    border-radius: 100%;
+    width: 50%;
+    object-fit: cover;
+}
+
+.profile-label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+}
+
+.profile__lable {
+    margin-top: 1rem;
+}
+
+.profile-label input,
+.profile-label textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.save-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #0056b3;
+}
+
+.adminProfile__image-container .progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.adminProfile__image-container .progress-bar-fill {
+    height: 8px;
+    background-color: #4caf50;
+    width: 0;
+    transition: width 0.4s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}

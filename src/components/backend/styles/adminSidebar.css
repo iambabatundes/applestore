@@ -5,11 +5,34 @@
   /* --font-family: 'Arial, sans-serif'; */
 }
 
+/* Dark Mode Styles */
+.admin-sidebar.dark-mode {
+  background-color: #333;
+  color: #fff;
+}
+
+.admin-sidebar.dark-mode a {
+  color: #fff;
+}
+
+.admin-sidebar.dark-mode a:hover {
+  border-left: 3px solid #66bfff;
+  background-color: #444;
+}
+
+.admin-sidebar.dark-mode .dropdown {
+  background-color: #444;
+}
+
+.admin-sidebar.dark-mode .dropdown a:hover {
+  border-left: 3px solid #66bfff;
+}
+
 .admin-sidebar {
   background: #1d2327;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   /* background-color: var(--bg-color); */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); */
   color: var(--secondary-color);
   height: 100%;
   transition: transform 0.3s ease-in-out;
@@ -24,6 +47,23 @@
 
 .admin-sidebar.open {
   transform: translateX(0);
+}
+
+.adminSidebar.dark-mode {
+  background-color: #333;
+  color: #fff;
+}
+
+.dark-mode .admin-sidebar a:hover {
+  /* background-color: var(--primary-color); */
+  color: #fff;
+  border-left: 3px solid #1a1a1a;
+}
+
+.dark-mode .admin-sidebar a.active {
+  background-color: #222;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  color: #fff;
 }
 
 .admin-sidebar aside {

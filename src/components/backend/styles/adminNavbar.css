@@ -5,7 +5,6 @@
     /* --font-family: 'Arial, sans-serif'; */
 }
 
-
 .admin-navbar {
     display: flex;
     justify-content: space-between;
@@ -21,6 +20,8 @@
     z-index: 1000;
 }
 
+
+
 .admin-navbar__left,
 .admin-navbar__center,
 .admin-navbar__right {
@@ -33,7 +34,7 @@
     font-size: 1.5rem;
     margin-right: 1rem;
     transition: transform 0.3s;
-    display: block;
+    /* display: block; */
 }
 
 .admin-menu__icon:hover {
@@ -87,11 +88,185 @@
     border-radius: 50%;
 }
 
-@media (max-width: 768px) {
+/* adminNavbar.css */
+/* .dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.dark-mode .company-name {
+    color: #fff;
+}
+
+.dark-mode .admin-navbar__search input {
+    background-color: #555;
+    color: #fff;
+}
+
+.dark-mode .dropdown-item {
+    background-color: #444;
+    color: #fff;
+} */
+
+/* add other necessary dark mode styles */
+
+/* admin.css */
+/* .dark-mode .admin-container {
+    background-color: #222;
+    color: #ddd;
+}
+
+.dark-mode .admin-sidebar {
+    background-color: #333;
+}
+
+.dark-mode .admin-main-content {
+    background-color: #222;
+    color: #ddd;
+} */
+
+/* add other necessary dark mode styles */
+
+
+.admin-navbar__left,
+.admin-navbar__center,
+.admin-navbar__right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-navbar__left .company-logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.company-name {
+    font-size: 20px;
+}
+
+.admin-navbar__center .admin-navbar__search {
+    position: relative;
+}
+
+.admin-navbar__center .admin-navbar__search input {
+    padding: 5px 10px;
+    margin-left: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.admin-navbar__right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-navbar__notifications,
+.admin-navbar__user {
+    position: relative;
+    margin-left: 20px;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+.adminNavbar__dropdown {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    flex-direction: column;
+    width: 150px;
+    z-index: 100;
+    color: #000;
+}
+
+.adminNavbar__dropdown.open {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.admin-navbar__notifications:hover .adminNavbar__dropdown,
+.admin-navbar__user:hover .adminNavbar__dropdown {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.admin-navbar__dark-mode-toggle {
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.mobile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 60px;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    z-index: 1;
+    display: none;
+}
+
+
+@media (max-width: 1200px) {
     .admin-navbar {
         width: 100%;
     }
+
 }
+
+@media (min-width: 768px) {
+    .admin-navbar {
+        /* flex-direction: row; */
+        width: 100%;
+    }
+
+    .admin-navbar__center {
+        display: flex;
+    }
+
+    .admin-navbar__right {
+        margin-top: 0;
+    }
+
+    .mobile-menu {
+        display: none;
+    }
+}
+
+
 
 @media (max-width: 400px) {
     .admin-navbar {

@@ -4,14 +4,17 @@ import "../styles/productForm.css";
 
 export default function ProductForm({
   data,
+  darkMode,
   handleInputChange,
   handleChangeDecription,
   editorDecription,
   handleChangeAbout,
   editorAbout,
-  handleChangeHighlight,
-  editorHighlight,
   handleSubmit,
+  handleProductDetails,
+  editorproductDetails,
+  handleProductInformation,
+  editorProductInformation,
 }) {
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -29,10 +32,13 @@ export default function ProductForm({
   };
 
   return (
-    <section className="productForm__main">
+    <section className={`productForm__main ${darkMode ? "dark-mode" : ""}`}>
       <form onSubmit={handleSubmit}>
         <div className="productForm__field-container">
-          <label htmlFor="name" className="productForm__label">
+          <label
+            htmlFor="name"
+            className={`productForm__label ${darkMode ? "dark-mode" : ""}`}
+          >
             Product Name
           </label>
           <input
@@ -41,7 +47,8 @@ export default function ProductForm({
             id="name"
             value={data.name}
             onChange={handleInputChange}
-            className="productForm__input"
+            // className="productForm__input"
+            className={`productForm__input ${darkMode ? "dark-mode" : ""}`}
             placeholder="Product Name"
             spellCheck
             autoComplete
@@ -126,6 +133,47 @@ export default function ProductForm({
             </span>
           </div>
         </section>
+
+        <section className="productForm__group-two">
+          <div className="productForm__field-container">
+            <label htmlFor="brand" className="productForm__label">
+              Brand
+            </label>
+            <input
+              type="text"
+              name="brand"
+              id="brand"
+              className="productForm__input"
+              placeholder="Brand"
+              size="20"
+              value={data.brand || ""}
+              onChange={handleInputChange}
+            />
+            <span className="productForm__tooltip">
+              Enter the product brand
+            </span>
+          </div>
+
+          <div className="productForm__field-container">
+            <label htmlFor="manufacturer" className="productForm__label">
+              Manufacturer
+            </label>
+            <input
+              type="text"
+              name="manufacturer"
+              id="manufacturer"
+              className="productForm__input"
+              placeholder="Manufacturer"
+              size="20"
+              value={data.manufacturer || ""}
+              onChange={handleInputChange}
+            />
+            <span className="productForm__tooltip">
+              Enter the product manufacturer
+            </span>
+          </div>
+        </section>
+
         <section className="productForm__group-two">
           <div className="productForm__field-container">
             <label htmlFor="salePrice" className="productForm__label">
@@ -183,6 +231,36 @@ export default function ProductForm({
         <section className="productForm__group-three"></section>
 
         <div className="productForm__editor-container">
+          <label htmlFor="aboutProduct" className="productForm__label">
+            About the Product
+          </label>
+          <ReactQuill
+            modules={modules}
+            onChange={handleChangeAbout}
+            value={editorAbout}
+            theme="snow"
+            id="aboutProduct"
+          />
+          <span className="productForm__tooltip">
+            Enter information About the Product
+          </span>
+        </div>
+
+        <div className="productForm__editor-container">
+          <label htmlFor="productHighlight" className="productForm__label">
+            Product Details
+          </label>
+          <ReactQuill
+            modules={modules}
+            onChange={handleProductDetails}
+            value={editorproductDetails}
+            theme="snow"
+            id="productHighlight"
+          />
+          <span className="productForm__tooltip">Enter product highlights</span>
+        </div>
+
+        <div className="productForm__editor-container">
           <label htmlFor="productDescription" className="productForm__label">
             Product Description
           </label>
@@ -199,29 +277,13 @@ export default function ProductForm({
         </div>
 
         <div className="productForm__editor-container">
-          <label htmlFor="aboutProduct" className="productForm__label">
-            About the Product
-          </label>
-          <ReactQuill
-            modules={modules}
-            onChange={handleChangeAbout}
-            value={editorAbout}
-            theme="snow"
-            id="aboutProduct"
-          />
-          <span className="productForm__tooltip">
-            Enter information about the product
-          </span>
-        </div>
-
-        <div className="productForm__editor-container">
           <label htmlFor="productHighlight" className="productForm__label">
-            Product Highlight
+            Product Information
           </label>
           <ReactQuill
             modules={modules}
-            onChange={handleChangeHighlight}
-            value={editorHighlight}
+            onChange={handleProductInformation}
+            value={editorProductInformation}
             theme="snow"
             id="productHighlight"
           />

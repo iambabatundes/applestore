@@ -81,7 +81,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 /* table {
-  border-collapse: collapse;
+  border-collapse: separate;
 } */
 
 /* To do list */

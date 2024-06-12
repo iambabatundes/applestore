@@ -1,7 +1,10 @@
 .admin-container {
     display: flex;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease-in-out, padding 0.3s ease-in-out;
     /* flex-direction: column; */
 }
+
 
 .admin-main-content {
     background: #f0f0f1;
@@ -11,6 +14,11 @@
     transition: margin-left 0.3s ease-in-out;
 }
 
+.adminDarkMode.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
 @media (max-width: 768px) {
     .admin-container {
         flex-direction: column;
@@ -18,7 +26,7 @@
 
     .admin-main-content {
         margin-left: 0;
-        padding: 10px;
+        /* padding: 10px; */
     }
 }
 

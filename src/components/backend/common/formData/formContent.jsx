@@ -1,123 +1,155 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import the Quill Snow theme CSS
 import "./formContent.css";
 import Button from "../../button";
 import "../../styles/createNew.css";
-import MediaUploadModal from "../../media/MediaUploadModal";
-import FeaturedMediaUploadModal from "../../media/FeaturedMediaUploadModal";
+import Input from "../input";
+import CustomImageBlot from "./customImageBlot"; // Import the custom blot
 
 export default function FormContent({
-  selectedMedia,
-  setSelectedMedia,
-  handleFilterChange,
-  selectedFilter,
-  handleDateChange,
-  selectedDate,
-  handleSearch,
-  mediaSearch,
-  filteredMedia,
-  handleFileChange,
-  handleFileSelect,
-  handleEditorChange,
-  initialContent,
+  handleContentChange,
   editorContent,
-  setEditorContent,
+  handleInputChange,
+  data,
+  errors,
 }) {
-  const [isMediaUploadOpen, setIsMediaUploadOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("library");
-  const [insertedMedia, setInsertedMedia] = useState([]); // Track inserted media
-  const [selectedMediaDetails, setSelectedMediaDetails] = useState(null);
-
-  const handleTabChange = (tab) => {
-    setSelectedTab(tab);
-  };
-
-  const handleAddMediaOpen = () => {
-    setIsMediaUploadOpen(true);
-  };
-
-  const handleAddMediaClose = () => {
-    setIsMediaUploadOpen(false);
-  };
-
-  const handleChange = (content) => {
-    setEditorContent(content);
-    handleEditorChange(content); // Pass the content back to the parent component
-  };
-
-  const handleMediaSelection = (mediaId) => {
-    // Toggle the selected state of the media item
-    const updatedSelectedMedia = selectedMedia.includes(mediaId)
-      ? selectedMedia.filter((id) => id !== mediaId)
-      : [...selectedMedia, mediaId];
-
-    setSelectedMedia(updatedSelectedMedia);
-  };
-
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
     ["bold", "italic", "underline", "strike"], // toggled buttons
     ["blockquote"],
-    // [{ size: [] }],
-
     [{ list: "ordered" }, { list: "bullet" }],
     [{ align: [] }],
     [{ script: "sub" }, { script: "super" }], // superscript/subscript
-
     [{ color: [] }], // dropdown with defaults from theme
-    // [{ font: [] }],
     ["link", "image", "video"],
-
     ["clean"], // remove formatting button
   ];
 
+  const handleImageUpload = useCallback(() => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const quill = ReactQuill.Quill.find(
+            document.querySelector(".ql-container")
+          );
+          const range = quill.getSelection();
+          quill.editor.insertEmbed(range.index, "customImage", {
+            url: reader.result,
+          });
+        };
+      }
+    };
+  }, []);
+
+  const handleVideoUpload = useCallback(() => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "video/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const quill = ReactQuill.Quill.find(
+            document.querySelector(".ql-container")
+          );
+          const range = quill.getSelection();
+          quill.editor.insertEmbed(range.index, "video", reader.result);
+        };
+      }
+    };
+  }, []);
+
+  const handleAddMedia = useCallback(() => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*,video/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const quill = ReactQuill.Quill.find(
+            document.querySelector(".ql-container")
+          );
+          const range = quill.getSelection();
+          const fileType = file.type.split("/")[0];
+          if (fileType === "image") {
+            quill.editor.insertEmbed(range.index, "customImage", {
+              url: reader.result,
+            });
+          } else if (fileType === "video") {
+            quill.editor.insertEmbed(range.index, "video", reader.result);
+          }
+        };
+      }
+    };
+  }, []);
+
   const modules = {
-    toolbar: toolbarOptions,
+    toolbar: {
+      container: toolbarOptions,
+      handlers: {
+        image: handleImageUpload,
+        video: handleVideoUpload,
+      },
+    },
   };
 
   return (
-    <section className="formContent__main">
+    <section className="formContent">
       <div>
-        <div className="media-main">
-          <div className="addMedia__btn">
-            <Button
-              title="Add Media"
-              iconData="fa fa-picture-o"
-              onClick={handleAddMediaOpen}
-            />
-          </div>
-        </div>
-
-        <MediaUploadModal
-          isMediaUploadOpen={isMediaUploadOpen}
-          onClick={handleAddMediaClose}
-          selectedTab={selectedTab}
-          handleTabChange={handleTabChange}
-          selectedMedia={selectedMedia}
-          setSelectedMedia={setSelectedMedia}
-          handleMediaSelection={handleMediaSelection}
-          handleFilterChange={handleFilterChange}
-          selectedFilter={selectedFilter}
-          handleDateChange={handleDateChange}
-          selectedDate={selectedDate}
-          handleSearch={handleSearch}
-          mediaSearch={mediaSearch}
-          filteredMedia={filteredMedia}
-          selectedMediaDetails={selectedMediaDetails}
-          setSelectedMediaDetails={setSelectedMediaDetails}
-          handleFileChange={handleFileChange}
-          handleFileSelect={handleFileSelect}
+        <Input
+          type="text"
+          id="title"
+          className="createNew__title"
+          name="title"
+          onChange={handleInputChange}
+          placeholder="Add title"
+          size="20"
+          spellCheck="true"
+          value={data.title}
         />
-
-        <ReactQuill
-          modules={modules}
-          onChange={handleChange}
-          value={editorContent}
-          theme="snow"
-          placeholder={"Write something awesome..."}
-          // formats={formats}
-        />
+        {errors.title && (
+          <div className="alert alert-danger">{errors.title}</div>
+        )}
       </div>
+      <section className="formContent__main">
+        <div>
+          <div className="media-main">
+            <div className="addMedia__btn">
+              <Button
+                title="Add Media"
+                iconData="fa fa-picture-o"
+                onClick={handleAddMedia}
+              />
+            </div>
+          </div>
+
+          <ReactQuill
+            modules={modules}
+            onChange={handleContentChange}
+            value={editorContent}
+            theme="snow"
+            placeholder={"Write something awesome..."}
+          />
+        </div>
+      </section>
     </section>
   );
 }

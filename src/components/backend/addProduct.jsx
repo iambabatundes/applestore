@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
-import Button from "./button";
 
 import TagsHeader from "./common/TagsHeader";
 import CategoryHeader from "./common/CategoriesHeader";
@@ -22,25 +20,40 @@ import DataTags from "./products/dataTags";
 import ProductGallary from "./common/formData/productGallary";
 import ProductGalleryHeader from "./common/productGallaryHeader";
 import "../backend/products/styles/addProduct.css";
+import { getCurrentUser } from "../../services/authService";
 
-export default function AddProduct() {
-  const [productDetails, setProductDetails] = useState({
-    name: "",
-    sku: "",
-    description: "",
-    weight: "",
-    price: "",
-    numberInStock: "",
-    salePrice: "",
-    saleStartDate: "",
-    saleEndDate: "",
-    media: [],
-    featureImage: {},
-  });
+export default function AddProduct({ darkMode }) {
+  const initialProductDetails = useMemo(
+    () => ({
+      name: "",
+      sku: "",
+      aboutProduct: "",
+      productDetails: "",
+      productInformation: "",
+      description: "",
+      brand: "",
+      manufacturer: "",
+      weight: "",
+      price: "",
+      numberInStock: "",
+      salePrice: "",
+      saleStartDate: "",
+      saleEndDate: "",
+      media: [],
+      featureImage: {},
+      category: [],
+      tags: [],
+    }),
+    []
+  );
+
+  const [productDetails, setProductDetails] = useState(initialProductDetails);
   const [isTagsVisible, setIsTagsVisible] = useState(true);
   const [selectedTags, setSelectedTags] = useState([]);
+
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
+
   const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
   const [featureImage, setFeatureImage] = useState(null);
   const [isProductGallaryVisible, setIsProductGallaryVisible] = useState(true);
@@ -48,22 +61,36 @@ export default function AddProduct() {
   const [editingMode, setEditingMode] = useState(false);
   const [editorContent, setEditorContent] = useState("");
   const [editorAbout, setEditorAbout] = useState("");
-  const [editorHighlight, setEditorHighlight] = useState("");
+  const [editorproductDetails, setEditorProductDetails] = useState("");
+  const [editorProductInformation, setEditorProductInformation] = useState("");
   const [tags, setTags] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const params = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function getTag() {
+  const fetchTag = useCallback(async () => {
+    try {
       const { data: tags } = await getTags();
       setTags(tags);
+    } catch (error) {
+      console.error("Failed to fetch tags", error);
     }
+  }, [setTags]);
 
-    async function getCategory() {
+  const fetchCategory = useCallback(async () => {
+    try {
       const { data: categories } = await getCategories([]);
       setCategories(categories);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
     }
+  }, [setCategories]);
+
+  useEffect(() => {
+    fetchTag();
+    fetchCategory();
 
     async function getProductDetails(productId) {
       try {
@@ -74,19 +101,14 @@ export default function AddProduct() {
           media: product.media || [], // Ensure media is an array
           featureImage: product.featureImage,
         });
-        setSelectedTags(product.tags);
-        // setSelectedCategories(product.category);
+        setSelectedTags(product.tags.map((tag) => tag.name));
         setSelectedCategories(product.category || []);
         setFeatureImage(product.featureImage);
         setMedia(product.media || []); // Ensure media is an array
-
-        // Ensure media objects are of correct type and structure
-        // const mediaFiles = product.media.map((m) => {
-        //   return m instanceof File ? m : { ...m, url: m.url }; // Add url property if missing
-        // });
-        // setMedia(mediaFiles);
-
+        setEditorAbout(product.aboutProduct);
+        setEditorProductDetails(product.productDetails);
         setEditorContent(product.description);
+        setEditorProductInformation(product.productInformation);
       } catch (ex) {
         if (ex.response && ex.response.status === 404) {
           navigate("/not-found");
@@ -98,34 +120,51 @@ export default function AddProduct() {
     if (productId) {
       setEditingMode(true);
       getProductDetails(productId);
+    } else {
+      setEditingMode(false);
+      setProductDetails(initialProductDetails); // Reset the form to initial state
+      setSelectedTags([]);
+      setSelectedCategories([]);
+      setFeatureImage(null);
+      setMedia([]);
+      setEditorAbout("");
+      setEditorProductDetails("");
+      setEditorContent("");
+      setEditorProductInformation("");
     }
-
-    getTag();
-    getCategory();
-  }, [params.id, navigate]);
+  }, [params.id, navigate, fetchTag, fetchCategory, initialProductDetails]); // Todo
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     console.log("Product Details before submitting:", productDetails); // Todo
 
     const categoryNames = selectedCategories.map((category) => category.name);
 
+    // getCurrentUser()
+    const user = getCurrentUser(); // Get the current user
+    const userId = user ? user._id : null;
+    // const userId = user ? { username: user.username, email: user.email } : null;
+
+    console.log("User ID:", userId);
+
     const requestBody = {
       ...productDetails,
+      aboutProduct: editorAbout,
+      productDetails: editorproductDetails,
+      productInformation: editorProductInformation,
       description: editorContent,
       category: categoryNames,
       tags: selectedTags,
-      // tags: selectedTags.map((tag) => tag._id),
-      media: productDetails.media || [], // to-do
+      media: productDetails.media || [],
       featureImage: productDetails.featureImage,
+      userId,
     };
-
-    console.log("Request Body:", requestBody);
 
     try {
       if (editingMode) {
-        await updateProduct(productDetails._id, requestBody);
+        await updateProduct(productDetails._id, requestBody, userId);
         toast.success("Product updated successfully");
         console.log("This is the updated product", requestBody);
       } else {
@@ -149,23 +188,46 @@ export default function AddProduct() {
     }));
   };
 
-  const handleContentChange = (content) => {
+  const handleChangeAbout = useCallback((content) => {
+    setEditorAbout(content);
+    setProductDetails((prevState) => ({
+      ...prevState,
+      aboutProduct: content,
+    }));
+  }, []);
+
+  const handleProductDetails = useCallback((content) => {
+    setEditorProductDetails(content);
+    setProductDetails((prevState) => ({
+      ...prevState,
+      productDetails: content,
+    }));
+  }, []);
+
+  const handleContentChange = useCallback((content) => {
     setEditorContent(content);
     setProductDetails((prevState) => ({
       ...prevState,
       description: content,
     }));
-  };
+  }, []);
 
-  const handleImageChange = (e) => {
+  const handleProductInformation = useCallback((content) => {
+    setEditorProductInformation(content);
+    setProductDetails((prevState) => ({
+      ...prevState,
+      productInformation: content,
+    }));
+  }, []);
+
+  const handleImageChange = useCallback((e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const preview = URL.createObjectURL(file);
       setFeatureImage({ file, preview });
       setProductDetails((prevState) => ({
         ...prevState,
-        // featureImage: file,
-        featureImage: { file, preview }, // to-do
+        featureImage: { file, preview },
       }));
     } else {
       setFeatureImage(null);
@@ -174,56 +236,66 @@ export default function AddProduct() {
         featureImage: null,
       }));
     }
-  };
+  }, []);
 
-  const handleProductImagesChange = (e) => {
+  const handleProductImagesChange = useCallback((e) => {
     const files = Array.from(e.target.files);
     setProductDetails((prevState) => ({
       ...prevState,
       media: [...(prevState.media || []), ...files],
     }));
-  };
+  }, []);
 
   return (
-    <section className="">
-      <header className="addProduct__heading">
-        <h1 className="addProduct__title">
+    <section className={darkMode ? "dark-mode" : ""}>
+      <header className={`addProduct__heading ${darkMode ? "dark-mode" : ""}`}>
+        <h1 className={`addProduct__title ${darkMode ? "dark-mode" : ""}`}>
           {editingMode ? "Edit Product" : "Add New Product"}
         </h1>
         <Link to="/admin/add-product">
-          <button className="addProduct__btn">
+          <button className={`addProduct__btn ${darkMode ? "dark-mode" : ""}`}>
             {editingMode ? "Add New" : ""}
           </button>
         </Link>
       </header>
 
-      <section className="padding add-product-section">
+      <section
+        className={`padding add-product-section ${darkMode ? "dark-mode" : ""}`}
+      >
         <section className="addProduct-grid">
           <section className="addProduct__productForm">
             <ProductForm
+              darkMode={darkMode}
               data={productDetails}
               editorAbout={editorAbout}
               editorDecription={editorContent}
-              editorHighlight={editorHighlight}
               handleChangeDecription={handleContentChange}
-              handleChangeAbout={handleContentChange}
+              handleChangeAbout={handleChangeAbout}
               handleChangeHighlight={handleContentChange}
               handleInputChange={handleInputChange}
               handleSubmit={handleSubmit}
+              handleProductDetails={handleProductDetails}
+              editorproductDetails={editorproductDetails}
+              handleProductInformation={handleProductInformation}
+              editorProductInformation={editorProductInformation}
             />
           </section>
 
           <div className="addProduct-sidebar">
-            <div className="addProduct-header">
-              <Button
-                title="Publish"
-                className="publish-button"
-                disabled=""
-                onClick={handleSubmit}
-              />
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
+              <span className="addProduct__publish-heading">
+                <button
+                  onClick={handleSubmit}
+                  // disabled={isSubmitting}
+                  className={`publish-button ${darkMode ? "dark-mode" : ""}`}
+                >
+                  {editingMode ? "Update" : "Publish"}
+                </button>
+                {/* {isSubmitting && <div className="loading-spinner"></div>} */}
+              </span>
             </div>
 
-            <div className="addProduct-header">
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
               <CategoryHeader
                 CategoryTitle="Categories"
                 isCategoriesVisible={true}
@@ -241,7 +313,7 @@ export default function AddProduct() {
               />
             </div>
 
-            <div className="addProduct-header">
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
               <TagsHeader
                 TagsTitle="Tags"
                 isTagsVisible={true}
@@ -259,7 +331,7 @@ export default function AddProduct() {
               />
             </div>
 
-            <div className="addProduct-header">
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
               <FeaturedImageHeader
                 FeaturedImageTitle="Product Image"
                 isFeaturedImageVisible={true}
@@ -276,7 +348,7 @@ export default function AddProduct() {
               />
             </div>
 
-            <div className="addProduct-header">
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
               <ProductGalleryHeader
                 dataImageVisible={true}
                 productGallaryTitle="Product Gallery"
@@ -290,16 +362,21 @@ export default function AddProduct() {
                 isProductGalleryVisible={isProductGallaryVisible}
                 media={media}
                 setMedia={setMedia}
+                darkMode={darkMode}
               />
             </div>
 
-            <div className="addProduct-header">
-              <Button
-                title="Publish"
-                className="publish-button"
-                disabled=""
-                onClick={handleSubmit}
-              />
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
+              <span className="addProduct__publish-heading">
+                <button
+                  onClick={handleSubmit}
+                  // disabled={isSubmitting}
+                  className={`publish-button ${darkMode ? "dark-mode" : ""}`}
+                >
+                  {editingMode ? "Update" : "Publish"}
+                </button>
+                {/* {isSubmitting && <div className="loading-spinner"></div>} */}
+              </span>
             </div>
           </div>
         </section>

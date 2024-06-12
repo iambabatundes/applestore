@@ -1,20 +1,19 @@
 import React from "react";
 import Input from "../input";
 
-export default function FormTitle({ handleTitleChange, value }) {
+export default function FormTitle({ handleInputChange, data }) {
   return (
     <div>
       <Input
         type="text"
-        id="AddTitle"
+        id="title"
         className="createNew__title"
-        name="Add title"
-        onChange={(e) => handleTitleChange(e)}
+        name="title"
+        onChange={handleInputChange}
         placeholder="Add title"
-        size="28"
+        size="20"
         spellCheck="true"
-        // autoComplete="off"
-        value={value}
+        value={data.title}
       />
     </div>
   );

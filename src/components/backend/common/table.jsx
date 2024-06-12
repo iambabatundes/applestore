@@ -18,7 +18,6 @@ export default function Table({
   tbodyTr,
 }) {
   return (
-    // <table className={`${table} dataTable-table post-list`}>
     <table className={`${table}`}>
       <TableHeader
         className={`${className}`}

@@ -13,7 +13,7 @@ export default function DataCategory({
 }) {
   const [newCategory, setNewCategory] = useState({
     name: "",
-    parent: "",
+    // parent: "",
   });
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
   const [error, setError] = useState("");

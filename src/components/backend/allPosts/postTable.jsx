@@ -40,6 +40,23 @@ export default function PostTable({
         ></div>
       ),
     },
+    {
+      label: "Post by",
+      path: "user.username",
+    },
+
+    // {
+    //   label: "Post by",
+    //   path: "user.profileImage",
+    //   content: (post) => (
+    //     <img
+    //       className="postTable__user-img"
+    //       src={config.mediaUrl + `/uploads/${post.user.profileImage}`}
+    //       alt={post.user.username}
+    //     />
+    //   ),
+    // },
+
     { label: "Category", path: "category" },
     { label: "Tags", path: "tags" },
     { label: "Comment", path: "comment" },
@@ -60,17 +77,17 @@ export default function PostTable({
       content: (post) => (
         <section className="post__icon">
           <i
-            className="fa fa-edit"
+            className="fa fa-edit postIcon"
             aria-hidden="true"
             onClick={() => onEdit(post)}
           ></i>
           <i
-            className="fa fa-eye"
+            className="fa fa-eye postIcon"
             aria-hidden="true"
             onClick={() => onPreview(post)}
           ></i>
           <i
-            className="fa fa-trash"
+            className="fa fa-trash postIcon"
             aria-hidden="true"
             onClick={() => onDelete(post)}
           ></i>

@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import "../styles/productImage.css";
-import Icon from "../../../icon";
-import config from "../../../../config.json";
+import "./styles/productImage.css";
 
-export default function ProductImage({
+import Icon from "../../icon";
+import config from "../../../config.json";
+
+export default function PostMainImage({
   isFeaturedImageVisible,
   handleImageChange,
-  featureImage,
-  setFeatureImage,
+  postMainImage,
+  setPostMainImage,
 }) {
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
@@ -49,14 +50,14 @@ export default function ProductImage({
       return;
     }
 
-    // if (featureImage) {
+    // if (postMainImage) {
     //   setError("You can only upload one image.");
     //   return;
     // }
 
     setError("");
     const fileUrl = URL.createObjectURL(file);
-    setFeatureImage({ file, preview: fileUrl });
+    setPostMainImage({ file, preview: fileUrl });
     handleImageChange({ target: { files: [file] } });
     simulateUploadProgress();
   };
@@ -83,7 +84,7 @@ export default function ProductImage({
 
   const handleRemoveImage = () => {
     if (window.confirm("Are you sure you want to remove this image?")) {
-      setFeatureImage(null);
+      setPostMainImage(null);
       handleImageChange({ target: { files: [] } });
       setProgress(0); // Reset progress when image is removed
     }
@@ -100,18 +101,18 @@ export default function ProductImage({
   useEffect(() => {
     return () => {
       // Revoke object URLs to avoid memory leaks
-      if (featureImage && featureImage.preview) {
-        URL.revokeObjectURL(featureImage.preview);
+      if (postMainImage && postMainImage.preview) {
+        URL.revokeObjectURL(postMainImage.preview);
       }
     };
-  }, [featureImage]);
+  }, [postMainImage]);
 
   let imageUrl = "";
-  if (featureImage) {
-    if (featureImage.preview && featureImage) {
-      imageUrl = featureImage.preview;
-    } else if (featureImage.filename) {
-      imageUrl = `${config.mediaUrl}/uploads/${featureImage.filename}`;
+  if (postMainImage) {
+    if (postMainImage.preview && postMainImage) {
+      imageUrl = postMainImage.preview;
+    } else if (postMainImage.filename) {
+      imageUrl = `${config.mediaUrl}/uploads/${postMainImage.filename}`;
     }
   }
 

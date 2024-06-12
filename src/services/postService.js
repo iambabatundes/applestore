@@ -3,129 +3,82 @@ import config from "../config.json";
 
 const apiEndPoint = config.apiUrl + "/posts";
 
+function postUrl(id) {
+  return `${apiEndPoint}/${id}`;
+}
+
 export function getPosts() {
   return http.get(apiEndPoint);
 }
 
 export function getPost(postId) {
-  return http.get(`${apiEndPoint}/${postId}`);
+  return http.get(postUrl(postId));
 }
 
-// export function savePost(post) {
-//   console.log(post);
-//   const formData = new FormData();
-//   for (const key in post) {
-//     if (key === "postMainImage" && post[key]) {
-//       formData.append(key, post[key], post[key].name);
-//     } else if (key !== "postMainImage") {
-//       formData.append(key, post[key]);
-//     }
-//   }
-//   return http.post(apiEndPoint, formData, {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//   });
-// }
-
-// export function savePost(post) {
-//   console.log(post);
-//   const formData = new FormData();
-
-//   for (const key in post) {
-//     if (key === "postMainImage" && post[key]) {
-//       if (post[key] instanceof File) {
-//         formData.append(key, post[key], post[key].name);
-//       } else {
-//         console.error(`postMainImage is not a File:`, post[key]);
-//       }
-//     } else {
-//       formData.append(key, post[key]);
-//     }
-//   }
-
-//   return http.post(apiEndPoint, formData);
-// }
-
-async function fetchImageAsBlob(imageUrl) {
-  const response = await fetch(imageUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch image from ${imageUrl}`);
-  }
-  return await response.blob();
-}
-
-export async function savePost(post) {
-  console.log(post);
+function createFormData(post, userId) {
   const formData = new FormData();
 
+  // if (userId && typeof userId === "object") {
+  //   for (const key in userId) {
+  //     if (userId.hasOwnProperty(key)) {
+  //       formData.append(`userId[${key}]`, userId[key]);
+  //     }
+  //   }
+  // }
+
+  if (userId && typeof userId === "object") {
+    formData.append("userId", JSON.stringify(userId));
+  }
+
+  // if (userId) {
+  //   formData.append("userId", userId._id);
+  // }
+
   for (const key in post) {
-    if (key === "postMainImage" && post[key]) {
-      if (post[key].type === "image" && post[key].src) {
-        try {
-          const imageBlob = await fetchImageAsBlob(post[key].src);
-          formData.append(key, imageBlob, post[key].filename);
-        } catch (error) {
-          console.error("Failed to fetch and convert image:", error);
-          return Promise.reject(new Error("Failed to fetch and convert image"));
-        }
-      } else {
-        console.error("postMainImage is not a valid image object:", post[key]);
-        return Promise.reject(
-          new Error("postMainImage is not a valid image object")
-        );
+    if (key === "_id") {
+      continue; // Skip the _id field
+    } else if (key === "postMainImage") {
+      if (post[key] && post[key].file) {
+        formData.append("postMainImage", post[key].file);
       }
+    } else if (key === "media") {
+      if (Array.isArray(post[key])) {
+        post[key].forEach((file) => formData.append("media", file));
+      }
+    } else if (Array.isArray(post[key])) {
+      post[key].forEach((item) => formData.append(`${key}[]`, item));
     } else {
       formData.append(key, post[key]);
     }
   }
 
-  return http.post(apiEndPoint, formData);
+  return formData;
 }
 
-// export function updatePost(postId, post) {
-//   const formData = new FormData();
-//   for (const key in post) {
-//     if (key === "postMainImage" && post[key]) {
-//       formData.append(key, post[key], post[key].name);
-//     } else if (key !== "postMainImage") {
-//       formData.append(key, post[key]);
-//     }
-//   }
-//   return http.put(`${apiEndPoint}/${postId}`, formData);
-// }
+export function savePost(post, userId) {
+  const formData = createFormData(post, userId);
 
-export async function updatePost(postId, post) {
-  console.log(post);
-  const formData = new FormData();
-
-  for (const key in post) {
-    if (key === "postMainImage" && post[key]) {
-      if (post[key].type === "image" && post[key].src) {
-        try {
-          const imageBlob = await fetchImageAsBlob(post[key].src);
-          formData.append(key, imageBlob, post[key].filename);
-        } catch (error) {
-          console.error("Failed to fetch and convert image:", error);
-          return Promise.reject(new Error("Failed to fetch and convert image"));
-        }
-      } else {
-        console.error("postMainImage is not a valid image object:", post[key]);
-        return Promise.reject(
-          new Error("postMainImage is not a valid image object")
-        );
-      }
-    } else {
-      formData.append(key, post[key]);
-    }
+  if (post._id) {
+    return http.put(postUrl(post._id), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   }
 
-  const url = `${apiEndPoint}/${postId}`;
-  return http.put(url, formData);
+  return http.post(apiEndPoint, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
+export function updatePost(postId, post, userId) {
+  const formData = createFormData(post, userId);
+
+  return http.put(postUrl(postId), formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 }
 
 export function deletePost(postId) {
-  return http.delete(`${apiEndPoint}/${postId}`);
+  return http.delete(postUrl(postId));
 }
 
 export function getPostsByTag(tagId) {

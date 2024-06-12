@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./styles/adminSidebar.css";
+import "../backend/common/styles/darkMode.css";
 
 export default function AdminSidebar({
+  darkMode,
   sidebarLinks,
   selectedLink,
   setSelectedLink,
@@ -11,7 +13,11 @@ export default function AdminSidebar({
   selectedDropdownLink,
 }) {
   return (
-    <aside className={`admin-sidebar ${isMobileMenuOpen ? "open" : ""}`}>
+    <aside
+      className={`admin-sidebar ${isMobileMenuOpen ? "open" : ""} ${
+        darkMode ? "dark-mode" : ""
+      }`}
+    >
       <ul>
         {sidebarLinks.map((link) => (
           <li key={link.to} className="sidebar-item">

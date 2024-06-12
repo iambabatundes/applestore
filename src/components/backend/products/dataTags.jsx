@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import "./styles/postTags.css";
 import "../../backend/common/styles/dataTags.css";
 
 export default function DataTags({
@@ -24,7 +23,7 @@ export default function DataTags({
       try {
         const existingTag = await getDataTags(newTag.trim());
         if (existingTag) {
-          setSelectedTags((prevTags) => [...prevTags, newTag.trim()]);
+          setSelectedTags((prevTags) => [...prevTags, existingTag.name]);
         } else {
           const savedTag = await saveDataTag({ name: newTag.trim() });
           setSelectedTags((prevTags) => [...prevTags, savedTag.name]);
@@ -62,7 +61,7 @@ export default function DataTags({
           <div className="tags-list">
             {selectedTags.map((tag) => (
               <div key={tag} className="tags">
-                {tag.name || tag}
+                {tag}
                 <span
                   className="cancel-icon"
                   onClick={() => handleRemoveTag(tag)}
@@ -101,22 +100,20 @@ export default function DataTags({
                   <input
                     className="category__checkbox"
                     type="checkbox"
-                    value={tag.name || tag}
-                    checked={selectedTags.includes(tag.name || tag)}
+                    value={tag.name}
+                    checked={selectedTags.includes(tag.name)}
                     onChange={(e) => {
+                      const value = tag.name;
                       if (e.target.checked) {
-                        setSelectedTags((prevTags) => [
-                          ...prevTags,
-                          e.target.value,
-                        ]);
+                        setSelectedTags((prevTags) => [...prevTags, value]);
                       } else {
                         setSelectedTags((prevTags) =>
-                          prevTags.filter((t) => t !== e.target.value)
+                          prevTags.filter((t) => t !== value)
                         );
                       }
                     }}
                   />
-                  {tag.name || tag}
+                  {tag.name}
                 </label>
               </li>
             ))}

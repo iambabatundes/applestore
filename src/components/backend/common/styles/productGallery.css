@@ -1,3 +1,14 @@
+/* :root {
+    --primary-color: #4CAF50;
+    --secondary-color: #333;
+    --bg-color: #f4f4f4;
+    --dark-bg-color: #333;
+    --dark-text-color: #fff;
+    --dark-border-color: #444;
+    --dark-hover-bg-color: #444;
+    --dark-hover-border-color: #66bfff;
+} */
+
 .productGallery__drop-zone {
     background-color: #f9f9f9;
     border-radius: 10px;
@@ -169,6 +180,95 @@
     color: #ff4d4f;
     font-size: 12px;
     text-align: center;
+}
+
+/* Dark Mode Styles */
+.productGallery__drop-zone.dark-mode {
+    background-color: #333;
+    color: #f9f9f9;
+    border-color: #444;
+}
+
+.productGallery__drop-zone.dark-mode:hover {
+    background-color: #444;
+    border-color: #444;
+}
+
+.productGallery__drop-zone.dragging.dark-mode {
+    background-color: #444;
+    border-color: #444;
+}
+
+/* Dark Mode for Media Items */
+.mediaItems.dark-mode {
+    /* border-color: #333; */
+    border: 4px solid #666;
+
+}
+
+.mediaItems.dark-mode:hover {
+    background-color: #222;
+    border-color: #333;
+}
+
+.media-preview.dark-mode:hover {
+    background-color: var(--dark-hover-bg-color);
+    border-color: #66bfff;
+}
+
+.remove-icon.dark-mode {
+    background: #333;
+    color: #fff;
+}
+
+.remove-icon.dark-mode:hover {
+    background: #1a1a1a;
+    color: #1890ff;
+}
+
+.add-more.dark-mode {
+    border-color: var(--dark-border-color);
+    background: var(--dark-bg-color);
+}
+
+.add-more-content.dark-mode {
+    color: var(--dark-text-color);
+}
+
+.productGallery-instruction.dark-mode {
+    color: var(--dark-text-color);
+}
+
+.productGallery-label.dark-mode {
+    background-color: var(--dark-bg-color);
+    color: var(--dark-text-color);
+    border-color: var(--dark-border-color);
+}
+
+.productGallery-label.dark-mode:hover {
+    background-color: #333;
+    border-color: #222;
+    /* border-radius: 20px; */
+}
+
+.productGallery-icon.dark-mode {
+    color: #fff
+}
+
+.productGallery-text.dark-mode {
+    color: #fff
+}
+
+.upload-instruction.dark-mode {
+    color: var(--dark-text-color);
+}
+
+.progress-bar.dark-mode {
+    background: #444;
+}
+
+.progress-bar-fill.dark-mode {
+    background: #222;
 }
 
 .progress-bar {

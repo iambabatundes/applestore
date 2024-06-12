@@ -35,7 +35,7 @@
 
 .orderTable {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
     margin: 20px 0;
     box-shadow: 0 2px 15px rgba(64, 64, 64, 0.1);
     background: #fff;
@@ -54,6 +54,22 @@
 .Ordertable__className:hover {
     width: 100%;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.orderTbody__className {
+    font-size: 0.7rem;
+
+}
+
+.orderTbodyTr {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.orderTbodyTr:hover {
+    background-color: #f1f1f1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1.0);
+
 }
 
 .orderTd {
@@ -92,6 +108,69 @@
 .order-number:hover {
     color: #0056b3;
 }
+
+.orderItem-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.orderItem__product_price {
+    color: #007bff;
+}
+
+.orderItem__order-total {
+    color: #007bff;
+}
+
+.orderItem__items {
+    font-size: 0.7rem;
+    font-weight: 300;
+}
+
+.orderItem-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    margin-right: 10px;
+    object-fit: cover;
+    /* box-shadow: 0 8px 16px rgba(85, 93, 102, 0.3); */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.orderItem-image:hover {
+    box-shadow: 0 8px 16px rgba(85, 93, 102, 0.3);
+    transform: scale(1.1);
+}
+
+.orderItem__user-info {
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+}
+
+.OrderItem__user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.orderItem__user-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.orderItem__user-username {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.orderItem__user-orderNumber {
+    color: #ccc;
+}
+
 
 .status-dropdown {
     width: 100%;
@@ -156,8 +235,8 @@
 
 .Ordertable__className .orderTh:nth-child(1),
 .orderTd:nth-child(1) {
-    min-width: 9rem;
-    max-width: 9rem;
+    min-width: 8rem;
+    max-width: 8rem;
 }
 
 .Ordertable__className .orderTh:nth-child(2),
@@ -168,8 +247,8 @@
 
 .Ordertable__className .orderTh:nth-child(3),
 .orderTd:nth-child(3) {
-    min-width: 15rem;
-    max-width: 15rem;
+    min-width: 19rem;
+    max-width: 19rem;
     word-wrap: break-word;
 }
 

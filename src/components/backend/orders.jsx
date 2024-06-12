@@ -5,9 +5,9 @@ import SearchBox from "./common/searchBox";
 import Pagination from "./common/pagination";
 import OrderTable from "./orders/orderTable";
 import OrderDetails from "./orderDetails";
-import { getOrderDatas } from "./orderData";
 import OrderHeader from "./orders/orderHeader";
 import "../backend/orders/styles/order.css";
+import { getOrders } from "../../services/orderService";
 
 export default function Orders() {
   const [orderData, setOrderData] = useState([]);
@@ -22,12 +22,12 @@ export default function Orders() {
   const [isModalOpen, setIsModalOpen] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = getOrderDatas();
-      setOrderData(data);
-    };
+    async function getOrder() {
+      const { data: orderData } = await getOrders();
+      setOrderData(orderData);
+    }
 
-    fetchData();
+    getOrder();
   }, []);
 
   function handleSort(sortColumns) {

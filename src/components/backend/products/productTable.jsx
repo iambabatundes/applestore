@@ -32,17 +32,18 @@ export default function ProductTable({
     },
     { label: "SKU", path: "sku" },
     {
-      label: "Description",
-      path: "description",
+      label: "About",
+      path: "aboutProduct",
       content: (product) => (
         <div
           dangerouslySetInnerHTML={{
-            __html: truncateContent(product.description, 15),
+            __html: truncateContent(product.aboutProduct, 15),
           }}
         ></div>
       ),
     },
 
+    // { label: "Post By", path: "userId" },
     { label: "In Stock", path: "numberInStock" },
     { label: "Price", path: "price" },
     { label: "Sale Price", path: "salePrice" },

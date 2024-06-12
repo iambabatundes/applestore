@@ -29,9 +29,10 @@
     position: fixed;
     width: calc(100% - 140px);
     top: 55px;
-    z-index: 1001;
+    z-index: 10;
     padding: 0 20px;
     transition: background var(--transition), box-shadow var(--transition);
+    width: 100%;
 }
 
 .product__header h1 {

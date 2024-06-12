@@ -1,0 +1,50 @@
+/* adminNavbar.css */
+.admin-navbar.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+.admin-navbar.dark-mode .company-name {
+    color: #fff;
+}
+
+.admin-navbar.dark-mode .admin-navbar__search input {
+    background-color: #555;
+    color: #fff;
+}
+
+.admin-navbar.dark-mode .dropdown-item {
+    background-color: #444;
+    color: #fff;
+}
+
+/* add other necessary dark mode styles */
+
+/* admin.css */
+.dark-mode .admin-container {
+    background-color: #222;
+    color: #ddd;
+}
+
+.dark-mode .admin-sidebar {
+    background-color: #333;
+}
+
+.dark-mode .admin-main-content {
+    background-color: #222;
+    color: #ddd;
+}
+
+/* add other necessary dark mode styles */
+
+/* Dashboard */
+
+.dashboard.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dashboard-content.dark-mode {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}

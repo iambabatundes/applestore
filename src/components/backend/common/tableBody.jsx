@@ -11,14 +11,6 @@ function renderCell(item, column) {
     return "—";
   }
 
-  // if (column.path === "category") {
-  //   return item.category.name;
-  // }
-
-  // if (column.path === "category" && item.category) {
-  //   return item.category.name;
-  // }
-
   if (column.path === "category") {
     return item.category.map((category) => category.name).join(", ");
   }
