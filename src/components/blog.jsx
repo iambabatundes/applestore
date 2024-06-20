@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
+import _ from "lodash";
 import { Link } from "react-router-dom";
 import "../components/styles/blog.css";
-import { getBlogPosts } from "./blogPosts";
+// import { getBlogPosts } from "./blogPosts";
+import { getPosts } from "../services/postService";
 
 export default function Blog() {
   const [blogPosts, setBlogPosts] = useState([]);
 
   useEffect(() => {
     // Fetch blog posts from the fake backend
-    const fetchedBlogPosts = getBlogPosts();
-    setBlogPosts(fetchedBlogPosts);
+
+    async function fetchPosts() {
+      const { data: blogPosts } = await getPosts();
+      const sortedPosts = _.orderBy(blogPosts, ["createdAt"], ["desc"]);
+      setBlogPosts(sortedPosts);
+    }
+
+    fetchPosts();
   }, []);
 
   function formatPermalink(title) {
@@ -29,11 +37,11 @@ export default function Blog() {
         {blogPosts.map((post, index) => (
           <div className="blog-post" key={index}>
             <div className="blog-post__image">
-              <img src={post.image} alt={post.title} />
+              <img src={post.postMainImage.filename} alt={post.title} />
             </div>
             <div className="blog-post__content">
               <h2 className="blog-post__title">{post.title}</h2>
-              <p className="blog-post__date">{post.datePosted}</p>
+              <p className="blog-post__date">{post.createdAt}</p>
               {/* <p className="blog-post__author">Posted by {post.postedBy}</p> */}
               <p className="blog-post__text">{post.content}</p>
               <Link

@@ -20,8 +20,10 @@ import SingleProduct from "./components/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
 import Admin from "./components/backend/admin";
-import { getBlogPosts } from "../src/components/blogPosts";
 import Blog from "./components/blog";
+import Navbar from "./components/home/navbar";
+import Login from "./components/home/login";
+import Register from "./components/home/register";
 
 function App() {
   const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
@@ -106,15 +108,6 @@ function App() {
   };
 
   useEffect(() => {
-    const fetchedPosts = getBlogPosts();
-    const postsWithSelection = fetchedPosts.map((post) => ({
-      ...post,
-      selected: false,
-    }));
-    setBlogPosts(postsWithSelection);
-  }, []);
-
-  useEffect(() => {
     const initialQuantities = {};
     cartItems.forEach((item) => {
       if (!initialQuantities.hasOwnProperty(item.id)) {
@@ -137,12 +130,13 @@ function App() {
       return <CheckoutNavbar cartItemCount={cartItemCount} />;
     } else {
       return (
-        <NavBar
-          cartItemCount={cartItemCount}
-          cartItems={cartItems}
-          selectedQuantities={selectedQuantities}
-          setSelectedQuantities={setSelectedQuantities}
-        />
+        // <NavBar
+        //   cartItemCount={cartItemCount}
+        //   cartItems={cartItems}
+        //   selectedQuantities={selectedQuantities}
+        //   setSelectedQuantities={setSelectedQuantities}
+        // />
+        <Navbar cartItemCount={cartItemCount} />
       );
     }
   };
@@ -173,12 +167,7 @@ function App() {
                 }
               />
               <Route path="/shop" element={<Shop />} />
-              <Route
-                path="/blog"
-                element={
-                  <Blog blogPosts={blogPosts} setBlogPosts={setBlogPosts} />
-                }
-              />
+              <Route path="/blog" element={<Blog />} />
               <Route
                 path="/product"
                 element={
@@ -197,6 +186,8 @@ function App() {
               <Route path="/:title" exact element={<SingleProduct />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route
                 path="/checkout"
                 element={<Checkout cartItem={cartItems} />}

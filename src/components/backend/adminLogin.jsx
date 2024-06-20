@@ -3,7 +3,7 @@ import { useLocation, Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/adminLogin.css";
-import { adminlogin, getCurrentUser } from "../../services/authService"; // Named imports
+import { adminlogin, getCurrentUser } from "../../services/adminAuthService";
 
 export default function AdminLogin({ setAuth }) {
   const [data, setData] = useState({ email: "", password: "" });

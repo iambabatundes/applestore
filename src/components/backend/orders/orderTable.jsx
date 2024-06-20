@@ -84,7 +84,7 @@ export default function OrderTable({
               {order.user.username}
             </span>
             <span className="orderItem__user-orderNumber">
-              {order.orderNumber}
+              Tel: {order.user.phoneNumber}
             </span>
           </section>
         </div>

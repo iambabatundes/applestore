@@ -1,0 +1,252 @@
+/* Reset some basic styles */
+.navbar {
+    align-items: center;
+    background-color: #232f3e;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+}
+
+.navbar-brand {
+    align-items: center;
+    display: flex;
+}
+
+.brand-logo {
+    height: 40px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.brand-logo:hover {
+    transform: scale(1.1);
+}
+
+.navbar-search {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: 0 20px;
+}
+
+.category-select {
+    height: 40px;
+    border: none;
+    padding: 5px;
+    border-radius: 4px 0 0 4px;
+    width: 5rem;
+}
+
+.search-input {
+    flex: 1;
+    height: 40px;
+    padding: 0 10px;
+    border: none;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.search-input:focus {
+    box-shadow: 0 0 5px rgba(255, 182, 0, 0.8);
+}
+
+.search-button {
+    height: 40px;
+    width: 40px;
+    background-color: #febd69;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.search-button i {
+    color: #111;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-user-container {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-user-container:hover {
+    transform: scale(1.05);
+}
+
+.navbar-user__main {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.navbar-user-image {
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.navbar-user-image:hover {
+    box-shadow: 0 0 10px rgba(255, 182, 0, 0.8);
+}
+
+.navbar-signin-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.navbar-user-greeting {
+    font-size: 12px;
+    color: #fff;
+}
+
+.navbar-signin-main span {
+    font-size: 14px;
+    color: #febd69;
+    font-weight: 500;
+}
+
+.map-marker {
+    font-size: 20px;
+    color: #febd69;
+    margin-right: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.map-marker:hover {
+    transform: scale(1.2);
+}
+
+.navbar-cart {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-cart-link {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-cart-icon {
+    height: 30px;
+    margin-right: 4px;
+}
+
+.navbar-cart-text {
+    font-size: 14px;
+}
+
+.cart-item-count {
+    position: absolute;
+    top: -15px;
+    right: 36px;
+    color: #febd69;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-5px);
+    }
+}
+
+.navbar-menu {
+    display: none;
+}
+
+.navbar-menu.is-active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #232f3e;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.navbar-menu.is-active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.navbar-menu a {
+    color: #fff;
+    padding: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.navbar-menu a:hover {
+    background-color: #1a222d;
+}
+
+.navbar-burger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-burger:hover {
+    transform: rotate(90deg);
+}
+
+.navbar-burger span {
+    height: 3px;
+    width: 25px;
+    background-color: #fff;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.navbar-burger span:hover {
+    background-color: #febd69;
+}
+
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .navbar {
+        width: 100%;
+    }
+
+    .navbar-search {
+        display: none;
+    }
+
+    .navbar-burger {
+        display: flex;
+    }
+}

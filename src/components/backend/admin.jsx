@@ -26,8 +26,8 @@ import Promotion from "./promotion";
 import AddPostTags from "./allPosts/addPostTags";
 import AddPostCategories from "./allPosts/addPostCategories";
 import AdminLogin from "./adminLogin";
-import { adminlogout } from "../../services/authService";
 import { getAdminUser } from "../../services/adminService";
+import { adminlogout } from "../../services/adminAuthService";
 
 const Admin = ({ companyName, count, userName }) => {
   const [selectedLink, setSelectedLink] = useState(null);
