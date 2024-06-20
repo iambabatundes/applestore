@@ -3,7 +3,6 @@ import _ from "lodash";
 
 import { getUsers } from "../../services/userServices";
 import { paginate } from "./../utils/paginate";
-import Header from "./common/header";
 import SearchBox from "./common/searchBox";
 import UserTable from "./users/UserTable";
 import Pagination from "./common/pagination";

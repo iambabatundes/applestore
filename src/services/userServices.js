@@ -2,6 +2,10 @@ import http from "../services/httpService";
 import config from "../config.json";
 
 const apiEndPoint = `${config.apiUrl}/users`;
+const apiEndUser = `${config.apiUrl}/users/register`;
+const apiEndVerify = `${config.apiUrl}/users/verify`;
+const apiEndRegistration = `${config.apiUrl}/users/complete-registration`;
+const apiEndResendCode = `${config.apiUrl}/users/resend-code`;
 
 function userUrl(id) {
   return `${apiEndPoint}/${id}`;
@@ -13,6 +17,21 @@ export function getUsers() {
 
 export function getUser(userId) {
   return http.get(userUrl(userId));
+}
+
+export function createUser(emailPhone) {
+  return http.post(apiEndUser, emailPhone);
+}
+
+export function verifyUser(emailPhone, verificationCode) {
+  return http.post(apiEndVerify, emailPhone, verificationCode);
+}
+
+export function completeRegistration(user) {
+  return http.post(apiEndRegistration, { user });
+}
+export function ResendValidationCode(emailPhone) {
+  return http.post(apiEndResendCode, emailPhone);
 }
 
 function createFormData(user) {

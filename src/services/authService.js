@@ -4,6 +4,7 @@ import config from "../config.json";
 
 const apiEndPoint = config.apiUrl + "/auth";
 const apiEndPointCheck = config.apiUrl + "/auth/check-user";
+
 const tokenKey = "token";
 
 http.setJwt(getJwt());
@@ -12,6 +13,7 @@ async function checkUser(emailPhone) {
   const { data } = await http.post(apiEndPointCheck, { emailPhone });
   return data;
 }
+
 async function login(emailPhone, password) {
   const { data: jwt } = await http.post(apiEndPoint, { emailPhone, password });
   localStorage.setItem(tokenKey, jwt);

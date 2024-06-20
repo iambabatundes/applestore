@@ -45,6 +45,32 @@
     cursor: pointer;
 }
 
+.register__btn,
+.register__btn-verify,
+.register__btn-resend {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: none;
+    border-radius: 4px;
+    background-color: #ff9800;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.register__btn:disabled,
+.register__btn-verify:disabled,
+.register__btn-resend:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+.error-message {
+    color: red;
+    margin-top: 0.5rem;
+}
+
 /* Responsive design */
 @media (min-width: 768px) {
     .register-main {

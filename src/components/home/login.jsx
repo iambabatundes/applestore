@@ -20,10 +20,10 @@ export default function Login() {
     setMessage("");
     try {
       const response = await checkUser(emailPhone);
-      if (response.data) {
+      if (response && response.data && response.data.exists) {
         setStep(2);
       } else {
-        navigate("/register", { state: { emailPhone } });
+        navigate("/register", { state: { emailPhone, step: 2 } });
       }
     } catch (error) {
       setMessage("An error occurred. Please try again.");

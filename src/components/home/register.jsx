@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./styles/register.css";
+import CountdownTimer from "./common/countdownTimer";
 
 export default function Register() {
   const [step, setStep] = useState(1);
@@ -14,6 +15,7 @@ export default function Register() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [canResend, setCanResend] = useState(false);
 
   const location = useLocation();
 
@@ -35,8 +37,9 @@ export default function Register() {
       );
       alert(response.data.message);
       setStep(2);
+      setCanResend(false); // Disable resend button initially
     } catch (error) {
-      setError("Registration failed. Please try again.", error);
+      setError("Registration failed. Please try again.");
       console.log("Registration failed. Please try again.", error);
     } finally {
       setLoading(false);
@@ -59,6 +62,27 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleResendCode = async () => {
+    if (!canResend) return; // Prevent multiple clicks
+    setLoading(true);
+    setError("");
+    try {
+      await axios.post("http://localhost:4000/api/users/resend-code", {
+        emailPhone,
+      });
+      alert("Verification code resent successfully.");
+      setCanResend(false); // Disable resend button after sending code
+    } catch (error) {
+      setError("Failed to resend verification code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTimerExpire = () => {
+    setCanResend(true); // Enable resend button after timer expires
   };
 
   const handleCompleteRegistration = async (e) => {
@@ -91,20 +115,20 @@ export default function Register() {
     }
   };
 
-  const handleResendCode = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      await axios.post("http://localhost:4000/api/users/resend-code", {
-        emailPhone,
-      });
-      alert("Verification code resent successfully.");
-    } catch (error) {
-      setError("Failed to resend verification code. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleResendCode = async () => {
+  //   setLoading(true);
+  //   setError("");
+  //   try {
+  //     await axios.post("http://localhost:4000/api/users/resend-code", {
+  //       emailPhone,
+  //     });
+  //     alert("Verification code resent successfully.");
+  //   } catch (error) {
+  //     setError("Failed to resend verification code. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <section className="register-main">
@@ -128,6 +152,9 @@ export default function Register() {
         )}
         {step === 2 && (
           <form onSubmit={handleVerify} className="register__form">
+            <h1>Verify your email address</h1>
+            <h2>We have sent a verification code to</h2>
+            <span>{emailPhone}</span>
             <input
               type="text"
               placeholder="Verification Code"
@@ -146,10 +173,16 @@ export default function Register() {
               type="button"
               className="register__btn-resend"
               onClick={handleResendCode}
-              disabled={loading}
+              disabled={loading || !canResend}
             >
               {loading ? "Resending..." : "Resend Code"}
             </button>
+            {!canResend && (
+              <CountdownTimer
+                initialSeconds={60}
+                onExpire={handleTimerExpire}
+              />
+            )}
             {error && <p className="error-message">{error}</p>}
           </form>
         )}
