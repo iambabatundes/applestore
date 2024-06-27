@@ -24,6 +24,7 @@ import Blog from "./components/blog";
 import Navbar from "./components/home/navbar";
 import Login from "./components/home/login";
 import Register from "./components/home/register";
+import UserProfile from "./components/home/userProfile";
 
 function App() {
   const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
@@ -188,6 +189,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/account" element={<UserProfile />} />
               <Route
                 path="/checkout"
                 element={<Checkout cartItem={cartItems} />}

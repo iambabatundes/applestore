@@ -10,9 +10,6 @@ export default function AutoFillForm({
       <div className="address-form">
         <span className="address-save">
           Save time. Autofill your current location.
-          {/* <button type="button" onClick={handleAutofill}>
-            Autofill
-          </button> */}
           <button type="button" onClick={handleAutofill} disabled={loading}>
             {loading ? "Autofilling..." : "Autofill"}
           </button>

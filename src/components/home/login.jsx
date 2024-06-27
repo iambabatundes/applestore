@@ -1,37 +1,38 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import "./styles/login.css";
-import { login, checkUser } from "../../services/authService";
+import { login } from "../../services/authService";
 
 export default function Login() {
-  const [step, setStep] = useState(1);
   const [emailPhone, setEmailPhone] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState({
+    country: "",
+    callingCode: "",
+  });
 
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => setEmailPhone(e.target.value);
-  const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setEmailPhone(value);
 
-  const handleNextStep = async () => {
-    setLoading(true);
-    setMessage("");
-    try {
-      const response = await checkUser(emailPhone);
-      if (response && response.data && response.data.exists) {
-        setStep(2);
-      } else {
-        navigate("/register", { state: { emailPhone, step: 2 } });
-      }
-    } catch (error) {
-      setMessage("An error occurred. Please try again.");
-      console.error("An error occurred. Please try again.", error);
-    } finally {
-      setLoading(false);
+    // Check if the input is a phone number
+    const phoneNumber = parsePhoneNumberFromString(value, "NG");
+    if (phoneNumber) {
+      setPhoneNumber({
+        country: phoneNumber.country,
+        callingCode: phoneNumber.countryCallingCode,
+      });
+    } else {
+      setPhoneNumber({ country: "", callingCode: "" });
     }
   };
+
+  const handlePasswordChange = (e) => setPassword(e.target.value);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -58,51 +59,49 @@ export default function Login() {
           Type your e-mail or phone number to log in or create an AppleStore
           account.
         </p>
-        {step === 1 && (
-          <>
+        <>
+          <div className="input-container">
+            {phoneNumber.callingCode && (
+              <span className="country-code">
+                +{phoneNumber.callingCode} {phoneNumber.country}
+              </span>
+            )}
             <input
               type="text"
               placeholder="Email or Phone Number"
               value={emailPhone}
               onChange={handleInputChange}
-              className="login__input"
+              className={`login__input ${
+                phoneNumber.callingCode ? "with-code" : ""
+              }`}
               autoFocus
             />
-            <button
-              className="login__btn"
-              onClick={handleNextStep}
-              disabled={loading}
-            >
-              {loading ? "Checking..." : "Continue"}
-            </button>
-            {message && <p className="error-message">{message}</p>}
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <input
-              type="text"
-              value={emailPhone}
-              readOnly
-              className="login__input"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              className="login__input"
-            />
-            <button
-              className="login__btn"
-              onClick={handleLogin}
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-            {message && <p className="error-message">{message}</p>}
-          </>
-        )}
+          </div>
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            className="login__input"
+          />
+          <button
+            className="login__btn"
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          {message && <p className="error-message">{message}</p>}
+        </>
+
+        <hr />
+        <div>
+          <h1>New in AppleStore</h1>
+          <Link to="/register">
+            <button>Create your AppleStore Account</button>
+          </Link>
+        </div>
       </div>
     </section>
   );

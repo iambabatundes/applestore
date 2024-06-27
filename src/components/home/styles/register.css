@@ -17,6 +17,17 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .register__form {
@@ -32,9 +43,38 @@
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    transition: border 0.3s ease-in-out;
 }
 
-.register__btn {
+.register__input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.input-container-register {
+    position: relative;
+    /* margin-bottom: 1rem; */
+}
+
+.country-code-register {
+    position: absolute;
+    top: 40%;
+    left: 0.75rem;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: #666;
+    /* background: #fff; */
+    padding: 0 0.25rem;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.register__input.with-code {
+    padding-left: 5.5rem;
+}
+
+.register__btn,
+.register__btn-verify {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -43,11 +83,56 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background 0.3s ease-in-out;
 }
 
-.register__btn,
-.register__btn-verify,
+.register__btn:hover,
+.register__btn-verify:hover {
+    background: #0056b3;
+}
+
+.register__btn:disabled,
+.register__btn-verify:disabled {
+    background: #ddd;
+    cursor: not-allowed;
+}
+
+/* .register__btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
 .register__btn-resend {
+    color: #ff9800;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+    /* box-shadow: 0 0 5px rgba(255, 182, 0, 0.8); */
+}
+
+.register__btn-resend:hover {
+    color: #ffb649;
+    transform: scale(1.1);
+    /* transition: box-shadow 0.3s ease-in-out; */
+}
+
+.register__btn-resend:disabled {
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+
+/* .register__btn,
+.register__btn-verify {
     width: 100%;
     padding: 0.75rem;
     margin: 0.5rem 0;
@@ -57,14 +142,13 @@
     color: #fff;
     font-size: 1rem;
     cursor: pointer;
-}
+} */
 
-.register__btn:disabled,
-.register__btn-verify:disabled,
-.register__btn-resend:disabled {
+/* .register__btn:disabled,
+.register__btn-verify:disabled {
     background-color: #ddd;
     cursor: not-allowed;
-}
+} */
 
 .error-message {
     color: red;

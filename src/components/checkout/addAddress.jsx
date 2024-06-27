@@ -19,7 +19,7 @@ export default function AddAddress({
     <section>
       <div className="address-form">
         <h1>Add a shipping address</h1>
-        {/* Implement your new address form here */}
+
         <AutoFillForm
           autofillError={autofillError}
           handleAutofill={handleAutofill}
@@ -140,8 +140,6 @@ export default function AddAddress({
             </>
           )}
         </InputForm>
-
-        {/* ... */}
       </div>
     </section>
   );

@@ -18,6 +18,84 @@ export default function Checkout() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // const handleAutofill = async (setFieldValue) => {
+  //   setLoading(true);
+  //   setAutofillError(""); // Clear previous error
+
+  //   if ("geolocation" in navigator) {
+  //     try {
+  //       const position = await new Promise((resolve, reject) => {
+  //         navigator.geolocation.getCurrentPosition(resolve, reject);
+  //       });
+
+  //       const { latitude, longitude } = position.coords;
+
+  //       const response = await fetch(
+  //         `https://api.ipgeolocation.io/ipgeo?apiKey=74d7025b99284e5ab87ede8a6b623e9b&lat=${latitude}&long=${longitude}`
+  //       );
+  //       const data = await response.json();
+
+  //       const address = data.display_name;
+  //       const country = data.address.country;
+  //       const state = data.address.state;
+  //       const city = data.address.city;
+  //       const zipCode = data.address.postcode;
+
+  //       setFieldValue("country", country);
+  //       setFieldValue("state", state);
+  //       setFieldValue("city", city);
+  //       setFieldValue("address", address);
+  //       setFieldValue("zipCode", zipCode);
+
+  //       setAutofillError(null);
+  //     } catch (error) {
+  //       console.log("Error fetching or processing location data:", error);
+  //       setAutofillError("Error fetching or processing location data.");
+  //     }
+  //   } else {
+  //     setAutofillError(
+  //       "Geolocation is not supported by your browser. Please fill in the fields manually."
+  //     );
+  //   }
+  // };
+
+  const handleAutofill = async (setFieldValue) => {
+    setLoading(true);
+    setAutofillError(""); // Clear previous error
+
+    try {
+      const response = await fetch(
+        "https://api.ipgeolocation.io/ipgeo?apiKey=74d7025b99284e5ab87ede8a6b623e9b"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch location data.");
+      }
+
+      const data = await response.json();
+
+      const address = {
+        country: data.country_name || "",
+        fullName: "",
+        phoneNumber: "",
+        address: data.address || "",
+        city: data.city || "",
+        state: data.state_prov || "",
+        zipCode: data.zipcode || "",
+        makeDefault: false,
+      };
+
+      Object.entries(address).forEach(([key, value]) => {
+        setFieldValue(key, value);
+      });
+    } catch (error) {
+      setAutofillError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddNewAddress = () => {
     setIsAddModalOpen(true);
@@ -76,44 +154,6 @@ export default function Checkout() {
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
     setStep(3); // Move to step 3 after selecting payment method
-  };
-
-  const handleAutofill = async (setFieldValue) => {
-    if ("geolocation" in navigator) {
-      try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-
-        const { latitude, longitude } = position.coords;
-
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-        );
-        const data = await response.json();
-
-        const address = data.display_name;
-        const country = data.address.country;
-        const state = data.address.state;
-        const city = data.address.city;
-        const zipCode = data.address.postcode;
-
-        setFieldValue("country", country);
-        setFieldValue("state", state);
-        setFieldValue("city", city);
-        setFieldValue("address", address);
-        setFieldValue("zipCode", zipCode);
-
-        setAutofillError(null);
-      } catch (error) {
-        console.log("Error fetching or processing location data:", error);
-        setAutofillError("Error fetching or processing location data.");
-      }
-    } else {
-      setAutofillError(
-        "Geolocation is not supported by your browser. Please fill in the fields manually."
-      );
-    }
   };
 
   const handleAddressChange = (address) => {
@@ -235,12 +275,15 @@ export default function Checkout() {
                     <AddNewAddress
                       AddressSchema={AddressSchema}
                       autofillError={autofillError}
-                      handleAutofill={handleAutofill}
+                      // handleAutofill={handleAutofill}
                       // handleAddressChange={handleAddressChange}
                       isAddModalOpen={isAddModalOpen}
                       setIsAddModalOpen={setIsAddModalOpen}
                       setStep={setStep}
                       onNewAddressAdded={handleNewAddressAdded}
+                      handleAutofill={(setFieldValue) =>
+                        handleAutofill(setFieldValue)
+                      }
                     />
                   </div>
 
@@ -251,6 +294,9 @@ export default function Checkout() {
               ) : (
                 <AddAddress
                   autofillError={autofillError}
+                  // handleAutofill={(setFieldValue) =>
+                  //   handleAutofill(setFieldValue)
+                  // }
                   // handleAddressChange={handleNewAddressAdded}
                   handleAutofill={handleAutofill}
                   setStep={setStep}

@@ -1,48 +1,79 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
-import "./styles/register.css";
+import React, { useState } from "react";
+import { useLocation, Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import CountdownTimer from "./common/countdownTimer";
+import "./styles/register.css";
+import {
+  createUser,
+  verifyUser,
+  resendValidationCode,
+} from "../../services/userServices";
+import { loginWithJwt } from "../../services/authService";
+
+const validationSchema = yup.object({
+  firstName: yup.string().required("First Name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phoneNumber: yup.string().required("Phone Number is required"),
+  username: yup.string().required("Username is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+});
 
 export default function Register() {
   const [step, setStep] = useState(1);
-  const [emailPhone, setEmailPhone] = useState("");
-  const [password, setPassword] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [canResend, setCanResend] = useState(false);
+  const [phoneNumberInfo, setPhoneNumberInfo] = useState({
+    country: "",
+    callingCode: "",
+  });
 
-  const location = useLocation();
+  const { state } = useLocation();
 
-  useEffect(() => {
-    if (location.state?.emailPhone && location.state?.step === 2) {
-      setEmailPhone(location.state.emailPhone);
-      setStep(2);
-    }
-  }, [location.state]);
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      email: "",
+      phoneNumber: "",
+      username: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      setError("");
+      try {
+        const response = await createUser(values);
+        alert(response.data.message);
+        setStep(2);
+      } catch (err) {
+        setError(
+          err.response?.data || "Registration failed. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const response = await axios.post(
-        "http://localhost:4000/api/users/register",
-        { emailPhone }
-      );
-      alert(response.data.message);
-      setStep(2);
-      setCanResend(false); // Disable resend button initially
-    } catch (error) {
-      setError("Registration failed. Please try again.");
-      console.log("Registration failed. Please try again.", error);
-    } finally {
-      setLoading(false);
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    formik.setFieldValue("phoneNumber", value);
+
+    const phoneNumber = parsePhoneNumberFromString(value, "NG");
+    if (phoneNumber) {
+      setPhoneNumberInfo({
+        country: phoneNumber.country,
+        callingCode: phoneNumber.countryCallingCode,
+      });
+    } else {
+      setPhoneNumberInfo({ country: "", callingCode: "" });
     }
   };
 
@@ -50,30 +81,41 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/users/verify",
-        { emailPhone, verificationCode }
+      const response = await verifyUser(
+        { email: formik.values.email },
+        verificationCode
       );
       alert(response.data.message);
-      setStep(3);
-    } catch (error) {
-      setError("Verification failed. Please check your code and try again.");
+      if (response.status === 200) {
+        // setStep(3);
+        loginWithJwt(response.headers["x-auth-tokens"]);
+        window.location = state ? state.path : "/";
+      } else {
+        setError(
+          response.data.message ||
+            "Verification failed. Please check your code and try again."
+        );
+      }
+    } catch (ex) {
+      setError(
+        ex.response?.data?.message ||
+          "Verification failed. Please check your code and try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleResendCode = async () => {
-    if (!canResend) return; // Prevent multiple clicks
+    if (!canResend) return;
     setLoading(true);
     setError("");
     try {
-      await axios.post("http://localhost:4000/api/users/resend-code", {
-        emailPhone,
-      });
+      await resendValidationCode(formik.values.email);
       alert("Verification code resent successfully.");
-      setCanResend(false); // Disable resend button after sending code
+      setCanResend(false);
     } catch (error) {
       setError("Failed to resend verification code. Please try again.");
     } finally {
@@ -82,79 +124,94 @@ export default function Register() {
   };
 
   const handleTimerExpire = () => {
-    setCanResend(true); // Enable resend button after timer expires
+    setCanResend(true);
   };
-
-  const handleCompleteRegistration = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const payload = {
-        emailPhone,
-        firstName,
-        username,
-        password,
-      };
-
-      if (emailPhone.includes("@")) {
-        payload.phone = phone;
-      } else {
-        payload.email = email;
-      }
-
-      const response = await axios.post(
-        "http://localhost:5000/api/users/complete-registration",
-        payload
-      );
-      alert(response.data.message);
-    } catch (error) {
-      setError("Completion failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // const handleResendCode = async () => {
-  //   setLoading(true);
-  //   setError("");
-  //   try {
-  //     await axios.post("http://localhost:4000/api/users/resend-code", {
-  //       emailPhone,
-  //     });
-  //     alert("Verification code resent successfully.");
-  //   } catch (error) {
-  //     setError("Failed to resend verification code. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <section className="register-main">
       <div className="register__container">
         {step === 1 && (
-          <form onSubmit={handleRegister} className="register__form">
+          <form onSubmit={formik.handleSubmit} className="register__form">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="register__input"
+            />
+            {formik.touched.email && formik.errors.email ? (
+              <div className="error-message">{formik.errors.email}</div>
+            ) : null}
+            <div className="input-container-register">
+              {phoneNumberInfo.callingCode && (
+                <span className="country-code-register">
+                  +{phoneNumberInfo.callingCode} {phoneNumberInfo.country}
+                </span>
+              )}
+              <input
+                type="text"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                value={formik.values.phoneNumber}
+                onChange={handlePhoneChange}
+                className={`register__input ${
+                  phoneNumberInfo.callingCode ? "with-code" : ""
+                }`}
+              />
+            </div>
+            {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+              <div className="error-message">{formik.errors.phoneNumber}</div>
+            ) : null}
             <input
               type="text"
-              placeholder="Email or Phone"
-              value={emailPhone}
-              onChange={(e) => setEmailPhone(e.target.value)}
+              name="firstName"
+              placeholder="First Name"
+              value={formik.values.firstName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               className="register__input"
-              autoFocus
             />
-
+            {formik.touched.firstName && formik.errors.firstName ? (
+              <div className="error-message">{formik.errors.firstName}</div>
+            ) : null}
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="register__input"
+            />
+            {formik.touched.username && formik.errors.username ? (
+              <div className="error-message">{formik.errors.username}</div>
+            ) : null}
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="register__input"
+            />
+            {formik.touched.password && formik.errors.password ? (
+              <div className="error-message">{formik.errors.password}</div>
+            ) : null}
             <button type="submit" className="register__btn" disabled={loading}>
               {loading ? "Registering..." : "Continue"}
             </button>
             {error && <p className="error-message">{error}</p>}
           </form>
         )}
+
         {step === 2 && (
           <form onSubmit={handleVerify} className="register__form">
             <h1>Verify your email address</h1>
             <h2>We have sent a verification code to</h2>
-            <span>{emailPhone}</span>
+            <span>{formik.values.email}</span>
             <input
               type="text"
               placeholder="Verification Code"
@@ -179,62 +236,21 @@ export default function Register() {
             </button>
             {!canResend && (
               <CountdownTimer
-                initialSeconds={60}
+                initialSeconds={20}
                 onExpire={handleTimerExpire}
               />
             )}
+
             {error && <p className="error-message">{error}</p>}
           </form>
         )}
-        {step === 3 && (
-          <form
-            onSubmit={handleCompleteRegistration}
-            className="register__form"
-          >
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="register__input"
-            />
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="register__input"
-            />
-            {emailPhone.includes("@") ? (
-              <input
-                type="tel"
-                placeholder="Phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="register__input"
-              />
-            ) : (
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="register__input"
-              />
-            )}
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="register__input"
-            />
-            <button type="submit" className="register__btn" disabled={loading}>
-              {loading ? "Completing..." : "Complete Registration"}
-            </button>
-            {error && <p className="error-message">{error}</p>}
-          </form>
-        )}
+
+        <hr />
+        <div>
+          <h1>
+            Already have an account <Link to="/login">Login</Link>
+          </h1>
+        </div>
       </div>
     </section>
   );
