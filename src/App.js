@@ -7,32 +7,45 @@ import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
-import About from "./components/About";
 import SinglePost from "./components/singlePost";
-import NavBar from "./components/navBar";
+// import NavBar from "./components/navBar";
 import Home from "./components/Home";
-import Shop from "./components/Shop";
 import Product from "./components/Product";
-import Contact from "./components/Contact";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
 import SingleProduct from "./components/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
 import Admin from "./components/backend/admin";
-import Blog from "./components/blog";
 import Navbar from "./components/home/navbar";
 import Login from "./components/home/login";
 import Register from "./components/home/register";
 import UserProfile from "./components/home/userProfile";
+import { getCurrentUser, getUser } from "./services/authService";
+import Logout from "./components/home/logout";
+import NotFound from "./components/home/notFound";
 
 function App() {
-  const [blogPosts, setBlogPosts] = useState([]); // Add this state variable
+  // const [data, setData] = useState("");
+  const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
 
   const location = useLocation();
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const user = await getUser();
+        setUser(user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    }
+
+    fetchUser();
+  }, []);
 
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
@@ -130,15 +143,7 @@ function App() {
     if (location.pathname === "/checkout") {
       return <CheckoutNavbar cartItemCount={cartItemCount} />;
     } else {
-      return (
-        // <NavBar
-        //   cartItemCount={cartItemCount}
-        //   cartItems={cartItems}
-        //   selectedQuantities={selectedQuantities}
-        //   setSelectedQuantities={setSelectedQuantities}
-        // />
-        <Navbar cartItemCount={cartItemCount} />
-      );
+      return <Navbar cartItemCount={cartItemCount} user={user} />;
     }
   };
 
@@ -163,12 +168,11 @@ function App() {
                   <Home
                     addToCart={addToCart}
                     cartItems={cartItems}
-                    blogPosts={blogPosts}
+                    // blogPosts={blogPosts}
                   />
                 }
               />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/blog" element={<Blog />} />
+
               <Route
                 path="/product"
                 element={
@@ -179,17 +183,21 @@ function App() {
                 path="/blog/:title"
                 element={
                   <SinglePost
-                    blogPosts={blogPosts}
-                    setBlogPosts={setBlogPosts}
+                  // blogPosts={blogPosts}
+                  // setBlogPosts={setBlogPosts}
                   />
                 }
               />
               <Route path="/:title" exact element={<SingleProduct />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/account" element={<UserProfile />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route
+                path="/my-dashboard"
+                element={<UserProfile user={user} />}
+              />
+              <Route path="/not-found" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
               <Route
                 path="/checkout"
                 element={<Checkout cartItem={cartItems} />}

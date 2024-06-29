@@ -16,7 +16,13 @@ export function getUser(userId) {
 }
 
 export function createUser(user) {
-  return http.post(apiEndPoint, user);
+  return http.post(apiEndPoint, {
+    firstName: user.firstName,
+    username: user.username,
+    phoneNumber: user.phoneNumber,
+    email: user.email,
+    password: user.password,
+  });
 }
 
 export function verifyUser({ email, phoneNumber }, verificationCode) {
@@ -25,10 +31,6 @@ export function verifyUser({ email, phoneNumber }, verificationCode) {
     phoneNumber,
     verificationCode,
   });
-}
-
-export function completeRegistration(user) {
-  return http.post(`${apiEndPoint}/complete-registration`, user);
 }
 
 export function resendValidationCode(email, phoneNumber) {
@@ -55,10 +57,10 @@ function createFormData(user) {
   return formData;
 }
 
-export function saveUser(user) {
-  console.log("Saving tag:", user); //
-  return http.post(apiEndPoint, user);
-}
+// export function saveUser(user) {
+//   console.log("Saving tag:", user); //
+//   return http.post(apiEndPoint, user);
+// }
 
 export function updateUser(userId, user) {
   const formData = createFormData(user);

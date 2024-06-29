@@ -14,6 +14,7 @@ export default function AdminLogin({ setAuth }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await adminlogin(data.email, data.password); // Call the named import directly
       window.location = state ? state.path : "/admin/home";

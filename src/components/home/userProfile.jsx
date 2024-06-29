@@ -12,12 +12,14 @@ import {
   FaCog,
   FaTimes,
   FaArrowRight,
+  FaUser,
 } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 import image from "./images/bac1.jpg";
+import defaultImage from "./images/user.png";
 
-export default function UserProfile() {
+export default function UserProfile({ user }) {
   const [greeting, setGreeting] = useState("Good day");
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
 
@@ -49,13 +51,20 @@ export default function UserProfile() {
               <FaTimes className="icon" />
             </div>
             <div className="profile-section">
-              <img src="profile-pic-url" alt="" className="profile-pic" />
-              <h2>Anzhelika Voinich</h2>
-              <p>anzhelika.voinich@gmail.com</p>
+              <img
+                src={user.profileImage || defaultImage}
+                alt=""
+                className="profile-pic"
+              />
+              <h2>{user.firstName}</h2>
+              <p>{user.email}</p>
             </div>
             <nav className="menu">
               <Link to="/userDashboard">
                 <FaHome className="menu-icon" /> Dashboard
+              </Link>
+              <Link to="/userDashboard">
+                <FaUser className="menu-icon" /> Account
               </Link>
               <Link to="/userOrder">
                 <FaBox className="menu-icon" /> Order
@@ -90,7 +99,9 @@ export default function UserProfile() {
         <main className="main-content">
           <nav className="top-navbar">
             <div className="navbar-left">
-              <h1>{greeting}, Anzhelika!</h1>
+              <h1>
+                {greeting}, {user.username}!
+              </h1>
               <FaBell className="icon" />
               <button className="new-course-btn">Order New Product</button>
             </div>
@@ -118,7 +129,7 @@ export default function UserProfile() {
 
           <div className="yourOrders">
             <div>
-              <h2>Your Orders</h2>
+              <h2>My Orders</h2>
             </div>
             <div className="yourOrder">
               <p>Colour theory</p>

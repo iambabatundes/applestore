@@ -90,7 +90,7 @@ export default function Register() {
       alert(response.data.message);
       if (response.status === 200) {
         // setStep(3);
-        loginWithJwt(response.headers["x-auth-tokens"]);
+        loginWithJwt(response.data.token);
         window.location = state ? state.path : "/";
       } else {
         setError(
