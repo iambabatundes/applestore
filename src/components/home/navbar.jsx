@@ -91,13 +91,10 @@ export default function Navbar({ user, cartItemCount = 0 }) {
                   <Link to="/help" className="navbar-dropdown-item">
                     <i className="fa fa-question-circle"></i> Help
                   </Link>
-                  {!user ? (
-                    <Link to="/my-dashboard" className="navbar-dropdown-item">
-                      <i className="fa fa-question-circle"></i> My Dashboard
-                    </Link>
-                  ) : (
-                    Navigate("/login")
-                  )}
+
+                  <Link to="/my-dashboard" className="navbar-dropdown-item">
+                    <i className="fa fa-question-circle"></i> My Dashboard
+                  </Link>
                 </div>
               )}
             </div>

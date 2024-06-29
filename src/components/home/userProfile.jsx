@@ -156,7 +156,7 @@ export default function UserProfile({ user }) {
                   className="top-product__image"
                   src={image}
                   alt=""
-                  srcset=""
+                  srcSet=""
                 />
 
                 <h1 className="product-title">Apple 2354 for sell</h1>
@@ -174,7 +174,7 @@ export default function UserProfile({ user }) {
                   className="top-product__image"
                   src={image}
                   alt=""
-                  srcset=""
+                  srcSet=""
                 />
                 <h1 className="product-title">Mongo 2354 for sell</h1>
                 <div className="Userprice__section">
@@ -191,7 +191,7 @@ export default function UserProfile({ user }) {
                   className="top-product__image"
                   src={image}
                   alt=""
-                  srcset=""
+                  srcSet=""
                 />
                 <h1 className="product-title">Orange 2354 for sell</h1>
                 <div className="Userprice__section">

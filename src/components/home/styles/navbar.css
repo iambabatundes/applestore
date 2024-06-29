@@ -94,6 +94,7 @@
 }
 
 .navbar-user-image {
+    border-radius: 50%;
     height: 35px;
     margin-right: 10px;
     transition: transform 0.3s ease-in-out;
@@ -107,12 +108,20 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    margin-right: 22px;
 }
 
 .navbar-user-greeting {
     font-size: 0.8rem;
     color: #fff;
     margin: 0;
+
+}
+
+.navbar-signin-main span {
+    font-size: 14px;
+    color: #febd69;
+    font-weight: 500;
 }
 
 .navbar-dropdown-chevron {
@@ -120,15 +129,33 @@
 }
 
 .navbar-dropdown-menu {
+    border-radius: 4px;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    background: #fff;
-    border: 1px solid #ddd;
+    position: fixed;
+    /* background: #fff; */
+    background: #232f3e;
+    /* border: 1px solid #ddd; */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    top: 70px;
-    right: 20px;
+    top: 100%;
+    right: -25px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    animation: dropdownAnimation 0.3s ease-in-out;
+    width: 200px;
     z-index: 999;
+}
+
+@keyframes dropdownAnimation {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .navbar-dropdown-item {
@@ -136,7 +163,7 @@
     align-items: center;
     padding: 10px;
     text-decoration: none;
-    color: #333;
+    color: #fff;
     transition: background-color 0.3s ease-in-out;
 }
 
@@ -145,39 +172,137 @@
 }
 
 .navbar-dropdown-item {
-    background-color: #f1f1f1;
+    background-color: #232f3e;
+    /* color: #fff; */
 }
 
-.navbar-cart {
-    position: relative;
+.navbar-dropdown-item:hover {
+    background-color: #f0f0f0;
+    color: #111;
+}
+
+.logout {
+    color: #232f3e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: #febd69;
+    font-size: 1rem;
+}
+
+.logout:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    background: #ffb554;
+}
+
+.navbar-user-address {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
     transition: transform 0.3s ease-in-out;
 }
+
+.navbar-user-address:hover {
+    transform: scale(1.05);
+}
+
+.navbar-address__main {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.navbar-address__containter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.navbar-address-deliver {
+    font-size: 12px;
+    color: #fff;
+}
+
+.map-marker {
+    font-size: 20px;
+    color: #fff;
+    margin-right: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.map-marker:hover {
+    transform: scale(1.2);
+}
+
+.navbar-address__main span {
+    text-decoration: none;
+    color: #febd69;
+
+}
+
+/* .navbar-cart {
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+} */
+
+.navbar-cart {
+    display: flex;
+    align-items: center;
+}
+
+
+/* .navbar-cart-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+} */
 
 .navbar-cart-link {
     display: flex;
     align-items: center;
+    color: #fff;
     text-decoration: none;
+    position: relative;
+    transition: transform 0.3s ease-in-out;
 }
 
 .navbar-cart-icon {
-    height: 35px;
-    margin-right: 5px;
+    height: 30px;
+    margin-right: 4px;
 }
 
 .navbar-cart-text {
-    color: #fff;
+    /* color: #fff; */
+    font-size: 0.9rem;
     margin: 0;
 }
 
 .cart-item-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff9900;
-    color: #fff;
-    border-radius: 50%;
-    padding: 5px 8px;
-    font-size: 0.8rem;
+    top: -15px;
+    right: 36px;
+    color: #febd69;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-5px);
+    }
 }
 
 .navbar-burger {
