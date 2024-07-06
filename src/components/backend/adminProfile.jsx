@@ -39,7 +39,6 @@ const AdminProfile = ({
                     profileImage={profileImage}
                     setProfileImage={setProfileImage}
                     handleProfileImageChange={handleProfileImageChange}
-                    readOnly
                   />
                 </div>
                 <div className="profile-info">

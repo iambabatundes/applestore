@@ -1,0 +1,88 @@
+/* styles/sideBarRight.css */
+
+/* .sidebar-right {
+    width: 100%;
+    padding: 20px;
+    background: #f4f4f9;
+    box-sizing: border-box;
+} */
+
+.calendar {
+    margin-bottom: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.days-of-week,
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.day {
+    padding: 5px;
+    background: #fff;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.day:hover {
+    background-color: #e0e0e0;
+}
+
+.day.disabled {
+    color: #ccc;
+}
+
+.day.today {
+    background: #232f3e;
+    color: #febd69;
+    /* border-radius: 50%; */
+    font-weight: 500;
+}
+
+.schedule .event {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.schedule .event:hover {
+    background-color: #e0e0e0;
+}
+
+.schedule .time {
+    display: block;
+    font-size: 12px;
+    color: #888;
+}
+
+@media (min-width: 768px) {
+    .sidebar-right {
+        width: 250px;
+    }
+
+    .header {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        align-items: center;
+        /* justify-content: center; */
+    }
+
+    .calendar-grid {
+        font-size: 0.7rem;
+    }
+
+    .days-of-week {
+        /* color: #febd69; */
+        font-size: 0.5rem;
+    }
+}

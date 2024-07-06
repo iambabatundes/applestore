@@ -8,9 +8,9 @@ export default function ProfileImage({
   setProfileImage,
   handleProfileImageChange,
 }) {
+  const [progress, setProgress] = useState(0);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
-  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {

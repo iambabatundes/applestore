@@ -7,6 +7,10 @@ function orderUrl(id) {
   return `${apiEndPoint}/${id}`;
 }
 
+export function fetchUsersOrder(userId) {
+  return http.get(`${apiEndPoint}/users/${userId}`);
+}
+
 export function getOrders() {
   return http.get(apiEndPoint);
 }

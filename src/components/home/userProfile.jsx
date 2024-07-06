@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "./styles/userProfile.css";
-import {
-  FaBars,
-  FaBell,
-  FaSearch,
-  FaStar,
-  FaHome,
-  FaBox,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaCog,
-  FaTimes,
-  FaArrowRight,
-  FaUser,
-} from "react-icons/fa";
+import MyProfile from "./users/myProfile";
+import MyOrder from "./users/myOrder";
+import MyMessages from "./users/myMessages";
+import MyAddress from "./users/myAddress";
+import MyDashboard from "./users/myDashboard";
+import MySettings from "./users/mySettings";
+import SidebarLeft from "./users/common/SidebarLeft";
+import SidebarRight from "./users/common/SidebarRight";
+import TopNavbar from "./users/common/TopNavbar";
+import { updateUser } from "../../services/userServices";
 
-import { Link } from "react-router-dom";
-import image from "./images/bac1.jpg";
-import defaultImage from "./images/user.png";
-
-export default function UserProfile({ user }) {
+export default function UserProfile({ user, setUser }) {
+  const [userData, setUserData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    gender: user.gender,
+    dateOfBirth: user.dateOfBirth,
+    profileImage: user.profileImage,
+  });
+  const [profileImage, setProfileImage] = useState(user.profileImage);
   const [greeting, setGreeting] = useState("Good day");
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const currentHour = new Date().getHours();
@@ -34,9 +42,54 @@ export default function UserProfile({ user }) {
     }
   }, []);
 
+  const handleProfileImageChange = useCallback((file, preview) => {
+    if (file) {
+      setProfileImage({ file, preview });
+      setUserData((prevState) => ({
+        ...prevState,
+        profileImage: { file, preview },
+      }));
+    } else {
+      setProfileImage(null);
+      setUserData((prevState) => ({
+        ...prevState,
+        profileImage: null,
+      }));
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const updatedUser = { ...userData };
+      if (userData.profileImage && userData.profileImage.file) {
+        updatedUser.profileImage = userData.profileImage.file;
+      } else {
+        delete updatedUser.profileImage;
+      }
+      const { data } = await updateUser(updatedUser);
+      console.log("Updated user:", data); // Debugging log
+      setUser(data);
+      setUserData(data);
+      setProfileImage(data.profileImage);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      toast.error("Error updating profile");
+    } finally {
+      setLoading(false);
+      setIsEditing(false);
+    }
+  };
+
   const toggleLeftSidebar = () => {
     setIsLeftSidebarOpen(!isLeftSidebarOpen);
   };
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <section className="userProfile">
@@ -45,185 +98,43 @@ export default function UserProfile({ user }) {
           isLeftSidebarOpen ? "left-sidebar-open" : ""
         }`}
       >
-        {isLeftSidebarOpen ? (
-          <aside className="sidebar-left open">
-            <div className="sidebar-toggle-left" onClick={toggleLeftSidebar}>
-              <FaTimes className="icon" />
-            </div>
-            <div className="profile-section">
-              <img
-                src={user.profileImage || defaultImage}
-                alt=""
-                className="profile-pic"
-              />
-              <h2>{user.firstName}</h2>
-              <p>{user.email}</p>
-            </div>
-            <nav className="menu">
-              <Link to="/userDashboard">
-                <FaHome className="menu-icon" /> Dashboard
-              </Link>
-              <Link to="/userDashboard">
-                <FaUser className="menu-icon" /> Account
-              </Link>
-              <Link to="/userOrder">
-                <FaBox className="menu-icon" /> Order
-              </Link>
-              <Link to="/userMessages">
-                <FaEnvelope className="menu-icon" /> Messages
-              </Link>
-              <Link to="/userAddress">
-                <FaMapMarkerAlt className="menu-icon" /> Address
-              </Link>
-              <Link to="/userSettings">
-                <FaCog className="menu-icon" /> Settings
-              </Link>
-            </nav>
-            <div className="userUpgrade">
-              <h1>
-                <FaStar className="menu-icon" /> Upgrade to Premium
-              </h1>
-              <button className="upgrade__btn">Get Started</button>
-            </div>
-          </aside>
-        ) : (
-          <div
-            className="sidebar-toggle-left closed"
-            onClick={toggleLeftSidebar}
-          >
-            <FaArrowRight className="icon" />
-            <span className="content-open">Open</span>
-          </div>
-        )}
-
+        <SidebarLeft
+          isOpen={isLeftSidebarOpen}
+          toggleSidebar={toggleLeftSidebar}
+          user={user}
+        />
         <main className="main-content">
-          <nav className="top-navbar">
-            <div className="navbar-left">
-              <h1>
-                {greeting}, {user.username}!
-              </h1>
-              <FaBell className="icon" />
-              <button className="new-course-btn">Order New Product</button>
-            </div>
-            <div className="navbar-right">
-              <FaSearch className="icon" />
+          <TopNavbar greeting={greeting} user={user} />
 
-              <FaBars className="icon" />
-            </div>
-          </nav>
-
-          <div className="stats">
-            <div className="stat stat-background">
-              <h2>$ 500</h2>
-              <p>spent</p>
-            </div>
-            <div className="stat stat-background1">
-              <h2>21</h2>
-              <p>Order Completed</p>
-            </div>
-            <div className="stat stat-background2">
-              <h2>43</h2>
-              <p>Total Order</p>
-            </div>
-          </div>
-
-          <div className="yourOrders">
-            <div>
-              <h2>My Orders</h2>
-            </div>
-            <div className="yourOrder">
-              <p>Colour theory</p>
-              <span className="grade">80/100</span>
-              <span className="status completed">Completed</span>
-            </div>
-            <div className="yourOrder">
-              <p>Composition</p>
-              <span className="grade">95/100</span>
-              <span className="status completed">Completed</span>
-            </div>
-            <div className="yourOrder">
-              <p>UX writing</p>
-              <span className="grade">In Progress</span>
-              <span className="status in-progress">In Progress</span>
-            </div>
-          </div>
-
-          <section className="userProduct-pick">
-            <h2>Top Product for you</h2>
-            <div className="top-productMain">
-              <div className="top-product">
-                <img
-                  className="top-product__image"
-                  src={image}
-                  alt=""
-                  srcSet=""
+          <Routes location={location}>
+            <Route
+              path="/my-dashboard"
+              element={<MyDashboard userId={user?._id} />}
+            />
+            <Route
+              path="/my-profile"
+              element={
+                <MyProfile
+                  user={user}
+                  handleSubmit={handleSubmit}
+                  profileImage={profileImage}
+                  setProfileImage={setProfileImage}
+                  userData={userData}
+                  setUserData={setUserData}
+                  loading={loading}
+                  isEditing={isEditing}
+                  setIsEditing={setIsEditing}
+                  handleProfileImageChange={handleProfileImageChange}
                 />
-
-                <h1 className="product-title">Apple 2354 for sell</h1>
-                <div className="Userprice__section">
-                  <span>
-                    <h2 className="price">$3,000</h2>
-                    <h2 className="discount__price">$2,800</h2>
-                  </span>
-
-                  <span>Add to cart</span>
-                </div>
-              </div>
-              <div className="top-product">
-                <img
-                  className="top-product__image"
-                  src={image}
-                  alt=""
-                  srcSet=""
-                />
-                <h1 className="product-title">Mongo 2354 for sell</h1>
-                <div className="Userprice__section">
-                  <span>
-                    <h2 className="price">$3,000</h2>
-                    <h2 className="discount__price">$2,800</h2>
-                  </span>
-
-                  <span>Add to cart</span>
-                </div>
-              </div>
-              <div className="top-product">
-                <img
-                  className="top-product__image"
-                  src={image}
-                  alt=""
-                  srcSet=""
-                />
-                <h1 className="product-title">Orange 2354 for sell</h1>
-                <div className="Userprice__section">
-                  <span>
-                    <h2 className="price">$3,000</h2>
-                    <h2 className="discount__price">$2,800</h2>
-                  </span>
-
-                  <span>Add to cart</span>
-                </div>
-              </div>
-            </div>
-          </section>
+              }
+            />
+            <Route path="/my-orders" element={<MyOrder />} />
+            <Route path="/my-messages" element={<MyMessages />} />
+            <Route path="/my-address" element={<MyAddress />} />
+            <Route path="/my-settings" element={<MySettings />} />
+          </Routes>
         </main>
-
-        <aside className="sidebar-right">
-          <div className="calendar">
-            <h2>August 2023</h2>
-            <div className="calendar-grid">{/* Calendar grid */}</div>
-          </div>
-          <div className="schedule">
-            <h2>Schedule</h2>
-            <div className="event">
-              <p>Learn user flow</p>
-              <span className="time">09:00 AM - 10:00 AM</span>
-            </div>
-            <div className="event">
-              <p>Identify user pains</p>
-              <span className="time">12:00 PM - 01:00 PM</span>
-            </div>
-          </div>
-        </aside>
+        <SidebarRight />
       </div>
     </section>
   );

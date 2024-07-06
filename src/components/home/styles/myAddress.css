@@ -1,0 +1,126 @@
+/* My Address style */
+.my-address {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.my-address h1 {
+    margin-bottom: 20px;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* AddNewAddress style */
+.add-address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.add-address-form input,
+.add-address-form button,
+.add-address-form label {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.add-address-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-address-form button:hover {
+    background-color: #0056b3;
+}
+
+.add-address-form .error {
+    color: red;
+    font-weight: bold;
+}
+
+/* EditAddress Form style */
+.edit-address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.edit-address-form input,
+.edit-address-form button,
+.edit-address-form label {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.edit-address-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.edit-address-form button:hover {
+    background-color: #0056b3;
+}
+
+.edit-address-form .error {
+    color: red;
+    font-weight: bold;
+}
+
+/* AddressCard style */
+.address-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: white;
+    position: relative;
+}
+
+.address-card h3 {
+    margin-top: 0;
+}
+
+.address-card .default {
+    color: green;
+    font-weight: bold;
+}
+
+.address-card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.address-card-actions button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.address-card-actions button:hover {
+    background-color: #0056b3;
+    color: white;
+}

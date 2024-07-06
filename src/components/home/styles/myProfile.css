@@ -1,0 +1,55 @@
+/* Example styles for myProfile.css */
+.profile-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* .profile-section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+} */
+
+.profile-details p {
+    margin: 10px 0;
+}
+
+.profile-details strong {
+    color: #555;
+}
+
+/* Example styles for myProfile.css */
+/* .profile-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .profile-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-details p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .profile-details strong {
+    color: #333;
+  }
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
+   */

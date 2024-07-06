@@ -49,11 +49,6 @@ export default function ProductImage({
       return;
     }
 
-    // if (featureImage) {
-    //   setError("You can only upload one image.");
-    //   return;
-    // }
-
     setError("");
     const fileUrl = URL.createObjectURL(file);
     setFeatureImage({ file, preview: fileUrl });

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import cart from "./images/cartItem.png";
-import UserImage from "./images/user.png";
+import defaultImage from "./images/user.png";
 import "./styles/navbar.css";
+import config from "../../config.json";
 
 export default function Navbar({ user, cartItemCount = 0 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +70,11 @@ export default function Navbar({ user, cartItemCount = 0 }) {
           <>
             <div className="navbar-user-container">
               <div className="navbar-user__main" onClick={toggleDropdown}>
-                <img src={UserImage} alt="User" className="navbar-user-image" />
+                <img
+                  src={defaultImage}
+                  alt="User"
+                  className="navbar-user-image"
+                />
                 <div className="navbar-signin-main">
                   <h1 className="navbar-user-greeting">Hello!</h1>
                   <span>Sign in</span>
@@ -113,7 +118,11 @@ export default function Navbar({ user, cartItemCount = 0 }) {
             <div className="navbar-user-container">
               <div className="navbar-user__main" onClick={toggleDropdown}>
                 <img
-                  src={user.profileImage || UserImage}
+                  src={
+                    user?.profileImage?.filename
+                      ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
+                      : defaultImage
+                  }
                   alt="User"
                   className="navbar-user-image"
                 />
@@ -129,19 +138,22 @@ export default function Navbar({ user, cartItemCount = 0 }) {
               </div>
               {isDropdownOpen && (
                 <div className="navbar-dropdown-menu">
-                  <Link to="/my-dashboard" className="navbar-dropdown-item">
+                  <Link
+                    to="users/my-dashboard"
+                    className="navbar-dropdown-item"
+                  >
                     <i className="fa fa-user"></i> My Dashboard
                   </Link>
-                  <Link to="/profile" className="navbar-dropdown-item">
+                  <Link to="users/my-profile" className="navbar-dropdown-item">
                     <i className="fa fa-user"></i> My Account
                   </Link>
-                  <Link to="/orders" className="navbar-dropdown-item">
-                    <i class="fa fa-envelope"></i> My Orders
+                  <Link to="users/my-orders" className="navbar-dropdown-item">
+                    <i className="fa fa-envelope"></i> My Orders
                   </Link>
-                  <Link to="/messages" className="navbar-dropdown-item">
+                  <Link to="users/my-messages" className="navbar-dropdown-item">
                     <i className="fa fa-envelope"></i> My Messages
                   </Link>
-                  <Link to="/saved-items" className="navbar-dropdown-item">
+                  <Link to="users/saved-items" className="navbar-dropdown-item">
                     <i className="fa fa-heart"></i> My Saved Items
                   </Link>
                   <Link to="/logout" className="navbar-dropdown-item logout">
@@ -155,7 +167,7 @@ export default function Navbar({ user, cartItemCount = 0 }) {
                 <i className="fa fa-map-marker map-marker"></i>
                 <div className="navbar-address__container">
                   <h1 className="navbar-user-greeting">Deliver to!</h1>
-                  <span>{user.address || geoLocation}</span>
+                  <span>{user.address?.country || geoLocation}</span>
                 </div>
               </Link>
             </div>

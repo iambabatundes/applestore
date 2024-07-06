@@ -1,16 +1,12 @@
 import React, { useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { parsePhoneNumberFromString } from "libphonenumber-js";
 import "./styles/login.css";
-import { login, getCurrentUser } from "../../services/authService";
+import { login } from "../../services/authService";
 
 export default function Login() {
   const [data, setData] = useState({ email: "", password: "" });
-  // const [errors, setErrors] = useState({});
-  // const [emailPhoneUser, setEmailPhoneUser] = useState("");
-  // const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { state } = useLocation();
@@ -27,18 +23,16 @@ export default function Login() {
     e.preventDefault();
 
     setLoading(true);
-    setMessage("");
+    setErrors("");
     try {
       await login(data.email, data.password);
       toast.success("You are now logged in");
       window.location = state ? state.path : "/";
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
-        const newErrors = { ...message };
-        newErrors.email = ex.response.data;
-        setMessage(newErrors);
+        setErrors("Invalid email or password");
       } else {
-        setMessage("Invalid email or password"); // Set a general error message
+        setErrors("An unexpected error occurred. Please try again.");
         console.error(
           "Login failed. Please check your credentials and try again.",
           ex
@@ -83,7 +77,7 @@ export default function Login() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-          {message && <p className="error-message">{message}</p>}
+          {errors && <p className="error-message">{errors}</p>}
         </>
 
         <hr />

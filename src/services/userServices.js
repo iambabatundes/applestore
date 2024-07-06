@@ -2,6 +2,7 @@ import http from "../services/httpService";
 import config from "../config.json";
 
 const apiEndPoint = `${config.apiUrl}/users`;
+const tokenKey = "token";
 
 function userUrl(id) {
   return `${apiEndPoint}/${id}`;
@@ -13,6 +14,16 @@ export function getUsers() {
 
 export function getUser(userId) {
   return http.get(userUrl(userId));
+}
+
+export async function getUserProfile() {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
+
+  const { data } = await http.get(`${apiEndPoint}/me`);
+  return data;
 }
 
 export function createUser(user) {
@@ -57,15 +68,10 @@ function createFormData(user) {
   return formData;
 }
 
-// export function saveUser(user) {
-//   console.log("Saving tag:", user); //
-//   return http.post(apiEndPoint, user);
-// }
-
-export function updateUser(userId, user) {
+export function updateUser(user) {
   const formData = createFormData(user);
 
-  return http.put(userUrl(userId), formData, {
+  return http.put(`${apiEndPoint}/profile`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 }

@@ -39,11 +39,11 @@
     font-size: 1rem;
 }
 
-.productForm__input input[type="number"],
+/* .productForm__input input[type="number"],
 input[type="date"] {
     font-size: 0.8rem;
 
-}
+} */
 
 /* Input Field Styles */
 .productForm__input {

@@ -21,31 +21,17 @@ import Navbar from "./components/home/navbar";
 import Login from "./components/home/login";
 import Register from "./components/home/register";
 import UserProfile from "./components/home/userProfile";
-import { getCurrentUser, getUser } from "./services/authService";
 import Logout from "./components/home/logout";
 import NotFound from "./components/home/notFound";
+import useUser from "./components/home/hooks/useUser";
 
 function App() {
-  // const [data, setData] = useState("");
-  const [user, setUser] = useState(null);
+  const { user, loading, handleFormSubmit, setUser } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
 
   const location = useLocation();
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const user = await getUser();
-        setUser(user);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    }
-
-    fetchUser();
-  }, []);
 
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
@@ -151,6 +137,10 @@ function App() {
   const countComment = 5;
   const companyName = "AppStore";
 
+  if (loading) {
+    return <p>Loading...</p>; // Or a loading spinner
+  }
+
   return (
     <>
       <ToastContainer />
@@ -193,8 +183,14 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/logout" element={<Logout />} />
               <Route
-                path="/my-dashboard"
-                element={<UserProfile user={user} />}
+                path="users/*"
+                element={
+                  <UserProfile
+                    user={user}
+                    setUser={setUser}
+                    handleProfileSubmit={handleFormSubmit}
+                  />
+                }
               />
               <Route path="/not-found" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />

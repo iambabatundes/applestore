@@ -1,7 +1,8 @@
 import http from "../services/httpService";
 import config from "../config.json";
 
-const apiEndPoint = config.apiUrl + "/address";
+const apiEndPoint = config.apiUrl + "/addresses";
+const tokenKey = "token";
 
 function addressUrl(id) {
   return `${apiEndPoint}/${id}`;
@@ -15,7 +16,21 @@ export function getAddress(addressId) {
   return http.get(addressUrl(addressId));
 }
 
-export function saveAddress(address) {
+export async function getUserAddress() {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
+
+  const { data } = await http.get(`${apiEndPoint}/me`);
+  return data;
+}
+
+export async function saveAddress(address) {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
   return http.post(apiEndPoint, address);
 }
 
