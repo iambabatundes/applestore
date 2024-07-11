@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import config from "../../config.json";
 import Icon from "../icon";
-import defaultUserImage from "./images/user.png"; // Add default image import
+import defaultUserImage from "./images/user.png";
 
 export default function ProfileImage({
   profileImage,

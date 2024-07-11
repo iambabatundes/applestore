@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import AddNewAddress from "./address/AddNewAddress";
+import EditAddress from "./address/EditAddressForm";
 import AddressCard from "./address/AddressCard";
+import CustomModal from "./common/customModal";
 import {
   deleteAddress,
   getUserAddress,
@@ -11,12 +13,15 @@ export default function MyAddress() {
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAddAddress, setShowAddAddress] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState(null);
 
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const addresses = await getUserAddress();
-        console.log("Fetched addresses: ", addresses);
         setAddresses(addresses);
         setError(null);
       } catch (err) {
@@ -32,6 +37,7 @@ export default function MyAddress() {
 
   const handleAddAddress = (newAddress) => {
     setAddresses([...addresses, newAddress]);
+    setShowAddAddress(false);
   };
 
   const handleUpdateAddress = (updatedAddress) => {
@@ -40,17 +46,19 @@ export default function MyAddress() {
         address._id === updatedAddress._id ? updatedAddress : address
       )
     );
+    setEditingAddress(null);
   };
 
-  async function handleDeleteAddress(address) {
+  async function handleDeleteAddress() {
     const originalAddresses = [...addresses];
     const updatedAddresses = originalAddresses.filter(
-      (a) => a._id !== address._id
+      (a) => a._id !== addressToDelete._id
     );
     setAddresses(updatedAddresses);
+    setShowDeleteModal(false);
 
     try {
-      await deleteAddress(address._id);
+      await deleteAddress(addressToDelete._id);
       toast.success("Address deleted successfully");
     } catch (error) {
       console.error("Error deleting address: ", error);
@@ -60,30 +68,74 @@ export default function MyAddress() {
     }
   }
 
+  const openDeleteModal = (address) => {
+    setAddressToDelete(address);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setAddressToDelete(null);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <section className="my-address">
       <div className="myAddress__header">
-        <article>
-          <h1>My Address</h1>
-          <span>({addresses.length})</span>
-        </article>
-
-        <AddNewAddress onAddAddress={handleAddAddress} />
+        {showAddAddress ? (
+          <article className="myAddress__heading">
+            <button onClick={() => setShowAddAddress(false)}>← Back</button>
+            <h1>Add New Address</h1>
+          </article>
+        ) : editingAddress ? (
+          <article className="myAddress__heading">
+            <button onClick={() => setEditingAddress(null)}>← Back</button>
+            <h1>Edit Address</h1>
+          </article>
+        ) : (
+          <article className="myAddress__heading">
+            <h1>My Address</h1>
+            <span>({addresses.length})</span>
+            <button onClick={() => setShowAddAddress(true)}>
+              Add New Address
+            </button>
+          </article>
+        )}
       </div>
-      <div className="address-list">
-        {Array.isArray(addresses) &&
-          addresses.map((address) => (
+      {showAddAddress && <AddNewAddress onAddAddress={handleAddAddress} />}
+      {editingAddress && (
+        <EditAddress
+          address={editingAddress}
+          onUpdateAddress={handleUpdateAddress}
+        />
+      )}
+      {!showAddAddress && !editingAddress && addresses.length === 0 && (
+        <div className="no-addresses">
+          <p>You don't have any addresses yet.</p>
+          <button onClick={() => setShowAddAddress(true)}>
+            Add New Address
+          </button>
+        </div>
+      )}
+      {!showAddAddress && !editingAddress && addresses.length > 0 && (
+        <div className="address-list">
+          {addresses.map((address) => (
             <AddressCard
               key={address._id}
               address={address}
-              onUpdate={handleUpdateAddress}
-              onDelete={handleDeleteAddress}
+              onUpdate={() => setEditingAddress(address)}
+              onDelete={() => openDeleteModal(address)}
             />
           ))}
-      </div>
+        </div>
+      )}
+      <CustomModal
+        isOpen={showDeleteModal}
+        onRequestClose={closeDeleteModal}
+        onConfirm={handleDeleteAddress}
+      />
     </section>
   );
 }

@@ -26,8 +26,8 @@ export async function getUserAddress() {
   return data;
 }
 
-export async function saveAddress(address) {
-  const token = localStorage.getItem(tokenKey);
+export async function saveAddress(address, userId) {
+  const token = localStorage.getItem(tokenKey, userId);
   if (token) {
     http.setJwt(token);
   }

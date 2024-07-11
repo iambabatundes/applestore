@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { fetchUsersOrder } from "../../../../services/orderService";
+import { getUserOrders } from "../../../../services/orderService";
 import "../../styles/userProfile.css";
 
-const FetchOrders = ({ userId }) => {
+const FetchOrders = ({ user }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("User ID: ", userId); // Check if userId is defined
-    if (!userId) {
-      setError(new Error("User ID is undefined"));
-      setLoading(false);
-      return;
-    }
-
-    // if (!userId) return;
-
     const fetchOrders = async () => {
       try {
-        const response = await fetchUsersOrder(userId);
-        setOrders(response.data);
+        const response = await getUserOrders();
+        const latestOrders = response.data.slice(0, 5); // Get the latest 5 orders
+        setOrders(latestOrders);
       } catch (err) {
         setError(err);
       } finally {
@@ -29,11 +21,19 @@ const FetchOrders = ({ userId }) => {
     };
 
     fetchOrders();
-  }, [userId]);
+  }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (orders.length === 0) return <div>No orders made for your goods.</div>;
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading orders.</p>;
+  }
+
+  if (orders.length === 0) {
+    return null; // Do not render if there are no orders
+  }
 
   return (
     <div className="orders-container">

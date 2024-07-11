@@ -8,7 +8,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import config from "../../../../config.json";
-import ProfileImage from "../../../backend/profileImage";
 
 export default function ProfileEditForm({
   user,
@@ -35,8 +34,11 @@ export default function ProfileEditForm({
       return;
     }
 
-    setProfileImage(file);
     setUserData({ ...userData, profileImage: file });
+    const fileUrl = URL.createObjectURL(file);
+    setProfileImage({ file, preview: fileUrl });
+    handleProfileImageChange(file, fileUrl);
+
     setError("");
   };
 
@@ -69,21 +71,12 @@ export default function ProfileEditForm({
     }
   };
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    if (name.includes("address.")) {
-      const addressField = name.split(".")[1];
-      setUserData((prevFormData) => ({
-        ...prevFormData,
-        address: {
-          ...prevFormData.address,
-          [addressField]: value,
-        },
-      }));
-    } else {
-      setUserData({ ...userData, [name]: value });
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   return (
@@ -108,31 +101,26 @@ export default function ProfileEditForm({
           borderRadius={2}
           textAlign="center"
         >
-          {/* <Avatar
+          <Avatar
             src={
-              profileImage instanceof File
-                ? URL.createObjectURL(profileImage)
+              profileImage && profileImage.preview
+                ? profileImage.preview
                 : user.profileImage
                 ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
                 : "/default-avatar.png"
             }
             alt={`${user.firstName} ${user.lastName}`}
             sx={{ width: 100, height: 100, mb: 2 }}
-          /> */}
-
-          <ProfileImage
-            profileImage={profileImage}
-            setProfileImage={setProfileImage}
-            handleProfileImageChange={handleProfileImageChange}
           />
-          {/* <input
+
+          <input
             accept="image/*"
             id="profileImage"
             type="file"
             style={{ display: "none" }}
             onChange={handleImageChange}
-          /> */}
-          {/* <label htmlFor="profileImage">
+          />
+          <label htmlFor="profileImage">
             <Button variant="contained" component="span">
               Change Profile Image
             </Button>
@@ -144,7 +132,7 @@ export default function ProfileEditForm({
             <Typography variant="body2" color="error">
               {error}
             </Typography>
-          )}*/}
+          )}
         </Box>
         <Box display="flex" gap={2}>
           <TextField
@@ -153,7 +141,7 @@ export default function ProfileEditForm({
             name="firstName"
             label="First Name"
             value={userData.firstName}
-            onChange={handleChange}
+            onChange={handleInputChange}
             margin="normal"
           />
           <TextField
@@ -162,7 +150,7 @@ export default function ProfileEditForm({
             name="lastName"
             label="Last Name"
             value={userData.lastName}
-            onChange={handleChange}
+            onChange={handleInputChange}
             margin="normal"
           />
         </Box>
@@ -172,7 +160,7 @@ export default function ProfileEditForm({
           name="username"
           label="Username"
           value={userData.username}
-          onChange={handleChange}
+          onChange={handleInputChange}
           margin="normal"
         />
         <TextField
@@ -181,7 +169,7 @@ export default function ProfileEditForm({
           name="email"
           label="Email"
           value={userData.email}
-          onChange={handleChange}
+          onChange={handleInputChange}
           margin="normal"
         />
         <TextField
@@ -190,7 +178,7 @@ export default function ProfileEditForm({
           name="phoneNumber"
           label="Phone Number"
           value={userData.phoneNumber}
-          onChange={handleChange}
+          onChange={handleInputChange}
           margin="normal"
         />
         <Box display="flex" gap={2}>
@@ -200,7 +188,7 @@ export default function ProfileEditForm({
             name="gender"
             label="Gender"
             value={userData.gender}
-            onChange={handleChange}
+            onChange={handleInputChange}
             margin="normal"
           />
           <TextField
@@ -210,7 +198,7 @@ export default function ProfileEditForm({
             label="Date Of Birth"
             type="date"
             value={userData.dateOfBirth}
-            onChange={handleChange}
+            onChange={handleInputChange}
             margin="normal"
             InputLabelProps={{
               shrink: true,

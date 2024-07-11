@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import cart from "./images/cartItem.png";
-import defaultImage from "./images/user.png";
+import { Avatar } from "@mui/material";
 import "./styles/navbar.css";
 import config from "../../config.json";
 
@@ -70,11 +70,11 @@ export default function Navbar({ user, cartItemCount = 0 }) {
           <>
             <div className="navbar-user-container">
               <div className="navbar-user__main" onClick={toggleDropdown}>
-                <img
-                  src={defaultImage}
-                  alt="User"
-                  className="navbar-user-image"
+                <Avatar
+                  src="/default-avatar.png"
+                  sx={{ width: 35, height: 35, mr: 1 }}
                 />
+
                 <div className="navbar-signin-main">
                   <h1 className="navbar-user-greeting">Hello!</h1>
                   <span>Sign in</span>
@@ -97,7 +97,10 @@ export default function Navbar({ user, cartItemCount = 0 }) {
                     <i className="fa fa-question-circle"></i> Help
                   </Link>
 
-                  <Link to="/my-dashboard" className="navbar-dropdown-item">
+                  <Link
+                    to="/users/my-dashboard"
+                    className="navbar-dropdown-item"
+                  >
                     <i className="fa fa-question-circle"></i> My Dashboard
                   </Link>
                 </div>
@@ -117,15 +120,18 @@ export default function Navbar({ user, cartItemCount = 0 }) {
           <>
             <div className="navbar-user-container">
               <div className="navbar-user__main" onClick={toggleDropdown}>
-                <img
+                <Avatar
                   src={
-                    user?.profileImage?.filename
+                    user.profileImage instanceof File
+                      ? URL.createObjectURL(user.profileImage)
+                      : user.profileImage
                       ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
-                      : defaultImage
+                      : "/default-avatar.png"
                   }
-                  alt="User"
-                  className="navbar-user-image"
+                  alt={`${user.firstName} ${user.lastName}`}
+                  sx={{ width: 40, height: 40, mr: 1 }}
                 />
+
                 <div className="navbar-signin-main">
                   <h1 className="navbar-user-greeting">Hello!</h1>
                   <span>{user.username}</span>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, Navigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
@@ -10,7 +10,7 @@ import {
   verifyUser,
   resendValidationCode,
 } from "../../services/userServices";
-import { loginWithJwt } from "../../services/authService";
+import { getCurrentUser, loginWithJwt } from "../../services/authService";
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -126,6 +126,9 @@ export default function Register() {
   const handleTimerExpire = () => {
     setCanResend(true);
   };
+
+  // if (getCurrentUser) return <Navigate to="/" />;
+  if (getCurrentUser()) return <Navigate to="/" replace />;
 
   return (
     <section className="register-main">

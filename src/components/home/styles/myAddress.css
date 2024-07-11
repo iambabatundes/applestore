@@ -51,6 +51,16 @@
     font-weight: bold;
 }
 
+.myAddress__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.myAddress__heading {
+    display: flex;
+}
+
 /* EditAddress Form style */
 .edit-address-form {
     display: flex;

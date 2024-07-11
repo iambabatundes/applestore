@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Avatar, IconButton } from "@mui/material";
+import { Avatar, Box, Typography, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import config from "../../../../config.json";
 
@@ -12,7 +12,7 @@ export default function ProfileDisplay({ user, onEdit }) {
       bgcolor="background.paper"
       marginBottom={4}
       display="flex"
-      flexDirection={{ xs: "column", md: "row" }}
+      flexDirection="column"
       alignItems="center"
       gap={3}
       position="relative"
@@ -33,27 +33,20 @@ export default function ProfileDisplay({ user, onEdit }) {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        width={{ xs: "100%", md: "30%" }}
+        width="100%"
       >
-        <img
+        <Avatar
           src={
-            user.profileImage
-              ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
+            user.profileImage instanceof File
+              ? URL.createObjectURL(user.profileImage)
+              : user.profileImage
+              ? `${config.mediaUrl}/uploads/${user.profileImage?.filename}`
               : "/default-avatar.png"
           }
           alt={`${user.firstName} ${user.lastName}`}
-          className="user-image"
+          sx={{ width: 100, height: 100 }}
         />
 
-        {/* <Avatar
-          src={
-            user.profileImage
-              ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
-              : "/default-avatar.png"
-          }
-          alt={`${user.firstName} ${user.lastName}`}
-          sx={{ width: 120, height: 120 }}
-        /> */}
         <Typography variant="h1" mt={2} fontSize="1.5rem" fontWeight={500}>
           {user.firstName} {user.lastName}
         </Typography>
@@ -67,10 +60,13 @@ export default function ProfileDisplay({ user, onEdit }) {
         </Typography>
       </Box>
       <Box
-        width={{ xs: "100%", md: "70%" }}
+        width="100%"
         display="flex"
         flexDirection="column"
         gap={2}
+        mt={2}
+        borderBottom="1px solid #e0e0e0"
+        pb={2}
       >
         <Typography variant="body1" color="textSecondary">
           <strong>Phone Number:</strong> {user.phoneNumber}

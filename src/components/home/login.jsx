@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./styles/login.css";
-import { login } from "../../services/authService";
+import { getCurrentUser, login } from "../../services/authService";
 
-export default function Login() {
+export default function Login({ companyName, user }) {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,12 +43,15 @@ export default function Login() {
     }
   };
 
+  if (getCurrentUser()) return <Navigate to="/" replace />;
+  // if (user) return <Navigate to="/" replace />;
+
   return (
     <section className="login-section">
       <div className="login-container">
-        <h1>Welcome to AppleStore</h1>
+        <h1>Welcome to {companyName}</h1>
         <p>
-          Type your e-mail or phone number to log in or create an AppleStore
+          Type your e-mail or phone number to log in or create an {companyName}
           account.
         </p>
         <>
@@ -81,10 +84,12 @@ export default function Login() {
         </>
 
         <hr />
-        <div>
-          <h1>New in AppleStore</h1>
+        <div className="createNew__account">
+          <h1 className="createNew__title">New in {companyName}</h1>
           <Link to="/register">
-            <button>Create your AppleStore Account</button>
+            <button className="createNew__btn">
+              Create your {companyName} Account
+            </button>
           </Link>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -8,7 +8,6 @@ import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
 import SinglePost from "./components/singlePost";
-// import NavBar from "./components/navBar";
 import Home from "./components/Home";
 import Product from "./components/Product";
 import Footer from "./components/footer/footer";
@@ -24,9 +23,10 @@ import UserProfile from "./components/home/userProfile";
 import Logout from "./components/home/logout";
 import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
+import RequireAuth from "./components/home/common/requireAuth";
 
 function App() {
-  const { user, loading, handleFormSubmit, setUser } = useUser();
+  const { user, loading, setUser, handleProfileSubmit } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
@@ -180,20 +180,24 @@ function App() {
               />
               <Route path="/:title" exact element={<SingleProduct />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+              <Route
+                path="/login"
+                element={<Login companyName={companyName} user={user} />}
+              />
               <Route path="/logout" element={<Logout />} />
               <Route
                 path="users/*"
                 element={
-                  <UserProfile
-                    user={user}
-                    setUser={setUser}
-                    handleProfileSubmit={handleFormSubmit}
-                  />
+                  <RequireAuth user={user}>
+                    <UserProfile
+                      user={user}
+                      setUser={setUser}
+                      handleProfileSubmit={handleProfileSubmit}
+                    />
+                  </RequireAuth>
                 }
               />
-              <Route path="/not-found" element={<NotFound />} />
-              <Route path="*" element={<NotFound />} />
+
               <Route
                 path="/checkout"
                 element={<Checkout cartItem={cartItems} />}
@@ -213,6 +217,9 @@ function App() {
                   />
                 }
               />
+              <Route path="/not-found" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+              {/* <Route path="*" element={<Navigate to="/not-found" replace />} /> */}
             </Routes>
           </main>
           <Footer />

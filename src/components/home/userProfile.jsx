@@ -11,7 +11,8 @@ import MySettings from "./users/mySettings";
 import SidebarLeft from "./users/common/SidebarLeft";
 import SidebarRight from "./users/common/SidebarRight";
 import TopNavbar from "./users/common/TopNavbar";
-import { updateUser } from "../../services/userServices";
+import { updateUser } from "../../services/profileService";
+// import { updateUser } from "../../services/userServices";
 
 export default function UserProfile({ user, setUser }) {
   const [userData, setUserData] = useState({
@@ -69,7 +70,6 @@ export default function UserProfile({ user, setUser }) {
         delete updatedUser.profileImage;
       }
       const { data } = await updateUser(updatedUser);
-      console.log("Updated user:", data); // Debugging log
       setUser(data);
       setUserData(data);
       setProfileImage(data.profileImage);
@@ -107,10 +107,7 @@ export default function UserProfile({ user, setUser }) {
           <TopNavbar greeting={greeting} user={user} />
 
           <Routes location={location}>
-            <Route
-              path="/my-dashboard"
-              element={<MyDashboard userId={user?._id} />}
-            />
+            <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
             <Route
               path="/my-profile"
               element={

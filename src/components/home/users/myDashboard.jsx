@@ -1,67 +1,52 @@
-import React from "react";
-import image from "../images/bac1.jpg";
+import React, { useEffect, useState } from "react";
 import FetchOrders from "./common/FetchOrders";
+import TopProduct from "../topProduct";
+import { getUserOrders } from "../../../services/orderService";
 
-export default function MyDashboard({ userId }) {
+export default function MyDashboard({ user }) {
+  const [stats, setStats] = useState({
+    totalSpent: 0,
+    completedOrders: 0,
+    totalOrders: 0,
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getUserOrders();
+        const { totalSpent, completedOrders, totalOrders } = response.data;
+        setStats({ totalSpent, completedOrders, totalOrders });
+      } catch (error) {
+        console.error("Error fetching user data", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <div>
       <h1>My Dashboard</h1>
       <div className="stats">
         <div className="stat stat-background">
-          <h2>$ 500</h2>
+          <h2>${stats.totalSpent}</h2>
           <p>spent</p>
         </div>
         <div className="stat stat-background1">
-          <h2>21</h2>
+          <h2>{stats.completedOrders}</h2>
           <p>Order Completed</p>
         </div>
         <div className="stat stat-background2">
-          <h2>43</h2>
-          <p>Total Order</p>
+          <h2>{stats.totalOrders}</h2>
+          <p>Total Orders</p>
         </div>
       </div>
       <div className="yourOrders">
         <h2>My Orders</h2>
-        <FetchOrders userId={userId} />
+        <FetchOrders />
       </div>
-      <section className="userProduct-pick">
-        <h2>Top Product for you</h2>
-        <div className="top-productMain">
-          <div className="top-product">
-            <img className="top-product__image" src={image} alt="" />
-            <h1 className="product-title">Apple 2354 for sell</h1>
-            <div className="Userprice__section">
-              <span>
-                <h2 className="price">$3,000</h2>
-                <h2 className="discount__price">$2,800</h2>
-              </span>
-              <span>Add to cart</span>
-            </div>
-          </div>
-          <div className="top-product">
-            <img className="top-product__image" src={image} alt="" />
-            <h1 className="product-title">Mongo 2354 for sell</h1>
-            <div className="Userprice__section">
-              <span>
-                <h2 className="price">$3,000</h2>
-                <h2 className="discount__price">$2,800</h2>
-              </span>
-              <span>Add to cart</span>
-            </div>
-          </div>
-          <div className="top-product">
-            <img className="top-product__image" src={image} alt="" />
-            <h1 className="product-title">Orange 2354 for sell</h1>
-            <div className="Userprice__section">
-              <span>
-                <h2 className="price">$3,000</h2>
-                <h2 className="discount__price">$2,800</h2>
-              </span>
-              <span>Add to cart</span>
-            </div>
-          </div>
-        </div>
-      </section>
+
+      <TopProduct />
     </div>
   );
 }

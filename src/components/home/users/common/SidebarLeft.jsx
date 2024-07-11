@@ -12,7 +12,7 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import defaultImage from "../../images/user.png";
+import { Avatar } from "@mui/material";
 import config from "../../../../config.json";
 
 export default function SidebarLeft({ isOpen, toggleSidebar, user }) {
@@ -22,14 +22,18 @@ export default function SidebarLeft({ isOpen, toggleSidebar, user }) {
         <FaArrowLeft className="icon" /> Close
       </div>
       <div className="profile-section">
-        <img
+        <Avatar
           src={
-            `${config.mediaUrl}/uploads/${user.profileImage?.filename}` ||
-            defaultImage
+            user.profileImage instanceof File
+              ? URL.createObjectURL(user.profileImage)
+              : user.profileImage
+              ? `${config.mediaUrl}/uploads/${user.profileImage?.filename}`
+              : "/default-avatar.png"
           }
-          alt=""
-          className="profile-pic"
+          alt={`${user.firstName} ${user.lastName}`}
+          sx={{ width: 100, height: 100, mb: 2 }}
         />
+
         <h2>{user.firstName}</h2>
         <p>{user.email}</p>
       </div>
