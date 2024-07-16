@@ -2,6 +2,7 @@ import http from "../services/httpService";
 import config from "../config.json";
 
 const apiEndPoint = config.apiUrl + "/posts";
+const tokenKey = "token";
 
 function postUrl(id) {
   return `${apiEndPoint}/${id}`;
@@ -11,20 +12,22 @@ export function getPosts() {
   return http.get(apiEndPoint);
 }
 
+export async function getUserPosts() {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
+
+  const { data } = await http.get(`${apiEndPoint}/me`);
+  return data;
+}
+
 export function getPost(postId) {
   return http.get(postUrl(postId));
 }
 
 function createFormData(post, userId) {
   const formData = new FormData();
-
-  // if (userId && typeof userId === "object") {
-  //   for (const key in userId) {
-  //     if (userId.hasOwnProperty(key)) {
-  //       formData.append(`userId[${key}]`, userId[key]);
-  //     }
-  //   }
-  // }
 
   if (userId && typeof userId === "object") {
     formData.append("userId", JSON.stringify(userId));
@@ -56,6 +59,11 @@ function createFormData(post, userId) {
 }
 
 export function savePost(post, userId) {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
+
   const formData = createFormData(post, userId);
 
   if (post._id) {

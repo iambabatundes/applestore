@@ -15,6 +15,7 @@ function truncateContent(content, wordLimit) {
 
 export default function PostTable({
   data,
+  user,
   onDelete,
   onPreview,
   onEdit,
@@ -26,7 +27,7 @@ export default function PostTable({
       label: "Title",
       path: "title",
       sortable: true,
-      content: (post) => <Link to={`/product/${post._id}`}>{post.title}</Link>,
+      content: (post) => <Link to={`/posts/${post._id}`}>{post.title}</Link>,
     },
 
     {
@@ -40,22 +41,35 @@ export default function PostTable({
         ></div>
       ),
     },
-    {
-      label: "Post by",
-      path: "user.username",
-    },
-
     // {
     //   label: "Post by",
-    //   path: "user.profileImage",
-    //   content: (post) => (
-    //     <img
-    //       className="postTable__user-img"
-    //       src={config.mediaUrl + `/uploads/${post.user.profileImage}`}
-    //       alt={post.user.username}
-    //     />
-    //   ),
+    //   path: "user.username",
     // },
+
+    {
+      label: "Post by",
+      path: "user.profileImage",
+      // content: (post) => (
+      //   <img
+      //     className="user__image"
+      //     src={config.mediaUrl + `/uploads/${post.user.profileImage?.filename}`}
+      //     alt={post.user.username}
+      //   />
+      // ),
+
+      content: (post) => {
+        const imageUrl =
+          config.mediaUrl + `/uploads/${post.user.profileImage.filename}`;
+        console.log(imageUrl); // Check the URL in the console
+        return (
+          <img
+            className="user__image"
+            src={imageUrl}
+            alt={post.user.username}
+          />
+        );
+      },
+    },
 
     { label: "Category", path: "category" },
     { label: "Tags", path: "tags" },
@@ -94,8 +108,6 @@ export default function PostTable({
         </section>
       ),
     },
-
-    // Add more headings as needed
   ];
 
   return (

@@ -124,6 +124,14 @@
 }
 
 /* Post Image */
+.user__image {
+    object-fit: cover;
+    border-radius: 50%;
+    /* object-fit: contain; */
+    width: 50px;
+    height: 50px;
+}
+
 .postTable__img {
     width: 100%;
     object-fit: cover;
@@ -135,6 +143,7 @@
     transform: scale(1.1);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 
 @keyframes slideDown {
     from {

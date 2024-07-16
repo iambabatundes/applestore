@@ -124,14 +124,6 @@ export default function CreatePost() {
     const user = getCurrentUser(); // Get the current user
     const userId = user ? user._id : null;
 
-    // const userId = user
-    //   ? {
-    //       _id: user._id,
-    //       username: user.username,
-    //       email: user.email,
-    //     }
-    //   : null;
-
     const postToSubmit = {
       ...blogPost,
       category: categoryNames,

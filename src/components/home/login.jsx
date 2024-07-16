@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./styles/login.css";
-import { getCurrentUser, login } from "../../services/authService";
+import { login } from "../../services/authService";
 
 export default function Login({ companyName, user }) {
   const [data, setData] = useState({ email: "", password: "" });
@@ -43,8 +43,7 @@ export default function Login({ companyName, user }) {
     }
   };
 
-  if (getCurrentUser()) return <Navigate to="/" replace />;
-  // if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/" replace />;
 
   return (
     <section className="login-section">

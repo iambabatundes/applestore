@@ -10,13 +10,14 @@ export default function DataCategory({
   setCategories,
   saveCategory,
   getCategories,
+  errors,
+  setErrors,
 }) {
   const [newCategory, setNewCategory] = useState({
     name: "",
-    // parent: "",
+    parent: "",
   });
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
-  const [error, setError] = useState("");
 
   const handleCategoryChange = (category) => {
     setSelectedCategories((prevSelected) => {
@@ -42,9 +43,12 @@ export default function DataCategory({
         setSelectedCategories([...selectedCategories, response.data]);
         setNewCategory({ name: "", parent: "" });
         setIsAddingNewCategory(false);
+        setErrors({ ...errors, category: "" });
       } catch (error) {
-        setError("Failed to add category");
+        setErrors({ ...errors, category: "Failed to add category" });
       }
+    } else {
+      setErrors({ ...errors, category: "Category name is required" });
     }
   };
 
@@ -143,7 +147,9 @@ export default function DataCategory({
                 onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
                 className="categories__cancel-button"
               />
-              {error && <p className="categories__error">{error}</p>}
+              {errors.category && (
+                <p className="categories__error">{errors.category}</p>
+              )}
             </form>
           )}
         </section>

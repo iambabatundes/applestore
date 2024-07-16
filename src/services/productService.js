@@ -2,9 +2,20 @@ import http from "../services/httpService";
 import config from "../config.json";
 
 const apiEndPoint = `${config.apiUrl}/products`;
+const tokenKey = "token";
 
 function productUrl(id) {
   return `${apiEndPoint}/${id}`;
+}
+
+export async function getUserProducts() {
+  const token = localStorage.getItem(tokenKey);
+  if (token) {
+    http.setJwt(token);
+  }
+
+  const { data } = await http.get(`${apiEndPoint}/me`);
+  return data;
 }
 
 export function getProducts() {

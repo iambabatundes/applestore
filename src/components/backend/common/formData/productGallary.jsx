@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../styles/productGallery.css";
+import config from "../../../../config.json";
 import Icon from "../../../icon";
 
 export default function ProductGallery({
@@ -7,11 +8,14 @@ export default function ProductGallery({
   handleProductImagesChange,
   media,
   setMedia,
+  errors,
+  setErrors,
   darkMode,
 }) {
   const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState("");
+  // const [errors, setErrors] = useState("");
   const [progress, setProgress] = useState(0);
+  const [showMinMediaMessage, setShowMinMediaMessage] = useState(false);
 
   const fileInputRef = useRef(null);
 
@@ -44,19 +48,25 @@ export default function ProductGallery({
 
     for (let file of files) {
       if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-        setError("Only image and video files are allowed.");
+        setErrors("Only image and video files are allowed.");
         return;
       }
 
       if (file.size > maxFileSize) {
-        setError("File size should not exceed 50 MB.");
+        setErrors("File size should not exceed 50 MB.");
         return;
       }
 
       validFiles.push(file);
     }
 
-    setError("");
+    if (media.length + validFiles.length < 2) {
+      setErrors("Please upload at least 2 media files.");
+      setShowMinMediaMessage(true);
+      return;
+    }
+
+    setErrors("");
     setProgress(0); // Reset progress
     uploadFiles(validFiles);
   };
@@ -152,7 +162,7 @@ export default function ProductGallery({
                 if (file instanceof File) {
                   fileUrl = URL.createObjectURL(file);
                 } else if (file.filename) {
-                  fileUrl = `http://localhost:4000/uploads/${file.filename}`;
+                  fileUrl = `${config.mediaUrl}/uploads/${file.filename}`;
                 } else {
                   fileUrl = "";
                 }
@@ -233,9 +243,15 @@ export default function ProductGallery({
                     : "Choose files to upload or drag and drop"}
                 </span>
                 <div className="upload-instruction">
-                  Maximum upload file size: 50 MB
+                  Maximum upload file size: 50 MB || Upload at least 2 media
+                  files
                 </div>
               </label>
+              {showMinMediaMessage && (
+                <div className="productGallery__min-media-message">
+                  Please upload at least 2 media files.
+                </div>
+              )}
             </div>
           )}
           <input
@@ -259,7 +275,9 @@ export default function ProductGallery({
           )}
         </section>
       )}
-      {error && <div className="productGallery__error-message">{error}</div>}
+      {errors.featureImage && (
+        <div className="productImage__error-message">{errors.featureImage}</div>
+      )}
     </>
   );
 }

@@ -10,7 +10,7 @@ import PostTable from "./allPosts/postTable";
 import "./allPosts/styles/post.css";
 import PostHeader from "./allPosts/postHeader";
 
-export default function AllPosts({ darkMode }) {
+export default function AllPosts({ darkMode, adminUser }) {
   const [postData, setPostData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

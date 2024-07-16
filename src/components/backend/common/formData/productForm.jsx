@@ -4,17 +4,12 @@ import "../styles/productForm.css";
 
 export default function ProductForm({
   data,
+  errors,
   darkMode,
   handleInputChange,
-  handleChangeDecription,
-  editorDecription,
-  handleChangeAbout,
-  editorAbout,
+  handleEditorChange,
+  editorContent,
   handleSubmit,
-  handleProductDetails,
-  editorproductDetails,
-  handleProductInformation,
-  editorProductInformation,
 }) {
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -51,10 +46,13 @@ export default function ProductForm({
             className={`productForm__input ${darkMode ? "dark-mode" : ""}`}
             placeholder="Product Name"
             spellCheck
-            autoComplete
+            autoComplete="true"
             autoFocus
             size={20}
           />
+          {errors.name && (
+            <div className="alert alert-danger">{errors.name}</div>
+          )}
           <span className="productForm__tooltip">Enter your product name</span>
         </div>
         <section className="productForm__group-two">
@@ -72,6 +70,9 @@ export default function ProductForm({
               value={data.sku || ""}
               onChange={handleInputChange}
             />
+            {errors.sku && (
+              <div className="alert alert-danger">{errors.sku}</div>
+            )}
             <span className="productForm__tooltip">Enter your SKU</span>
           </div>
 
@@ -89,6 +90,9 @@ export default function ProductForm({
               value={data.weight || ""}
               onChange={handleInputChange}
             />
+            {errors.weight && (
+              <div className="alert alert-danger">{errors.weight}</div>
+            )}
             <span className="productForm__tooltip">
               Enter the product weight
             </span>
@@ -109,6 +113,9 @@ export default function ProductForm({
               value={data.price || ""}
               onChange={handleInputChange}
             />
+            {errors.price && (
+              <div className="alert alert-danger">{errors.price}</div>
+            )}
             <span className="productForm__tooltip">
               Enter the product price
             </span>
@@ -128,6 +135,9 @@ export default function ProductForm({
               value={data.numberInStock || ""}
               onChange={handleInputChange}
             />
+            {errors.numberInStock && (
+              <div className="alert alert-danger">{errors.numberInStock}</div>
+            )}
             <span className="productForm__tooltip">
               Enter the product quantity
             </span>
@@ -149,6 +159,9 @@ export default function ProductForm({
               value={data.brand || ""}
               onChange={handleInputChange}
             />
+            {errors.brand && (
+              <div className="alert alert-danger">{errors.brand}</div>
+            )}
             <span className="productForm__tooltip">
               Enter the product brand
             </span>
@@ -168,6 +181,9 @@ export default function ProductForm({
               value={data.manufacturer || ""}
               onChange={handleInputChange}
             />
+            {errors.manufacturer && (
+              <div className="alert alert-danger">{errors.manufacturer}</div>
+            )}
             <span className="productForm__tooltip">
               Enter the product manufacturer
             </span>
@@ -189,45 +205,62 @@ export default function ProductForm({
               value={data.salePrice || ""}
               onChange={handleInputChange}
             />
+            {errors.salePrice && (
+              <div className="alert alert-danger">{errors.salePrice}</div>
+            )}
             <span className="productForm__tooltip">Enter the sale price</span>
           </div>
-          <div className="productForm__field-container">
-            <label htmlFor="saleStartDate" className="productForm__label">
-              Sale Start Date
-            </label>
-            <input
-              type="date"
-              name="saleStartDate"
-              id="saleStartDate"
-              className="productForm__input"
-              placeholder="Sale Start Date"
-              size="20"
-              value={data.saleStartDate || ""}
-              onChange={handleInputChange}
-            />
-            <span className="productForm__tooltip">
-              Enter the sale start date
-            </span>
-          </div>
-          <div className="productForm__field-container">
-            <label htmlFor="saleEndDate" className="productForm__label">
-              Sale End Date
-            </label>
-            <input
-              type="date"
-              name="saleEndDate"
-              id="saleEndDate"
-              className="productForm__input"
-              placeholder="Sale End Date"
-              size="20"
-              value={data.saleEndDate || ""}
-              onChange={handleInputChange}
-            />
-            <span className="productForm__tooltip">
-              Enter the sale end date
-            </span>
-          </div>
+
+          {data.salePrice && (
+            <>
+              <div className="productForm__field-container">
+                <label htmlFor="saleStartDate" className="productForm__label">
+                  Sale Start Date
+                </label>
+                <input
+                  type="date"
+                  name="saleStartDate"
+                  id="saleStartDate"
+                  className="productForm__input"
+                  placeholder="Sale Start Date"
+                  size="20"
+                  value={data.saleStartDate || ""}
+                  onChange={handleInputChange}
+                />
+                {errors.saleStartDate && (
+                  <div className="alert alert-danger">
+                    {errors.saleStartDate}
+                  </div>
+                )}
+                <span className="productForm__tooltip">
+                  Enter the sale start date
+                </span>
+              </div>
+              <div className="productForm__field-container">
+                <label htmlFor="saleEndDate" className="productForm__label">
+                  Sale End Date
+                </label>
+                <input
+                  type="date"
+                  name="saleEndDate"
+                  id="saleEndDate"
+                  className="productForm__input"
+                  placeholder="Sale End Date"
+                  size="20"
+                  value={data.saleEndDate || ""}
+                  onChange={handleInputChange}
+                />
+                {errors.saleEndDate && (
+                  <div className="alert alert-danger">{errors.saleEndDate}</div>
+                )}
+                <span className="productForm__tooltip">
+                  Enter the sale end date
+                </span>
+              </div>
+            </>
+          )}
         </section>
+
         <section className="productForm__group-three"></section>
 
         <div className="productForm__editor-container">
@@ -236,27 +269,35 @@ export default function ProductForm({
           </label>
           <ReactQuill
             modules={modules}
-            onChange={handleChangeAbout}
-            value={editorAbout}
+            value={editorContent.aboutProduct}
+            onChange={(content) => handleEditorChange("aboutProduct", content)}
             theme="snow"
             id="aboutProduct"
           />
+          {errors.aboutProduct && (
+            <div className="alert alert-danger">{errors.aboutProduct}</div>
+          )}
           <span className="productForm__tooltip">
             Enter information About the Product
           </span>
         </div>
 
         <div className="productForm__editor-container">
-          <label htmlFor="productHighlight" className="productForm__label">
+          <label htmlFor="productDetails" className="productForm__label">
             Product Details
           </label>
           <ReactQuill
             modules={modules}
-            onChange={handleProductDetails}
-            value={editorproductDetails}
+            value={editorContent.productDetails}
+            onChange={(content) =>
+              handleEditorChange("productDetails", content)
+            }
             theme="snow"
-            id="productHighlight"
+            id="productDetails"
           />
+          {errors.productDetails && (
+            <div className="alert alert-danger">{errors.productDetails}</div>
+          )}
           <span className="productForm__tooltip">Enter product highlights</span>
         </div>
 
@@ -266,27 +307,37 @@ export default function ProductForm({
           </label>
           <ReactQuill
             modules={modules}
-            onChange={handleChangeDecription}
-            value={editorDecription}
+            value={editorContent.description}
+            onChange={(content) => handleEditorChange("description", content)}
             theme="snow"
             id="productDescription"
           />
+          {errors.description && (
+            <div className="alert alert-danger">{errors.description}</div>
+          )}
           <span className="productForm__tooltip">
             Enter product description
           </span>
         </div>
 
         <div className="productForm__editor-container">
-          <label htmlFor="productHighlight" className="productForm__label">
+          <label htmlFor="productInformation" className="productForm__label">
             Product Information
           </label>
           <ReactQuill
             modules={modules}
-            onChange={handleProductInformation}
-            value={editorProductInformation}
+            value={editorContent.productInformation}
+            onChange={(content) =>
+              handleEditorChange("productInformation", content)
+            }
             theme="snow"
-            id="productHighlight"
+            id="productInformation"
           />
+          {errors.productInformation && (
+            <div className="alert alert-danger">
+              {errors.productInformation}
+            </div>
+          )}
           <span className="productForm__tooltip">Enter product highlights</span>
         </div>
       </form>

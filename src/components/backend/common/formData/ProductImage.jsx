@@ -8,9 +8,11 @@ export default function ProductImage({
   handleImageChange,
   featureImage,
   setFeatureImage,
+  errors,
+  setErrors,
 }) {
   const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState("");
+  // const [errors, setErrors] = useState("");
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
 
@@ -39,17 +41,17 @@ export default function ProductImage({
 
   const validateAndAddFile = (file) => {
     if (!file.type.startsWith("image/")) {
-      setError("Only image files are allowed.");
+      setErrors("Only image files are allowed.");
       return;
     }
 
     const maxFileSize = 50 * 1024 * 1024; // 50 MB
     if (file.size > maxFileSize) {
-      setError("File size should not exceed 50 MB.");
+      setErrors("File size should not exceed 50 MB.");
       return;
     }
 
-    setError("");
+    setErrors("");
     const fileUrl = URL.createObjectURL(file);
     setFeatureImage({ file, preview: fileUrl });
     handleImageChange({ target: { files: [file] } });
@@ -175,7 +177,9 @@ export default function ProductImage({
           )}
         </section>
       )}
-      {error && <div className="productImage__error-message">{error}</div>}
+      {errors.featureImage && (
+        <div className="productImage__error-message">{errors.featureImage}</div>
+      )}
     </>
   );
 }

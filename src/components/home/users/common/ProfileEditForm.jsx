@@ -73,11 +73,28 @@ export default function ProfileEditForm({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+
+    if (name.includes("address.")) {
+      const addressField = name.split(".")[1];
+      setUserData((prevFormData) => ({
+        ...prevFormData,
+        address: {
+          ...prevFormData.address,
+          [addressField]: value,
+        },
+      }));
+    } else {
+      setUserData({ ...userData, [name]: value });
+    }
   };
+
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUserData((prevState) => ({
+  //     ...prevState,
+  //     [name]: value,
+  //   }));
+  // };
 
   return (
     <Box
@@ -205,6 +222,55 @@ export default function ProfileEditForm({
             }}
           />
         </Box>
+
+        <TextField
+          fullWidth
+          id="address"
+          name="address"
+          label="Address"
+          // value={userData.address}
+          value={userData.address.address}
+          onChange={handleInputChange}
+          margin="normal"
+        />
+
+        <TextField
+          fullWidth
+          id="city"
+          name="city"
+          label="City"
+          value={userData.city}
+          onChange={handleInputChange}
+          margin="normal"
+        />
+
+        <TextField
+          fullWidth
+          id="state"
+          name="state"
+          label="State"
+          value={userData.state}
+          onChange={handleInputChange}
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          id="country"
+          name="country"
+          label="Country"
+          value={userData.country}
+          onChange={handleInputChange}
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          id="zipCode"
+          name="zipCode"
+          label="Zip Code"
+          value={userData.zipCode}
+          onChange={handleInputChange}
+          margin="normal"
+        />
 
         <Box mt={2} display="flex" justifyContent="space-between">
           <Button

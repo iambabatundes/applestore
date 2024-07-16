@@ -179,7 +179,7 @@ function App() {
                 }
               />
               <Route path="/:title" exact element={<SingleProduct />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/register" element={<Register user={user} />} />
               <Route
                 path="/login"
                 element={<Login companyName={companyName} user={user} />}

@@ -5,7 +5,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/adminLogin.css";
 import { adminlogin, getCurrentUser } from "../../services/adminAuthService";
 
-export default function AdminLogin({ setAuth }) {
+export default function AdminLogin({ adminUser, setAuth }) {
   const [data, setData] = useState({ email: "", password: "" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
@@ -42,6 +42,7 @@ export default function AdminLogin({ setAuth }) {
     setPasswordVisible(!passwordVisible);
   };
 
+  // if (adminUser) return <Navigate to="/admin/home" />;
   if (getCurrentUser()) return <Navigate to="/admin/home" />;
 
   return (

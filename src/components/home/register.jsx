@@ -10,7 +10,7 @@ import {
   verifyUser,
   resendValidationCode,
 } from "../../services/userServices";
-import { getCurrentUser, loginWithJwt } from "../../services/authService";
+import { loginWithJwt } from "../../services/authService";
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -23,7 +23,7 @@ const validationSchema = yup.object({
     .required("Password is required"),
 });
 
-export default function Register() {
+export default function Register({ user }) {
   const [step, setStep] = useState(1);
   const [verificationCode, setVerificationCode] = useState("");
   const [canResend, setCanResend] = useState(false);
@@ -127,8 +127,7 @@ export default function Register() {
     setCanResend(true);
   };
 
-  // if (getCurrentUser) return <Navigate to="/" />;
-  if (getCurrentUser()) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/" replace />;
 
   return (
     <section className="register-main">

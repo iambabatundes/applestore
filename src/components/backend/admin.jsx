@@ -134,7 +134,7 @@ const Admin = ({ companyName, count, userName }) => {
         {
           label: "Create Post",
           to: "/admin/create",
-          content: <CreatePost />,
+          content: <CreatePost adminUser={adminUser} />,
         },
         {
           label: "Categories",
@@ -162,7 +162,7 @@ const Admin = ({ companyName, count, userName }) => {
         {
           label: "Add Product",
           to: "/admin/add-product",
-          content: <AddProduct darkMode={darkMode} />,
+          content: <AddProduct darkMode={darkMode} user={adminUser} />,
         },
         {
           label: "Categories",
@@ -310,7 +310,10 @@ const Admin = ({ companyName, count, userName }) => {
                 />
               ))
             )}
-            <Route path="/admin/add-product/:id" element={<AddProduct />} />
+            <Route
+              path="/admin/add-product/:id"
+              element={<AddProduct user={adminUser} />}
+            />
             <Route path="/admin/create/:id" element={<CreatePost />} />
           </Routes>
         </section>

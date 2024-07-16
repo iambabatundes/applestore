@@ -24,6 +24,13 @@ export default function UserProfile({ user, setUser }) {
     gender: user.gender,
     dateOfBirth: user.dateOfBirth,
     profileImage: user.profileImage,
+    address: {
+      addressLine: user.address?.addressLine || "",
+      city: user.address?.city || "",
+      state: user.address?.state || "",
+      country: user.address?.country || "",
+      postalCode: user.address?.postalCode || "",
+    },
   });
   const [profileImage, setProfileImage] = useState(user.profileImage);
   const [greeting, setGreeting] = useState("Good day");
