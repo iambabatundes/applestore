@@ -9,6 +9,8 @@ export default function DataTags({
   setDataTags,
   getDataTags,
   saveDataTag,
+  errors,
+  setErrors,
 }) {
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);

@@ -1,0 +1,204 @@
+.exclusiveDeal-main {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    gap: 20px;
+    /* padding: 20px; */
+    /* background: #fff; */
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+@media (min-width: 768px) {
+    .exclusiveDeal-main {
+        flex-direction: row;
+    }
+}
+
+.exclusiveDeal {
+    background: #f5f5f5;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.welcomeDeal {
+    align-items: center;
+    background: #fff1ee;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    width: 23%;
+}
+
+.welcomeDeal__header-container {
+    margin-bottom: 20px;
+}
+
+.welcomeDeal__header {
+    font-size: 1.5rem;
+    color: #fd384f;
+    font-weight: 700;
+}
+
+.welcomeDeal__subHeader {
+    font-size: 1rem;
+    color: #191919;
+}
+
+.welcomeDeal__productImage-container {
+    margin: 50px 0;
+    width: 195px;
+}
+
+.welcomeDeal__productImage {
+    border-radius: 24px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.welcomeDeal__price-main {
+    margin-top: 10px;
+    font-size: 1.2rem;
+}
+
+.welcomeDeal__price {
+    color: #fd384f;
+    font-weight: bold;
+}
+
+.welcomeDeal__oldprice {
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+
+.firstComers {
+    background: #fff;
+    padding: 20px;
+    flex-grow: 3;
+    width: 35%;
+}
+
+.firstComers__action {
+    align-items: center;
+    background: #F5F5EA;
+    /* background: #f5f5f5; */
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 20px 0;
+}
+
+.firstComers__action:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s, color 0.3s;
+}
+
+.firstComers__btn {
+    border-radius: 30px;
+    padding: 10px 20px;
+    border: 2px solid #000;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+
+.firstComers__register {
+    background: #000;
+    color: #fff;
+    margin-right: 30px;
+}
+
+.firstComers__signIn {
+    background: #fff;
+    color: #000;
+}
+
+.firstComers__btn:hover {
+    background: #fd384f;
+    color: #fff;
+    border-color: #fd384f;
+}
+
+.firstComers__offer {
+    /* text-align: center; */
+    background: #f1f1f1;
+    padding: 15px 10px;
+    border-radius: 24px;
+
+}
+
+.firstComers__offer-title {
+    color: #fd384f;
+    font-size: 1.3rem;
+    /* overflow: hidden; */
+}
+
+.firstComers__offer-label {
+    background: #febd69;
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 8px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.firstComers__offer-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.firstComers__products {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.firstComers__product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+.firstComers__productImage {
+    border-radius: 20px;
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+
+}
+
+.firstComers__productPrice {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #000;
+}
+
+.firstComers__discount {
+    font-size: 0.9rem;
+    color: #fd384f;
+    margin-top: 5px;
+}
+
+.buyFrom10k {
+    background: #ffefdb;
+    text-align: center;
+    padding: 20px;
+    width: 50%;
+    flex-grow: 20;
+}
+
+.buyFrom10k__title {
+    font-size: 1.4rem;
+    color: #d35400;
+}

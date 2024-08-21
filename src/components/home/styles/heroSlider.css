@@ -1,0 +1,217 @@
+.hero-slider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #00a85a;
+    padding: 20px 40px;
+    color: white;
+    margin: 0;
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.promo-text {
+    flex: 1;
+    padding: 30px 0px;
+}
+
+.promo-text p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.promo-text h1 {
+    font-size: 32px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.promoText__menu {
+    display: flex;
+    align-items: center;
+}
+
+.promoText {
+    display: block;
+    line-height: 35px;
+}
+
+.promoText__up {
+    font-size: 2.3rem;
+    font-weight: 700;
+}
+
+.promoText__menu h2 {
+    font-size: 65px;
+    color: #fff;
+    font-family: 'Oswald';
+    font-weight: 800;
+    padding-left: 10px;
+}
+
+.promo-cards-wrapper {
+    flex: 2;
+    overflow: hidden;
+    position: relative;
+    /* width: -20%; */
+    /* max-width: 1200px; */
+    margin: 0 auto;
+
+}
+
+.heroSlides-button {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+    border: none;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.heroSlides-button-prev {
+    border-radius: 50px 50px 50px 50px;
+    left: 10px;
+    padding-left: 10px;
+}
+
+.heroSlides-button-next {
+    right: 18px;
+    border-radius: 50px 50px 50px 50px;
+}
+
+.heroSlides-button-icon {
+    font-size: 20px;
+    color: #333;
+}
+
+.heroSlides__card button:first-child {
+    left: 0;
+}
+
+.heroSlides__card button:last-child {
+    right: 0;
+}
+
+.promo-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s ease-in-out;
+    /* Smooth sliding transition */
+    /* width: calc(100% * 6 / 3); */
+    /* width: 220px; */
+    /* will-change: transform; */
+}
+
+.promo-card {
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    padding: 15px;
+    /* min-width: calc(100% / 3); */
+    width: 260px;
+    margin-right: 10px;
+    box-sizing: border-box;
+
+}
+
+.promoContent {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    height: 100px;
+}
+
+.promo-card__image {
+    width: 50%;
+    object-fit: cover;
+    padding-right: 5px;
+}
+
+.promo-card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #000;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-content p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: gray;
+    font-size: 14px;
+}
+
+.fresh-finds {
+    background-color: #ffe6e6;
+}
+
+.tech-essentials {
+    background-color: #e6f7ff;
+}
+
+.home-essentials {
+    background-color: #e6e9ff;
+}
+
+/* .control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.control.left {
+    left: 10px;
+}
+
+.control.right {
+    right: 10px;
+} */
+
+@media (max-width: 768px) {
+    .promo-cards-wrapper {
+        width: 100%;
+    }
+
+    .promo-card {
+        min-width: calc(100% / 2);
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-card {
+        min-width: 100%;
+    }
+
+    .promoText__menu h2 {
+        font-size: 2rem;
+    }
+
+    .promo-text h1 {
+        font-size: 1.25rem;
+    }
+}

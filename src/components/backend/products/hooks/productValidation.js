@@ -44,13 +44,13 @@ export const schema = Joi.object({
     .optional()
     .allow(""),
   description: Joi.string().min(20).required().label("Product Description"),
-  //   featureImage: Joi.object().label("Feature Image").max(1).required(),
-  featureImage: Joi.object({
-    file: Joi.any().required().label("File"),
-    preview: Joi.string().uri().required().label("Preview URL"),
-  })
-    .label("Feature Image")
-    .required(),
+  featureImage: Joi.object().label("Feature Image").required(),
+  //   featureImage: Joi.object({
+  //     file: Joi.any().required().label("File"),
+  //     preview: Joi.string().uri().required().label("Feauture Image"),
+  //   })
+  //     .label("Feature Image")
+  //     .required(),
   media: Joi.array().min(2).max(8).label("Media File").optional().allow(null),
   tags: Joi.array().label("Tags").optional().allow(null),
   category: Joi.array().required().label("Category"),

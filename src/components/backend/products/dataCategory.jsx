@@ -48,7 +48,7 @@ export default function DataCategory({
         setErrors({ ...errors, category: "Failed to add category" });
       }
     } else {
-      setErrors({ ...errors, category: "Category name is required" });
+      setErrors({ ...errors, category: "Choose atleast onet Categorys" });
     }
   };
 

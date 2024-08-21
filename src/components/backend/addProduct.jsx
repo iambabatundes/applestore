@@ -127,6 +127,8 @@ export default function AddProduct({ darkMode }) {
                 getDataTags={getTags}
                 saveDataTag={saveTag}
                 setDataTags={setTags}
+                errors={errors}
+                setErrors={setErrors}
               />
             </div>
 

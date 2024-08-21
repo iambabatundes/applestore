@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import cart from "./images/cartItem.png";
-import { Avatar } from "@mui/material";
 import "./styles/navbar.css";
-import config from "../../config.json";
+import UserSection from "./UserSection";
+import { getCategories } from "../../services/categoryService";
+import CategoriesSection from "./categoriesSection";
 
 export default function Navbar({ user, cartItemCount = 0 }) {
+  const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [geoLocation, setGeoLocation] = useState("");
@@ -32,6 +34,15 @@ export default function Navbar({ user, cartItemCount = 0 }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    const fetchCategory = async () => {
+      const { data: categories } = await getCategories();
+      setCategories(categories);
+    };
+
+    fetchCategory();
+  }, []);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -43,7 +54,7 @@ export default function Navbar({ user, cartItemCount = 0 }) {
   return (
     <header className="navbar">
       <div className="navbar-brand">
-        <Link to="#home">
+        <Link to="/">
           <img
             src="https://www.amazon.com/favicon.ico"
             alt="Brand Logo"
@@ -52,13 +63,9 @@ export default function Navbar({ user, cartItemCount = 0 }) {
         </Link>
       </div>
 
+      <CategoriesSection categories={categories} />
+
       <form className="navbar-search">
-        <select className="category-select">
-          <option value="all">All</option>
-          <option value="electronics">Electronics</option>
-          <option value="fashion">Fashion</option>
-          <option value="home-kitchen">Home & Kitchen</option>
-        </select>
         <input type="text" className="search-input" placeholder="Search..." />
         <button className="search-button">
           <i className="fa fa-search"></i>
@@ -66,119 +73,12 @@ export default function Navbar({ user, cartItemCount = 0 }) {
       </form>
 
       <section className="navbar-actions">
-        {!user ? (
-          <>
-            <div className="navbar-user-container">
-              <div className="navbar-user__main" onClick={toggleDropdown}>
-                <Avatar
-                  src="/default-avatar.png"
-                  sx={{ width: 35, height: 35, mr: 1 }}
-                />
-
-                <div className="navbar-signin-main">
-                  <h1 className="navbar-user-greeting">Hello!</h1>
-                  <span>Sign in</span>
-                </div>
-                <i
-                  className={`fa ${
-                    isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
-                  } navbar-dropdown-chevron`}
-                ></i>
-              </div>
-              {isDropdownOpen && (
-                <div className="navbar-dropdown-menu">
-                  <Link to="/login" className="navbar-dropdown-item">
-                    <i className="fa fa-sign-in-alt"></i> Sign In
-                  </Link>
-                  <Link to="/register" className="navbar-dropdown-item">
-                    <i className="fa fa-user-plus"></i> Register
-                  </Link>
-                  <Link to="/help" className="navbar-dropdown-item">
-                    <i className="fa fa-question-circle"></i> Help
-                  </Link>
-
-                  <Link
-                    to="/users/my-dashboard"
-                    className="navbar-dropdown-item"
-                  >
-                    <i className="fa fa-question-circle"></i> My Dashboard
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div className="navbar-user-container">
-              <Link to="/address" className="navbar-user__main">
-                <i className="fa fa-map-marker map-marker"></i>
-                <div className="navbar-signin-main">
-                  <h1 className="navbar-user-greeting">Deliver to!</h1>
-                  <span>{geoLocation}</span>
-                </div>
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="navbar-user-container">
-              <div className="navbar-user__main" onClick={toggleDropdown}>
-                <Avatar
-                  src={
-                    user.profileImage instanceof File
-                      ? URL.createObjectURL(user.profileImage)
-                      : user.profileImage
-                      ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
-                      : "/default-avatar.png"
-                  }
-                  alt={`${user.firstName} ${user.lastName}`}
-                  sx={{ width: 40, height: 40, mr: 1 }}
-                />
-
-                <div className="navbar-signin-main">
-                  <h1 className="navbar-user-greeting">Hello!</h1>
-                  <span>{user.username}</span>
-                </div>
-                <i
-                  className={`fa ${
-                    isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
-                  } navbar-dropdown-chevron`}
-                ></i>
-              </div>
-              {isDropdownOpen && (
-                <div className="navbar-dropdown-menu">
-                  <Link
-                    to="users/my-dashboard"
-                    className="navbar-dropdown-item"
-                  >
-                    <i className="fa fa-user"></i> My Dashboard
-                  </Link>
-                  <Link to="users/my-profile" className="navbar-dropdown-item">
-                    <i className="fa fa-user"></i> My Account
-                  </Link>
-                  <Link to="users/my-orders" className="navbar-dropdown-item">
-                    <i className="fa fa-envelope"></i> My Orders
-                  </Link>
-                  <Link to="users/my-messages" className="navbar-dropdown-item">
-                    <i className="fa fa-envelope"></i> My Messages
-                  </Link>
-                  <Link to="users/saved-items" className="navbar-dropdown-item">
-                    <i className="fa fa-heart"></i> My Saved Items
-                  </Link>
-                  <Link to="/logout" className="navbar-dropdown-item logout">
-                    <i className="fa fa-sign-out-alt"></i> Logout
-                  </Link>
-                </div>
-              )}
-            </div>
-            <div className="navbar-user-address">
-              <Link to="/address" className="navbar-address__main">
-                <i className="fa fa-map-marker map-marker"></i>
-                <div className="navbar-address__container">
-                  <h1 className="navbar-user-greeting">Deliver to!</h1>
-                  <span>{user.address?.country || geoLocation}</span>
-                </div>
-              </Link>
-            </div>
-          </>
-        )}
+        <UserSection
+          user={user}
+          geoLocation={geoLocation}
+          isDropdownOpen={isDropdownOpen}
+          toggleDropdown={toggleDropdown}
+        />
       </section>
 
       <div className="navbar-cart">
