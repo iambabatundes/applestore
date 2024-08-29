@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function HeroCard({ index, card }) {
+export default function HeroCard({ index, card, backgroundColor, textColor }) {
   return (
-    <div key={index} className="promo-card">
-      <h3>{card.title}</h3>
+    <div key={index} className="promo-card" style={{ backgroundColor }}>
+      <h3 style={{ color: textColor }}>{card.title}</h3>
       <section className="card-content">
         {card.items.map((item, idx) => (
           <div className="promoContent" key={idx}>

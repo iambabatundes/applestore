@@ -4,7 +4,7 @@ import HeroCard from "./heroCard";
 import cards from "./heroDatas";
 import { getRandomColor, getContrastYIQ } from "./utils/colorUtils";
 
-export default function HeroSlider() {
+export default function DiscountProduct() {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   const handleNextCard = () => {

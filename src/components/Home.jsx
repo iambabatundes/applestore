@@ -10,12 +10,16 @@ import Blog from "./blog";
 import Newsletter from "./Newsletter";
 import HeroSlider from "./home/HeroSlider";
 import ExclusiveDeal from "./home/exclusiveDeal";
+import BigSave from "./home/bigSave";
+// import DiscountProduct from "./home/discountProduct";
 
 function Home({ addToCart, cartItems, blogPosts, user }) {
   return (
     <section>
       <HeroSlider />
       <ExclusiveDeal user={user} />
+      <BigSave addToCart={addToCart} cartItems={cartItems} />
+      {/* <DiscountProduct /> */}
       <HomeSlider />
       <BrandProduct />
       <Feactured />

@@ -24,6 +24,7 @@ import Logout from "./components/home/logout";
 import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
+import ExclusiveDeal from "./components/home/exclusiveDeal";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
@@ -159,6 +160,7 @@ function App() {
                     addToCart={addToCart}
                     cartItems={cartItems}
                     // blogPosts={blogPosts}
+                    user={user}
                   />
                 }
               />

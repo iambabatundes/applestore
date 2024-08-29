@@ -107,8 +107,13 @@ export default function Cart({
           <h2>Your AppleStore Cart is empty</h2>
           <h3>Shop today's deals</h3>
 
-          <button>Login to your account</button>
-          <button>Sign up</button>
+          <Link to="/login">
+            <button>Login to your account</button>
+          </Link>
+
+          <Link to="/register">
+            <button>Sign up</button>
+          </Link>
         </section>
 
         <section className="cart-left">

@@ -1,0 +1,58 @@
+.welcomeDeal {
+    background: rgb(255, 245, 239);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.welcomeDeal__header-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.welcomeDeal__header {
+    font-size: 1.5rem;
+    color: #fd384f;
+    font-weight: 700;
+}
+
+.welcomeDeal__subHeader {
+    font-size: 1rem;
+    color: #191919;
+}
+
+.welcomeDeal__slider {
+    width: 100%;
+}
+
+.welcomeDeal__productImage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.welcomeDeal__productImage {
+    border-radius: 24px;
+    width: 100%;
+    max-width: 300px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.welcomeDeal__price-main {
+    margin-top: 10px;
+    font-size: 1.2rem;
+}
+
+.welcomeDeal__price {
+    color: #fd384f;
+    font-weight: bold;
+}
+
+.welcomeDeal__oldprice {
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 10px;
+}

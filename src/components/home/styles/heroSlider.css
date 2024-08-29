@@ -57,7 +57,11 @@
     /* width: -20%; */
     /* max-width: 1200px; */
     margin: 0 auto;
+}
 
+.promo-cards.sliding {
+    transform: translateX(-33.33%);
+    /* Slide one card width */
 }
 
 .heroSlides-button {
@@ -103,10 +107,7 @@
     align-items: center;
     justify-content: center;
     transition: transform 0.5s ease-in-out;
-    /* Smooth sliding transition */
-    /* width: calc(100% * 6 / 3); */
-    /* width: 220px; */
-    /* will-change: transform; */
+
 }
 
 .promo-card {
@@ -114,10 +115,10 @@
     color: black;
     border-radius: 10px;
     padding: 15px;
-    /* min-width: calc(100% / 3); */
     width: 260px;
     margin-right: 10px;
     box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
 }
 

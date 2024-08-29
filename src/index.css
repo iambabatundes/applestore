@@ -34,6 +34,8 @@ a,
 p,
 span {
   font-weight: var(--fw-regular);
+  text-decoration: none;
+  color: unset;
 }
 
 button,
