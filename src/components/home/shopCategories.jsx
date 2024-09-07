@@ -1,13 +1,15 @@
 import React from "react";
-import "./ShopCategories.css";
+import "./styles/shopCategories.css";
+import productImage from "./images/produ1.avif";
+import productImage1 from "./images/produ2.avif";
 
 export default function ShopCategories() {
   const categories = [
-    { name: "Electronics", image: "electronics.jpg" },
-    { name: "Fashion", image: "fashion.jpg" },
-    { name: "Home", image: "home.jpg" },
-    { name: "Books", image: "books.jpg" },
-    { name: "Toys", image: "toys.jpg" },
+    { name: "Electronics", image: productImage1 },
+    { name: "Fashion", image: productImage },
+    { name: "Home", image: productImage1 },
+    { name: "Books", image: productImage },
+    { name: "Toys", image: productImage1 },
   ];
 
   return (

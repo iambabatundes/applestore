@@ -35,8 +35,8 @@ export default function ProductCards({
     localStorage.setItem(`added_${item.id}`, "true");
   };
 
-  function formatPermalink(title) {
-    return title.toLowerCase().replaceAll(" ", "-");
+  function formatPermalink(name) {
+    return name.toLowerCase().replaceAll(" ", "-");
   }
 
   return (
@@ -48,10 +48,10 @@ export default function ProductCards({
       />
       <div className={`productCards__content`}>
         <Link
-          to={`/${formatPermalink(product.title)}`}
+          to={`/${formatPermalink(product.name)}`}
           className="productCards__links"
         >
-          <h1 className={`${className} productCards__title`}>{item.title}</h1>
+          <h1 className={`${className} productCards__title`}>{item.name}</h1>
         </Link>
         <h2 className={`${className} productCards__title header`}>
           {item.header}

@@ -1,0 +1,25 @@
+.moreToLove {
+    padding: 20px 0px 20px;
+    /* background-color: #f7f7f7; */
+}
+
+.more-to-love h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* .moreToLove__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+} */
+
+.moreToLove__main {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}

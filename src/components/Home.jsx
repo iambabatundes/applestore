@@ -11,15 +11,45 @@ import Newsletter from "./Newsletter";
 import HeroSlider from "./home/HeroSlider";
 import ExclusiveDeal from "./home/exclusiveDeal";
 import BigSave from "./home/bigSave";
-// import DiscountProduct from "./home/discountProduct";
+import DiscountProduct from "./home/discountProduct";
+// import ShopCategories from "./home/shopCategories";
+// import ChoiceDay from "./home/choiceDay";
+import Choice from "./home/choice";
+import MoreToLove from "./home/moreToLove";
 
-function Home({ addToCart, cartItems, blogPosts, user }) {
+function Home({
+  addToCart,
+  cartItems,
+  blogPosts,
+  user,
+  conversionRate,
+  selectedCurrency,
+}) {
   return (
     <section>
       <HeroSlider />
       <ExclusiveDeal user={user} />
-      <BigSave addToCart={addToCart} cartItems={cartItems} />
-      {/* <DiscountProduct /> */}
+      <BigSave
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
+      {/* <ShopCategories /> */}
+      <Choice
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
+      <MoreToLove
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
+      {/* <ChoiceDay /> */}
+      <DiscountProduct />
       <HomeSlider />
       <BrandProduct />
       <Feactured />

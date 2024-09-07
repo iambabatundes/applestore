@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,15 +24,22 @@ import Logout from "./components/home/logout";
 import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
-import ExclusiveDeal from "./components/home/exclusiveDeal";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
-  const [quantityTenPlus, setQuantityTenPlus] = useState({}); // State variable for "Quantity 10+"
+  const [quantityTenPlus, setQuantityTenPlus] = useState({});
+  const [selectedCurrency, setSelectedCurrency] = useState("₦");
+  const [conversionRate, setConversionRate] = useState(1);
 
   const location = useLocation();
+
+  // Function to update currency and conversion rate
+  const handleCurrencyChange = (currency, rate) => {
+    setSelectedCurrency(currency);
+    setConversionRate(rate);
+  };
 
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
@@ -130,7 +137,13 @@ function App() {
     if (location.pathname === "/checkout") {
       return <CheckoutNavbar cartItemCount={cartItemCount} />;
     } else {
-      return <Navbar cartItemCount={cartItemCount} user={user} />;
+      return (
+        <Navbar
+          cartItemCount={cartItemCount}
+          user={user}
+          onCurrencyChange={handleCurrencyChange}
+        />
+      );
     }
   };
 
@@ -161,6 +174,8 @@ function App() {
                     cartItems={cartItems}
                     // blogPosts={blogPosts}
                     user={user}
+                    selectedCurrency={selectedCurrency}
+                    conversionRate={conversionRate}
                   />
                 }
               />
@@ -180,7 +195,7 @@ function App() {
                   />
                 }
               />
-              <Route path="/:title" exact element={<SingleProduct />} />
+              <Route path="/:name" exact element={<SingleProduct />} />
               <Route path="/register" element={<Register user={user} />} />
               <Route
                 path="/login"
@@ -195,6 +210,8 @@ function App() {
                       user={user}
                       setUser={setUser}
                       handleProfileSubmit={handleProfileSubmit}
+                      addToCart={addToCart}
+                      cartItems={cartItems}
                     />
                   </RequireAuth>
                 }

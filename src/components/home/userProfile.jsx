@@ -14,7 +14,7 @@ import TopNavbar from "./users/common/TopNavbar";
 import { updateUser } from "../../services/profileService";
 // import { updateUser } from "../../services/userServices";
 
-export default function UserProfile({ user, setUser }) {
+export default function UserProfile({ user, setUser, addToCart, cartItems }) {
   const [userData, setUserData] = useState({
     firstName: user.firstName,
     lastName: user.lastName,
@@ -114,7 +114,16 @@ export default function UserProfile({ user, setUser }) {
           <TopNavbar greeting={greeting} user={user} />
 
           <Routes location={location}>
-            <Route path="/my-dashboard" element={<MyDashboard user={user} />} />
+            <Route
+              path="/my-dashboard"
+              element={
+                <MyDashboard
+                  user={user}
+                  cartItems={cartItems}
+                  addToCart={addToCart}
+                />
+              }
+            />
             <Route
               path="/my-profile"
               element={

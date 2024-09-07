@@ -1,4 +1,3 @@
-// StarRating.js
 import React, { useState } from "react";
 import Star from "./star";
 

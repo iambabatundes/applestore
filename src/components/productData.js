@@ -2,7 +2,7 @@ const products = [
   {
     id: 1,
     image: "/brandNew21.webp",
-    video: { video: "/video1.mp4", title: "Build your ways" },
+    video: { video: "/video1.mp4", name: "Build your ways" },
 
     productDatas: {
       image1: "/brandNew23.webp",
@@ -16,19 +16,19 @@ const products = [
     productVideo: {
       video1: {
         src: "/video2.mp4",
-        title: "Video 2 Title",
+        name: "Video 2 Title",
       },
       video2: {
         src: "/video3.mp4",
-        title: "Video 3 Title",
+        name: "Video 3 Title",
       },
       video3: {
         src: "/video4.mp4",
-        title: "Video 4 Title",
+        name: "Video 4 Title",
       },
     },
 
-    title: "Refreshing Flavors in Every Bite",
+    name: "Refreshing Flavors in Every Bite",
     sku: "CAT78438949533",
     categories: "Food",
     tags: "rice",
@@ -45,7 +45,7 @@ const products = [
   {
     id: 2,
     image: "/brand11.webp",
-    title: "Discover the Delight of Fresh Apples",
+    name: "Discover the Delight of Fresh Apples",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
       "Embark on a Journey through Nature's Apple Extravaganza: Immerse Yourself in a Whirlwind of Tempting Varieties Grown in Lush Orchards",
@@ -63,7 +63,7 @@ const products = [
   {
     id: 3,
     image: "/newBrand.webp",
-    title: "Apple Ecstasy at Your Fingertips.",
+    name: "Apple Ecstasy at Your Fingertips.",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
       "Savor the Symphony of Freshness with our Crisp and Succulent Apples: Grown with Care and Nurtured",
@@ -81,7 +81,7 @@ const products = [
   {
     id: 4,
     // image: "apple9.jpg",
-    title: "Savor the Orchard's Finest Apples.",
+    name: "Savor the Orchard's Finest Apples.",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
@@ -106,7 +106,7 @@ const products = [
   {
     id: 5,
     // image: "apple1.jpg",
-    title: "Savor the Orchard's Finest Apples.",
+    name: "Savor the Orchard's Finest Apples.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
@@ -123,7 +123,7 @@ const products = [
   {
     id: 6,
     // image: "apple2.jpg",
-    title: "A Crescendo of Crispness, Sweetness Apple.",
+    name: "A Crescendo of Crispness, Sweetness Apple.",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
@@ -141,7 +141,7 @@ const products = [
   {
     id: 7,
     // image: "apple3.jpg",
-    title: "Savor the Orchard's Finest Apples.",
+    name: "Savor the Orchard's Finest Apples.",
     sku: "CAT78438949533",
     categories: "Food",
     tags: "rice",
@@ -159,7 +159,7 @@ const products = [
   {
     id: 8,
     // image: "apple10.jpg",
-    title: "Prepare for The Apple Symphony.",
+    name: "Prepare for The Apple Symphony.",
     sku: "CAT78438949533",
     categories: "Food",
     tags: "rice",
@@ -183,7 +183,7 @@ const products = [
     salePrice: 10,
     stock: "inStock",
     numberInStock: 40,
-    title: "the Orchard's Finest Apples.",
+    name: "the Orchard's Finest Apples.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
@@ -200,7 +200,7 @@ const products = [
     salePrice: 10,
     stock: "inStock",
     numberInStock: 40,
-    title: "Savor the Orchard's Finest Apples.",
+    name: "Savor the Orchard's Finest Apples.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
     rating: 4.99,
@@ -217,7 +217,7 @@ const products = [
     salePrice: 10,
     stock: "inStock",
     numberInStock: 40,
-    title: "Prepare for The Apple Symphony Orchestra.",
+    name: "Prepare for The Apple Symphony Orchestra.",
     subtitle: "Prepare for The Apple Symphony Orchestra.",
     description:
       "Prepare for The Apple Symphony Orchestra: A Crescendo of Crispness, Sweetness, and Unforgettable Eating Pleasure.",
@@ -234,17 +234,17 @@ export function getProducts() {
   return products;
 }
 
-export function getProduct(title) {
-  return products.find((product) => formatPermalink(product.title) === title);
+export function getProduct(name) {
+  return products.find((product) => formatPermalink(product.name) === name);
 }
 
-// export function getProduct(title) {
-//   const formattedTitle = formatPermalink(title);
+// export function getProduct(name) {
+//   const formattedTitle = formatPermalink(name);
 //   return products.find(
-//     (product) => formatPermalink(product.title) === formattedTitle
+//     (product) => formatPermalink(product.name) === formattedTitle
 //   );
 // }
 
-function formatPermalink(title) {
-  return title.toLowerCase().replaceAll(" ", "-");
+function formatPermalink(name) {
+  return name.toLowerCase().replaceAll(" ", "-");
 }

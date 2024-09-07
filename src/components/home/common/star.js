@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/bigSave.css";
+import "../styles/productCard.css";
 
 const Star = ({
   filled,
@@ -10,9 +10,9 @@ const Star = ({
   ratingValue,
 }) => {
   return (
-    <div className="star-container">
+    <div className="productCard__star-container">
       <svg
-        className="bigSave__star-main"
+        className="product__star-main"
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -20,7 +20,7 @@ const Star = ({
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          className="bigSave__star"
+          className="productCard__star"
           d="M12 .587l3.668 7.431 8.167 1.18-5.92 5.76 1.397 8.139L12 18.897l-7.312 3.845 1.396-8.139L.165 9.198l8.167-1.18z"
           fill={filled ? "#191919" : halfFilled ? "url(#half)" : "#e8e8e8"}
         />
@@ -33,7 +33,7 @@ const Star = ({
           </defs>
         )}
       </svg>
-      <div className="tooltip">{ratingValue}</div>
+      <div className="productCard__tooltip">{ratingValue}</div>
     </div>
   );
 };

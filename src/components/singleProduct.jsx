@@ -19,21 +19,21 @@ export default function SingleProduct() {
   // const { productDatas = {} } = product || {};
   // const imagesArray = Object.values(productDatas);
 
-  const { title } = useParams();
+  const { name } = useParams();
 
-  function formatPermalink(title) {
-    return title.toLowerCase().replaceAll(" ", "-");
+  function formatPermalink(name) {
+    return name.toLowerCase().replaceAll(" ", "-");
   }
 
   useEffect(() => {
     try {
-      const fetchedProduct = getProduct(formatPermalink(title));
+      const fetchedProduct = getProduct(formatPermalink(name));
       setProduct(fetchedProduct);
       console.log(fetchedProduct);
     } catch (error) {
       console.error("Error fetching product:", error);
     }
-  }, [title]);
+  }, [name]);
 
   // if (!product) {
   //   return <div>Loading...</div>;
@@ -68,10 +68,10 @@ export default function SingleProduct() {
     } else setActiveTab("image");
 
     // Call the updateMainVideo function with the selected video
-    if (type === "video" && (media.src || (media.video && media.title))) {
+    if (type === "video" && (media.src || (media.video && media.name))) {
       updateMainVideo({
         src: media.src,
-        title: media.title,
+        name: media.name,
       });
     }
     setIsModalOpen(true);
@@ -95,7 +95,7 @@ export default function SingleProduct() {
   };
 
   const mainVideo = product?.video
-    ? { src: product?.video?.video, title: product?.video?.title }
+    ? { src: product?.video?.video, name: product?.video?.name }
     : product?.image || {}; // Provide a default value if 'image' is also undefined
 
   const hasVideo = videosArray.length > 0;
@@ -209,7 +209,7 @@ export default function SingleProduct() {
         </section>
 
         <div>
-          <h1>{product?.title}</h1>
+          <h1>{product?.name}</h1>
         </div>
         <div>
           <h1>This is for the AddCart side</h1>
@@ -226,7 +226,7 @@ export default function SingleProduct() {
         handleCloseModal={handleCloseModal}
         handleTabClick={handleTabClick}
         handleMediaClick={handleMediaClick}
-        mainVideoTitle={mainVideo?.title || ""}
+        mainVideoTitle={mainVideo?.name || ""}
         updateMainVideo={updateMainVideo}
         hasVideo={hasVideo}
         currentPlayingIndex={currentPlayingIndex}

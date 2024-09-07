@@ -3,7 +3,7 @@ import FetchOrders from "./common/FetchOrders";
 import TopProduct from "../topProduct";
 import { getUserOrders } from "../../../services/orderService";
 
-export default function MyDashboard({ user }) {
+export default function MyDashboard({ user, addToCart, cartItems }) {
   const [stats, setStats] = useState({
     totalSpent: 0,
     completedOrders: 0,
@@ -46,7 +46,7 @@ export default function MyDashboard({ user }) {
         <FetchOrders />
       </div>
 
-      <TopProduct />
+      <TopProduct cartItems={cartItems} addToCart={addToCart} />
     </div>
   );
 }

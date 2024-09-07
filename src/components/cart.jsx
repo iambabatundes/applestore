@@ -143,8 +143,8 @@ export default function Cart({
     );
   }
 
-  function formatPermalink(title) {
-    return title.toLowerCase().replaceAll(" ", "-");
+  function formatPermalink(name) {
+    return name.toLowerCase().replaceAll(" ", "-");
   }
 
   return (
@@ -160,11 +160,11 @@ export default function Cart({
           return (
             <section className="cart-item" key={item.id}>
               <article className="cart-item__main">
-                <img src={item.image} alt={item.title} width={100} />
+                <img src={item.image} alt={item.name} width={100} />
                 <div className="cart-item__content">
                   <div className="item-details">
-                    <Link to={`/${formatPermalink(item.title)}`}>
-                      <h2>{item.title}</h2>
+                    <Link to={`/${formatPermalink(item.name)}`}>
+                      <h2>{item.name}</h2>
                     </Link>
                     <span className="cart-item__price">${item.price}</span>
                     <p>In Stock: {item.inStock}</p>

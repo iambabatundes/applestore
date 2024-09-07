@@ -1,52 +1,75 @@
-import React from "react";
-import Slider from "react-slick";
+import React, { useState, useEffect } from "react";
+import { getProducts } from "./common/productDatas";
+import ProductCard from "./common/productCard";
 
-export default function Choice() {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    arrows: true,
-    autoplay: true,
-    autoplaySpeed: 3000,
+export default function Choice({
+  addToCart,
+  cartItems,
+  conversionRate,
+  selectedCurrency,
+}) {
+  const [products, setProducts] = useState([]);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchedProducts = getProducts();
+    setProducts(fetchedProducts);
+  }, []);
+
+  const handleRatingChange = (newRating) => {
+    console.log(`New rating for ${products.name}: ${newRating}`);
   };
 
-  const products = [
-    {
-      id: 1,
-      title: "Multi-Layer Trolley Rack",
-      price: "NGN 30,775.73",
-      originalPrice: "NGN 87,732.89",
-      image: "path-to-image", // Replace with your image path
-      sold: "10,000+ sold",
-    },
-    {
-      id: 2,
-      title: "QT&QY 25L/45L Tactical Backpack",
-      price: "NGN 55,200.59",
-      originalPrice: "NGN 110,840.32",
-      image: "path-to-image", // Replace with your image path
-      sold: "5,000+ sold",
-    },
-    // Add more products here
-  ];
+  const handleNextCard = () => {
+    const nextIndex = (currentCardIndex + 1) % (products.length - 5);
+    setCurrentCardIndex(nextIndex);
+  };
+
+  const handlePrevCard = () => {
+    const prevIndex =
+      (currentCardIndex + products.length - 1) % (products.length - 5);
+    setCurrentCardIndex(prevIndex);
+  };
+
+  const cardsToDisplay = products.slice(currentCardIndex, currentCardIndex + 5);
 
   return (
-    <div className="choice-container">
-      <h2>Better services and selected items on Choice</h2>
-      <Slider {...settings}>
-        {products.map((product) => (
-          <div key={product.id} className="product-card">
-            <img src={product.image} alt={product.title} />
-            <h3>{product.title}</h3>
-            <p>{product.sold}</p>
-            <p className="price">{product.price}</p>
-            <p className="original-price">{product.originalPrice}</p>
-          </div>
-        ))}
-      </Slider>
-    </div>
+    <section>
+      <div className="bigSave__cards-wrapper">
+        <button
+          className="bigSave-arrowBtn bigSave__leftBtn"
+          onClick={handlePrevCard}
+        >
+          <span className="bigSave__iconBtn">
+            <i className="fa fa-chevron-left" aria-hidden="true"></i>
+          </span>
+        </button>
+
+        <div className="bigSave__product">
+          {cardsToDisplay.map((product, index) => {
+            return (
+              <ProductCard
+                key={index}
+                addToCart={addToCart}
+                item={product}
+                handleRatingChange={handleRatingChange}
+                cartItems={cartItems}
+                productName={product}
+                conversionRate={conversionRate}
+                selectedCurrency={selectedCurrency}
+              />
+            );
+          })}
+        </div>
+        <button
+          className="bigSave-arrowBtn bigSave__nextBtn"
+          onClick={handleNextCard}
+        >
+          <span className=".bigSave__iconBtn">
+            <i className="fa fa-chevron-right" aria-hidden="true"></i>
+          </span>
+        </button>
+      </div>
+    </section>
   );
 }

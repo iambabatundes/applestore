@@ -1,0 +1,73 @@
+.currency-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.currency-dropdown {
+    cursor: pointer;
+}
+
+.currency-button {
+    /* background-color: #f3f3f3; */
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* .currency-button:hover {
+    background-color: #e2e2e2;
+} */
+
+.dropdown-arrow {
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+.currency-list {
+    position: absolute;
+    top: 52px;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 100%;
+    min-width: 239px;
+    height: 100%;
+    min-height: 280px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* padding: 30px 25px 10px 30px; */
+    overflow: auto;
+}
+
+.currency-list::before {
+    content: "";
+    position: fixed;
+    top: 45px;
+    left: 52%;
+    /* transform: translateX(-50%); */
+    border: 10px solid transparent;
+    box-shadow: 0px -2px 5px rgb(137, 137, 137) inset;
+    border-bottom-color: #fff;
+    z-index: 4000;
+}
+
+.currency-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.currency-item:hover {
+    background-color: #f0f0f0;
+}
