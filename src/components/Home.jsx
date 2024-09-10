@@ -24,6 +24,8 @@ function Home({
   user,
   conversionRate,
   selectedCurrency,
+  currencySymbols,
+  isLoading,
 }) {
   return (
     <section>
@@ -34,6 +36,8 @@ function Home({
         cartItems={cartItems}
         conversionRate={conversionRate}
         selectedCurrency={selectedCurrency}
+        currencySymbols={currencySymbols}
+        isLoading={isLoading}
       />
       {/* <ShopCategories /> */}
       <Choice

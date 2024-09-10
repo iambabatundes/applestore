@@ -6,9 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 // import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 import { BrowserRouter } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AdminProvider } from "./components/backend/AdminProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

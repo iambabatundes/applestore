@@ -5,6 +5,8 @@ export default function Currency({
   currencies,
   selectedCurrency,
   onCurrencyChange,
+  loading,
+  error,
 }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -17,14 +19,37 @@ export default function Currency({
     setIsDropdownOpen(false); // Close dropdown after selection
   };
 
+  const handleMouseEnter = () => {
+    setIsDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDropdownOpen(false);
+  };
+
+  if (loading) {
+    return <div className="currency-loading">Loading currencies...</div>;
+  }
+
+  if (error) {
+    return <div className="currency-error">{error}</div>;
+  }
+
   return (
-    <div className="currency-wrapper">
+    <div
+      className="currency-wrapper"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="currency-dropdown" onClick={toggleDropdown}>
         <span className="currency-button">
           {selectedCurrency}
-          <span className={`dropdown-arrow ${isDropdownOpen ? "open" : ""}`}>
-            ▼
-          </span>
+
+          <i
+            className={`fa ${
+              isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
+            } dropdown-arrow`}
+          ></i>
         </span>
 
         {isDropdownOpen && (

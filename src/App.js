@@ -13,6 +13,7 @@ import Product from "./components/Product";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
 import SingleProduct from "./components/singleProduct";
+import SingleProducts from "./components/home/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
 import Admin from "./components/backend/admin";
@@ -24,6 +25,7 @@ import Logout from "./components/home/logout";
 import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
+import LoadingSpinner from "./components/common/loadingSpinner";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
@@ -32,13 +34,25 @@ function App() {
   const [quantityTenPlus, setQuantityTenPlus] = useState({});
   const [selectedCurrency, setSelectedCurrency] = useState("₦");
   const [conversionRate, setConversionRate] = useState(1);
+  const [loadingApp, setLoadingApp] = useState(false);
 
   const location = useLocation();
 
-  // Function to update currency and conversion rate
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem("selectedCurrency");
+    const savedRate = localStorage.getItem("conversionRate");
+
+    if (savedCurrency && savedRate) {
+      setSelectedCurrency(savedCurrency);
+      setConversionRate(parseFloat(savedRate));
+    }
+  }, []);
+
   const handleCurrencyChange = (currency, rate) => {
     setSelectedCurrency(currency);
     setConversionRate(rate);
+    localStorage.setItem("selectedCurrency", currency);
+    localStorage.setItem("conversionRate", rate);
   };
 
   const handleSubmit = (e, itemId) => {
@@ -142,6 +156,7 @@ function App() {
           cartItemCount={cartItemCount}
           user={user}
           onCurrencyChange={handleCurrencyChange}
+          isLoading={loadingApp}
         />
       );
     }
@@ -151,8 +166,20 @@ function App() {
   const countComment = 5;
   const companyName = "AppStore";
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingApp(false);
+    }, 300); // Delay spinner for 300ms to avoid flicker
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loadingApp) {
+    return <LoadingSpinner />;
+  }
+
   if (loading) {
-    return <p>Loading...</p>; // Or a loading spinner
+    return <LoadingSpinner />;
   }
 
   return (
@@ -172,7 +199,6 @@ function App() {
                   <Home
                     addToCart={addToCart}
                     cartItems={cartItems}
-                    // blogPosts={blogPosts}
                     user={user}
                     selectedCurrency={selectedCurrency}
                     conversionRate={conversionRate}
@@ -196,6 +222,8 @@ function App() {
                 }
               />
               <Route path="/:name" exact element={<SingleProduct />} />
+              <Route path="/singleproduct" exact element={<SingleProducts />} />
+
               <Route path="/register" element={<Register user={user} />} />
               <Route
                 path="/login"
@@ -233,6 +261,9 @@ function App() {
                     handleSubmit={handleSubmit}
                     setCartItems={setCartItems}
                     handleDelete={handleDelete}
+                    isLoggedIn={user}
+                    selectedCurrency={selectedCurrency}
+                    conversionRate={conversionRate}
                   />
                 }
               />

@@ -1,4 +1,5 @@
 {
   "apiUrl": "http://localhost:4000/api",
-  "mediaUrl": "http://localhost:4000"
+  "mediaUrl": "http://localhost:4000",
+  "currencyApi": "https://v6.exchangerate-api.com/v6/6991faf3937f8f0023aff58c/latest/NGN"
 }

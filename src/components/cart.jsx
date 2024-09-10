@@ -2,6 +2,9 @@ import React, { useEffect } from "react";
 import "./styles/cart.css";
 import { calculateTotalPrice } from "./utils/utils";
 import { Link } from "react-router-dom";
+import CartSummary from "./cart/CartSummary";
+import EmptyCart from "./cart/emptyCart";
+import NotLoginCart from "./cart/notLoginCart";
 
 export default function Cart({
   cartItems,
@@ -12,6 +15,8 @@ export default function Cart({
   quantityTenPlus,
   setQuantityTenPlus,
   handleDelete,
+  conversionRate,
+  selectedCurrency,
 }) {
   useEffect(() => {
     const storedQuantities = localStorage.getItem("selectedQuantities");
@@ -96,51 +101,16 @@ export default function Cart({
   const price = calculateTotalPrice(
     cartItems,
     selectedQuantities,
-    quantityTenPlus
+    quantityTenPlus,
+    conversionRate
   );
 
   if (cartItems.length === 0 && !isLoggedIn) {
-    return (
-      <section className="cart cart-main">
-        <section className="cart-right">
-          <img src="../apple.png" alt="Apple" width={50} />
-          <h2>Your AppleStore Cart is empty</h2>
-          <h3>Shop today's deals</h3>
-
-          <Link to="/login">
-            <button>Login to your account</button>
-          </Link>
-
-          <Link to="/register">
-            <button>Sign up</button>
-          </Link>
-        </section>
-
-        <section className="cart-left">
-          <section className="cart-product">
-            <h1>Cart Product</h1>
-          </section>
-        </section>
-      </section>
-    );
+    return <NotLoginCart />;
   }
 
   if (cartItems.length === 0 && isLoggedIn) {
-    return (
-      <section className="cart cart-main">
-        <section className="cart-right">
-          <img src="/apple.png" alt="Apple" width={50} />
-          <h2>Your AppleStore Cart is empty</h2>
-          <h3>Shop today's deals</h3>
-        </section>
-
-        <section className="cart-left">
-          <section className="cart-product">
-            <h1>Cart Product</h1>
-          </section>
-        </section>
-      </section>
-    );
+    return <EmptyCart />;
   }
 
   function formatPermalink(name) {
@@ -157,6 +127,11 @@ export default function Cart({
           const selectedQuantity = selectedQuantities[item.id] || 1;
           const isQuantityTenPlus = quantityTenPlus[item.id] !== undefined;
 
+          // const itemPrice = item.discountPrice || item.price;
+          // const convertedPrice = (itemPrice * conversionRate).toFixed(2);
+
+          const convertedPrice = (item.price * conversionRate).toFixed(2);
+
           return (
             <section className="cart-item" key={item.id}>
               <article className="cart-item__main">
@@ -166,7 +141,9 @@ export default function Cart({
                     <Link to={`/${formatPermalink(item.name)}`}>
                       <h2>{item.name}</h2>
                     </Link>
-                    <span className="cart-item__price">${item.price}</span>
+                    <span className="cart-item__price">
+                      {selectedCurrency} {convertedPrice}
+                    </span>
                     <p>In Stock: {item.inStock}</p>
                   </div>
                   <div className="item-actions">
@@ -242,26 +219,17 @@ export default function Cart({
           );
         })}
         <span className="cart-item__subTotal">
-          Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): ${price}
+          Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}):{" "}
+          {selectedCurrency}
+          {price}
         </span>
       </section>
 
-      <section className="cart-right">
-        <div className="cart-subtotal">
-          <h2>Your AppleStore Cart</h2>
-          <h3>
-            Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}): $
-            {price}
-          </h3>
-          <Link to="/checkout">
-            <button>Proceed to checkout</button>
-          </Link>
-        </div>
-
-        <section className="cart-product">
-          <h1>Cart Product</h1>
-        </section>
-      </section>
+      <CartSummary
+        totalItem={totalItem}
+        price={price}
+        selectedCurrency={selectedCurrency}
+      />
     </section>
   );
 }

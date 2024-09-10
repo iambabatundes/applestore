@@ -13,6 +13,7 @@ export default function BigSave({
   scrollInterval = 3000,
   selectedCurrency,
   conversionRate,
+  currencySymbols,
 }) {
   const [products, setProducts] = useState([]);
   const [isHovered, setIsHovered] = useState(false); // Track hover state
@@ -67,6 +68,7 @@ export default function BigSave({
                 productName={product}
                 conversionRate={conversionRate}
                 selectedCurrency={selectedCurrency}
+                currencySymbols={currencySymbols}
               />
             );
           })}
