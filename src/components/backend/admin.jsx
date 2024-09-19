@@ -30,7 +30,7 @@ import AdminLogin from "./adminLogin";
 // import { adminlogout } from "../../services/adminAuthService";
 import useAdminUser from "./hooks/useAdminUser";
 
-const Admin = ({ companyName, count, userName }) => {
+const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDropdownLink, setSelectedDropdownLink] = useState(null);
@@ -283,6 +283,7 @@ const Admin = ({ companyName, count, userName }) => {
         handleLogout={handleLogout}
         user={adminUser}
         darkMode={darkMode}
+        logo={logo}
         toggleDarkMode={toggleDarkMode}
       />
       <section className="admin-container">

@@ -6,7 +6,7 @@ const StarRating = ({
   initialRating = 0,
   readOnly = false,
   onRatingChange,
-  //   totalRatings = 100,
+  // totalRatings = 100,
 }) => {
   const [rating, setRating] = useState(initialRating);
   const [hover, setHover] = useState(undefined);

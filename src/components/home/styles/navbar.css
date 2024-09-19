@@ -20,6 +20,8 @@
 .navbar-brand {
     display: flex;
     align-items: center;
+    margin-right: 20px;
+    margin-bottom: -10px;
 }
 
 .brand-logo {

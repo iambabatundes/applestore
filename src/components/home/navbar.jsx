@@ -11,7 +11,12 @@ import SearchBar from "./common/searchBar";
 import Cart from "./common/cart";
 import Currency from "./common/currency";
 
-export default function Navbar({ user, cartItemCount = 0, onCurrencyChange }) {
+export default function Navbar({
+  user,
+  cartItemCount = 0,
+  onCurrencyChange,
+  logoImage,
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -36,7 +41,11 @@ export default function Navbar({ user, cartItemCount = 0, onCurrencyChange }) {
 
   return (
     <header className="navbar">
-      <Logo />
+      <Logo
+        logoImage={logoImage}
+        brandLogo="brand-logo"
+        navbarBrand="navbar-brand"
+      />
       <CategoriesSection categories={categories} />
       <SearchBar />
 

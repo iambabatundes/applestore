@@ -12,7 +12,6 @@ import Home from "./components/Home";
 import Product from "./components/Product";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
-import SingleProduct from "./components/singleProduct";
 import SingleProducts from "./components/home/singleProduct";
 import Checkout from "./components/checkout";
 import CheckoutNavbar from "./components/checkoutNavbar";
@@ -26,17 +25,37 @@ import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
 import LoadingSpinner from "./components/common/loadingSpinner";
+import { getUploads } from "./services/logoService";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({});
-  const [selectedCurrency, setSelectedCurrency] = useState("₦");
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [conversionRate, setConversionRate] = useState(1);
   const [loadingApp, setLoadingApp] = useState(false);
+  const [logoImage, setLogoImage] = useState("");
 
   const location = useLocation();
+  const mediaLogo = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const { data } = await getUploads();
+        if (data && data.logoImage) {
+          setLogoImage(`${mediaLogo}/uploads/${data.logoImage.filename}`);
+        } else {
+          console.log("No logo found.");
+        }
+      } catch (error) {
+        console.error("Error fetching logo:", error);
+      }
+    };
+
+    fetchLogo();
+  }, [mediaLogo]);
 
   useEffect(() => {
     const savedCurrency = localStorage.getItem("selectedCurrency");
@@ -157,6 +176,7 @@ function App() {
           user={user}
           onCurrencyChange={handleCurrencyChange}
           isLoading={loadingApp}
+          logoImage={logoImage}
         />
       );
     }
@@ -186,7 +206,11 @@ function App() {
     <>
       <ToastContainer />
       {isAdminMode ? (
-        <Admin companyName={companyName} count={countComment} />
+        <Admin
+          companyName={companyName}
+          count={countComment}
+          logo={logoImage}
+        />
       ) : (
         <>
           {renderNavbar()}
@@ -221,8 +245,17 @@ function App() {
                   />
                 }
               />
-              <Route path="/:name" exact element={<SingleProduct />} />
-              <Route path="/singleproduct" exact element={<SingleProducts />} />
+              {/* <Route path="/:name" exact element={<SingleProduct />} /> */}
+              <Route
+                path="/:name"
+                exact
+                element={
+                  <SingleProducts
+                    conversionRate={conversionRate}
+                    selectedCurrency={selectedCurrency}
+                  />
+                }
+              />
 
               <Route path="/register" element={<Register user={user} />} />
               <Route
@@ -272,7 +305,7 @@ function App() {
               {/* <Route path="*" element={<Navigate to="/not-found" replace />} /> */}
             </Routes>
           </main>
-          <Footer />
+          <Footer logoImage={logoImage} />
         </>
       )}
     </>

@@ -33,6 +33,7 @@ const Star = ({
           </defs>
         )}
       </svg>
+
       <div className="productCard__tooltip">{ratingValue}</div>
     </div>
   );

@@ -60,21 +60,18 @@ export default function SingleProduct() {
     setSelectedMedia(media);
 
     if (type === "image") {
-      // If the clicked media is an image, set the active tab to "image"
       setActiveTab("image");
     } else if (type === "video") {
-      // If the clicked media is a video, set the active tab to "video"
       setActiveTab("video");
     } else setActiveTab("image");
 
-    // Call the updateMainVideo function with the selected video
     if (type === "video" && (media.src || (media.video && media.name))) {
       updateMainVideo({
         src: media.src,
         name: media.name,
       });
     }
-    setIsModalOpen(true);
+    // setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -135,77 +132,6 @@ export default function SingleProduct() {
               );
             })}
           </div>
-
-          {/* <div
-            className="product-image-container"
-            onClick={() =>
-              hoveredImage && hoveredImage.includes(".mp4")
-                ? handleMediaClick(mainVideo, "video")
-                : handleMediaClick(hoveredImage || product.image, "image")
-            }
-          >
-            {hoveredImage ? (
-              hoveredImage.includes(".mp4") ? (
-                <div className="product__video-main">
-                  <video className="product-video" src={hoveredImage} />
-                </div>
-              ) : (
-                <ReactImageMagnify
-                  {...{
-                    imageClassName: "smallImage",
-                    smallImage: {
-                      alt: "",
-                      isFluidWidth: true,
-                      src: hoveredImage || product.image,
-                    },
-                    shouldUsePositiveSpaceLens: true,
-                    lensStyle: {
-                      background: "hsla(0, 0%, 100%, .3)",
-                      cursor: "pointer",
-                    },
-                    largeImage: {
-                      src: hoveredImage,
-                      width: 1800,
-                      height: 1800,
-                    },
-                    enlargedImageContainerDimensions: {
-                      width: "150%",
-                      height: "100%",
-                    },
-                    isHintEnabled: true,
-                    shouldHideHintAfterFirstActivation: false,
-                  }}
-                />
-              )
-            ) : (
-              <ReactImageMagnify
-                {...{
-                  imageClassName: "smallImage",
-                  smallImage: {
-                    alt: "",
-                    isFluidWidth: true,
-                    src: product.image,
-                  },
-                  shouldUsePositiveSpaceLens: true,
-                  lensStyle: {
-                    background: "hsla(0, 0%, 100%, .3)",
-                    cursor: "pointer",
-                  },
-                  largeImage: {
-                    src: product.image,
-                    width: 1800,
-                    height: 1800,
-                  },
-                  enlargedImageContainerDimensions: {
-                    width: "150%",
-                    height: "100%",
-                  },
-                  isHintEnabled: true,
-                  shouldHideHintAfterFirstActivation: false,
-                }}
-              />
-            )}
-          </div> */}
         </section>
 
         <div>

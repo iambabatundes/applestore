@@ -3,6 +3,12 @@
     display: grid;
     padding: 35px;
     margin-top: 50px;
+    /* gap: 10px; */
+}
+
+.footer__logo {
+    /* width: 40px; */
+    height: 40px;
 }
 
 .footer__contact {
@@ -171,11 +177,9 @@
     margin-right: 10px;
 }
 
-
-
 @media (min-width: 768px) {
     .footer {
-        grid-template-columns: 150px 248px 150px 1fr 1fr;
+        grid-template-columns: 200px 248px 150px 1fr 1fr;
         gap: 10px;
     }
 

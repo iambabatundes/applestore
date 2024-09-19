@@ -42,10 +42,11 @@
 }
 
 .company-logo {
-    width: 40px;
-    height: 40px;
-    margin-right: 1rem;
+    /* width: 40px; */
+    height: 45px;
     transition: transform 0.3s;
+    margin-right: 1rem;
+    margin-left: 1rem;
 }
 
 .company-logo:hover {

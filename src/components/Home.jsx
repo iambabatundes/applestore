@@ -29,8 +29,15 @@ function Home({
 }) {
   return (
     <section>
-      <HeroSlider />
-      <ExclusiveDeal user={user} />
+      <HeroSlider
+        selectedCurrency={selectedCurrency}
+        conversionRate={conversionRate}
+      />
+      <ExclusiveDeal
+        user={user}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
       <BigSave
         addToCart={addToCart}
         cartItems={cartItems}

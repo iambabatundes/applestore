@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import defaultUserImage from "./images/user.png";
-import logo from "../../logo.svg";
+// import logo from "../../logo.svg";
 import "./styles/adminNavbar.css";
 import "../backend/common/styles/darkMode.css";
 import Icon from "../icon";
@@ -21,6 +21,7 @@ export default function AdminNavbar({
   handleLogout,
   darkMode,
   toggleDarkMode,
+  logo,
 }) {
   const [profileDetails, setProfileDetails] = useState({
     firstName: user.firstName,

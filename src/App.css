@@ -8,7 +8,7 @@ body {
 
 @media (min-width: 769px) {
   .main {
-    margin: 0.5rem 2rem;
+    /* margin: 0.5rem 2rem; */
     margin-top: 80px;
   }
 }

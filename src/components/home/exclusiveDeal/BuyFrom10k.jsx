@@ -9,17 +9,22 @@ const groupProducts = (products, chunkSize) => {
   return groups;
 };
 
-export default function BuyFrom10k({ productImage1, productImage }) {
+export default function BuyFrom10k({
+  productImage1,
+  productImage,
+  conversionRate,
+  selectedCurrency,
+}) {
   const buyFrom10kProducts = [
-    { image: productImage1, price: "NGN45,000", discount: "-60%" },
-    { image: productImage, price: "NGN55,000", discount: "-60%" },
-    { image: productImage, price: "NGN85,000", discount: "-70%" },
+    { image: productImage1, price: 45000, discount: "-60%" },
+    { image: productImage, price: 55000, discount: "-60%" },
+    { image: productImage, price: 85000, discount: "-70%" },
   ];
 
   const superDealProducts = [
-    { image: productImage1, price: "₦45,000", oldPrice: "₦120,000" },
-    { image: productImage, price: "₦45,000", oldPrice: "₦120,000" },
-    { image: productImage, price: "₦45,000", oldPrice: "₦120,000" },
+    { image: productImage1, price: 45000, oldPrice: 120000 },
+    { image: productImage, price: 45000, oldPrice: 120000 },
+    { image: productImage, price: 45000, oldPrice: 120000 },
   ];
 
   const buyFrom10kGroups = groupProducts(buyFrom10kProducts, 3);
@@ -36,6 +41,8 @@ export default function BuyFrom10k({ productImage1, productImage }) {
           <ProductList
             products={group}
             key={index}
+            conversionRate={conversionRate}
+            selectedCurrency={selectedCurrency}
             containerClassName="buyFrom10k__products"
             productClassName="buyFrom10k__product"
             imageClassName="buyFrom10k__productImage"
@@ -56,6 +63,8 @@ export default function BuyFrom10k({ productImage1, productImage }) {
           <ProductList
             products={group}
             key={index}
+            conversionRate={conversionRate}
+            selectedCurrency={selectedCurrency}
             containerClassName="superDeal__products"
             productClassName="superDeal__product"
             imageClassName="superDeal__productImage"

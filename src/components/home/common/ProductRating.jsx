@@ -3,6 +3,7 @@ import StarRating from "./starRating";
 
 export default function ProductRating({
   rating,
+  reviews,
   numberOfSales,
   onRatingChange,
 }) {
@@ -18,6 +19,13 @@ export default function ProductRating({
           readOnly={true}
         />
       )}
+
+      {reviews && (
+        <div className="productCard__details">
+          <span>{reviews} Reviews</span>
+        </div>
+      )}
+
       {numberOfSales && (
         <span className="productCard__product-sold">{numberOfSales}</span>
       )}

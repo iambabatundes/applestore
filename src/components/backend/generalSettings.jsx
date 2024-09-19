@@ -1,9 +1,10 @@
 import React from "react";
+import LogoImage from "./settings/logoImage";
 
 export default function GeneralSettings() {
   return (
     <section>
-      <h1>This is the Genernal setting page</h1>
+      <LogoImage />
     </section>
   );
 }

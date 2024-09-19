@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/shippingDetails.css";
+import Details from "./details";
 
 export default function ShippingDetails() {
   // Mock data
@@ -62,96 +63,101 @@ export default function ShippingDetails() {
         <span>{location}</span>
       </div>
 
-      <div className="shippingDetails__price">
-        <span className="shippingDetails__price--discount">-33%</span>
-        <span className="shippingDetails__price--current">{price}</span>
-        <span className="shippingDetails__price--list">
-          List Price: {listPrice}
-        </span>
-      </div>
+      <div className="shippingDetails__container">
+        <div className="shippingDetails__price">
+          <span className="shippingDetails__price--discount">-33%</span>
+          <span className="shippingDetails__price--current">{price}</span>
+          <span className="shippingDetails__price--list">
+            List Price: {listPrice}
+          </span>
+        </div>
 
-      <div className="shippingDetails__fees">
-        <span>
-          {shippingCost} Shipping & Import Fees Deposit to {location}
-        </span>
-        <a href="/" className="shippingDetails__detailsLink">
-          Details
-        </a>
-      </div>
+        <div className="shippingDetails__fees">
+          <span>
+            {shippingCost} Shipping & Import Fees Deposit to {location}
+          </span>
+          <a href="/" className="shippingDetails__detailsLink">
+            Details
+          </a>
+        </div>
 
-      <div className="shippingDetails__info">
-        <i
-          className="fa fa-exclamation-circle shippingDetails__infoIcon"
-          aria-hidden="true"
-        ></i>
-        <span>Sales taxes may apply at checkout</span>
-      </div>
+        <div className="shippingDetails__info">
+          <i
+            className="fa fa-exclamation-circle shippingDetails__infoIcon"
+            aria-hidden="true"
+          ></i>
+          <span>Sales taxes may apply at checkout</span>
+        </div>
 
-      <div className="shippingDetails__delivery">
-        <span>Delivery {deliveryDateRange}</span>
-      </div>
-      <div className="shippingDetails__fastestDelivery">
-        <span>
-          Or fastest delivery <strong>{fastestDeliveryDate}</strong>. Order
-          within <strong>12 hrs 50 mins</strong>
-        </span>
-      </div>
-      <div className="shippingDetails__location">
-        <span>Deliver to</span>
-        <span className="shippingDetails__locationName">{location}</span>
-      </div>
-      <div
-        className={`shippingDetails__stock ${
-          stockStatus === "In Stock" ? "inStock" : "outOfStock"
-        }`}
-      >
-        <span>{stockStatus}</span>
-      </div>
+        <div className="shippingDetails__delivery">
+          <span>Delivery {deliveryDateRange}</span>
+        </div>
+        <div className="shippingDetails__fastestDelivery">
+          <span>
+            Or fastest delivery <strong>{fastestDeliveryDate}</strong>. Order
+            within <strong>12 hrs 50 mins</strong>
+          </span>
+        </div>
+        <div className="shippingDetails__location">
+          <span>Deliver to</span>
+          <span className="shippingDetails__locationName">{location}</span>
+        </div>
+        <div
+          className={`shippingDetails__stock ${
+            stockStatus === "In Stock" ? "inStock" : "outOfStock"
+          }`}
+        >
+          <span>{stockStatus}</span>
+        </div>
 
-      {/* Quantity Selector */}
-      <div className="shippingDetails__quantity">
-        <div className="customDropdown">
-          {!isCustomQuantity ? (
-            <button onClick={toggleDropdown} className="customDropdown__button">
-              {`Quantity: ${quantity > 10 ? quantity : quantity}`}
-              <i className="fa fa-chevron-down customDropdown__arrow"></i>
-            </button>
-          ) : (
-            <div className="customQuantityInput">
-              <input
-                type="number"
-                value={customQuantity}
-                onChange={handleCustomQuantityChange}
-                min="1"
-                max={availableQuantity}
-              />
-              <button onClick={handleCustomQuantitySubmit}>Submit</button>
-            </div>
-          )}
+        {/* Quantity Selector */}
+        <div className="shippingDetails__quantity">
+          <div className="customDropdown">
+            {!isCustomQuantity ? (
+              <button
+                onClick={toggleDropdown}
+                className="customDropdown__button"
+              >
+                {`Quantity: ${quantity > 10 ? quantity : quantity}`}
+                <i className="fa fa-chevron-down customDropdown__arrow"></i>
+              </button>
+            ) : (
+              <div className="customQuantityInput">
+                <input
+                  type="number"
+                  value={customQuantity}
+                  onChange={handleCustomQuantityChange}
+                  min="1"
+                  max={availableQuantity}
+                />
+                <button onClick={handleCustomQuantitySubmit}>Submit</button>
+              </div>
+            )}
 
-          {isDropdownOpen && (
-            <ul className="customDropdown__list">
-              {[...Array(Math.min(availableQuantity, 9))].map((_, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleQuantityChange(index + 1)}
-                  className={`customDropdown__item ${
-                    quantity === index + 1 ? "selected" : ""
-                  }`}
-                >
-                  {index + 1}
-                </li>
-              ))}
-              {availableQuantity > 10 && (
-                <li
-                  onClick={handleCustomQuantityClick}
-                  className="customDropdown__item"
-                >
-                  10+
-                </li>
-              )}
-            </ul>
-          )}
+            {isDropdownOpen && (
+              <ul className="customDropdown__list">
+                {[...Array(Math.min(availableQuantity, 9))].map((_, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleQuantityChange(index + 1)}
+                    className={`customDropdown__item ${
+                      quantity === index + 1 ? "selected" : ""
+                    }`}
+                  >
+                    {index + 1}
+                  </li>
+                ))}
+                {availableQuantity > 10 && (
+                  <li
+                    onClick={handleCustomQuantityClick}
+                    className="customDropdown__item"
+                  >
+                    10+
+                  </li>
+                )}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
 
@@ -160,6 +166,8 @@ export default function ShippingDetails() {
         <button className="shippingDetails__addToCart">Add to Cart</button>
         <button className="shippingDetails__buyNow">Buy Now</button>
       </div>
+
+      <Details />
     </section>
   );
 }

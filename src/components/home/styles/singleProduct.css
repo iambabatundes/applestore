@@ -1,13 +1,170 @@
 .singleProduct-container {
     display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
 }
 
 .singleProduct__left {
     flex: 3;
 }
 
+.singleProduct__left {
+    display: flex;
+    /* flex-direction: column; */
+}
+
+.singleProduct__productMedia {
+    display: flex;
+    /* align-items: baseline; */
+}
+
+.singleImage__productImage,
+.singleImage__productVideo {
+    width: 50px;
+    /* height: 60px; */
+    height: 50px;
+    display: block;
+    object-fit: cover;
+    /* margin-bottom: 8px; */
+    /* border: 3px solid #ccc; */
+    border-radius: 10px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+
+}
+
+.media-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.media-thumbnails::-webkit-scrollbar {
+    display: none;
+}
+
+/* Customize scrollbar appearance */
+/* .media-thumbnails::-webkit-scrollbar {
+    width: 3px;
+} */
+
+/* .media-thumbnails::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.media-thumbnails::-webkit-scrollbar-track {
+    background: #f1f1f1;
+} */
+
+/* .thumbnail {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.3s ease;
+} */
+
+.thumbnail {
+    margin-right: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.thumbnail.active {
+    border-color: #007bff;
+    border-radius: 10px;
+    border-width: 2px;
+}
+
+.thumbnail:hover {
+    transform: scale(1.0);
+}
+
+.main-media {
+    position: relative;
+    height: 100%;
+    object-fit: cover;
+    width: 400px;
+    min-height: auto;
+    margin-right: 20px;
+}
+
+.main-media img,
+.main-media video {
+    width: 100%;
+    height: 399px;
+    /* height: auto; */
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 28px;
+    /* opacity: 0; */
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* .main-media video {
+    border-radius: 28px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+.main-media .visible {
+    opacity: 1;
+}
+
+/* .zoom-container {
+    position: relative;
+} */
+
+.zoom-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.zoom-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.magnifier {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: pointer;
+    border-radius: 28px;
+    /* border: 2px solid #ccc; */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-repeat: no-repeat;
+    background-size: 300% 300%;
+    /* Control the zoom level */
+    visibility: hidden;
+    z-index: 10;
+}
+
+.magnifier.visible {
+    visibility: visible;
+}
+
 .singleProduct__shippingDetail {
-    flex: 1;
+    /* flex: 1; */
+    /* position: fixed; */
+    left: 0;
+    top: 100px;
+    /* padding: 20px; */
+    background-color: white;
+    /* border: 1px solid #ddd; */
+    /* width: 250px; */
 }
 
 .single-product-page {
@@ -34,14 +191,82 @@
     height: auto;
 }
 
-.thumbnails {
+/* .thumbnails {
     display: flex;
     gap: 10px;
-}
+} */
 
 .product-details {
     flex: 1;
     padding: 0 20px;
+}
+
+.singleProduct__price {
+    /* display: flex; */
+    align-items: center;
+    gap: 20px;
+}
+
+.singleProduct__price-price {
+    align-items: baseline;
+    display: flex;
+    font-size: 2.3rem;
+    font-weight: 700;
+    font-family: TT Norms Pro, Open Sans, Roboto, Arial, Helvetica, sans-serif, SimSun;
+}
+
+.singleProduct__price-currency {
+    color: #d3031c;
+    font-size: 0.86rem;
+    font-weight: 700;
+    vertical-align: bottom;
+}
+
+.singleProduct__price-whole {
+    /* font-size: 2rem; */
+    font-weight: 700;
+}
+
+.singleProduct__price-fraction {
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.singleProduct__price {
+    margin-bottom: 1rem;
+}
+
+.singleProduct__discountPrice-main {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    color: #757575;
+}
+
+.singleProduct__discountPrice {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 0 4px;
+    text-decoration: line-through;
+}
+
+.singleProduct__discountPrecentage {
+    font-size: 1rem;
+    color: #d3031c;
+}
+
+.singleProduct__shown {
+    font-size: 0.73rem;
+    /* line-height: 16px; */
+    margin-left: 15px;
+}
+
+.singleProduct__productName {
+    font-size: 1rem;
+    font-family: TT Norms Pro, Open Sans, Roboto, Arial, Helvetica, sans-serif, SimSun;
+    color: #000;
+    line-height: 20px;
 }
 
 .rating-reviews {

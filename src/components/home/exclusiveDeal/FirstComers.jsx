@@ -12,12 +12,18 @@ const groupProducts = (products, chunkSize) => {
   return groups;
 };
 
-export default function FirstComers({ productImage1, productImage, user }) {
+export default function FirstComers({
+  productImage1,
+  productImage,
+  user,
+  selectedCurrency,
+  conversionRate,
+}) {
   const products = [
-    { image: productImage1, price: "NGN45,000", discount: "-60%" },
-    { image: productImage, price: "NGN55,000", discount: "-60%" },
-    { image: productImage, price: "NGN85,000", discount: "-70%" },
-    { image: productImage1, price: "NGN95,000", discount: "-50%" },
+    { image: productImage1, price: 45000, discount: "-60%" },
+    { image: productImage, price: 55000, discount: "-60%" },
+    { image: productImage, price: 85000, discount: "-70%" },
+    { image: productImage1, price: 95000, discount: "-50%" },
   ];
 
   // Group products into pairs
@@ -49,6 +55,8 @@ export default function FirstComers({ productImage1, productImage, user }) {
           <ProductList
             key={index}
             products={group}
+            conversionRate={conversionRate}
+            selectedCurrency={selectedCurrency}
             containerClassName="firstComers__products"
             productClassName="firstComers__product"
             imageClassName="firstComers__productImage"

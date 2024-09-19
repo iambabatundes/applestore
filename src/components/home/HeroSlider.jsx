@@ -4,7 +4,7 @@ import HeroCard from "./heroCard";
 import cards from "./heroDatas";
 import { getRandomColor, getContrastYIQ } from "./utils/colorUtils";
 
-export default function HeroSlider() {
+export default function HeroSlider({ selectedCurrency, conversionRate }) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   const handleNextCard = () => {
@@ -64,6 +64,8 @@ export default function HeroSlider() {
                 key={index}
                 backgroundColor={backgroundColor}
                 textColor={textColor} // Pass text color
+                conversionRate={conversionRate}
+                selectedCurrency={selectedCurrency}
               />
             );
           })}

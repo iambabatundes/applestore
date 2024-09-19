@@ -1,15 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Logo() {
+export default function Logo({ brandLogo, logoImage, navbarBrand }) {
   return (
-    <div className="navbar-brand">
+    <div className={`${navbarBrand}`}>
       <Link to="/">
-        <img
-          src="https://www.amazon.com/favicon.ico"
-          alt="Brand Logo"
-          className="brand-logo"
-        />
+        <img src={logoImage} alt="Brand Logo" className={`${brandLogo}`} />
       </Link>
     </div>
   );

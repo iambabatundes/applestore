@@ -5,85 +5,85 @@ const cards = [
   {
     title: "Fresh finds",
     items: [
-      { price: "NGN7,160.51", oldPrice: "NGN20,458.2", imgSrc: image },
-      { price: "NGN15,533.74", oldPrice: "NGN48,540.5", imgSrc: image1 },
+      { price: 97160.51, oldPrice: 20458.2, imgSrc: image },
+      { price: 15533.74, oldPrice: 48540.5, imgSrc: image1 },
     ],
   },
   {
     title: "Tech essentials",
     items: [
-      { price: "NGN3,615.92", oldPrice: "NGN11,661.2", imgSrc: image },
-      { price: "NGN6,308.91", oldPrice: "NGN14,338.6", imgSrc: image1 },
+      { price: 23615.92, oldPrice: 11661.2, imgSrc: image },
+      { price: 16308.91, oldPrice: 14338.6, imgSrc: image1 },
     ],
   },
   {
     title: "Home essentials",
     items: [
-      { price: "NGN62,103.79", oldPrice: "NGN200,331", imgSrc: image },
-      { price: "NGN6,217.51", oldPrice: "NGN18,284.7", imgSrc: image1 },
+      { price: 62103.79, oldPrice: 200331, imgSrc: image },
+      { price: 68217.51, oldPrice: 18284.7, imgSrc: image1 },
     ],
   },
   {
     title: "Fresh finds",
     items: [
-      { price: "NGN7,160.51", oldPrice: "NGN20,458.2", imgSrc: image },
-      { price: "NGN15,533.74", oldPrice: "NGN48,540.5", imgSrc: image1 },
+      { price: 71960.51, oldPrice: 24958.2, imgSrc: image },
+      { price: 91533.74, oldPrice: 49540.5, imgSrc: image1 },
     ],
   },
   {
     title: "Tech essentials",
     items: [
-      { price: "NGN3,615.92", oldPrice: "NGN11,661.2", imgSrc: image },
-      { price: "NGN6,308.91", oldPrice: "NGN14,338.6", imgSrc: image1 },
+      { price: 36915.92, oldPrice: 19661.2, imgSrc: image },
+      { price: 68308.91, oldPrice: 81338.6, imgSrc: image1 },
     ],
   },
   {
     title: "Home essentials",
     items: [
-      { price: "NGN62,103.79", oldPrice: "NGN200,331", imgSrc: image },
-      { price: "NGN6,217.51", oldPrice: "NGN18,284.7", imgSrc: image1 },
+      { price: 86103.79, oldPrice: 208331, imgSrc: image },
+      { price: 76217.51, oldPrice: 18284.7, imgSrc: image1 },
     ],
   },
   {
     title: "Fresh finds",
     items: [
-      { price: "NGN7,160.51", oldPrice: "NGN20,458.2", imgSrc: image },
-      { price: "NGN15,533.74", oldPrice: "NGN48,540.5", imgSrc: image1 },
+      { price: 7160.51, oldPrice: 20458.2, imgSrc: image },
+      { price: 15533.74, oldPrice: 48540.5, imgSrc: image1 },
     ],
   },
   {
     title: "Tech essentials",
     items: [
-      { price: "NGN3,615.92", oldPrice: "NGN11,661.2", imgSrc: image },
-      { price: "NGN6,308.91", oldPrice: "NGN14,338.6", imgSrc: image1 },
+      { price: 3615.92, oldPrice: 11661.2, imgSrc: image },
+      { price: 6308.91, oldPrice: 14338.6, imgSrc: image1 },
     ],
   },
   {
     title: "Home essentials",
     items: [
-      { price: "NGN62,103.79", oldPrice: "NGN200,331", imgSrc: image },
-      { price: "NGN6,217.51", oldPrice: "NGN18,284.7", imgSrc: image1 },
+      { price: 62103.79, oldPrice: 200331, imgSrc: image },
+      { price: 6217.51, oldPrice: 18284.7, imgSrc: image1 },
     ],
   },
   {
     title: "Fresh finds",
     items: [
-      { price: "NGN7,160.51", oldPrice: "NGN20,458.2", imgSrc: image },
-      { price: "NGN15,533.74", oldPrice: "NGN48,540.5", imgSrc: image1 },
+      { price: 7160.51, oldPrice: 20458.2, imgSrc: image },
+      { price: 15533.74, oldPrice: 48540.5, imgSrc: image1 },
     ],
   },
   {
     title: "Tech essentials",
     items: [
-      { price: "NGN3,615.92", oldPrice: "NGN11,661.2", imgSrc: image },
-      { price: "NGN6,308.91", oldPrice: "NGN14,338.6", imgSrc: image1 },
+      { price: 3615.92, oldPrice: 11661.2, imgSrc: image },
+      { price: 6308.91, oldPrice: 14338.6, imgSrc: image1 },
     ],
   },
   {
     title: "Home essentials",
     items: [
-      { price: "NGN62,103.79", oldPrice: "NGN200,331", imgSrc: image },
-      { price: "NGN6,217.51", oldPrice: "NGN18,284.7", imgSrc: image1 },
+      { price: 62103.79, oldPrice: 200331, imgSrc: image },
+      { price: 6217.51, oldPrice: 18284.7, imgSrc: image1 },
     ],
   },
 ];

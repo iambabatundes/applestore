@@ -6,16 +6,31 @@ import WelcomeDeal from "./exclusiveDeal/WelcomeDeal";
 import FirstComers from "./exclusiveDeal/FirstComers";
 import BuyFrom10k from "./exclusiveDeal/BuyFrom10k";
 
-export default function ExclusiveDeal({ user }) {
+export default function ExclusiveDeal({
+  user,
+  selectedCurrency,
+  conversionRate,
+}) {
   return (
     <section className="exclusiveDeal-main">
-      <WelcomeDeal productImage={productImage} />
+      <WelcomeDeal
+        productImage={productImage}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
       <FirstComers
         user={user}
         productImage={productImage}
         productImage1={productImage1}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
       />
-      <BuyFrom10k productImage={productImage} productImage1={productImage1} />
+      <BuyFrom10k
+        productImage={productImage}
+        productImage1={productImage1}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
     </section>
   );
 }
