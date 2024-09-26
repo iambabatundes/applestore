@@ -7,8 +7,9 @@ import MediaThumbnails from "./singleProduct/MediaThumbnail";
 import PriceDisplay from "./singleProduct/priceDisplay";
 import { formatPrice } from "./singleProduct/utils/priceFormatter";
 import ProductMedia from "./singleProduct/productMedia";
-import StarRating from "./common/starRating";
+// import StarRating from "./common/starRating";
 import ProductRating from "./common/ProductRating";
+import SingleProductTab from "./common/singleProductTab";
 
 export default function SingleProduct({ selectedCurrency, conversionRate }) {
   const { name } = useParams();
@@ -45,40 +46,42 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
   return (
     <section className="singleProduct-container">
       <div className="singleProduct__left">
-        <section className="singleProduct__productMedia">
-          {product.media && Array.isArray(product.media) && (
-            <MediaThumbnails
-              mediaData={product.media}
-              onMediaClick={handleMediaClick}
+        <div className="singleProduct__detailsMain">
+          <section className="singleProduct__productMedia">
+            {product.media && Array.isArray(product.media) && (
+              <MediaThumbnails
+                mediaData={product.media}
+                onMediaClick={handleMediaClick}
+                selectedMedia={selectedMedia}
+              />
+            )}
+            {!product.media && <div>No media available for this product.</div>}
+
+            <ProductMedia
+              fadeClass={fadeClass}
               selectedMedia={selectedMedia}
+              isZoomed={isZoomed}
+              setIsZoomed={setIsZoomed}
             />
-          )}
-          {!product.media && <div>No media available for this product.</div>}
+          </section>
+          <section>
+            <PriceDisplay
+              convertedDiscount={convertedDiscount}
+              convertedPrice={convertedPrice}
+              product={product}
+              selectedCurrency={selectedCurrency}
+            />
+            <h1 className="singleProduct__productName">{product.name}</h1>
+            <ProductRating
+              numberOfSales={product.numberOfSales}
+              onRatingChange={handleRatingChange}
+              reviews={product.reviews}
+              rating={product.rating}
+            />
+          </section>
+        </div>
 
-          <ProductMedia
-            fadeClass={fadeClass}
-            selectedMedia={selectedMedia}
-            isZoomed={isZoomed}
-            setIsZoomed={setIsZoomed}
-          />
-        </section>
-
-        <section>
-          <PriceDisplay
-            convertedDiscount={convertedDiscount}
-            convertedPrice={convertedPrice}
-            product={product}
-            selectedCurrency={selectedCurrency}
-          />
-          <h1 className="singleProduct__productName">{product.name}</h1>
-          {/* <StarRating onRatingChange={} /> */}
-          <ProductRating
-            numberOfSales={product.numberOfSales}
-            onRatingChange={handleRatingChange}
-            reviews={product.reviews}
-            rating={product.rating}
-          />
-        </section>
+        <SingleProductTab />
       </div>
       <div className="singleProduct__shippingDetail">
         <ShippingDetails />

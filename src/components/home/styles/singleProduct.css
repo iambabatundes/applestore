@@ -6,11 +6,12 @@
 
 .singleProduct__left {
     flex: 3;
+    display: flex;
+    flex-direction: column;
 }
 
-.singleProduct__left {
+.singleProduct__detailsMain {
     display: flex;
-    /* flex-direction: column; */
 }
 
 .singleProduct__productMedia {

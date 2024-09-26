@@ -1,0 +1,42 @@
+.single-product-tabs {
+    font-family: Arial, sans-serif;
+}
+
+.tab-navigation {
+    display: flex;
+    justify-content: space-around;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 100;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.tab-navigation ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.tab-navigation li {
+    cursor: pointer;
+    padding: 10px 20px;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+}
+
+.tab-navigation li.active {
+    font-weight: bold;
+    border-bottom: 3px solid #007aff;
+    color: #007aff;
+}
+
+.tabSection {
+    padding: 50px;
+    min-height: 300px;
+}
+
+.tabSection h2 {
+    margin-top: 0;
+}

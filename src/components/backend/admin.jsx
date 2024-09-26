@@ -29,6 +29,7 @@ import AdminLogin from "./adminLogin";
 // import { getAdminUser } from "../../services/adminService";
 // import { adminlogout } from "../../services/adminAuthService";
 import useAdminUser from "./hooks/useAdminUser";
+import Promotions from "./promotions/promotions";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -209,6 +210,19 @@ const Admin = ({ companyName, count, userName, logo }) => {
           label: "All Pages",
           to: "/admin/all-pages",
           content: <AllPages />,
+        },
+      ],
+    },
+    {
+      label: "Promotion",
+      to: "/admin/promotions",
+      icon: "fa-file",
+      content: <Promotion />,
+      dropdown: [
+        {
+          label: "Create",
+          to: "/admin/create-promotions",
+          content: <Promotions />,
         },
       ],
     },

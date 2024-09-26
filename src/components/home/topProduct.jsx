@@ -22,6 +22,7 @@ export default function TopProduct() {
   return (
     <section className="userProduct-pick">
       <h2>Top Products for You</h2>
+
       <div className="top-productMain">
         {products.map((product) => (
           <div className="top-product" key={product._id}>
