@@ -30,6 +30,8 @@ import AdminLogin from "./adminLogin";
 // import { adminlogout } from "../../services/adminAuthService";
 import useAdminUser from "./hooks/useAdminUser";
 import Promotions from "./promotions/promotions";
+import Coupon from "./coupon";
+import ShippingRate from "./shippingRate/shippingRate";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -119,6 +121,11 @@ const Admin = ({ companyName, count, userName, logo }) => {
         { label: "Updates", to: "/admin/updates", content: <Updates /> },
         { label: "SEO", to: "/admin/seo", content: <SEO /> },
         { label: "Promotion", to: "/admin/promotion", content: <Promotion /> },
+        {
+          label: "Shipping Rate",
+          to: "/admin/shipping",
+          content: <ShippingRate />,
+        },
       ],
     },
     {
@@ -218,6 +225,19 @@ const Admin = ({ companyName, count, userName, logo }) => {
       to: "/admin/promotions",
       icon: "fa-file",
       content: <Promotion />,
+      dropdown: [
+        {
+          label: "Create",
+          to: "/admin/create-promotions",
+          content: <Promotions />,
+        },
+      ],
+    },
+    {
+      label: "Coupon",
+      to: "/admin/coupons",
+      icon: "fa-file",
+      content: <Coupon />,
       dropdown: [
         {
           label: "Create",

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../logo.svg";
 import Icon from "./icon";
 import "./styles/checkoutNavbar.css";
+import Logo from "./home/common/logo";
 
-export default function CheckoutNavbar({ cartItemCount }) {
+export default function CheckoutNavbar({ cartItemCount, logoImage }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   //   const location = useLocation();
@@ -27,7 +27,12 @@ export default function CheckoutNavbar({ cartItemCount }) {
   return (
     <section>
       <div className="checkout-navbar">
-        <img className="checkout-logo" src={logo} alt="Company Logo" />
+        <Logo
+          logoImage={logoImage}
+          navbarBrand="checkout__main"
+          brandLogo="checkout__logo"
+        />
+
         <h1>
           Checkout (
           <span className="checkout-link" onClick={handleClick}>

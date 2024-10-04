@@ -168,7 +168,9 @@ function App() {
 
   const renderNavbar = () => {
     if (location.pathname === "/checkout") {
-      return <CheckoutNavbar cartItemCount={cartItemCount} />;
+      return (
+        <CheckoutNavbar cartItemCount={cartItemCount} logoImage={logoImage} />
+      );
     } else {
       return (
         <Navbar

@@ -4,6 +4,8 @@ import { AddressSchema } from "../components/checkout/utils/validation";
 import EditAddress from "./checkout/editAddress";
 import AddNewAddress from "./checkout/addNewAddress";
 import AddAddress from "./checkout/addAddress";
+import Coupon from "./checkout/coupon";
+import { validateCoupon } from "../services/couponService";
 
 export default function Checkout() {
   const [addresses, setAddresses] = useState([]);
@@ -19,47 +21,22 @@ export default function Checkout() {
   const [editingAddress, setEditingAddress] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState([]);
+  const [discount, setDiscount] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(orderTotal);
 
-  // const handleAutofill = async (setFieldValue) => {
-  //   setLoading(true);
-  //   setAutofillError(""); // Clear previous error
+  useEffect(() => {
+    const validateCoupons = async () => {
+      try {
+        const { data: couponCode } = await validateCoupon();
+        setCouponCode(couponCode);
+      } catch (error) {
+        console.error("Error fetching validation coupon code:", error);
+      }
+    };
 
-  //   if ("geolocation" in navigator) {
-  //     try {
-  //       const position = await new Promise((resolve, reject) => {
-  //         navigator.geolocation.getCurrentPosition(resolve, reject);
-  //       });
-
-  //       const { latitude, longitude } = position.coords;
-
-  //       const response = await fetch(
-  //         `https://api.ipgeolocation.io/ipgeo?apiKey=74d7025b99284e5ab87ede8a6b623e9b&lat=${latitude}&long=${longitude}`
-  //       );
-  //       const data = await response.json();
-
-  //       const address = data.display_name;
-  //       const country = data.address.country;
-  //       const state = data.address.state;
-  //       const city = data.address.city;
-  //       const zipCode = data.address.postcode;
-
-  //       setFieldValue("country", country);
-  //       setFieldValue("state", state);
-  //       setFieldValue("city", city);
-  //       setFieldValue("address", address);
-  //       setFieldValue("zipCode", zipCode);
-
-  //       setAutofillError(null);
-  //     } catch (error) {
-  //       console.log("Error fetching or processing location data:", error);
-  //       setAutofillError("Error fetching or processing location data.");
-  //     }
-  //   } else {
-  //     setAutofillError(
-  //       "Geolocation is not supported by your browser. Please fill in the fields manually."
-  //     );
-  //   }
-  // };
+    validateCoupons();
+  }, []);
 
   const handleAutofill = async (setFieldValue) => {
     setLoading(true);
@@ -343,8 +320,14 @@ export default function Checkout() {
           )}
         </div>
       </div>
+
       <article>
         <h2>This is the price page</h2>
+        <Coupon
+          // applyCoupon={applyCoupon}
+          setCouponCode={setCouponCode}
+          couponCode={couponCode}
+        />
       </article>
     </section>
   );
