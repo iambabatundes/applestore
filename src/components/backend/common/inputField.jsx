@@ -1,14 +1,15 @@
 import React from "react";
 
 export function InputField({
-  autoFocus,
   label,
+  name,
   value,
   onChange,
   onBlur,
   error,
   type = "text",
   placeholder,
+  autoFocus,
   inputFieldContainer,
   inputFieldLabel,
   inputFieldInput,
@@ -19,6 +20,7 @@ export function InputField({
       {label && <label className={`${inputFieldLabel}`}>{label}</label>}
       <input
         autoFocus={autoFocus}
+        name={name}
         type={type}
         value={value}
         onChange={onChange}

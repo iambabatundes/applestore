@@ -1,34 +1,64 @@
 .shippingRate {
     display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
+.shippingRate__heading {
+    text-align: left;
+    font-size: 1.8rem;
+    /* margin-bottom: 20px; */
+    color: #2c3e50;
+    padding: 15px;
+}
+
+@media (min-width: 768px) {
+    .shippingRate {
+        flex-direction: row;
+        /* justify-content: space-between; */
+    }
+
+    .shippingRate__form,
+    .shippingRate__list {
+        flex: 1;
+        margin: 10px;
+    }
 }
 
 /* Styles for the shipping rate form */
 .shippingRate-form {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 18px;
+    font-family: 'Roboto', sans-serif;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Roboto', sans-serif;
 }
 
-.shippingRate__heading {
-    text-align: center;
-    font-size: 1.8rem;
-    color: #333;
-    margin-bottom: 20px;
+.shippingRate-form:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.shippingForm__heading {
+    margin-bottom: 12px;
+    font-size: 1rem;
+    text-transform: uppercase;
 }
 
 .shippingRate__container {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
 }
 
 .shippingRate__label {
-    font-size: 1rem;
+    font-size: 0.7rem;
     font-weight: 500;
     color: #555;
     margin-bottom: 8px;
@@ -38,7 +68,7 @@
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     transition: border-color 0.3s ease;
 }
 
@@ -50,26 +80,27 @@
 .shippingRate__error {
     color: #e74c3c;
     font-size: 0.875rem;
-    margin-top: 8px;
+    margin-top: 5px;
 }
 
-.submit-btn {
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
+.shippingRate__submit-btn {
     background-color: #007bff;
-    color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
+    color: #fff;
     cursor: pointer;
+    font-size: 1rem;
     transition: background-color 0.3s ease;
+    margin-top: 20px;
+    padding: 12px;
+    width: 100%;
 }
 
-.submit-btn:hover {
+.shippingRate__submit-btn:hover {
     background-color: #0056b3;
 }
 
-.submit-btn:disabled {
+.shippingRate__submit-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
@@ -124,150 +155,64 @@
 /* Responsive styles */
 @media (min-width: 768px) {
     .shippingRate-form {
-        padding: 30px;
+        padding: 20px 25px;
+        width: 40%;
+        height: 40%;
+        margin: 0;
     }
 
     .shippingRate__heading {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .shippingRate__input {
         font-size: 1.1rem;
     }
 
-    .submit-btn {
+    .shippingRate__submit-btn {
         padding: 14px;
         font-size: 1.1rem;
     }
 }
 
-/* styles/shippingRate.css */
-
+/* Container for the shipping rates list */
 .shipping-rate-list {
-    padding: 20px;
+    /* padding: 1rem; */
     max-width: 1200px;
-    margin: 0 auto;
+    /* margin: 0 auto; */
 }
 
-.shipping-rate__heading {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-}
-
-.shipping-rate__table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-size: 1rem;
-}
-
-.shipping-rate__table th,
-.shipping-rate__table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: left;
-}
-
-.shipping-rate__table th {
-    background-color: #f4f4f4;
-}
-
-.shipping-rate__table td {
-    word-wrap: break-word;
-}
-
-.loading,
-.error {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #ff6347;
-}
-
-@media (max-width: 768px) {
-
-    .shipping-rate__table th,
-    .shipping-rate__table td {
-        font-size: 0.9rem;
-        padding: 8px;
-    }
-
-    .shipping-rate__heading {
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-
-    .shipping-rate__table,
-    .shipping-rate__table th,
-    .shipping-rate__table td {
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .shipping-rate__table th {
-        display: none;
-    }
-
-    .shipping-rate__table td {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .shipping-rate__table td:before {
-        content: attr(data-label);
-        font-weight: bold;
-    }
-}
-
-
-
-
-/* General Styles */
-.shipping-rate-list {
-    padding: 1rem;
-}
-
-.shipping-rate__heading {
-    text-align: center;
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-}
-
-/* Cards Container */
+/* Cards container with a grid layout */
 .shipping-rate__cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 1.5rem;
 }
 
-/* Card */
+/* Single card styling */
 .shipping-rate__card {
     background-color: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.shipping-rate__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Details section inside the card */
 .shipping-rate__details {
-    margin-bottom: 1rem;
+    margin-bottom: 0.6rem;
 }
 
 .shipping-rate__label {
     font-weight: bold;
-    color: #555;
-    margin-bottom: 0.5rem;
+    color: #444;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
 }
 
 .shipping-rate__value {
@@ -275,18 +220,60 @@
     font-size: 1rem;
 }
 
-/* Loading & Error */
-.loading,
-.error {
+/* Buttons in the card actions section */
+.shippingRate__actions {
+    display: flex;
+    justify-content: space-between;
+    /* gap: 1rem; */
+}
+
+.shippingRate__edit-btn,
+.shippingRate__delete-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.shippingRate__edit-btn {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.shippingRate__edit-btn:hover {
+    background-color: #0073e6;
+}
+
+.shippingRate__delete-btn {
+    background-color: #ff4757;
+    color: white;
+}
+
+.shippingRate__delete-btn:hover {
+    background-color: #ff2f3e;
+}
+
+/* Loading & Error messages */
+.shippingRate__loading,
+.shipping__error,
+.No__shipping {
     text-align: center;
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     color: #ff4757;
 }
 
-/* Media Queries */
-@media (min-width: 768px) {
+/* Responsive Design */
+@media (min-width: 576px) {
     .shipping-rate__cards {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .shipping-rate__cards {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 

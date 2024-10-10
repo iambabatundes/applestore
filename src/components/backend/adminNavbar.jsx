@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import defaultUserImage from "./images/user.png";
-// import logo from "../../logo.svg";
 import "./styles/adminNavbar.css";
 import "../backend/common/styles/darkMode.css";
 import Icon from "../icon";

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
 import ShippingRateForm from "./shippingRateForm";
 import ShippingRateList from "./shippingRateList";
 import { deleteShippingRate } from "../../../services/shippingService";
-
 import { useShippingRates } from "./hooks/useShippingRates";
+
+import "./styles/shippingRate.css";
 
 export default function ShippingRate() {
   const [selectedRate, setSelectedRate] = useState(null);
@@ -42,8 +42,18 @@ export default function ShippingRate() {
     setSelectedRate(rate);
   };
 
-  const handleFormSubmit = (newRate) => {
-    setShippingRates((prevRates) => [...prevRates, newRate]);
+  const handleFormSubmit = (updatedRate) => {
+    if (updatedRate._id) {
+      // Optimistically update the rate in the UI before server confirmation
+      setShippingRates((prevRates) =>
+        prevRates.map((rate) =>
+          rate._id === updatedRate._id ? { ...rate, ...updatedRate } : rate
+        )
+      );
+    } else {
+      // Add new rate optimistically
+      setShippingRates((prevRates) => [...prevRates, updatedRate]);
+    }
     fetchShippingRates();
     setSelectedRate(null);
   };

@@ -88,31 +88,6 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
     }
   };
 
-  //   const getCoordinates = async (storeName) => {
-  //     try {
-  //       const apiKey = "d6b91191327c4224b64fed489e5a4207";
-  //       const response = await axios.get(
-  //         `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-  //           storeName
-  //         )}&key=${apiKey}`
-  //       );
-
-  //       if (
-  //         response.data &&
-  //         response.data.results &&
-  //         response.data.results.length > 0
-  //       ) {
-  //         const { lat, lng } = response.data.results[0].geometry;
-  //         return { lat, lon: lng };
-  //       } else {
-  //         throw new Error("No coordinates found");
-  //       }
-  //     } catch (error) {
-  //       console.error("Geocoding failed:", error);
-  //       throw new Error("Geocoding failed");
-  //     }
-  //   };
-
   const fetchLocationSuggestions = async (query) => {
     try {
       const apiKey = "0636d54539ea4a298f36acf75edcf3c8";
@@ -144,30 +119,29 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
 
     setLoading(true);
     try {
-      // Get coordinates if the storeName is valid
       const coordinates = await getCoordinates(storeName);
 
       const payload = {
         ratePerMile,
         baseRate,
-        storeLocation: coordinates || storeLocation, // If new coordinates found, else use existing
+        storeLocation: coordinates || storeLocation,
         isGlobal,
       };
 
       if (rateToEdit) {
+        onFormSubmit({ ...rateToEdit, ...payload });
         await updateShippingRate(rateToEdit._id, payload);
         toast.success("Shipping rate updated successfully");
       } else {
-        await saveShippingRate(payload);
+        const newRate = await saveShippingRate(payload);
+        onFormSubmit(newRate);
         toast.success("Shipping rate added successfully");
       }
 
-      // Ensure that onFormSubmit is called after a successful update or create
-      if (onFormSubmit) {
-        onFormSubmit(); // Triggers a refresh of the list
-      }
+      //   if (onFormSubmit) {
+      //     onFormSubmit(); // Triggers a refresh of the list
+      //   }
 
-      // Reset the form after a successful submission
       resetForm();
     } catch (error) {
       toast.error(error.message || "Failed to update shipping rate");
@@ -178,9 +152,12 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
 
   return (
     <div className="shippingRate-form">
-      <h2>{rateToEdit ? "Update Shipping Rate" : "Add Shipping Rate"}</h2>
+      <h2 className="shippingForm__heading">
+        {rateToEdit ? "Update Shipping Rate" : "Add Shipping Rate"}
+      </h2>
       <form onSubmit={handleSubmit}>
         <InputField
+          autoFocus
           type="number"
           value={ratePerMile}
           onChange={(e) => setRatePerMile(e.target.value)}
@@ -191,7 +168,7 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
           inputFieldError="shippingRate__error"
           placeholder="Rate Per Mile"
           error={errors.ratePerMile}
-          label="Rate Per Mile"
+          //   label="Rate Per Mile"
         />
 
         <InputField
@@ -205,7 +182,7 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
           inputFieldError="shippingRate__error"
           placeholder="Base Shipping Rate"
           error={errors.baseRate}
-          label="Base Shipping Rate"
+          //   label="Base Shipping Rate"
         />
 
         <InputField
@@ -240,10 +217,16 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
           checked={isGlobal}
           onChange={() => setIsGlobal(!isGlobal)}
           label="Is Global"
-          // className="shippingRate__input"
+          className="shippingRate__input"
+          inputFieldLabel="shippingRate__checkout-label"
+          inputFieldInput="shippingRate__checkout"
         />
 
-        <button type="submit" className="submit-btn" disabled={loading}>
+        <button
+          type="submit"
+          className="shippingRate__submit-btn"
+          disabled={loading}
+        >
           {loading ? "Saving..." : rateToEdit ? "Update Rate" : "Add Rate"}
         </button>
       </form>

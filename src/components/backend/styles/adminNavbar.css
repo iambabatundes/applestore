@@ -11,7 +11,7 @@
     position: sticky;
     top: 0;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0.2rem 1rem;
     background-color: var(--primary-color);
     color: #fff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -19,8 +19,6 @@
     width: 100%;
     z-index: 1000;
 }
-
-
 
 .admin-navbar__left,
 .admin-navbar__center,

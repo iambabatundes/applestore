@@ -291,9 +291,9 @@
     cursor: pointer;
 }
 
-.active {
+/* .active {
     border: 2px solid black;
-}
+} */
 
 .quantity-selection {
     display: flex;

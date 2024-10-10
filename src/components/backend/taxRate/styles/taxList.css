@@ -1,0 +1,106 @@
+.taxRate__list {
+    /* padding: 1rem; */
+    max-width: 1200px;
+    /* margin: 0 auto; */
+}
+
+/* Cards container with a grid layout */
+.taxRate__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+/* Single card styling */
+.taxRate__card {
+    background-color: #fff;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.taxRate__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Details section inside the card */
+.taxRate__details {
+    margin-bottom: 0.6rem;
+}
+
+.taxRate__label {
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+}
+
+.taxRate__value {
+    color: #333;
+    font-size: 1rem;
+}
+
+/* Buttons in the card actions section */
+.taxRate__actions {
+    display: flex;
+    justify-content: space-between;
+    /* gap: 1rem; */
+}
+
+.taxRate__edit-btn,
+.taxRate__delete-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.taxRate__edit-btn {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.taxRate__edit-btn:hover {
+    background-color: #0073e6;
+}
+
+.taxRate__delete-btn {
+    background-color: #ff4757;
+    color: white;
+}
+
+.taxRate__delete-btn:hover {
+    background-color: #ff2f3e;
+}
+
+/* Loading & Error messages */
+.taxRate__loading,
+.tax__error,
+.taxRate__vat-no {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ff4757;
+}
+
+/* Responsive Design */
+@media (min-width: 576px) {
+    .taxRate__cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .taxRate__cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .taxRate__cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

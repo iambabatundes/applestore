@@ -1,4 +1,5 @@
 import React from "react";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import "./styles/shippingRate.css";
 
 export default function ShippingRateList({
@@ -9,11 +10,15 @@ export default function ShippingRateList({
   error,
 }) {
   if (loading) {
-    return <div className="loading">Loading shipping rates...</div>;
+    return (
+      <span className="shippingRate__loading">Loading shipping rates...</span>
+    );
   }
 
   if (error) {
-    return <div className="error">Error loading shipping rates</div>;
+    return (
+      <span className="shipping__error">Error loading shipping rates</span>
+    );
   }
 
   return (
@@ -23,46 +28,48 @@ export default function ShippingRateList({
           {shippingRates.map((rate) => (
             <div className="shipping-rate__card" key={rate._id}>
               <div className="shipping-rate__details">
-                <p className="shipping-rate__label">Rate Per Mile:</p>
-                <p className="shipping-rate__value">{rate.ratePerMile}</p>
+                <span className="shipping-rate__label">Rate Per Mile:</span>
+                {"  "}
+                <span className="shipping-rate__value">{rate.ratePerMile}</span>
               </div>
               <div className="shipping-rate__details">
-                <p className="shipping-rate__label">Base Rate:</p>
-                <p className="shipping-rate__value">{rate.baseRate}</p>
+                <span className="shipping-rate__label">Base Rate:</span>
+                {"  "}
+                <span className="shipping-rate__value">{rate.baseRate}</span>
               </div>
               <div className="shipping-rate__details">
-                <p className="shipping-rate__label">Location:</p>
-                <p className="shipping-rate__value">
+                <span className="shipping-rate__label">Location:</span> {"  "}
+                <span className="shipping-rate__value">
                   {rate.address || "Fetching address..."}
-                </p>
+                </span>
               </div>
               <div className="shipping-rate__details">
-                <p className="shipping-rate__label">Is Global:</p>
-                <p className="shipping-rate__value">
+                <span className="shipping-rate__label">Is Global:</span> {"  "}
+                <span className="shipping-rate__value">
                   {rate.isGlobal ? "Yes" : "No"}
-                </p>
+                </span>
               </div>
 
-              <div>
+              <div className="shippingRate__actions">
                 <button
-                  className="edit-btn"
+                  className="shippingRate__edit-btn"
                   onClick={() => onEdit(rate)} // Pass rate data to the form
                 >
-                  Edit
+                  <FaEdit /> Edit
                 </button>
 
                 <button
-                  className="delete-btn"
+                  className="shippingRate__delete-btn"
                   onClick={() => onDelete(rate._id)}
                 >
-                  Delete
+                  <FaTrash /> Delete
                 </button>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p>No shipping rates available</p>
+        <p className="No__shipping">No shipping rates available</p>
       )}
     </section>
   );

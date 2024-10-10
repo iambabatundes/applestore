@@ -32,6 +32,7 @@ import useAdminUser from "./hooks/useAdminUser";
 import Promotions from "./promotions/promotions";
 import Coupon from "./coupon";
 import ShippingRate from "./shippingRate/shippingRate";
+import TaxRate from "./taxRate/taxRate";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);
@@ -120,11 +121,15 @@ const Admin = ({ companyName, count, userName, logo }) => {
         { label: "Home", to: "/admin/home", content: <Dashboard /> },
         { label: "Updates", to: "/admin/updates", content: <Updates /> },
         { label: "SEO", to: "/admin/seo", content: <SEO /> },
-        { label: "Promotion", to: "/admin/promotion", content: <Promotion /> },
         {
           label: "Shipping Rate",
           to: "/admin/shipping",
           content: <ShippingRate />,
+        },
+        {
+          label: "Tax Rate",
+          to: "/admin/tax-rate",
+          content: <TaxRate />,
         },
       ],
     },

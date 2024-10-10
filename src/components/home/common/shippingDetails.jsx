@@ -102,63 +102,67 @@ export default function ShippingDetails() {
           <span>Deliver to</span>
           <span className="shippingDetails__locationName">{location}</span>
         </div>
-        <div
-          className={`shippingDetails__stock ${
-            stockStatus === "In Stock" ? "inStock" : "outOfStock"
-          }`}
-        >
-          <span>{stockStatus}</span>
-        </div>
-
-        {/* Quantity Selector */}
-        <div className="shippingDetails__quantity">
-          <div className="customDropdown">
-            {!isCustomQuantity ? (
-              <button
-                onClick={toggleDropdown}
-                className="customDropdown__button"
-              >
-                {`Quantity: ${quantity > 10 ? quantity : quantity}`}
-                <i className="fa fa-chevron-down customDropdown__arrow"></i>
-              </button>
-            ) : (
-              <div className="customQuantityInput">
-                <input
-                  type="number"
-                  value={customQuantity}
-                  onChange={handleCustomQuantityChange}
-                  min="1"
-                  max={availableQuantity}
-                />
-                <button onClick={handleCustomQuantitySubmit}>Submit</button>
-              </div>
-            )}
-
-            {isDropdownOpen && (
-              <ul className="customDropdown__list">
-                {[...Array(Math.min(availableQuantity, 9))].map((_, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleQuantityChange(index + 1)}
-                    className={`customDropdown__item ${
-                      quantity === index + 1 ? "selected" : ""
-                    }`}
-                  >
-                    {index + 1}
-                  </li>
-                ))}
-                {availableQuantity > 10 && (
-                  <li
-                    onClick={handleCustomQuantityClick}
-                    className="customDropdown__item"
-                  >
-                    10+
-                  </li>
-                )}
-              </ul>
-            )}
+        <section>
+          <div
+            className={`shippingDetails__stock ${
+              stockStatus === "In Stock" ? "inStock" : "outOfStock"
+            }`}
+          >
+            <span>{stockStatus}</span>
           </div>
-        </div>
+
+          {/* Quantity Selector */}
+          <div className="shippingDetails__quantity">
+            <div className="customDropdown">
+              {!isCustomQuantity ? (
+                <button
+                  onClick={toggleDropdown}
+                  className="customDropdown__button"
+                >
+                  {`Quantity: ${quantity > 10 ? quantity : quantity}`}
+                  <i className="fa fa-chevron-down customDropdown__arrow"></i>
+                </button>
+              ) : (
+                <div className="customQuantityInput">
+                  <input
+                    type="number"
+                    value={customQuantity}
+                    onChange={handleCustomQuantityChange}
+                    min="1"
+                    max={availableQuantity}
+                  />
+                  <button onClick={handleCustomQuantitySubmit}>Submit</button>
+                </div>
+              )}
+
+              {isDropdownOpen && (
+                <ul className="customDropdown__list">
+                  {[...Array(Math.min(availableQuantity, 9))].map(
+                    (_, index) => (
+                      <li
+                        key={index}
+                        onClick={() => handleQuantityChange(index + 1)}
+                        className={`customDropdown__item ${
+                          quantity === index + 1 ? "selected" : ""
+                        }`}
+                      >
+                        {index + 1}
+                      </li>
+                    )
+                  )}
+                  {availableQuantity > 10 && (
+                    <li
+                      onClick={handleCustomQuantityClick}
+                      className="customDropdown__item"
+                    >
+                      10+
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* Add to Cart and Buy Now Buttons */}

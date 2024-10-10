@@ -43,6 +43,10 @@
   position: fixed;
   width: 160px;
   z-index: 999;
+  padding-top: 10px;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .admin-sidebar.open {
