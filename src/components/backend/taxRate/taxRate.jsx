@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { getTaxRates, deleteTaxRate } from "../../../services/taxRateService";
 import TaxForm from "./taxForm";
 import TaxList from "./taxList";
+import "./styles/taxRate.css";
 
 export default function TaxRate() {
   const [taxRates, setTaxRates] = useState([]);
@@ -55,19 +56,25 @@ export default function TaxRate() {
   };
 
   return (
-    <section>
-      <div>
-        <TaxForm currentTax={currentTax} onSaveComplete={handleSaveComplete} />
-      </div>
+    <section className="taxRate">
+      <h2 className="shippingRate__heading">Manage Tax Rate</h2>
+      <div className="taxRate__main">
+        <div className="taxRate__taxForm">
+          <TaxForm
+            currentTax={currentTax}
+            onSaveComplete={handleSaveComplete}
+          />
+        </div>
 
-      <div>
-        <TaxList
-          onDelete={handleDelete}
-          taxRates={taxRates}
-          loading={loading}
-          error={error}
-          onEdit={handleEdit}
-        />
+        <div className="taxRate__taxList">
+          <TaxList
+            onDelete={handleDelete}
+            taxRates={taxRates}
+            loading={loading}
+            error={error}
+            onEdit={handleEdit}
+          />
+        </div>
       </div>
     </section>
   );

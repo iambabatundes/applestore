@@ -10,6 +10,7 @@ export default function SelectInput({
   onChange,
   error,
   selectContainer,
+  selectDropdowns,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
@@ -58,7 +59,7 @@ export default function SelectInput({
       </div>
 
       {isOpen && (
-        <ul className="select__dropdown">
+        <ul className={`${selectDropdowns} select__dropdowns`}>
           {options.map((option) => (
             <li
               key={option}

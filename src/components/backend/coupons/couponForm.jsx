@@ -1,151 +1,178 @@
-import React, { useState } from "react";
-import Joi from "joi";
+import React, { useState, useEffect } from "react";
 import FormField from "./common/formField";
 import "./styles/couponForm.css";
+import { validateForm, validateProperty } from "./validations/couponValidation";
+import SelectInput from "../promotions/common/selectInput";
 
-export default function CouponForm({ onAddCoupon }) {
+export default function CouponForm({
+  onAddCoupon,
+  selectedCoupon,
+  onEditCoupon,
+}) {
   const [formData, setFormData] = useState({
     code: "",
-    discountType: "percentage",
+    discountType: "Percentage",
     discountPercentage: 1,
-    discountValue: 1,
+    discountValue: "",
     expirationDate: "",
     minimumOrderAmount: 0,
-    usageLimit: 1,
+    usageLimit: "",
+    isActive: true,
   });
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
 
-  if (successMessage) {
-    return <p>{successMessage}</p>;
-  }
-
-  const schema = Joi.object({
-    code: Joi.string().required(),
-    discountType: Joi.string().valid("percentage", "fixed").required(),
-    discountPercentage: Joi.when("discountType", {
-      is: "percentage",
-      then: Joi.number().min(1).max(100).required(),
-      otherwise: Joi.forbidden(),
-    }),
-    discountValue: Joi.when("discountType", {
-      is: "fixed",
-      then: Joi.number().min(1).required(),
-      otherwise: Joi.forbidden(),
-    }),
-
-    expirationDate: Joi.date().required(),
-    minimumOrderAmount: Joi.number().min(0),
-    usageLimit: Joi.number().min(1),
-    // isActive: Joi.boolean(),
-    createdAt: Joi.date(),
-  });
-
-  const validateForm = () => {
-    const { error } = schema.validate(formData, { abortEarly: false });
-    if (!error) return null;
-
-    const errorObj = {};
-    error.details.forEach((err) => {
-      errorObj[err.path[0]] = err.message;
-    });
-    setErrors(errorObj);
-    return errorObj;
-  };
+  useEffect(() => {
+    if (selectedCoupon) {
+      const formattedCoupon = {
+        code: selectedCoupon.code || "",
+        discountType: selectedCoupon.discountType || "Percentage",
+        discountPercentage:
+          selectedCoupon.discountType === "Percentage"
+            ? selectedCoupon.discountPercentage || 1
+            : "",
+        discountValue:
+          selectedCoupon.discountType === "Fixed"
+            ? selectedCoupon.discountValue || 1
+            : "",
+        expirationDate: selectedCoupon.expirationDate
+          ? new Date(selectedCoupon.expirationDate).toISOString().split("T")[0]
+          : "",
+        minimumOrderAmount: selectedCoupon.minimumOrderAmount || 0,
+        usageLimit: selectedCoupon.usageLimit || "",
+        isActive: selectedCoupon.isActive || true,
+      };
+      setFormData(formattedCoupon);
+    }
+  }, [selectedCoupon]);
 
   const handleChange = ({ target: { name, value } }) => {
-    setFormData({ ...formData, [name]: value });
+    const updatedFormData = { ...formData, [name]: value };
+
+    // Reset fields when discountType changes
+    if (name === "discountType") {
+      updatedFormData.discountPercentage = value === "Percentage" ? 1 : "";
+      updatedFormData.discountValue = value === "Fixed" ? 1 : "";
+    }
+
+    // Convert discountPercentage and discountValue to numbers when applicable
+    if (name === "discountPercentage") {
+      updatedFormData.discountPercentage = value ? Number(value) : "";
+    } else if (name === "discountValue") {
+      updatedFormData.discountValue = value ? Number(value) : "";
+    }
+
+    // Validate fields
+    const errorMessage = validateProperty({ name, value });
+    const updatedErrors = { ...errors, [name]: errorMessage || undefined };
+
+    // If discountType changes, clear errors for discountPercentage and discountValue
+    if (name === "discountType") {
+      updatedErrors.discountPercentage = undefined;
+      updatedErrors.discountValue = undefined;
+    }
+
+    setErrors(updatedErrors);
+    setFormData(updatedFormData);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (validationErrors) return;
+    const validationErrors = validateForm(formData);
+    setErrors(validationErrors || {});
 
+    if (validationErrors) {
+      console.log(validationErrors);
+      return;
+    }
+
+    // Prepare coupon data
     const couponData = {
       code: formData.code,
       discountType: formData.discountType,
-      expirationDate: new Date(formData.expirationDate).toISOString(),
+      expirationDate: formData.expirationDate,
       minimumOrderAmount: formData.minimumOrderAmount,
       usageLimit: formData.usageLimit,
       isActive: formData.isActive,
     };
 
-    if (formData.discountType === "percentage") {
-      couponData.discountPercentage = Number(formData.discountPercentage);
-    } else if (formData.discountType === "fixed") {
-      couponData.discountValue = Number(formData.discountValue);
+    // If discountType is "Percentage", ensure discountPercentage is applied
+    if (formData.discountType === "Percentage") {
+      couponData.discountPercentage = Number(formData.discountPercentage || 1);
     }
 
-    onAddCoupon(couponData);
-    setErrors({});
-    setSuccessMessage("Coupon added successfully!");
+    // If discountType is "Fixed", ensure discountValue is applied
+    if (formData.discountType === "Fixed") {
+      couponData.discountValue = Number(formData.discountValue || 1);
+    }
+
+    if (selectedCoupon) {
+      onEditCoupon(selectedCoupon._id, couponData);
+    } else {
+      onAddCoupon(couponData);
+    }
+
+    // Reset form
     setFormData({
       code: "",
-      discountType: "percentage",
+      discountType: "Percentage",
       discountPercentage: 1,
-      discountValue: 1,
+      discountValue: "",
       expirationDate: "",
       minimumOrderAmount: 0,
-      usageLimit: 1,
-      //   isActive: true,
+      usageLimit: "",
+      isActive: true,
     });
+
+    setErrors({});
   };
 
   return (
     <div className="coupon-form-container">
-      <h2 className="coupon__form-heading">Create New Coupon</h2>
-      {successMessage && <p className="success-message">{successMessage}</p>}
+      <h2 className="coupon__form-heading">
+        {selectedCoupon ? "Edit Coupon" : "Create New Coupon"}
+      </h2>
       <form onSubmit={handleSubmit}>
         <FormField
           handleChange={handleChange}
           name="code"
-          placeholder="Code"
+          placeholder="Coupon Code"
           type="text"
           value={formData.code}
           error={errors.code}
-          label="Coupon Code"
         />
 
-        <div className="coupon__formContainer">
-          <label>Discount Type</label>
-          <select
-            name="discountType"
-            value={formData.discountType}
-            onChange={handleChange}
-          >
-            <option value="percentage">Percentage</option>
-            <option value="fixed">Fixed Amount</option>
-          </select>
-          {errors.discountType && (
-            <p className="coupon__error">{errors.discountType}</p>
-          )}
-        </div>
+        <SelectInput
+          options={["Percentage", "Fixed"]}
+          // label="Discount Type"
+          name="discountType"
+          onChange={handleChange}
+          value={formData.discountType}
+          error={errors.discountType}
+          selectDropdowns="coupon__selectDropdowns"
+        />
 
-        {formData.discountType === "percentage" ? (
-          <>
-            <FormField
-              type="number"
-              name="discountPercentage"
-              value={formData.discountPercentage}
-              placeholder="Discount Percentage"
-              handleChange={handleChange}
-              error={errors.discountPercentage}
-              label="Discount Percentage"
-            />
-          </>
-        ) : (
-          <>
-            <FormField
-              type="number"
-              name="discountValue"
-              value={formData.discountValue}
-              handleChange={handleChange}
-              error={errors.discountValue}
-              placeholder="Discount Value"
-              label="Discount Value"
-            />
-          </>
+        {formData.discountType === "Percentage" && (
+          <FormField
+            type="number"
+            name="discountPercentage"
+            value={formData.discountPercentage}
+            placeholder="Discount Percentage"
+            handleChange={handleChange}
+            error={errors.discountPercentage}
+            label="Discount Percentage"
+          />
+        )}
+
+        {formData.discountType === "Fixed" && (
+          <FormField
+            type="number"
+            name="discountValue"
+            value={formData.discountValue}
+            handleChange={handleChange}
+            error={errors.discountValue}
+            placeholder="Discount Value"
+            label="Discount Value"
+          />
         )}
 
         <FormField
@@ -164,8 +191,8 @@ export default function CouponForm({ onAddCoupon }) {
           value={formData.minimumOrderAmount}
           handleChange={handleChange}
           placeholder="Minimum Order Amount"
-          error={errors.minimumOrderAmount}
           label="Minimum Order Amount"
+          error={errors.minimumOrderAmount}
         />
 
         <FormField
@@ -175,15 +202,10 @@ export default function CouponForm({ onAddCoupon }) {
           handleChange={handleChange}
           placeholder="Usage Limit"
           error={errors.usageLimit}
-          label="Usage Limit"
         />
 
-        <button
-          className="coupon__btn"
-          type="submit"
-          disabled={Object.keys(errors).length > 0}
-        >
-          Add Coupon
+        <button className="coupon__btn" type="submit">
+          {selectedCoupon ? "Update Coupon" : "Add Coupon"}
         </button>
       </form>
     </div>

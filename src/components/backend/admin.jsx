@@ -26,8 +26,6 @@ import Promotion from "./promotion";
 import AddPostTags from "./allPosts/addPostTags";
 import AddPostCategories from "./allPosts/addPostCategories";
 import AdminLogin from "./adminLogin";
-// import { getAdminUser } from "../../services/adminService";
-// import { adminlogout } from "../../services/adminAuthService";
 import useAdminUser from "./hooks/useAdminUser";
 import Promotions from "./promotions/promotions";
 import Coupon from "./coupon";
@@ -38,8 +36,6 @@ const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedDropdownLink, setSelectedDropdownLink] = useState(null);
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const {
     adminUser,
@@ -59,31 +55,6 @@ const Admin = ({ companyName, count, userName, logo }) => {
     setMobileMenuOpen((prevState) => !prevState);
   }, []);
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const userData = await getAdminUser();
-  //       setUser(userData);
-  //       setIsAuthenticated(true);
-  //     } catch (err) {
-  //       console.error("Failed to fetch user", err);
-  //       setIsAuthenticated(false);
-  //       navigate("/admin/login");
-  //     }
-  //   };
-
-  //   const token = localStorage.getItem("token");
-
-  //   if (!token) {
-  //     navigate("/admin/login");
-  //     return;
-  //   }
-
-  //   if (token && !user) {
-  //     fetchUser();
-  //   }
-  // }, [navigate, user]);
-
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
@@ -99,13 +70,6 @@ const Admin = ({ companyName, count, userName, logo }) => {
   if (!isAuthenticated) {
     return <AdminLogin setAuth={() => {}} />;
   }
-
-  // const handleLogout = () => {
-  //   adminlogout();
-  //   setIsAuthenticated(false);
-  //   setAdminUser(null);
-  //   navigate("/admin/login");
-  // };
 
   const toggleDarkMode = () => {
     setDarkMode((prevMode) => !prevMode);

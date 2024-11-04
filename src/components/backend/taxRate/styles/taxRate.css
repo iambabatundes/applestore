@@ -1,0 +1,41 @@
+.taxRate {
+    overflow-y: auto;
+    height: 500px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.taxRate::-webkit-scrollbar {
+    display: none;
+}
+
+.taxRate__main {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    max-width: 1200px;
+    /* margin: 0 auto; */
+}
+
+.taxRate__taxList {
+    /* flex: 4; */
+    overflow-x: auto;
+}
+
+@media (min-width: 768px) {
+    .taxRate__main {
+        flex-direction: row;
+        /* justify-content: space-between; */
+    }
+
+    .taxRate__taxForm {
+        flex: 1.5;
+        /* Keep the form smaller */
+    }
+
+    .taxRate__taxList {
+        flex: 4;
+        /* Make the list even wider on larger screens */
+    }
+}

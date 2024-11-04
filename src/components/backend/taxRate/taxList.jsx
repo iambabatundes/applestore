@@ -23,31 +23,48 @@ export default function TaxList({
           {taxRates.map((rate) => (
             <div className="taxRate__card" key={rate._id}>
               <div className="taxRate__details">
-                <span className="taxRate__label">country:</span>
+                <span className="taxRate__label">Country:</span>
                 {"  "}
                 <span className="taxRate__value">{rate.country}</span>
               </div>
               <div className="taxRate__details">
-                <span className="taxRate__label">region:</span>
+                <span className="taxRate__label">Region:</span>
                 {"  "}
                 <span className="taxRate__value">{rate.region}</span>
               </div>
               <div className="taxRate__details">
-                <span className="taxRate__label">taxCode:</span> {"  "}
+                <span className="taxRate__label">City:</span>
+                {"  "}
+                <span className="taxRate__value">{rate.city}</span>
+              </div>
+              <div className="taxRate__details">
+                <span className="taxRate__label">TaxCode:</span> {"  "}
                 <span className="taxRate__value">{rate.taxCode}</span>
               </div>
               <div className="taxRate__details">
-                <span className="taxRate__label">taxRate:</span> {"  "}
+                <span className="taxRate__label">TaxRate:</span> {"  "}
                 <span className="taxRate__value">{rate.taxRate}</span>
               </div>
               <div className="taxRate__details">
-                <span className="taxRate__label">Is Global:</span> {"  "}
+                <span className="taxRate__label">Effective Date:</span> {"  "}
+                <span className="taxRate__value">
+                  {new Date(rate.effectiveDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="taxRate__details">
+                <span className="taxRate__label">Expiration Date:</span> {"  "}
+                <span className="taxRate__value">
+                  {new Date(rate.expirationDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="taxRate__details">
+                <span className="taxRate__label">IsGlobal:</span> {"  "}
                 <span className="taxRate__value">
                   {rate.isGlobal ? "Yes" : "No"}
                 </span>
               </div>
               <div className="taxRate__details">
-                <span className="taxRate__label">Is Active:</span> {"  "}
+                <span className="taxRate__label">IsActive:</span> {"  "}
                 <span className="taxRate__value">
                   {rate.isActive ? "Yes" : "No"}
                 </span>

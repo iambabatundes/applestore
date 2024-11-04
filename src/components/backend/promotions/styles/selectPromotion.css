@@ -35,7 +35,7 @@
     transform: translateY(-50%);
 }
 
-.select__dropdown {
+.select__dropdowns {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 15px;
@@ -43,7 +43,8 @@
     position: absolute;
     top: 52.6%;
     /* left: 0; */
-    width: 29.4%;
+    width: 21.4%;
+    /* width: 17.3%; */
     max-height: 200px;
     color: #000;
     overflow-y: auto;

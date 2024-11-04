@@ -30,6 +30,7 @@ const useProductForm = () => {
       featureImage: {},
       category: [],
       tags: [],
+      promotion: [],
     }),
     []
   );
@@ -44,6 +45,7 @@ const useProductForm = () => {
     description: "",
   });
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedPromotions, setSelectedPromotions] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [featureImage, setFeatureImage] = useState(null);
   const [media, setMedia] = useState([]);
@@ -64,6 +66,9 @@ const useProductForm = () => {
         });
         setSelectedTags(product.tags.map((tag) => tag.name));
         setSelectedCategories(product.category || []);
+        setSelectedPromotions(
+          product.promotion.map((promotion) => promotion.name)
+        );
         setFeatureImage(product.featureImage);
         setMedia(product.media || []);
         setEditorContent({
@@ -87,6 +92,7 @@ const useProductForm = () => {
       setEditingMode(false);
       setProductDetails(initialProductDetails);
       setSelectedTags([]);
+      setSelectedPromotions([]);
       setSelectedCategories([]);
       setFeatureImage(null);
       setMedia([]);
@@ -151,6 +157,7 @@ const useProductForm = () => {
       ...editorContent,
       category: categoryNames,
       tags: selectedTags,
+      promotion: selectedPromotions,
       userId,
     };
 
@@ -291,6 +298,8 @@ const useProductForm = () => {
     setSelectedTags,
     selectedCategories,
     setSelectedCategories,
+    selectedPromotions,
+    setSelectedPromotions,
     featureImage,
     setFeatureImage,
     media,

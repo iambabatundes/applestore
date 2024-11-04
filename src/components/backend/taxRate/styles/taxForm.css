@@ -1,0 +1,192 @@
+/* Form container */
+.taxForm {
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 300px;
+}
+
+.taxForm:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.taxForm__heading {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.taxForm__main {
+    overflow-y: auto;
+    height: 400px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.taxForm__main::-webkit-scrollbar {
+    display: none;
+}
+
+/* Input field container */
+.taxForm__container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+/* .taxForm__group {
+    display: flex;
+    gap: 10px;
+} */
+
+.taxForm__label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+.taxForm__input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+
+}
+
+.taxForm__input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Error message */
+.taxForm__error {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 4px;
+}
+
+/* Checkbox styling */
+.taxForm__container-isGlobal,
+.taxForm__isActive {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.taxForm__checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.taxForm__isGlobal,
+.taxForm__isActive-input {
+    margin-right: 20px;
+    width: 18px;
+    height: 18px;
+}
+
+.taxForm__isGlobal-label,
+.taxForm__isActive-label {
+    margin-right: 10px;
+}
+
+/* Tiered Rates Section */
+.tieredRate__form {
+    margin-top: 30px;
+}
+
+.tieredRate__form h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+.tieredRate__Addbtn {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tieredRate__Addbtn:hover {
+    background-color: #2980b9;
+}
+
+.tieredRates__lists {
+    margin-top: 16px;
+    padding-left: 0;
+}
+
+.tieredRate__list {
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    list-style: none;
+}
+
+.tieredRate__btn {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tieredRate__btn:hover {
+    background-color: #c0392b;
+}
+
+/* Button styling */
+.taxForm__btn {
+    background-color: #2ecc71;
+    color: #fff;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.taxForm__btn:hover {
+    background-color: #27ae60;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    section {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .taxForm__input {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .taxForm__btn {
+        font-size: 14px;
+    }
+
+    .taxForm__checkbox {
+        display: flex;
+    }
+}

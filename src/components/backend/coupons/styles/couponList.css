@@ -1,0 +1,117 @@
+.couponList__container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* padding: 1rem; */
+    /* background-color: #f9f9f9; */
+}
+
+/* Coupon cards container with responsive grid layout */
+.couponList__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+/* Individual coupon card */
+.couponList__card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 227px;
+}
+
+/* Hover effect on coupon card */
+.couponList__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Coupon details styling */
+.couponList__details {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Label for each detail */
+.couponList__label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Value for each detail */
+.couponList__value {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* Style for the "No coupons available" message */
+.couponList__available {
+    text-align: center;
+    color: #888;
+    font-size: 1.1rem;
+}
+
+/* Action buttons for editing and deleting */
+.shippingRate__actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.shippingRate__edit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.shippingRate__edit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Loading and error messages */
+.shippingRate__loading,
+.shipping__error {
+    display: block;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #ff4757;
+    padding: 1rem;
+}
+
+/* Responsive styles for larger screens */
+@media (min-width: 576px) {
+    .couponList__cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .couponList__cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .couponList__cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1990px) {
+    .couponList__cards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

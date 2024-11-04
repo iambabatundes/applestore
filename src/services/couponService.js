@@ -12,11 +12,11 @@ export function getCoupon(couponId) {
 }
 
 export function saveCoupon(coupon) {
-  return http.post(apiEndPoint + "/validate" + coupon);
+  return http.post(apiEndPoint, coupon);
 }
 
 export function validateCoupon(coupon) {
-  return http.post(apiEndPoint, coupon);
+  return http.post(apiEndPoint + "/validate" + coupon);
 }
 
 export function updateCoupon(couponId, coupon) {
@@ -24,5 +24,5 @@ export function updateCoupon(couponId, coupon) {
 }
 
 export function deleteCoupon(couponId) {
-  return http.delete(apiEndPoint + "/" + couponId);
+  return http.delete(`${apiEndPoint}/${couponId}`);
 }

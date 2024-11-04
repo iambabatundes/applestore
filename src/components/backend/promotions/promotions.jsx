@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import PromotionForm from "./common/promotionForm";
 import PromotionList from "./common/promotionList";
 import "./styles/promotions.css";
@@ -12,6 +13,8 @@ import {
 export default function Promotions() {
   const [promotions, setPromotions] = useState([]);
   const [selectedPromotion, setSelectedPromotion] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchPromotions();
@@ -19,27 +22,43 @@ export default function Promotions() {
 
   const fetchPromotions = async () => {
     try {
-      const response = await getPromotions();
-      setPromotions(response.data);
+      setLoading(true);
+      const { data: promotion } = await getPromotions();
+      setPromotions(promotion);
     } catch (error) {
+      setError(error);
+      toast.error("Error fetching promotions");
       console.error("Error fetching promotions:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCreateOrUpdate = async (promotion, resetForm) => {
+  const handleAddPromotion = async (promotion) => {
     try {
-      if (promotion._id) {
-        await updatePromotion(promotion._id, promotion);
-      } else {
-        await savePromotion(promotion);
-      }
-      fetchPromotions(); // Refresh promotions
-      resetForm();
+      await savePromotion(promotion);
+      toast.success("Promotion added successfully!");
+      fetchPromotions(); // Refetch promotion to update the list
     } catch (error) {
-      console.error("Error creating/updating promotion:", error);
-      if (error.response && error.response.status === 404)
-        alert("This promotion can not be created");
+      console.log(error);
+      toast.error("Error saving coupon");
     }
+  };
+
+  const handleEditPromotion = async (promotionId, updatedPromotion) => {
+    try {
+      await updatePromotion(promotionId, updatedPromotion);
+      toast.success("Promotion updated successfully!");
+      fetchPromotions();
+      setSelectedPromotion(null);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error updating coupon");
+    }
+  };
+
+  const handleSelectPromotion = (promotion) => {
+    setSelectedPromotion(promotion); // Set promotion for editing
   };
 
   const handleDelete = async (id) => {
@@ -56,14 +75,17 @@ export default function Promotions() {
       <h1 className="promotion__heading">Promotions</h1>
       <div className="promotion__main">
         <PromotionForm
-          onSubmit={handleCreateOrUpdate}
+          onEditPromotion={handleEditPromotion}
+          onAddPromotion={handleAddPromotion}
           selectedPromotion={selectedPromotion}
         />
         <div className="promotionList__main">
           <PromotionList
             promotions={promotions}
-            onEdit={setSelectedPromotion}
+            onEdit={handleSelectPromotion}
             onDelete={handleDelete}
+            error={error}
+            loading={loading}
           />
         </div>
       </div>

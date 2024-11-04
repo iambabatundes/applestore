@@ -1,32 +1,57 @@
+// promotionValidation.js
 import Joi from "joi";
 
-export const promotionSchema = Joi.object({
-  name: Joi.string().min(1).max(255).required(),
+const promotionSchema = Joi.object({
+  promotionName: Joi.string().min(1).max(255).required(),
   description: Joi.string().min(3).required(),
   promotionType: Joi.string()
     .valid("Discount", "FlashSale", "FreeShipping", "BundleDeal")
     .required(),
-  discountPercentage: Joi.number().min(1).max(100).when("promotionType", {
+
+  discountPercentage: Joi.when("promotionType", {
     is: "Discount",
-    then: Joi.required(),
+    then: Joi.number().min(1).max(100).required().label("Discount Percentage"),
   }),
-  flashSalePrice: Joi.number().when("promotionType", {
+
+  flashSalePrice: Joi.when("promotionType", {
     is: "FlashSale",
-    then: Joi.required(),
+    then: Joi.number().required().label("Flash Sale"),
   }),
-  shippingDiscount: Joi.number().min(0).max(100).when("promotionType", {
+
+  shippingDiscount: Joi.when("promotionType", {
     is: "FreeShipping",
-    then: Joi.required(),
+    then: Joi.number().min(1).max(100).required().label("Shipping Discount"),
   }),
-  minimumQuantity: Joi.number().min(1).when("promotionType", {
+
+  minimumQuantity: Joi.when("promotionType", {
     is: "BundleDeal",
-    then: Joi.required(),
+    then: Joi.number().min(1).required().label("Minimum Quantity"),
   }),
-  freeQuantity: Joi.number().min(1).when("promotionType", {
+
+  freeQuantity: Joi.when("promotionType", {
     is: "BundleDeal",
-    then: Joi.required(),
+    then: Joi.number().min(1).required().label("Free Quantity"),
   }),
-  startDate: Joi.date(),
-  endDate: Joi.date().min(Joi.ref("startDate")),
+
+  startDate: Joi.date().required(),
+  endDate: Joi.date().min(Joi.ref("startDate")).required(),
   isActive: Joi.boolean(),
 });
+
+export function validateProperty({ name, value }) {
+  const obj = { [name]: value };
+  const subSchema = Joi.object({ [name]: promotionSchema.extract(name) });
+  const { error } = subSchema.validate(obj);
+  return error ? error.details[0].message : null;
+}
+
+export function validateForm(formData) {
+  const { error } = promotionSchema.validate(formData, { abortEarly: false });
+  if (!error) return null;
+
+  const validationErrors = {};
+  error.details.forEach((err) => {
+    validationErrors[err.path[0]] = err.message;
+  });
+  return validationErrors;
+}

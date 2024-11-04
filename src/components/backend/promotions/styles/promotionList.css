@@ -1,0 +1,109 @@
+.promotion-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    /* padding: 1rem; */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Individual promotion card styling */
+.promotionList__card {
+    background-color: #fff;
+    padding: 1.2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 240px;
+}
+
+.promotionList__card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Promotion details */
+.promotionList__label {
+    font-weight: bold;
+    font-size: 0.72rem;
+    color: #444;
+    /* display: block; */
+    margin-bottom: 0.25rem;
+}
+
+.promotionList__name {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.promotionList__description,
+.promotionList__type,
+.promotionList__discount,
+.promotionList__flashSale,
+.promotionList__shippingDiscount,
+.promotionList__mini,
+.promotionList__isActive,
+.promotionList__date {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+/* Actions (Edit & Delete buttons) */
+.promotionList__actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.promotionList__onEdit,
+.promotionList__onDelete {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.promotionList__onEdit {
+    background-color: #1e90ff;
+    color: white;
+}
+
+.promotionList__onEdit:hover {
+    background-color: #0073e6;
+}
+
+.promotionList__onDelete {
+    background-color: #ff4757;
+    color: white;
+}
+
+.promotionList__onDelete:hover {
+    background-color: #ff2f3e;
+}
+
+/* Responsive grid layout */
+@media (min-width: 576px) {
+    .promotion-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .promotion-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .promotion-list {
+        grid-template-columns: repeat(3, 1fr);
+
+    }
+}

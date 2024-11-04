@@ -58,7 +58,7 @@ export default function DataTags({
       {isTagsVisible && (
         <section className="data-tags">
           {selectedTags.length === 0 && (
-            <p className="data-tags__no-tags">No Tags Found</p>
+            <p className="data-tags__no-tags">No Tags Selected</p>
           )}
           <div className="tags-list">
             {selectedTags.map((tag) => (

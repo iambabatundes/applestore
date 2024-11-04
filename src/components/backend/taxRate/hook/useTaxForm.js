@@ -22,6 +22,23 @@ export function useTaxForm(currentTax, onSaveComplete) {
   const [tier, setTier] = useState({ minAmount: "", maxAmount: "", rate: "" });
   const [errors, setErrors] = useState({});
 
+  const resetForm = () => {
+    setFormData({
+      country: "",
+      region: "",
+      city: "",
+      taxRate: "",
+      taxCode: "",
+      isGlobal: false,
+      isActive: true,
+      effectiveDate: "",
+      expirationDate: "",
+      tieredRates: [],
+    });
+    setTier({ minAmount: "", maxAmount: "", rate: "" });
+    setErrors({});
+  };
+
   useEffect(() => {
     if (currentTax) {
       setFormData({
@@ -30,12 +47,20 @@ export function useTaxForm(currentTax, onSaveComplete) {
         city: currentTax.city || "",
         taxRate: currentTax.taxRate || "",
         taxCode: currentTax.taxCode || "",
-        isGlobal: currentTax.isGlobal || false,
-        isActive: currentTax.isActive || true,
-        effectiveDate: currentTax.effectiveDate?.substring(0, 10) || "",
-        expirationDate: currentTax.expirationDate?.substring(0, 10) || "",
+        isGlobal:
+          currentTax.isGlobal !== undefined ? currentTax.isGlobal : false,
+        isActive:
+          currentTax.isActive !== undefined ? currentTax.isActive : true,
+        effectiveDate: currentTax.effectiveDate
+          ? currentTax.effectiveDate.substring(0, 10)
+          : "",
+        expirationDate: currentTax.expirationDate
+          ? currentTax.expirationDate.substring(0, 10)
+          : "",
         tieredRates: currentTax.tieredRates || [],
       });
+    } else {
+      resetForm(); // Clear form when not editing
     }
   }, [currentTax]);
 
@@ -76,7 +101,7 @@ export function useTaxForm(currentTax, onSaveComplete) {
       }));
       setTier({ minAmount: "", maxAmount: "", rate: "" });
     } else {
-      toast.error("Please fill in all tiered rate fields.");
+      //   toast.error("Please fill in all tiered rate fields.");
     }
   };
 
@@ -106,6 +131,7 @@ export function useTaxForm(currentTax, onSaveComplete) {
       }
 
       onSaveComplete();
+      resetForm();
     } catch (error) {
       console.error("Error saving tax rate:", error);
     }

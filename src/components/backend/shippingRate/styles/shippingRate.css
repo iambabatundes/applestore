@@ -179,7 +179,15 @@
 .shipping-rate-list {
     /* padding: 1rem; */
     max-width: 1200px;
+    overflow-y: auto;
+    height: 500px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     /* margin: 0 auto; */
+}
+
+.shipping-rate-list::-webkit-scrollbar {
+    display: none;
 }
 
 /* Cards container with a grid layout */

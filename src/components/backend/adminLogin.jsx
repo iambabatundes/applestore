@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -9,8 +9,18 @@ export default function AdminLogin({ adminUser, setAuth }) {
   const [data, setData] = useState({ email: "", password: "" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
+  const [logoutMessage, setLogoutMessage] = useState(null);
 
   const { state } = useLocation();
+
+  useEffect(() => {
+    // Check if there's a logout message to display
+    const message = localStorage.getItem("logoutMessage");
+    if (message) {
+      setLogoutMessage(message);
+      localStorage.removeItem("logoutMessage"); // Clear the message after displaying
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +58,22 @@ export default function AdminLogin({ adminUser, setAuth }) {
   return (
     <div className="admin-login-background">
       <div className="admin-login-container">
+        {/* {logoutMessage && (
+          <div className="adminLogin__message">{logoutMessage}</div>
+        )} */}
+
+        {logoutMessage && (
+          <div className="adminLogin__message">
+            {logoutMessage}
+            <button
+              className="adminLogin__close"
+              onClick={() => setLogoutMessage(null)}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="adminLogin__form">
           <h1 className="adminLogin__Heading">Admin Login</h1>
           {errors && (

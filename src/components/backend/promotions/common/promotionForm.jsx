@@ -1,44 +1,182 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/promotions.css";
 import TextInput from "./textInput";
 import SelectInput from "./selectInput";
-import { usePromotionForm } from "../hooks/usePromotionForm";
+import {
+  validateForm,
+  validateProperty,
+} from "../validation/promotionValidation";
 
-const initialState = {
-  name: "",
-  description: "",
-  promotionType: "Discount",
-  discountPercentage: 1,
-  flashSalePrice: "",
-  shippingDiscount: 1,
-  minimumQuantity: 1,
-  freeQuantity: 1,
-  startDate: "",
-  endDate: "",
-  isActive: false,
-};
+export default function PromotionForm({
+  onAddPromotion,
+  onEditPromotion,
+  selectedPromotion,
+}) {
+  const [formData, setFormData] = useState({
+    promotionName: "",
+    description: "",
+    promotionType: "Discount",
+    discountPercentage: 1,
+    flashSalePrice: "",
+    shippingDiscount: 1,
+    minimumQuantity: 1,
+    freeQuantity: 1,
+    startDate: "",
+    endDate: "",
+    isActive: false,
+    appliedToAll: false,
+    appliedProducts: [],
+    appliedCategories: [],
+  });
+  const [errors, setErrors] = useState({});
 
-export default function PromotionForm({ onSubmit, selectedPromotion }) {
-  const { formData, errors, handleChange, handleSubmit } = usePromotionForm(
-    initialState,
-    onSubmit,
-    selectedPromotion
-  );
+  const resetForm = () => {
+    setFormData({
+      promotionName: "",
+      description: "",
+      promotionType: "Discount",
+      discountPercentage: 1,
+      flashSalePrice: "",
+      shippingDiscount: 1,
+      minimumQuantity: 1,
+      freeQuantity: 1,
+      startDate: "",
+      endDate: "",
+      isActive: false,
+      appliedToAll: false,
+      appliedProducts: [],
+      appliedCategories: [],
+    });
+    setErrors({});
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
+  useEffect(() => {
+    if (selectedPromotion) {
+      const formattedPromotion = {
+        promotionName: selectedPromotion.promotionName || "",
+        description: selectedPromotion.description || "",
+        promotionType: selectedPromotion.promotionType || "Discount",
+        discountPercentage:
+          selectedPromotion.promotionType === "Discount"
+            ? selectedPromotion.discountPercentage || 1
+            : "",
+        flashSalePrice:
+          selectedPromotion.promotionType === "FlashSale"
+            ? selectedPromotion.flashSalePrice || 1
+            : "",
+
+        shippingDiscount:
+          selectedPromotion.promotionType === "FreeShipping"
+            ? selectedPromotion.shippingDiscount || 1
+            : "",
+
+        minimumQuantity:
+          selectedPromotion.promotionType === "BundleDeal"
+            ? selectedPromotion.minimumQuantity || 1
+            : "",
+
+        freeQuantity:
+          selectedPromotion.promotionType === "BundleDeal"
+            ? selectedPromotion.freeQuantity || 1
+            : "",
+
+        startDate: formatDate(selectedPromotion.startDate),
+        endDate: formatDate(selectedPromotion.endDate),
+        isActive: selectedPromotion.isActive || true,
+        appliedCategories: selectedPromotion.appliedCategories || [],
+        appliedProducts: selectedPromotion.appliedCategories || [],
+        appliedToAll: selectedPromotion.appliedToAll || false,
+      };
+      setFormData(formattedPromotion);
+    } else {
+      resetForm();
+    }
+  }, [selectedPromotion]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    const updatedFormData = { ...formData };
+
+    // Reset fields based on promotionType
+    if (name === "promotionType") {
+      updatedFormData.discountPercentage = value === "Discount" ? 1 : "";
+      updatedFormData.flashSalePrice = value === "FlashSale" ? 1 : "";
+      updatedFormData.shippingDiscount = value === "FreeShipping" ? 1 : "";
+      updatedFormData.minimumQuantity = value === "BundleDeal" ? 1 : "";
+      updatedFormData.freeQuantity = value === "BundleDeal" ? 1 : "";
+    }
+
+    // Handle checkbox state
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+
+    // Validation
+    const errorMessage = validateProperty({ name, value });
+    setErrors({ ...errors, [name]: errorMessage || undefined });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const validationErrors = validateForm();
+    if (validationErrors) {
+      console.log("Validation Errors:", validationErrors);
+      return;
+    }
+
+    const promotionData = {
+      promotionName: formData.promotionName,
+      description: formData.description,
+      promotionType: formData.promotionType,
+      startDate: new Date(formData.startDate).toISOString(),
+      endDate: new Date(formData.endDate).toISOString(),
+      isActive: formData.isActive,
+    };
+
+    // Add fields based on promotionType
+    if (formData.promotionType === "Discount") {
+      promotionData.discountPercentage = Number(formData.discountPercentage);
+    } else if (formData.promotionType === "FlashSale") {
+      promotionData.flashSalePrice = Number(formData.flashSalePrice);
+    } else if (formData.promotionType === "FreeShipping") {
+      promotionData.shippingDiscount = Number(formData.shippingDiscount);
+    } else if (formData.promotionType === "BundleDeal") {
+      promotionData.minimumQuantity = Number(formData.minimumQuantity);
+      promotionData.freeQuantity = Number(formData.freeQuantity);
+    }
+
+    if (selectedPromotion) {
+      onEditPromotion(selectedPromotion._id, promotionData); // Make sure `selectedPromotion._id` is valid
+    } else {
+      onAddPromotion(promotionData);
+    }
+    resetForm();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="promotions__form">
       <TextInput
-        name="name"
-        label="Promotion Name"
+        name="promotionName"
+        // label="Promotion Name"
+        placeholder="Promotion Name"
         onChange={handleChange}
-        value={formData.name}
+        value={formData.promotionName}
         type="text"
-        error={errors.name}
+        error={errors.promotionName}
       />
 
       <TextInput
         name="description"
-        label="Promotion Description"
+        // label="Promotion Description"
+        placeholder="Promotion Description"
         onChange={handleChange}
         value={formData.description}
         error={errors.description}
@@ -59,6 +197,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
         <TextInput
           label="Discount Percentage"
           name="discountPercentage"
+          placeholder="Discount Percentage"
           value={formData.discountPercentage}
           onChange={handleChange}
           error={errors.discountPercentage}
@@ -69,6 +208,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
       {formData.promotionType === "FlashSale" && (
         <TextInput
           label="Flash Sale Price"
+          placeholder="Flash Sale Price"
           name="flashSalePrice"
           value={formData.flashSalePrice}
           onChange={handleChange}
@@ -80,6 +220,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
       {formData.promotionType === "FreeShipping" && (
         <TextInput
           label="Shipping Discount"
+          placeholder="Shipping Discount"
           name="shippingDiscount"
           value={formData.shippingDiscount}
           onChange={handleChange}
@@ -92,6 +233,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
         <>
           <TextInput
             label="Minimum Quantity"
+            placeholder="Minimum Quantity"
             name="minimumQuantity"
             value={formData.minimumQuantity}
             onChange={handleChange}
@@ -101,6 +243,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
 
           <TextInput
             label="Free Quantity"
+            placeholder="Free Quantity"
             name="freeQuantity"
             value={formData.freeQuantity}
             onChange={handleChange}
@@ -115,6 +258,7 @@ export default function PromotionForm({ onSubmit, selectedPromotion }) {
         type="date"
         name="startDate"
         label="Start Date"
+        placeholder="Start Date"
         onChange={handleChange}
         value={formData.startDate}
       />

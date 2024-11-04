@@ -1,5 +1,6 @@
 import React from "react";
 import { InputField } from "../../common/inputField";
+import "../styles/taxForm.css";
 
 export function TieredRatesSection({
   tier,
@@ -10,7 +11,7 @@ export function TieredRatesSection({
 }) {
   return (
     <div className="tieredRate__form">
-      <h3>Tiered Rates</h3>
+      <h3 className="taxForm__heading">Tiered Rates</h3>
 
       <InputField
         type="number"
@@ -18,6 +19,8 @@ export function TieredRatesSection({
         value={tier.minAmount}
         onChange={onTierChange}
         placeholder="Min Amount"
+        inputFieldContainer="taxForm__container"
+        inputFieldInput="taxForm__input"
       />
       <InputField
         type="number"
@@ -25,6 +28,8 @@ export function TieredRatesSection({
         value={tier.maxAmount}
         onChange={onTierChange}
         placeholder="Max Amount"
+        inputFieldContainer="taxForm__container"
+        inputFieldInput="taxForm__input"
       />
       <InputField
         type="number"
@@ -32,17 +37,23 @@ export function TieredRatesSection({
         value={tier.rate}
         onChange={onTierChange}
         placeholder="Rate (%)"
+        inputFieldContainer="taxForm__container"
+        inputFieldInput="taxForm__input"
       />
-      <button type="button" onClick={onAddTier}>
+      <button type="button" onClick={onAddTier} className="tieredRate__Addbtn">
         Add Tiered Rate
       </button>
 
       {tieredRates.length > 0 && (
-        <ul className="tiered-rates-list">
+        <ul className="tieredRates__lists">
           {tieredRates.map((tier, index) => (
-            <li key={index}>
+            <li className="tieredRate__list" key={index}>
               Min: {tier.minAmount}, Max: {tier.maxAmount}, Rate: {tier.rate}%
-              <button type="button" onClick={() => onRemoveTier(index)}>
+              <button
+                className="tieredRate__btn"
+                type="button"
+                onClick={() => onRemoveTier(index)}
+              >
                 Remove
               </button>
             </li>

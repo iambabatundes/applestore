@@ -1,80 +1,98 @@
 .taxRate__list {
     /* padding: 1rem; */
-    max-width: 1200px;
-    /* margin: 0 auto; */
+    max-width: 100%;
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: none;
+    /* Hide scrollbar */
+}
+
+.taxRate__list::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar for Webkit browsers */
 }
 
 /* Cards container with a grid layout */
 .taxRate__cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 0.7rem;
+    padding-bottom: 1rem;
 }
 
 /* Single card styling */
 .taxRate__card {
     background-color: #fff;
-    padding: 1.25rem;
+    padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .taxRate__card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
 /* Details section inside the card */
 .taxRate__details {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 .taxRate__label {
-    font-weight: bold;
-    color: #444;
-    margin-bottom: 0.25rem;
-    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.8rem;
 }
 
 .taxRate__value {
-    color: #333;
-    font-size: 1rem;
+    color: #555;
+    font-size: 0.95rem;
 }
 
 /* Buttons in the card actions section */
 .taxRate__actions {
     display: flex;
     justify-content: space-between;
-    /* gap: 1rem; */
+    gap: 0.75rem;
 }
 
 .taxRate__edit-btn,
 .taxRate__delete-btn {
-    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.6rem 1.2rem;
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .taxRate__edit-btn {
     background-color: #1e90ff;
-    color: white;
+    color: #fff;
 }
 
-.taxRate__edit-btn:hover {
+.taxRate__edit-btn:hover,
+.taxRate__edit-btn:focus {
     background-color: #0073e6;
+    outline: none;
 }
 
 .taxRate__delete-btn {
     background-color: #ff4757;
-    color: white;
+    color: #fff;
 }
 
-.taxRate__delete-btn:hover {
+.taxRate__delete-btn:hover,
+.taxRate__delete-btn:focus {
     background-color: #ff2f3e;
+    outline: none;
 }
 
 /* Loading & Error messages */
@@ -82,8 +100,9 @@
 .tax__error,
 .taxRate__vat-no {
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #ff4757;
+    padding: 1rem;
 }
 
 /* Responsive Design */
@@ -95,12 +114,20 @@
 
 @media (min-width: 768px) {
     .taxRate__cards {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
     }
 }
 
 @media (min-width: 1024px) {
     .taxRate__cards {
         grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .taxRate__cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
     }
 }

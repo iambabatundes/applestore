@@ -4,6 +4,7 @@ const TextInput = ({
   label,
   name,
   value,
+  placeholder,
   onChange,
   error,
   type = "text",
@@ -19,7 +20,7 @@ const TextInput = ({
         value={value}
         onChange={onChange}
         className="promotions__input"
-        placeholder={name}
+        placeholder={placeholder}
       />
     ) : (
       <input
@@ -28,7 +29,7 @@ const TextInput = ({
         value={value}
         onChange={onChange}
         className={`${className}`}
-        placeholder={name}
+        placeholder={placeholder}
         checked={checked}
       />
     )}

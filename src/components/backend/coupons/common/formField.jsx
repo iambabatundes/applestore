@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/couponForm.css";
 
 export default function FormField({
+  autoFocus,
   label,
   placeholder,
   type,
@@ -14,6 +15,7 @@ export default function FormField({
     <div className="coupon__formContainer">
       <label className="coupon__label">{label}</label>
       <input
+        autoFocus={autoFocus}
         type={type}
         name={name}
         value={value}

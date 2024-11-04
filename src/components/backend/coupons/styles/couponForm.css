@@ -1,15 +1,17 @@
 .coupon-form-container {
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    max-width: 400px;
+    width: 310px;
     margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .coupon__form-heading {
     margin-bottom: 16px;
+    font-size: 1.3rem;
 }
 
 /* .coupon-form label {
@@ -21,9 +23,10 @@
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 10px;
     background-color: #fff;
-    transition: border-color 0.3s ease
+    transition: border-color 0.3s ease;
+    margin-bottom: 10px;
 }
 
 .coupon__input:focus {
@@ -33,6 +36,12 @@
 
 .coupon__input-error {
     border: 1px solid red;
+}
+
+.coupon__selectDropdowns {
+    top: 32%;
+    /* left: 0; */
+    width: 21.4%;
 }
 
 .coupon__btn {

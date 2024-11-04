@@ -1,8 +1,8 @@
 import http from "../services/httpService";
 // import config from "../config.json";
 
-const apiEndPoint = "http://localhost:4000/api/promotions";
 // const apiEndPoint = config.apiUrl + "/promotions";
+const apiEndPoint = "http://localhost:4000/api/promotions";
 
 export function getPromotions() {
   return http.get(apiEndPoint);

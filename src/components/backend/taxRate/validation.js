@@ -10,7 +10,7 @@ const taxRateSchema = Joi.object({
   isGlobal: Joi.boolean(),
   isActive: Joi.boolean(),
   effectiveDate: Joi.date().required(),
-  expirationDate: Joi.date().greater(Joi.ref("effectiveDate")).optional(), // expiration after effective date
+  expirationDate: Joi.date(), // expiration after effective date
   tieredRates: Joi.array().items(
     Joi.object({
       minAmount: Joi.number().min(0).required(),

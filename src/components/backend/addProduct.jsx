@@ -16,12 +16,17 @@ import "../backend/products/styles/addProduct.css";
 import useFetchTags from "./products/hooks/useFetchTags";
 import useFetchCategories from "./products/hooks/useFetchCategories";
 import useProductForm from "./products/hooks/useProductForm";
+import PromotionsHeader from "./common/promotionHeader";
+import DataPromotions from "./products/dataPromotions";
+import useFetchPromotions from "./products/hooks/useFetchPromotions";
 
 export default function AddProduct({ darkMode }) {
   const {
     productDetails,
     editorContent,
     selectedTags,
+    selectedPromotions,
+    setSelectedPromotions,
     errors,
     setErrors,
     setSelectedTags,
@@ -41,11 +46,13 @@ export default function AddProduct({ darkMode }) {
   } = useProductForm();
 
   const [isTagsVisible, setIsTagsVisible] = useState(true);
+  const [isPromotionsVisible, setIsPromotionsVisible] = useState(true);
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(true);
   const [isFeaturedImageVisible, setIsFeaturedImageVisible] = useState(true);
   const [isProductGallaryVisible, setIsProductGallaryVisible] = useState(true);
 
   const { tags, setTags } = useFetchTags();
+  const { promotions, setPromotions } = useFetchPromotions();
   const { categories, setCategories } = useFetchCategories();
 
   return (
@@ -129,6 +136,22 @@ export default function AddProduct({ darkMode }) {
                 setDataTags={setTags}
                 errors={errors}
                 setErrors={setErrors}
+              />
+            </div>
+
+            <div className={`addProduct-header ${darkMode ? "dark-mode" : ""}`}>
+              <PromotionsHeader
+                promotionTitle="Promotions"
+                isPromotionVisible={true}
+                onClick={() => setIsPromotionsVisible(!isPromotionsVisible)}
+              />
+
+              <DataPromotions
+                isPromotionsVisible={isPromotionsVisible}
+                selectedPromotions={selectedPromotions}
+                setSelectedPromotions={setSelectedPromotions}
+                dataPromotions={promotions}
+                setPromotions={setPromotions}
               />
             </div>
 

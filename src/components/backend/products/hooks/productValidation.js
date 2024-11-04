@@ -53,6 +53,7 @@ export const schema = Joi.object({
   //     .required(),
   media: Joi.array().min(2).max(8).label("Media File").optional().allow(null),
   tags: Joi.array().label("Tags").optional().allow(null),
+  promotion: Joi.array().label("Promotions").optional().allow(null),
   category: Joi.array().required().label("Category"),
   weight: Joi.number().required().label("Weight"),
   brand: Joi.string().required().label("Brand"),
