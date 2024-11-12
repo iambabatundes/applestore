@@ -19,7 +19,6 @@ import NewPage from "./newPage";
 import Updates from "./updates";
 import SEO from "./seo";
 import AdminSidebar from "./adminSidebar";
-import AddTags from "./addTags";
 import AddCategories from "./categories/addCategory";
 import Orders from "./orders";
 import Promotion from "./promotion";
@@ -31,6 +30,7 @@ import Promotions from "./promotions/promotions";
 import Coupon from "./coupon";
 import ShippingRate from "./shippingRate/shippingRate";
 import TaxRate from "./taxRate/taxRate";
+import AddTags from "./tags/addTags";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const [selectedLink, setSelectedLink] = useState(null);

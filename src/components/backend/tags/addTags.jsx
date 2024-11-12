@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "./styles/addtag.css";
-import PostTagModal from "./common/postTagModal";
-import TagForm from "./common/tagForm";
-import TagsList from "./common/tagsList";
+import "./styles/tags.css";
+import TagForm from "./tagForm";
+import TagModal from "./tagModal";
+import TagsList from "./tagsList";
 import useTags from "./hook/useTags";
-import TagSearchBox from "./common/tagSearchBox";
+import TagSearchBox from "./tagSearchBox";
 
-export default function AddPostTags({ className }) {
+export default function AddTags({ className }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
@@ -27,6 +27,7 @@ export default function AddPostTags({ className }) {
   };
 
   function handlePreview(tag) {
+    // setSelectedTag(tag);
     setSelectedTagForPreview(tag);
     setIsModalOpen(true);
   }
@@ -44,7 +45,7 @@ export default function AddPostTags({ className }) {
 
   return (
     <section className="padding">
-      <h1 className="addTag__title">Post Tags</h1>
+      <h1 className="addTag__title">Product Tags</h1>
       <section className={`${className} addTag-header`}>
         <div className="addTag__form-main">
           <TagForm
@@ -75,9 +76,9 @@ export default function AddPostTags({ className }) {
         </section>
 
         {isModalOpen && selectedTagForPreview && (
-          <PostTagModal
+          <TagModal
             tag={selectedTagForPreview}
-            posts={selectedTagForPreview.posts}
+            products={selectedTagForPreview.products}
             onClose={closeModal}
           />
         )}

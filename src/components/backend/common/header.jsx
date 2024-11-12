@@ -9,10 +9,11 @@ export default function Header({
   headerTitle,
   to,
   onClick,
+  titleHeader,
 }) {
   return (
     <header className={`${className}`}>
-      <h1 className={`${className}, headerData-title`}>{headerTitle}</h1>
+      <h1 className={`${titleHeader}, headerData-title`}>{headerTitle}</h1>
       <Link to={to}>
         {buttonTitle && (
           <button className={`${className}, headerData-btn`} onClick={onClick}>

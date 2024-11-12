@@ -139,6 +139,7 @@ export default function CouponForm({
           type="text"
           value={formData.code}
           error={errors.code}
+          input
         />
 
         <SelectInput
@@ -160,6 +161,7 @@ export default function CouponForm({
             handleChange={handleChange}
             error={errors.discountPercentage}
             label="Discount Percentage"
+            input
           />
         )}
 
@@ -172,6 +174,7 @@ export default function CouponForm({
             error={errors.discountValue}
             placeholder="Discount Value"
             label="Discount Value"
+            input
           />
         )}
 
@@ -183,6 +186,7 @@ export default function CouponForm({
           placeholder="Expiration Date"
           error={errors.expirationDate}
           label="Expiration Date"
+          input
         />
 
         <FormField
@@ -193,6 +197,7 @@ export default function CouponForm({
           placeholder="Minimum Order Amount"
           label="Minimum Order Amount"
           error={errors.minimumOrderAmount}
+          input
         />
 
         <FormField
@@ -202,6 +207,7 @@ export default function CouponForm({
           handleChange={handleChange}
           placeholder="Usage Limit"
           error={errors.usageLimit}
+          input
         />
 
         <button className="coupon__btn" type="submit">

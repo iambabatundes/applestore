@@ -9,7 +9,6 @@
 
 .taxRate__list::-webkit-scrollbar {
     display: none;
-    /* Hide scrollbar for Webkit browsers */
 }
 
 /* Cards container with a grid layout */

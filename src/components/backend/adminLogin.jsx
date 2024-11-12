@@ -10,32 +10,36 @@ export default function AdminLogin({ adminUser, setAuth }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [logoutMessage, setLogoutMessage] = useState(null);
+  const [logoutType, setLogoutType] = useState(null);
 
   const { state } = useLocation();
 
+  // Load the logout message and type if present and clear them after display
   useEffect(() => {
-    // Check if there's a logout message to display
     const message = localStorage.getItem("logoutMessage");
+    const type = localStorage.getItem("logoutType"); // Fetch logout type
+
     if (message) {
       setLogoutMessage(message);
-      localStorage.removeItem("logoutMessage"); // Clear the message after displaying
+      setLogoutType(type); // Set the logout type to apply appropriate styles
+      localStorage.removeItem("logoutMessage");
+      localStorage.removeItem("logoutType"); // Clear after reading
     }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await adminlogin(data.email, data.password); // Call the named import directly
-      window.location = state ? state.path : "/admin/home";
-      setAuth(true);
+      await adminlogin(data.email, data.password);
+      window.location = state ? state.path : "/admin/home"; // Redirect after login
+      setAuth(true); // Set authentication state
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const newErrors = { ...errors };
         newErrors.email = ex.response.data;
-        setErrors(newErrors);
+        setErrors(newErrors); // Display error on incorrect email or password
       } else {
-        setErrors({ ...errors, general: "Invalid email or password" }); // Set a general error message
+        setErrors({ ...errors, general: "Invalid email or password" });
       }
     }
   };
@@ -49,21 +53,21 @@ export default function AdminLogin({ adminUser, setAuth }) {
   };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+    setPasswordVisible(!passwordVisible); // Toggle password visibility
   };
 
-  // if (adminUser) return <Navigate to="/admin/home" />;
   if (getCurrentUser()) return <Navigate to="/admin/home" />;
+
+  const messageClass =
+    logoutType === "manual"
+      ? "adminLogin__message--manual"
+      : "adminLogin__message--automatic";
 
   return (
     <div className="admin-login-background">
       <div className="admin-login-container">
-        {/* {logoutMessage && (
-          <div className="adminLogin__message">{logoutMessage}</div>
-        )} */}
-
         {logoutMessage && (
-          <div className="adminLogin__message">
+          <div className={`adminLogin__message ${messageClass}`}>
             {logoutMessage}
             <button
               className="adminLogin__close"

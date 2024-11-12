@@ -1,8 +1,9 @@
 import http from "./httpService";
-import { jwtDecode } from "jwt-decode"; // Ensure this matches the actual named export from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
 import config from "../config.json";
 
 const apiEndPoint = config.apiUrl + "/admin/auth";
+const apiEndPointRefresh = config.apiUrl + "/admin/refresh";
 const tokenKey = "token";
 
 http.setJwt(getJwt());
@@ -20,10 +21,27 @@ function adminlogout() {
   localStorage.removeItem(tokenKey);
 }
 
+// function getCurrentUser() {
+//   try {
+//     const jwt = localStorage.getItem(tokenKey);
+//     return jwtDecode(jwt);
+//   } catch (error) {
+//     return null;
+//   }
+// }
+
 function getCurrentUser() {
   try {
     const jwt = localStorage.getItem(tokenKey);
-    return jwtDecode(jwt);
+    const decodedToken = jwtDecode(jwt);
+
+    if (decodedToken.exp * 1000 < Date.now()) {
+      // Token has expired
+      adminlogout();
+      return null;
+    }
+
+    return decodedToken;
   } catch (error) {
     return null;
   }

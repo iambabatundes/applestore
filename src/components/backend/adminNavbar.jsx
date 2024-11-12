@@ -3,14 +3,15 @@ import defaultUserImage from "./images/user.png";
 import "./styles/adminNavbar.css";
 import "../backend/common/styles/darkMode.css";
 import Icon from "../icon";
-import { FaSearch, FaMoon, FaSun } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import AdminProfile from "./adminProfile";
-import AdminNotification from "./common/adminNotification";
-import io from "socket.io-client";
+
 import { getNotifications } from "../../services/notificationService";
 import { updateUser } from "../../services/profileService";
 
-const socket = io("http://localhost:4000");
+// Material UI imports
+import { Avatar, Badge, Switch, Grid, IconButton } from "@mui/material";
+import { FaMoon, FaSun } from "react-icons/fa";
 
 export default function AdminNavbar({
   companyName,
@@ -34,11 +35,9 @@ export default function AdminNavbar({
   });
   const [currentUser, setCurrentUser] = useState(user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const [modalOpen, setModalOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-
   const [profileImage, setProfileImage] = useState(null);
 
   const userName = currentUser?.username || currentUser?.email || "Admin";
@@ -51,21 +50,19 @@ export default function AdminNavbar({
     setProfileDetails((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleProfileImageChange = useCallback((file, preview) => {
-    if (file) {
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.size < 2 * 1024 * 1024 && file.type.startsWith("image/")) {
+      const preview = URL.createObjectURL(file);
       setProfileImage({ file, preview });
       setProfileDetails((prevState) => ({
         ...prevState,
         profileImage: { file, preview },
       }));
     } else {
-      setProfileImage(null);
-      setProfileDetails((prevState) => ({
-        ...prevState,
-        profileImage: null,
-      }));
+      alert("Please select an image file smaller than 2MB.");
     }
-  }, []);
+  };
 
   const fetchNotification = useCallback(async () => {
     try {
@@ -75,21 +72,6 @@ export default function AdminNavbar({
       console.error("Failed to fetch notifications", error);
     }
   }, []);
-
-  useEffect(() => {
-    fetchNotification();
-
-    socket.on(`notification-${currentUser._id}`, (notification) => {
-      setNotifications((prevNotifications) => [
-        notification,
-        ...prevNotifications,
-      ]);
-    });
-
-    return () => {
-      socket.off(`notification-${currentUser._id}`);
-    };
-  }, [currentUser._id, fetchNotification]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -120,51 +102,71 @@ export default function AdminNavbar({
 
   return (
     <header className={`admin-navbar ${darkMode ? "dark-mode" : ""}`}>
-      <div className="admin-navbar__left">
-        <Icon menu onClick={handleToggle} />
-        <img src={logo} alt="Company logo" className="company-logo" />
-        <h1 className="company-name">{companyName}</h1>
-      </div>
-      <div className="admin-navbar__center">
-        <div className="admin-navbar__search">
-          <FaSearch />
-          <input type="text" placeholder="Search..." />
-        </div>
-        <div className="admin-navbar__comments">
-          <i className="fa fa-comment" aria-hidden="true"></i>
-          <span>{count}</span>
-        </div>
-      </div>
+      <Grid container alignItems="center" justifyContent="space-between">
+        {/* Left Section */}
+        <Grid item className="admin-navbar__left">
+          <IconButton onClick={handleToggle}>
+            <Icon menu />
+          </IconButton>
+          <img src={logo} alt="Company logo" className="company-logo" />
+          <h1 className="company-name">{companyName}</h1>
+        </Grid>
 
-      <div className="admin-navbar__right">
-        <div className="admin-navbar__welcome">
-          <h4>Welcome,</h4>
-          <span className="admin__userName">{userName}</span>
-        </div>
-        <div className="admin-navbar__notifications">
-          <AdminNotification notifications={notifications} />
-        </div>
-        <div className="admin-navbar__user" onClick={toggleDropdown}>
-          <img src={userImage} alt="User" className="user-image" />
-          <div
-            className={`adminNavbar__dropdown ${dropdownOpen ? "open" : ""}`}
-          >
-            <div className="dropdown-item" onClick={toggleModal}>
-              Profile
-            </div>
-            <div className="dropdown-item">Settings</div>
-            <div className="dropdown-item" onClick={handleLogout}>
-              Logout
+        {/* Center Section */}
+        <Grid item className="admin-navbar__center">
+          <div className="admin-navbar__search">
+            <FaSearch />
+            <input type="text" placeholder="Search..." />
+          </div>
+          <div className="admin-navbar__comments">
+            <i className="fa fa-comment" aria-hidden="true"></i>
+            <span>{count}</span>
+          </div>
+        </Grid>
+
+        {/* Right Section */}
+        <Grid item className="admin-navbar__right">
+          <div className="admin-navbar__welcome">
+            <h4>Welcome,</h4>
+            <span className="admin__userName">{userName}</span>
+          </div>
+          <div className="admin-navbar__notifications">
+            <Badge badgeContent={notifications.length} color="error">
+              <FaSearch />
+            </Badge>
+          </div>
+          <div className="admin-navbar__user" onClick={toggleDropdown}>
+            <Avatar
+              src={userImage}
+              alt={userName}
+              sx={{ width: 40, height: 40 }}
+            >
+              {!userImage && userName.charAt(0)}
+            </Avatar>
+            <div
+              className={`adminNavbar__dropdown ${dropdownOpen ? "open" : ""}`}
+            >
+              <div className="dropdown-item" onClick={toggleModal}>
+                Profile
+              </div>
+              <div className="dropdown-item">Settings</div>
+              <div className="dropdown-item" onClick={handleLogout}>
+                Logout
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          className="admin-navbar__dark-mode-toggle"
-          onClick={toggleDarkMode}
-        >
-          {darkMode ? <FaSun /> : <FaMoon />}
-        </div>
-      </div>
+          <div className="admin-navbar__dark-mode-toggle">
+            <Switch
+              checked={darkMode}
+              onChange={toggleDarkMode}
+              color="default"
+              icon={<FaMoon />}
+              checkedIcon={<FaSun />}
+              inputProps={{ "aria-label": "dark mode toggle" }}
+            />
+          </div>
+        </Grid>
+      </Grid>
 
       <AdminProfile
         user={profileDetails}

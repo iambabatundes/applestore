@@ -1,0 +1,169 @@
+.tagList__container {
+    /* padding: 1rem; */
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: none;
+}
+
+.tagList__container::-webkit-scrollbar {
+    display: none;
+    /* Hide scrollbar for Webkit browsers */
+}
+
+.tagList__loading,
+.tagList__error,
+.tagList__empty {
+    /* text-align: center; */
+    color: #777;
+}
+
+.tagList__grid {
+    display: grid;
+    gap: 1rem;
+
+    grid-template-columns: 1fr;
+}
+
+
+@media (min-width: 600px) {
+
+    .tagList__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+
+    .tagList__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .tagList__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Card Styling */
+.tagList__card {
+    position: relative;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* width: 232px; */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tagList__card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.tagList__title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.tagList__info {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+}
+
+.tagList__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+/* Button Styling */
+.tagList__action-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tagList__action-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Delete icon with floating effect */
+.tagList__delete-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 99, 71, 0.2);
+    /* Slight transparency */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.tagList__delete-icon:hover {
+    background-color: rgba(231, 76, 60, 1);
+    /* Slightly darker on hover */
+    transform: scale(1.1);
+}
+
+.tagList__edit {
+    background: #4caf50;
+    color: #fff;
+}
+
+.tagList__edit:hover {
+    background: #43a047;
+}
+
+.tagList__preview {
+    background: #2196f3;
+    color: #fff;
+}
+
+.tagList__preview:hover {
+    background: #1976d2;
+}
+
+.tagList__delete {
+    background: #f44336;
+    color: #fff;
+}
+
+.tagList__delete:hover {
+    background: #e53935;
+}
+
+/* Responsive Typography */
+@media (max-width: 600px) {
+    .tagList__title {
+        font-size: 1rem;
+    }
+
+    .tagList__info {
+        font-size: 0.85rem;
+    }
+}

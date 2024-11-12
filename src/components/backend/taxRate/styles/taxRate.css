@@ -18,6 +18,14 @@
     /* margin: 0 auto; */
 }
 
+.taxRate__heading {
+    text-align: left;
+    font-size: 1.8rem;
+    /* margin-bottom: 20px; */
+    color: #2c3e50;
+    padding: 15px;
+}
+
 .taxRate__taxList {
     /* flex: 4; */
     overflow-x: auto;
@@ -31,11 +39,11 @@
 
     .taxRate__taxForm {
         flex: 1.5;
-        /* Keep the form smaller */
+
     }
 
     .taxRate__taxList {
         flex: 4;
-        /* Make the list even wider on larger screens */
+
     }
 }

@@ -57,7 +57,7 @@ export default function TaxRate() {
 
   return (
     <section className="taxRate">
-      <h2 className="shippingRate__heading">Manage Tax Rate</h2>
+      <h2 className="taxRate__heading">Manage Tax Rate</h2>
       <div className="taxRate__main">
         <div className="taxRate__taxForm">
           <TaxForm

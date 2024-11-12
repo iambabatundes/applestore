@@ -1,6 +1,7 @@
 import React from "react";
+import "./styles/tags.css";
 
-function SearchBox({ value, onChange }) {
+function TagSearchBox({ value, onChange }) {
   return (
     <input
       name="query"
@@ -14,4 +15,4 @@ function SearchBox({ value, onChange }) {
   );
 }
 
-export default SearchBox;
+export default TagSearchBox;

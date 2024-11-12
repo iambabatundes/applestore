@@ -55,8 +55,8 @@ export default function Input({
         <textarea
           id={name}
           name={name}
-          cols="30"
           key={name}
+          cols="30"
           rows="10"
           value={value}
           onChange={(e) => setFieldValue(name, e.target.value)}

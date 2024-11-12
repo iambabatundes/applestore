@@ -57,7 +57,8 @@ export default function PostTagModal({ tag, onClose }) {
 
         <ul>
           {posts.map((post) => (
-            <li key={post._id}>{post.name}</li>
+            // <li key={post._id}>{post.name}</li>
+            <li key={post._id}>{post.title}</li>
           ))}
         </ul>
 

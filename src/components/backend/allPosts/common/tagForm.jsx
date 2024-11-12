@@ -1,6 +1,6 @@
 import React from "react";
-import useTagForm from "./hook/useTagForm";
-import TagField from "./common/tagField";
+import useTagForm from "../hook/useTagForm";
+import TagField from "../common/tagField";
 
 export default function TagForm({ onAddTag, selectedTag, onEditTag }) {
   const initialValues = { name: "", slug: "", description: "" };
