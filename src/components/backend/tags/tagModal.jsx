@@ -34,13 +34,13 @@ export default function TagModal({ tag, onClose }) {
     }
 
     if (tag) {
-      fetchProducts(); // Fetch products when the tag is selected
+      fetchProducts();
     }
   }, [tag]);
 
   return (
     <Modal
-      isOpen={tag !== null} // Open modal when tags are fetched
+      isOpen={tag !== null}
       onRequestClose={onClose}
       style={customStyles}
       ariaHideApp={false}

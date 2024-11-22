@@ -1,0 +1,108 @@
+.categoryForm__container {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 25vw;
+    padding: 10px;
+    /* max-width: 500px; */
+    /* width: 323px; */
+    /* height: 488px; */
+    /* height: 172vh;
+    margin: 0 auto; */
+}
+
+.categoryForm__container:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.categoryForm__title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+}
+
+.category-Form__container {
+    display: flex;
+    flex-direction: column;
+    /* margin-bottom: 1rem; */
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.categoryForm__container label {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.categoryForm__input,
+textarea.categoryForm__input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.categoryForm__input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
+}
+
+.categoryForm-error {
+    border-color: #ff3860;
+}
+
+.categoryForm-error {
+    font-size: 0.75rem;
+    color: #ff3860;
+    margin-top: -0.5rem;
+}
+
+.categoryForm__tooltip {
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: #666;
+    /* padding: 0.25rem 0.5rem; */
+    margin-top: 0.7rem;
+    font-style: italic;
+
+}
+
+/* Button Styles */
+.categoryForm__btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.categoryForm__btn:hover {
+    background-color: #0056b3;
+}
+
+@media (min-width: 768px) {
+    .categoryForm__container {
+        padding: calc(16px * 1.5);
+    }
+
+    .categoryForm__tooltip {
+        font-size: 0.7rem;
+    }
+
+    .categoryForm__btn {
+        width: auto;
+        padding: 0.75rem 1.5rem;
+        align-self: flex-end;
+    }
+}

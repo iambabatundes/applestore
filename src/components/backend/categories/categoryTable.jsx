@@ -11,9 +11,20 @@ export default function CategoryTable({
   onEdit,
   sortColumn,
   onSort,
+  loading,
+  error,
+  onFilter,
 }) {
+  if (loading) {
+    return <span className="tagList__loading">Loading Tags list...</span>;
+  }
+
+  if (error) {
+    return <span className="tagList__error">Error loading Tags list</span>;
+  }
+
   const renderCategoryName = (category) => {
-    const indentation = "—".repeat(category.depth); // Append dashes based on depth
+    const indentation = "—".repeat(category.depth);
     return (
       <span style={{ marginLeft: `${category.depth * 20}px` }}>
         {indentation} {category.name}
@@ -27,7 +38,9 @@ export default function CategoryTable({
       path: "name",
       sortable: true,
       content: (category) => (
-        <Link to={`/tags/${category._id}`}>{renderCategoryName(category)}</Link>
+        <span to={`/category/${category._id}`}>
+          {renderCategoryName(category)}
+        </span>
       ),
     },
     { label: "Description", path: "description" },
@@ -35,9 +48,7 @@ export default function CategoryTable({
     {
       label: "Count",
       path: "productCount",
-      content: (category) => (
-        <Link to={`/product/${category._id}`}>{category.productCount}</Link>
-      ),
+      content: (category) => <span>{category.productCount}</span>,
     },
     {
       content: (category) => (
@@ -55,7 +66,7 @@ export default function CategoryTable({
           <i
             className="fa fa-trash"
             aria-hidden="true"
-            onClick={() => onDelete(category)}
+            onClick={() => onDelete(category._id)}
           ></i>
         </section>
       ),

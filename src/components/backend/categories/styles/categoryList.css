@@ -1,0 +1,28 @@
+.category-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.category-item {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.category-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.subcategory-list {
+    padding-left: 20px;
+}

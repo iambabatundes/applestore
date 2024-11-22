@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import "./styles/addtag.css";
 import PostTagModal from "./common/postTagModal";
-import TagForm from "./common/tagForm";
-import TagsList from "./common/tagsList";
+// import TagForm from "./common/tagForm";
+import TagForm from "../tags/tagForm";
+// import TagsList from "./common/tagsList";
+import TagsList from "../tags/tagsList";
 import useTags from "./hook/useTags";
-import TagSearchBox from "./common/tagSearchBox";
+import TagSearchBox from "../tags/tagSearchBox";
 
 export default function AddPostTags({ className }) {
   const [searchQuery, setSearchQuery] = useState("");

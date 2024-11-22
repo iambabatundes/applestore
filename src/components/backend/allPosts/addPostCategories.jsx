@@ -1,65 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import _ from "lodash";
-import { toast } from "react-toastify";
-import Header from "../common/header";
+import "./styles/addPostCategory.css";
 import SearchBox from "../common/searchBox";
-import { paginate } from "../../utils/paginate";
-import Pagination from "../common/pagination";
 import CategoryTable from "../categories/categoryTable";
 import CategoryForm from "../categories/categoryForm";
-import {
-  getPostCategories,
-  deletePostCategory,
-  savePostCategory,
-  updatePostCategory,
-} from "../../../services/postCategoryServices";
+import useCategory from "./hook/useCategory";
+import CategoryModel from "./common/categoryModel";
 
 export default function AddPostCategories({ className }) {
-  const [categories, setCategories] = useState([]);
   const [sortColumn, setSortColumn] = useState({ path: "name", order: "asc" });
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(8);
-  const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategoryForPreview, setSelectedCategoryForPreview] =
+    useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(null);
 
-  useEffect(() => {
-    async function getCategory() {
-      const { data: fetchedCategories } = await getPostCategories();
-      setCategories(fetchedCategories);
-    }
-    getCategory();
-  }, []);
-
-  async function handleSaveOrUpdate(data) {
-    try {
-      if (isEditMode) {
-        const updatedCategories = categories.map((c) =>
-          c._id === selectedCategory._id ? { ...c, ...data } : c
-        );
-        setCategories(updatedCategories);
-      } else {
-        setCategories([data, ...categories]);
-      }
-      isEditMode
-        ? await updatePostCategory(selectedCategory._id, data)
-        : await savePostCategory(data);
-      toast.success(
-        `Category ${isEditMode ? "updated" : "created"} successfully`
-      );
-      setIsEditMode(false);
-      setSelectedCategory(null);
-    } catch (error) {
-      console.error("Error saving Category:", error);
-      toast.error("Failed to save Category");
-      const { data: fetchedCategories } = await getPostCategories();
-      setCategories(fetchedCategories);
-    }
-  }
+  const {
+    category,
+    loading,
+    errors,
+    addCategory,
+    editCategory,
+    deleteCategorys,
+  } = useCategory({
+    setSelectedCategory,
+  });
 
   function handleEdit(category) {
-    setIsEditMode(true);
     setSelectedCategory(category);
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedCategoryForPreview(null);
+  };
+
+  function handlePreview(category) {
+    setSelectedCategoryForPreview(category);
+    setIsModalOpen(true);
   }
 
   function handleSort(sortColumns) {
@@ -68,23 +46,6 @@ export default function AddPostCategories({ className }) {
 
   function handleSearch(query) {
     setSearchQuery(query);
-    setCurrentPage(1);
-  }
-
-  async function handleDelete(category) {
-    const originalCategories = [...categories];
-    const updatedCategories = originalCategories.filter(
-      (c) => c._id !== category._id
-    );
-    setCategories(updatedCategories);
-    try {
-      await deletePostCategory(category._id);
-      toast.success("Category deleted successfully");
-    } catch (error) {
-      console.error("Error deleting Category:", error);
-      toast.error("Failed to delete Category");
-      setCategories(originalCategories);
-    }
   }
 
   const flattenCategories = (categories, depth = 0) => {
@@ -105,7 +66,7 @@ export default function AddPostCategories({ className }) {
     return flatCategories;
   };
 
-  const flattenedCategories = flattenCategories(categories);
+  const flattenedCategories = flattenCategories(category);
 
   let filtered = flattenedCategories;
   if (searchQuery)
@@ -113,48 +74,52 @@ export default function AddPostCategories({ className }) {
       c.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
-  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
   const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1;
 
-  const allCategories = paginationEnabled
-    ? paginate(sorted, currentPage, pageSize)
-    : sorted;
+  const allCategories = _.orderBy(
+    filtered,
+    [sortColumn.path],
+    [sortColumn.order]
+  );
 
   return (
     <section className="padding">
-      <Header headerTitle="Product Categories" />
-      <section className={`${className} tag-header`}>
+      <h1 className="addpostCategory__title">Post Categories</h1>
+      <section className={`${className} addpostCategory__main`}>
         <CategoryForm
+          onAddCategory={addCategory}
+          onEditCategory={editCategory}
+          parentCategories={flattenedCategories}
           categories={flattenedCategories}
-          flattenedCategories={flattenedCategories}
-          isEditMode={isEditMode}
-          onSubmit={handleSaveOrUpdate}
           selectedCategory={selectedCategory}
         />
-        <article>
-          <span>
+        <section>
+          <span className="postCategory__filtered-container">
             <SearchBox onChange={handleSearch} value={searchQuery} />
-            <span>
+            <span className="postCategory__filteredTags-length">
               Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
             </span>
           </span>
           <CategoryTable
             onSort={handleSort}
             sortColumn={sortColumn}
-            onDelete={handleDelete}
+            onDelete={deleteCategorys}
             onEdit={handleEdit}
-            data={flattenedCategories}
+            data={allCategories}
+            error={errors}
+            loading={loading}
+            onPreview={handlePreview}
           />
-          <Pagination
-            itemsCount={filtered.length}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
-        </article>
+        </section>
       </section>
+
+      {isModalOpen && selectedCategoryForPreview && (
+        <CategoryModel
+          category={selectedCategoryForPreview}
+          posts={selectedCategoryForPreview.posts}
+          onClose={closeModal}
+        />
+      )}
     </section>
   );
 }

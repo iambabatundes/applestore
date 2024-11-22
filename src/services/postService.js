@@ -92,3 +92,7 @@ export function deletePost(postId) {
 export function getPostsByTag(tagId) {
   return http.get(`${apiEndPoint}/tag/${tagId}`);
 }
+
+export function getPostByCategory(categoryId) {
+  return http.get(`${apiEndPoint}/category/${categoryId}`);
+}

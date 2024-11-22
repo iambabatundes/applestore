@@ -1,96 +1,83 @@
 import React from "react";
-import InputForm from "../../common/inputForm";
-import InputText from "../../common/inputText";
-import InputField from "../../common/inputField";
-import { ErrorMessage } from "formik";
-import Button from "../../common/button";
-import { CategoryFormSchema } from "./validate";
+import useCategoryForm from "./hooks/useCategoryForm";
+import CategoryField from "./common/categoryField";
+import "./styles/categoryForm.css";
 
 export default function CategoryForm({
-  isEditMode,
-  onSubmit,
-  categories,
-  // flattenedCategories,
+  onAddCategory,
+  selectedCategory,
+  onEditCategory,
+  parentCategories = [],
 }) {
+  const initialValues = { name: "", slug: "", description: "", parent: "" };
+
+  const onSubmit = (data) => {
+    if (selectedCategory) {
+      onEditCategory(selectedCategory._id, data);
+    } else {
+      onAddCategory(data);
+    }
+  };
+
+  const { formData, errors, handleChange, handleSubmit } = useCategoryForm(
+    initialValues,
+    onSubmit,
+    selectedCategory
+  );
+
   return (
-    <article>
-      <h1>{isEditMode ? "Edit Category" : "Add New Category"}</h1>
+    <section className="categoryForm__container">
+      <h1 className="categoryForm__title">
+        {selectedCategory ? "Edit Category" : "Add New Category"}
+      </h1>
 
-      <InputForm
-        initialValues={{
-          name: "",
-          //   slug: "",
-          //   description: "",
-          //   parent: "",
-        }}
-        validationSchema={CategoryFormSchema}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          try {
-            await onSubmit(values);
-            resetForm();
-            setSubmitting(false);
-          } catch (error) {
-            console.error("Error submitting form:", error);
-            setSubmitting(false);
-          }
-        }}
-      >
-        {(values, isSubmitting, setFieldValue) => (
-          <>
-            <InputText name="name" labelTitle="Name" className="labelTitle" />
-            <InputField
-              name="name"
-              type="name"
-              placeholder=""
-              fieldInput
-              tooltip
-              tooltipTitle="The name is how it appears on your site."
-              className="tooltip"
-            />
-            <ErrorMessage name="name" />
+      <form onSubmit={handleSubmit}>
+        <CategoryField
+          autoFocus
+          name="name"
+          placeholder="Category Name"
+          type="text"
+          value={formData.name}
+          error={errors.name}
+          onChange={handleChange}
+          tooltipTitle="The name is how it appears on your site."
+        />
 
-            <InputText name="slug" labelTitle="Slug" className="labelTitle" />
-            <InputField
-              name="slug"
-              type="slug"
-              fieldInput
-              tooltip
-              className="tooltip"
-              tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-            />
+        <CategoryField
+          name="slug"
+          placeholder="Category Slug"
+          type="text"
+          value={formData.slug}
+          error={errors.slug}
+          onChange={handleChange}
+          tooltipTitle="The slug is the URL-friendly version of the name."
+        />
 
-            <InputField
-              name="category"
-              placeholder="Parent Category"
-              setFieldValue={setFieldValue}
-              tooltip
-              select
-              // flattenedCategories={flattenedCategories}
-              options={categories}
-              className="category-select tooltip"
-              type="select"
-              tooltipTitle="Assign a parent term to create a hierarchy. The term Jazz, for example, would be the parent of Bebop and Big Band."
-            />
+        <CategoryField
+          name="parent"
+          placeholder="Select Parent Category"
+          type="select"
+          value={formData.parent}
+          options={parentCategories}
+          // options={[{ label: "None", value: null }, ...parentCategories]}
+          onChange={handleChange}
+          tooltipTitle="Select the parent category, if any."
+        />
 
-            <InputText
-              name="description"
-              labelTitle="Description"
-              className="labelTitle"
-            />
-            <InputField
-              name="description"
-              textarea
-              tooltip
-              className="textareas tooltip"
-              tooltipTitle="The slug is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens."
-            />
+        <CategoryField
+          name="description"
+          placeholder="Category Description"
+          type="textarea"
+          value={formData.description}
+          error={errors.description}
+          onChange={handleChange}
+          tooltipTitle="The description is optional."
+        />
 
-            <Button type="submit" disabled={isSubmitting} className="addButton">
-              {isEditMode ? "Update Category" : "Add New Category"}
-            </Button>
-          </>
-        )}
-      </InputForm>
-    </article>
+        <button className="categoryForm__btn" type="submit">
+          {selectedCategory ? "Edit Category" : "Add New Category"}
+        </button>
+      </form>
+    </section>
   );
 }

@@ -49,18 +49,11 @@ export default function PostTable({
     {
       label: "Post by",
       path: "user.profileImage",
-      // content: (post) => (
-      //   <img
-      //     className="user__image"
-      //     src={config.mediaUrl + `/uploads/${post.user.profileImage?.filename}`}
-      //     alt={post.user.username}
-      //   />
-      // ),
 
       content: (post) => {
         const imageUrl =
           config.mediaUrl + `/uploads/${post.user.profileImage.filename}`;
-        console.log(imageUrl); // Check the URL in the console
+        console.log(imageUrl);
         return (
           <img
             className="user__image"

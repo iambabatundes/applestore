@@ -22,6 +22,10 @@ export function getProducts() {
   return http.get(apiEndPoint);
 }
 
+// export function getProducts(page = 1, limit = 10) {
+//   return http.get(`${config.apiUrl}/products?page=${page}&limit=${limit}`);
+// }
+
 export function getProduct(productId) {
   return http.get(productUrl(productId));
 }
@@ -88,4 +92,8 @@ export function deleteProduct(productId) {
 
 export function getProductsByTag(tagId) {
   return http.get(`${apiEndPoint}/tag/${tagId}`);
+}
+
+export function getProductsByCategory(categoryId) {
+  return http.get(`${apiEndPoint}/category/${categoryId}`);
 }

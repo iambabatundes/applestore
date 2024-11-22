@@ -1,0 +1,44 @@
+.category-header {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    max-width: 1200px;
+}
+
+.addCategory__title {
+    text-align: left;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    /* padding: 15px; */
+}
+
+/* Tablet and above */
+@media (min-width: 768px) {
+    .category-header {
+        flex-direction: row;
+        gap: 15px;
+        /* justify-content: space-between; */
+        /* padding: 20px; */
+    }
+
+    .tags__filtered-container {
+        justify-content: flex-start;
+    }
+
+    .postCategory__filteredTags-length {
+        font-size: 1rem;
+        margin-left: 12px;
+    }
+}
+
+/* Desktop and above */
+@media (min-width: 1024px) {
+    /* .tagsList__main {
+        grid-template-columns: 1fr 3fr;
+    } */
+
+    .padding {
+        padding: 24px;
+    }
+}

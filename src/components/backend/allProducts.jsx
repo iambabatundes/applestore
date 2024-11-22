@@ -63,7 +63,7 @@ export default function AllProduct() {
   let filtered = productData;
   if (searchQuery)
     filtered = productData.filter((p) =>
-      p.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+      p.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
   let sorted = filtered;
@@ -74,7 +74,7 @@ export default function AllProduct() {
   }
 
   const totalItems = filtered.length;
-  const paginationEnabled = totalItems > 1; // Enable pagination if more than one item
+  const paginationEnabled = totalItems > 1;
 
   const allProductData = paginationEnabled
     ? paginate(sorted, currentPage, pageSize)
