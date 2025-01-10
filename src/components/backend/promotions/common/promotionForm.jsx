@@ -13,7 +13,7 @@ export default function PromotionForm({
   selectedPromotion,
 }) {
   const [formData, setFormData] = useState({
-    promotionName: "",
+    name: "",
     description: "",
     promotionType: "Discount",
     discountPercentage: 1,
@@ -32,7 +32,7 @@ export default function PromotionForm({
 
   const resetForm = () => {
     setFormData({
-      promotionName: "",
+      name: "",
       description: "",
       promotionType: "Discount",
       discountPercentage: 1,
@@ -59,7 +59,7 @@ export default function PromotionForm({
   useEffect(() => {
     if (selectedPromotion) {
       const formattedPromotion = {
-        promotionName: selectedPromotion.promotionName || "",
+        name: selectedPromotion.name || "",
         description: selectedPromotion.description || "",
         promotionType: selectedPromotion.promotionType || "Discount",
         discountPercentage:
@@ -133,7 +133,7 @@ export default function PromotionForm({
     }
 
     const promotionData = {
-      promotionName: formData.promotionName,
+      name: formData.name,
       description: formData.description,
       promotionType: formData.promotionType,
       startDate: new Date(formData.startDate).toISOString(),
@@ -164,13 +164,13 @@ export default function PromotionForm({
   return (
     <form onSubmit={handleSubmit} className="promotions__form">
       <TextInput
-        name="promotionName"
+        name="name"
         // label="Promotion Name"
         placeholder="Promotion Name"
         onChange={handleChange}
-        value={formData.promotionName}
+        value={formData.name}
         type="text"
-        error={errors.promotionName}
+        error={errors.name}
       />
 
       <TextInput

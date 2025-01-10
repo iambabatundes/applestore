@@ -21,6 +21,7 @@ const TextInput = ({
         onChange={onChange}
         className="promotions__input"
         placeholder={placeholder}
+        aria-label={placeholder}
       />
     ) : (
       <input
@@ -31,6 +32,7 @@ const TextInput = ({
         className={`${className}`}
         placeholder={placeholder}
         checked={checked}
+        aria-label={placeholder}
       />
     )}
     {error && <p className="promotions__error-text">{error}</p>}

@@ -12,7 +12,6 @@ export default function ProductImage({
   setErrors,
 }) {
   const [dragging, setDragging] = useState(false);
-  // const [errors, setErrors] = useState("");
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
 
@@ -45,9 +44,9 @@ export default function ProductImage({
       return;
     }
 
-    const maxFileSize = 50 * 1024 * 1024; // 50 MB
+    const maxFileSize = 20 * 1024 * 1024; // 20 MB
     if (file.size > maxFileSize) {
-      setErrors("File size should not exceed 50 MB.");
+      setErrors("File size should not exceed 20 MB.");
       return;
     }
 
@@ -75,14 +74,14 @@ export default function ProductImage({
     if (e.target.files && e.target.files.length > 0) {
       validateAndAddFile(e.target.files[0]);
     }
-    fileInputRef.current.value = null; // Reset the file input
+    fileInputRef.current.value = null;
   };
 
   const handleRemoveImage = () => {
     if (window.confirm("Are you sure you want to remove this image?")) {
       setFeatureImage(null);
       handleImageChange({ target: { files: [] } });
-      setProgress(0); // Reset progress when image is removed
+      setProgress(0);
     }
   };
 

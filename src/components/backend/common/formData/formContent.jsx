@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import the Quill Snow theme CSS
+import "react-quill/dist/quill.snow.css";
 import "./formContent.css";
 import Button from "../../button";
 import "../../styles/createNew.css";
 import Input from "../input";
-import CustomImageBlot from "./customImageBlot"; // Import the custom blot
+import CustomImageBlot from "./customImageBlot";
 
 export default function FormContent({
   handleContentChange,

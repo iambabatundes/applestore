@@ -4,7 +4,7 @@ import { getPromotions } from "../../../../services/promotionServices";
 const useFetchPromotions = () => {
   const [promotions, setPromotions] = useState([]);
 
-  const fetchTags = useCallback(async () => {
+  const fetchPromotions = useCallback(async () => {
     try {
       const { data } = await getPromotions();
       setPromotions(data);
@@ -14,8 +14,8 @@ const useFetchPromotions = () => {
   }, []);
 
   useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
+    fetchPromotions();
+  }, [fetchPromotions]);
 
   return { promotions, setPromotions };
 };

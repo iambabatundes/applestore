@@ -264,10 +264,12 @@
 }
 
 .singleProduct__productName {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-family: TT Norms Pro, Open Sans, Roboto, Arial, Helvetica, sans-serif, SimSun;
     color: #000;
     line-height: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .rating-reviews {

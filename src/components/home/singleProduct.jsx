@@ -55,7 +55,7 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
                 selectedMedia={selectedMedia}
               />
             )}
-            {!product.media && <div>No media available for this product.</div>}
+            {!product.media && <p>No media available for this product.</p>}
 
             <ProductMedia
               fadeClass={fadeClass}
@@ -71,6 +71,10 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
               product={product}
               selectedCurrency={selectedCurrency}
             />
+            <span>
+              Tax excluded, add at checkout if applicable.丨Extra 1% off with
+              coins
+            </span>
             <h1 className="singleProduct__productName">{product.name}</h1>
             <ProductRating
               numberOfSales={product.numberOfSales}

@@ -10,13 +10,12 @@ export default function DataPromotions({
   const [promotion, setPromotion] = useState("");
   const [filteredPromotions, setFilteredPromotions] = useState([]);
 
-  // Filter promotions in real-time
   useEffect(() => {
     const lowerCasedInput = promotion.toLowerCase();
     setFilteredPromotions(
       dataPromotions.filter(
         (promo) =>
-          promo.promotionName.toLowerCase().includes(lowerCasedInput) ||
+          promo.name.toLowerCase().includes(lowerCasedInput) ||
           promo.promotionType.toLowerCase().includes(lowerCasedInput)
       )
     );
@@ -26,7 +25,6 @@ export default function DataPromotions({
     <>
       {isPromotionsVisible && (
         <section className="product__promotions">
-          {/* Search Input */}
           <div className="promotion__search-container">
             <input
               type="text"
@@ -46,17 +44,19 @@ export default function DataPromotions({
                   <label className="promotion__label">
                     <input
                       type="checkbox"
-                      checked={selectedPromotions.includes(promo.promotionName)}
+                      checked={selectedPromotions.some(
+                        (p) => p._id === promo._id
+                      )}
                       onChange={() => {
                         setSelectedPromotions((prev) =>
-                          prev.includes(promo.promotionName)
-                            ? prev.filter((p) => p !== promo.promotionName)
-                            : [...prev, promo.promotionName]
+                          prev.some((p) => p._id === promo._id)
+                            ? prev.filter((p) => p._id !== promo._id)
+                            : [...prev, promo]
                         );
                       }}
                       className="promotion__checkbox"
                     />
-                    {promo.promotionName} ({promo.promotionType})
+                    {promo.name} ({promo.promotionType})
                   </label>
                 </li>
               ))

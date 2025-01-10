@@ -30,7 +30,7 @@ export default function PromotionList({
         <div className="promotionList__card" key={promotion._id}>
           <div>
             <span className="promotionList__label">Promotion Name:</span>
-            <h2 className="promotionList__name">{promotion.promotionName}</h2>
+            <h2 className="promotionList__name">{promotion.name}</h2>
           </div>
 
           <div>

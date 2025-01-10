@@ -13,7 +13,6 @@ export default function ProductGallery({
   darkMode,
 }) {
   const [dragging, setDragging] = useState(false);
-  // const [errors, setErrors] = useState("");
   const [progress, setProgress] = useState(0);
   const [showMinMediaMessage, setShowMinMediaMessage] = useState(false);
 
@@ -275,8 +274,8 @@ export default function ProductGallery({
           )}
         </section>
       )}
-      {errors.featureImage && (
-        <div className="productImage__error-message">{errors.featureImage}</div>
+      {errors.media && (
+        <div className="productImage__error-message">{errors.media}</div>
       )}
     </>
   );

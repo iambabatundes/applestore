@@ -43,6 +43,10 @@ export default function AddProduct({ darkMode }) {
     handleEditorChange,
     handleImageChange,
     handleProductImagesChange,
+    attributes,
+    handleAttributesChange,
+    handleColorChange,
+    colors,
   } = useProductForm();
 
   const [isTagsVisible, setIsTagsVisible] = useState(true);
@@ -81,6 +85,10 @@ export default function AddProduct({ darkMode }) {
               handleSubmit={handleSubmit}
               editorContent={editorContent}
               handleEditorChange={handleEditorChange}
+              attributes={attributes}
+              onAttributesChange={handleAttributesChange}
+              onColorChange={handleColorChange}
+              colors={colors}
             />
           </section>
 
@@ -152,6 +160,7 @@ export default function AddProduct({ darkMode }) {
                 setSelectedPromotions={setSelectedPromotions}
                 dataPromotions={promotions}
                 setPromotions={setPromotions}
+                promotion={promotions}
               />
             </div>
 

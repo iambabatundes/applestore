@@ -22,10 +22,6 @@ export function getProducts() {
   return http.get(apiEndPoint);
 }
 
-// export function getProducts(page = 1, limit = 10) {
-//   return http.get(`${config.apiUrl}/products?page=${page}&limit=${limit}`);
-// }
-
 export function getProduct(productId) {
   return http.get(productUrl(productId));
 }
@@ -43,8 +39,14 @@ function createFormData(product, userId) {
 
   for (const key in product) {
     if (product.hasOwnProperty(key)) {
-      if (key === "_id") {
-        continue; // Skip the _id field
+      if (key === "salePrice" && !product[key]) {
+        continue;
+      } else if (key === "saleStartDate" && !product[key]) {
+        continue;
+      } else if (key === "saleEndDate" && !product[key]) {
+        continue;
+      } else if (key === "_id") {
+        continue;
       } else if (key === "featureImage") {
         if (product[key] && product[key].file) {
           formData.append("featureImage", product[key].file);
@@ -53,6 +55,45 @@ function createFormData(product, userId) {
         if (Array.isArray(product[key])) {
           product[key].forEach((file) => formData.append("media", file));
         }
+      } else if (key === "attributes") {
+        if (Array.isArray(product[key])) {
+          product[key].forEach((attr, index) => {
+            formData.append(`attributes[${index}][key]`, attr.key);
+            formData.append(`attributes[${index}][value]`, attr.value);
+          });
+        }
+      } else if (key === "colors" && Array.isArray(product[key])) {
+        product[key].forEach((color, index) => {
+          Object.entries(color).forEach(([colorKey, colorValue]) => {
+            if (colorKey === "colorImages" && colorValue instanceof File) {
+              // Use a flat field name, e.g., colorImages
+              formData.append(`colorImages`, colorValue);
+            } else if (colorKey === "colorSalePrice") {
+              // Ensure it's only appended if it exists and is valid
+              if (
+                colorValue !== undefined &&
+                colorValue !== null &&
+                colorValue !== ""
+              ) {
+                formData.append(`colors[${index}][${colorKey}]`, colorValue);
+              }
+            } else if (colorKey === "colorSaleEndDate") {
+              // Append only if colorSaleEndDate is a valid date or provided
+              if (colorValue) {
+                formData.append(`colors[${index}][${colorKey}]`, colorValue);
+              }
+            } else if (colorKey === "colorSaleStartDate") {
+              // Append only if colorSaleEndDate is a valid date or provided
+              if (colorValue) {
+                formData.append(`colors[${index}][${colorKey}]`, colorValue);
+              }
+            } else {
+              formData.append(`colors[${index}][${colorKey}]`, colorValue);
+            }
+          });
+        });
+      } else if (key === "sizes" && Array.isArray(product[key])) {
+        product[key].forEach((size) => formData.append("sizes[]", size));
       } else if (Array.isArray(product[key])) {
         product[key].forEach((item) => formData.append(`${key}[]`, item));
       } else {

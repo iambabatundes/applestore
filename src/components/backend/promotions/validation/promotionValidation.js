@@ -1,8 +1,7 @@
-// promotionValidation.js
 import Joi from "joi";
 
 const promotionSchema = Joi.object({
-  promotionName: Joi.string().min(1).max(255).required(),
+  name: Joi.string().min(1).max(255).required(),
   description: Joi.string().min(3).required(),
   promotionType: Joi.string()
     .valid("Discount", "FlashSale", "FreeShipping", "BundleDeal")
