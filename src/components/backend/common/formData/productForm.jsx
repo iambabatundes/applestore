@@ -5,6 +5,9 @@ import TextareaField from "../../products/common/TextareaField";
 import AttributesForm from "../../products/common/AttributesForm";
 
 import ColorsForm from "../../products/common/colorsForm";
+import SizeForm from "../../products/common/sizeForm";
+import CapacityForm from "../../products/common/capacityForm";
+import MaterialsForm from "../../products/common/materialsForm";
 
 export default function ProductForm({
   data,
@@ -18,6 +21,26 @@ export default function ProductForm({
   editorContent,
   handleSubmit,
   colors,
+  toggleDefaultColor,
+  handleAddColor,
+  handleRemoveColor,
+  handleColorChange,
+  handleColorImageUpload,
+  handleAddSize,
+  handleRemoveSize,
+  handleSizeChange,
+  toggleDefaultSize,
+  sizes,
+  capacity,
+  handleAddCap,
+  handleRemoveCap,
+  handleCapChange,
+  toggleDefaultCap,
+  materials,
+  toggleDefaultMaterials,
+  handleAddMaterials,
+  handleMaterialsChange,
+  handleRemoveMaterials,
 }) {
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -171,14 +194,50 @@ export default function ProductForm({
             darkMode={darkMode}
             onAttributesChange={onAttributesChange}
             attributes={attributes}
-            errors={errors}
+            errors={errors.attributes}
           />
 
           <ColorsForm
             colors={colors}
-            errors={errors}
-            onColorChange={onColorChange}
+            errors={errors.colors}
+            // onColorChange={onColorChange}
             darkMode={darkMode}
+            handleAddColor={handleAddColor}
+            handleRemoveColor={handleRemoveColor}
+            handleColorChange={handleColorChange}
+            toggleDefault={toggleDefaultColor}
+            handleColorImageUpload={handleColorImageUpload}
+          />
+
+          <SizeForm
+            darkMode={darkMode}
+            handleAddSize={handleAddSize}
+            handleRemoveSize={handleRemoveSize}
+            handleSizeChange={handleSizeChange}
+            toggleDefaultSize={toggleDefaultSize}
+            errors={errors.sizes}
+            sizes={sizes}
+            // setSizes={setSizes}
+          />
+
+          <CapacityForm
+            capacity={capacity}
+            handleAddCap={handleAddCap}
+            handleRemoveCap={handleRemoveCap}
+            handleCapChange={handleCapChange}
+            toggleDefaultCap={toggleDefaultCap}
+            errors={errors.capacity}
+            darkMode={darkMode}
+          />
+
+          <MaterialsForm
+            darkMode={darkMode}
+            errors={errors.materials}
+            materials={materials}
+            handleAddMaterials={handleAddMaterials}
+            handleMaterialsChange={handleMaterialsChange}
+            handleRemoveMaterials={handleRemoveMaterials}
+            toggleDefaultMaterials={toggleDefaultMaterials}
           />
         </section>
 

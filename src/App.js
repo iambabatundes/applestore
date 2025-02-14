@@ -98,13 +98,13 @@ function App() {
 
   const addToCart = (product) => {
     // Check if the product already exists in the cart
-    const existingProduct = cartItems.find((item) => item.id === product.id);
+    const existingProduct = cartItems.find((item) => item._id === product._id);
 
     if (existingProduct) {
       // Product already in the cart, increase the quantity
       setCartItems((prevCart) =>
         prevCart.map((item) =>
-          item.id === product.id
+          item._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
@@ -118,7 +118,7 @@ function App() {
   const handleDelete = (itemId) => {
     setCartItems((prevCartItems) => {
       const updatedCartItems = prevCartItems.filter(
-        (item) => item.id !== itemId
+        (item) => item._id !== itemId
       );
       return updatedCartItems;
     });
@@ -151,8 +151,8 @@ function App() {
   useEffect(() => {
     const initialQuantities = {};
     cartItems.forEach((item) => {
-      if (!initialQuantities.hasOwnProperty(item.id)) {
-        initialQuantities[item.id] = selectedQuantities[item.id] || 1;
+      if (!initialQuantities.hasOwnProperty(item._id)) {
+        initialQuantities[item._id] = selectedQuantities[item._id] || 1;
       }
     });
     setSelectedQuantities(initialQuantities);

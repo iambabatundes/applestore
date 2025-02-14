@@ -11,7 +11,7 @@ export const useAddedToCart = (itemId, cartItems) => {
   }, [itemId]);
 
   useEffect(() => {
-    if (cartItems && cartItems.some((cartItem) => cartItem.id === itemId)) {
+    if (cartItems && cartItems.some((cartItem) => cartItem._id === itemId)) {
       setIAdded(true);
     } else {
       setIAdded(false);

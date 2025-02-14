@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/exclusiveDeal.css";
 import { formatPrice } from "../common/utils";
+import config from "../../../config.json";
 
 export default function ProductList({
   products,
@@ -26,14 +27,18 @@ export default function ProductList({
           currency: originalCurrency,
           whole: originalWhole,
           fraction: originalFraction,
-        } = product.oldPrice
-          ? formatPrice(product.oldPrice, selectedCurrency, conversionRate)
+        } = product.salePrice
+          ? formatPrice(product.salePrice, selectedCurrency, conversionRate)
           : {};
 
         return (
           <div key={index} className={productClassName}>
             <img
-              src={product.image}
+              src={
+                product.featureImage && product.featureImage.filename
+                  ? `${config.mediaUrl}/uploads/${product.featureImage.filename}`
+                  : "/default-image.jpg"
+              }
               alt={`Product ${index + 1}`}
               className={imageClassName}
             />
@@ -45,11 +50,13 @@ export default function ProductList({
                 <span className="fraction">.{saleFraction}</span>
               </span>
 
-              {product.discount && (
-                <span className={discountClassName}>{product.discount}</span>
+              {product.discountPercentage && (
+                <span className={discountClassName}>
+                  {product.discountPercentage}
+                </span>
               )}
 
-              {product.oldPrice && (
+              {product.salePrice && (
                 <span className={oldPriceClassName}>
                   <span className="currency">{originalCurrency}</span>
                   <span className="whole">{originalWhole}</span>

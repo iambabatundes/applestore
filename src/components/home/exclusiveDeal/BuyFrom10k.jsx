@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProductList from "./ProductList";
+import { getProductsByPromotion } from "../../../services/productService";
+import SuperDeal from "./superDeal";
+
+const INITIAL_GROUP_COUNT = 1;
 
 const groupProducts = (products, chunkSize) => {
   const groups = [];
@@ -9,26 +13,36 @@ const groupProducts = (products, chunkSize) => {
   return groups;
 };
 
-export default function BuyFrom10k({
-  productImage1,
-  productImage,
-  conversionRate,
-  selectedCurrency,
-}) {
-  const buyFrom10kProducts = [
-    { image: productImage1, price: 45000, discount: "-60%" },
-    { image: productImage, price: 55000, discount: "-60%" },
-    { image: productImage, price: 85000, discount: "-70%" },
-  ];
+export default function BuyFrom10k({ conversionRate, selectedCurrency }) {
+  const [products, setProducts] = useState([]);
+  const [displayedGroups, setDisplayedGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const superDealProducts = [
-    { image: productImage1, price: 45000, oldPrice: 120000 },
-    { image: productImage, price: 45000, oldPrice: 120000 },
-    { image: productImage, price: 45000, oldPrice: 120000 },
-  ];
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { data } = await getProductsByPromotion("Shipping");
+        // setProducts(data);
 
-  const buyFrom10kGroups = groupProducts(buyFrom10kProducts, 3);
-  const superDealGroups = groupProducts(superDealProducts, 3);
+        const mergedProducts = [...data];
+        const groupedProducts = groupProducts(mergedProducts, 3);
+
+        setProducts(groupedProducts);
+        setDisplayedGroups(groupedProducts.slice(0, INITIAL_GROUP_COUNT));
+      } catch (err) {
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="buyFrom10k">
       <section className="buyFrom10k__offer">
@@ -37,7 +51,7 @@ export default function BuyFrom10k({
         </h1>
         <button className="buyFrom10k__offer-label">Shipping</button>
         <span className="buyFrom10k__offer-subtitle">Free Shipping</span>
-        {buyFrom10kGroups.map((group, index) => (
+        {displayedGroups.map((group, index) => (
           <ProductList
             products={group}
             key={index}
@@ -53,26 +67,11 @@ export default function BuyFrom10k({
         ))}
       </section>
 
-      <section className="superDeal">
-        <h1 className="superDeal__offer-title">
-          Super<span className="superDeal__deal">Deal</span>
-        </h1>
-        <button className="superDeal__offer-label">Limited</button>
-        <span className="superDeal__offer-subtitle">Limited Time Offers</span>
-        {superDealGroups.map((group, index) => (
-          <ProductList
-            products={group}
-            key={index}
-            conversionRate={conversionRate}
-            selectedCurrency={selectedCurrency}
-            containerClassName="superDeal__products"
-            productClassName="superDeal__product"
-            imageClassName="superDeal__productImage"
-            priceClassName="superDeal__productPrice"
-            oldPriceClassName="superDeal__oldPrice"
-          />
-        ))}
-      </section>
+      {/* Super Deal Section */}
+      <SuperDeal
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
     </div>
   );
 }

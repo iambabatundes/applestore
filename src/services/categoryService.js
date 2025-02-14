@@ -12,7 +12,7 @@ export function getCategory(categoryId) {
 }
 
 export function saveCategory(category) {
-  console.log("Saving Category:", category); //
+  console.log("Saving Category:", category);
   return http.post(apiEndPoint, category);
 }
 

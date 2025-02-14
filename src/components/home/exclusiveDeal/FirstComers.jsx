@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/exclusiveDeal.css";
 import { Link } from "react-router-dom";
 import ProductList from "./ProductList";
-
-// Function to group products into chunks
+import { getProductsByPromotion } from "../../../services/productService";
 const groupProducts = (products, chunkSize) => {
   const groups = [];
   for (let i = 0; i < products.length; i += chunkSize) {
@@ -12,22 +11,41 @@ const groupProducts = (products, chunkSize) => {
   return groups;
 };
 
+const INITIAL_GROUP_COUNT = 3;
+
 export default function FirstComers({
-  productImage1,
-  productImage,
   user,
   selectedCurrency,
   conversionRate,
 }) {
-  const products = [
-    { image: productImage1, price: 45000, discount: "-60%" },
-    { image: productImage, price: 55000, discount: "-60%" },
-    { image: productImage, price: 85000, discount: "-70%" },
-    { image: productImage1, price: 95000, discount: "-50%" },
-  ];
+  const [products, setProducts] = useState([]);
+  const [displayedGroups, setDisplayedGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Group products into pairs
-  const productGroups = groupProducts(products, 2);
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { data } = await getProductsByPromotion("Sale");
+        // setProducts(data);
+
+        const mergedProducts = [...data];
+        const groupedProducts = groupProducts(mergedProducts, 2);
+
+        setProducts(groupedProducts);
+        setDisplayedGroups(groupedProducts.slice(0, INITIAL_GROUP_COUNT));
+      } catch (err) {
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="firstComers">
@@ -51,7 +69,7 @@ export default function FirstComers({
         <button className="firstComers__offer-label">Shipping</button>
         <span className="firstComers__offer-subtitle">Free Shipping</span>
 
-        {productGroups.map((group, index) => (
+        {displayedGroups.map((group, index) => (
           <ProductList
             key={index}
             products={group}
@@ -65,21 +83,13 @@ export default function FirstComers({
             discountClassName="firstComers__discount"
           />
         ))}
-      </section>
 
-      {user && (
-        <div className="firstComers-user__product">
-          <img
-            src={productImage1}
-            alt="Product 1"
-            className="firstComers-user__productImage"
-          />
-          <article>
-            <p className="firstComers-user__productPrice">NGN45,000</p>
-            <span className="firstComers-user__oldPrice">N100, 000.89</span>
-          </article>
-        </div>
-      )}
+        {/* {displayedGroups.length < allProductGroups.length && (
+          <button className="firstComers__loadMore" onClick={handleLoadMore}>
+            Load More
+          </button>
+        )} */}
+      </section>
     </div>
   );
 }

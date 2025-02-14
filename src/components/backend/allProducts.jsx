@@ -39,6 +39,9 @@ export default function AllProduct() {
   }
 
   async function handleDelete(product) {
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
+
     const originalProducts = productData;
     const updatedProducts = originalProducts.filter(
       (p) => p._id !== product._id

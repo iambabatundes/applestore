@@ -27,16 +27,18 @@ export default function CartItem({
             <QuantitySelector
               isQuantityTenPlus={isQuantityTenPlus}
               selectedQuantity={selectedQuantity}
-              onQuantityChange={(value) => handleQuantityChange(item.id, value)}
-              onTenPlusChange={(e) => handleQuantityTenPlusChange(e, item.id)}
-              handleSubmit={(e) => handleSubmit(e, item.id)}
+              onQuantityChange={(value) =>
+                handleQuantityChange(item._id, value)
+              }
+              onTenPlusChange={(e) => handleQuantityTenPlusChange(e, item._id)}
+              handleSubmit={(e) => handleSubmit(e, item._id)}
               quantityTenPlusValue={
                 isQuantityTenPlus ? item.quantityTenPlus : ""
               }
             />
             <span
               className="cart-item__span"
-              onClick={() => handleDelete(item.id)}
+              onClick={() => handleDelete(item._id)}
             >
               Delete
             </span>

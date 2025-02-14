@@ -1,42 +1,55 @@
 import React from "react";
 
-export default function ProductLabels({
-  superDeal,
-  shipping,
-  choice,
-  discount,
-}) {
+export default function ProductLabels({ promotions }) {
   return (
     <>
-      {superDeal && (
-        <div className="productCard__superDeal-main">
-          <article className="productCard__superDeal">
-            <span className="productCard__super">Super</span>
-            <span className="productCard__deal">Deals</span>
-          </article>
-          <span className="productCard__superDeal-text">{superDeal}</span>
+      {promotions?.map((promo, index) => (
+        <div key={index} className="productCard__promotion">
+          <span className="productCard__promotion-name" data-promo={promo.name}>
+            <span
+              className="productCard__promotion-name"
+              data-promo={promo.name}
+            >
+              {promo.name === "SuperDeal" ? (
+                <>
+                  <span className="super">Super</span>
+                  <span className="deal">Deal</span>
+                </>
+              ) : promo.name === "WelcomeDeal" ? (
+                <>
+                  <span className="welcome">Welcome</span>
+                  <span className="sdeal">Deal</span>
+                </>
+              ) : promo.name === "BlackFriday" ? (
+                <>
+                  <span className="black">Black</span>
+                  <span className="friday">Friday</span>
+                </>
+              ) : promo.name === "CyberMonday" ? (
+                <>
+                  <span className="cyber">Cyber</span>
+                  <span className="monday">Monday</span>
+                </>
+              ) : promo.name === "HolidaySale" ? (
+                <>
+                  <span className="holiday">Holiday</span>
+                  <span className="sale">Sale</span>
+                </>
+              ) : promo.name === "FlashSale" ? (
+                <>
+                  <span className="flash">Flash</span>
+                  <span className="sale">Sale</span>
+                </>
+              ) : (
+                promo.name
+              )}
+            </span>
+          </span>
+          <span className="productCard__promotion-description">
+            {promo.description}
+          </span>
         </div>
-      )}
-
-      {shipping && (
-        <div className="productCard__shipping">
-          <span className="productCard__shipping-badge">Shipping</span>
-          <span className="productCard__shipping-text">{superDeal}</span>
-        </div>
-      )}
-
-      {choice && (
-        <article className="productCard__choice">
-          <span className="productCard__choice-badge">Choice</span>
-          <span className="productCard__choice-text">{choice}</span>
-        </article>
-      )}
-
-      {discount && (
-        <article className="productCard__discount">
-          <span className="productCard__discount-text">- {discount}</span>
-        </article>
-      )}
+      ))}
     </>
   );
 }

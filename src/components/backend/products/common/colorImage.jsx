@@ -14,18 +14,9 @@ export default function ColorImage({
       ? color.colorImages.preview || URL.createObjectURL(color.colorImages)
       : typeof color.colorImages === "string"
       ? color.colorImages
-      : color.colorImages.filename
+      : color.colorImages && color.colorImages.filename
       ? `${config.mediaUrl}/uploads/${color.colorImages.filename}`
       : "";
-
-  //   let imageUrl = "";
-  //   if (color.colorImages) {
-  //     if (color.colorImages.preview && color.colorImages) {
-  //       imageUrl = color.colorImages.preview;
-  //     } else if (color.colorImages.filename) {
-  //       imageUrl = `${config.mediaUrl}/uploads/${color.colorImages.filename}`;
-  //     }
-  //   }
 
   return (
     <div

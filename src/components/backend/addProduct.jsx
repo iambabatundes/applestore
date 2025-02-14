@@ -47,6 +47,25 @@ export default function AddProduct({ darkMode }) {
     handleAttributesChange,
     handleColorChange,
     colors,
+    handleAddColor,
+    handleRemoveColor,
+    toggleDefaultColor,
+    handleColorImageUpload,
+    handleAddSize,
+    handleRemoveSize,
+    handleSizeChange,
+    toggleDefaultSize,
+    sizes,
+    capacity,
+    handleAddCapacity,
+    handleCapacityChange,
+    handleRemoveCapacity,
+    toggleDefaultCapacity,
+    materials,
+    handleAddMaterials,
+    handleMaterialsChange,
+    handleRemoveMaterials,
+    toggleDefaultMaterials,
   } = useProductForm();
 
   const [isTagsVisible, setIsTagsVisible] = useState(true);
@@ -87,8 +106,29 @@ export default function AddProduct({ darkMode }) {
               handleEditorChange={handleEditorChange}
               attributes={attributes}
               onAttributesChange={handleAttributesChange}
-              onColorChange={handleColorChange}
+              // onColorChange={handleColorChange}
               colors={colors}
+              handleRemoveSize={handleRemoveSize}
+              toggleDefaultSize={toggleDefaultSize}
+              handleColorChange={handleColorChange}
+              handleAddColor={handleAddColor}
+              sizes={sizes}
+              handleAddSize={handleAddSize}
+              handleSizeChange={handleSizeChange}
+              // setSizes={setSizes}
+              handleRemoveColor={handleRemoveColor}
+              toggleDefaultColor={toggleDefaultColor}
+              handleColorImageUpload={handleColorImageUpload}
+              capacity={capacity}
+              handleAddCap={handleAddCapacity}
+              handleRemoveCap={handleRemoveCapacity}
+              handleCapChange={handleCapacityChange}
+              toggleDefaultCap={toggleDefaultCapacity}
+              materials={materials}
+              handleAddMaterials={handleAddMaterials}
+              handleMaterialsChange={handleMaterialsChange}
+              handleRemoveMaterials={handleRemoveMaterials}
+              toggleDefaultMaterials={toggleDefaultMaterials}
             />
           </section>
 
@@ -122,7 +162,7 @@ export default function AddProduct({ darkMode }) {
                 setCategories={setCategories}
                 getCategories={getCategories}
                 saveCategory={saveCategory}
-                errors={errors}
+                errors={errors.categories}
                 setErrors={setErrors}
               />
             </div>

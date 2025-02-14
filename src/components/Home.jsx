@@ -7,11 +7,13 @@ import DiscountProduct from "./home/discountProduct";
 // import ChoiceDay from "./home/choiceDay";
 import Choice from "./home/choice";
 import MoreToLove from "./home/moreToLove";
+import CategoryOne from "./home/categoryOne";
+import CategoryTwo from "./home/categoryTwo";
+import CategoryThree from "./home/categoryThree";
 
 function Home({
   addToCart,
   cartItems,
-  blogPosts,
   user,
   conversionRate,
   selectedCurrency,
@@ -37,12 +39,36 @@ function Home({
         currencySymbols={currencySymbols}
         isLoading={isLoading}
       />
+
+      <CategoryOne
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+        currencySymbols={currencySymbols}
+      />
       {/* <ShopCategories /> */}
       <Choice
         addToCart={addToCart}
         cartItems={cartItems}
         conversionRate={conversionRate}
         selectedCurrency={selectedCurrency}
+      />
+
+      <CategoryTwo
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+        currencySymbols={currencySymbols}
+      />
+
+      <CategoryThree
+        addToCart={addToCart}
+        cartItems={cartItems}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+        currencySymbols={currencySymbols}
       />
       <MoreToLove
         addToCart={addToCart}

@@ -1,4 +1,3 @@
-// CartStatus.js
 import React from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -22,7 +21,7 @@ function CartStatus({ added, handleAddToCart, cartItems, item }) {
         />
       )}
 
-      {added && cartItems.some((cartItem) => cartItem.id === item.id) && (
+      {added && cartItems.some((cartItem) => cartItem._id === item._id) && (
         <div className="productCard__cartBtn">
           <Link to="/cart" className="gotoCartBtn productCart__gotoCartBtn">
             <i className="fa fa-shopping-cart"></i> Go to Cart

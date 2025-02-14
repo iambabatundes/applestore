@@ -63,7 +63,7 @@ export default function HeroSlider({ selectedCurrency, conversionRate }) {
                 index={index}
                 key={index}
                 backgroundColor={backgroundColor}
-                textColor={textColor} // Pass text color
+                textColor={textColor}
                 conversionRate={conversionRate}
                 selectedCurrency={selectedCurrency}
               />

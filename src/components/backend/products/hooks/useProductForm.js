@@ -10,6 +10,10 @@ import { getCurrentUser } from "../../../../services/authService";
 import { schema } from "./productValidation";
 import config from "../../../../config.json";
 import { formatDate } from "../../utils/dateUtils";
+import useSizes from "./useSizes";
+import useCapacity from "./useCapacity";
+import useMaterial from "./useMaterial";
+import useColors from "./useColors";
 
 const useProductForm = () => {
   const initialProductDetails = useMemo(
@@ -35,6 +39,9 @@ const useProductForm = () => {
       promotion: [],
       attributes: [],
       colors: [],
+      sizes: [],
+      capacity: [],
+      materials: [],
     }),
     []
   );
@@ -49,7 +56,6 @@ const useProductForm = () => {
     description: "",
   });
   const [attributes, setAttributes] = useState([{ key: "", value: "" }]);
-  const [colors, setColor] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedPromotions, setSelectedPromotions] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -60,10 +66,51 @@ const useProductForm = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  const {
+    sizes,
+    setSizes,
+    handleAddSize,
+    handleSizeChange,
+    handleRemoveSize,
+    validateSizes,
+    toggleDefaultSize,
+  } = useSizes({ setErrors });
+
+  const {
+    capacity,
+    setCapacity,
+    handleAddCapacity,
+    handleCapacityChange,
+    handleRemoveCapacity,
+    validateCapacity,
+    toggleDefaultCapacity,
+  } = useCapacity({ setErrors });
+
+  const {
+    materials,
+    setMaterials,
+    handleAddMaterials,
+    handleMaterialsChange,
+    handleRemoveMaterials,
+    validateMaterials,
+    toggleDefaultMaterials,
+  } = useMaterial({ setErrors });
+
+  const {
+    colors,
+    setColor,
+    handleAddColor,
+    handleColorChange,
+    handleColorImageUpload,
+    handleRemoveColor,
+    toggleDefaultColor,
+  } = useColors({ setErrors });
+
   useEffect(() => {
     const fetchProductDetails = async (productId) => {
       try {
         const { data: product } = await getProduct(productId);
+        console.log("Fetched Product:", product);
         setProductDetails({
           ...product,
           salePrice: product.salePrice ? parseFloat(product.salePrice) : null,
@@ -80,10 +127,8 @@ const useProductForm = () => {
         setSelectedTags(product.tags.map((tag) => tag.name));
         setSelectedCategories(product.category || []);
         setSelectedPromotions(product.promotion);
-
         setFeatureImage(product.featureImage);
         setMedia(product.media || []);
-        // setAttributes([{ key: product.key, value: product.value }]);
         setAttributes(
           product.attributes && Array.isArray(product.attributes)
             ? product.attributes.map((attr) => ({
@@ -96,13 +141,18 @@ const useProductForm = () => {
         setColor(
           product.colors.map((color) => ({
             ...color,
-
             colorImages:
-              color.colorImages instanceof Object
+              typeof color.colorImages === "string"
+                ? color.colorImages
+                : color.colorImages?.filename
                 ? `${config.mediaUrl}/uploads/${color.colorImages.filename}`
-                : color.colorImages || "",
+                : color.colorImages || null,
           }))
         );
+
+        setSizes(product.sizes || []);
+        setCapacity(product.capacity || []);
+        setMaterials(product.materials || []);
 
         setEditorContent({
           aboutProduct: product.aboutProduct || "",
@@ -137,6 +187,9 @@ const useProductForm = () => {
       });
       setAttributes([]);
       setColor([]);
+      setSizes([]);
+      setCapacity([]);
+      setMaterials([]);
     }
   }, [params.id, navigate, initialProductDetails]);
 
@@ -146,27 +199,39 @@ const useProductForm = () => {
       ...editorContent,
       attributes,
       colors,
+      sizes,
+      capacity,
+      materials,
     };
 
     const { error } = schema.validate(productDetailsWithEditorContent, {
       abortEarly: false,
     });
 
+    const sizeErrors = validateSizes(sizes);
+    const capacityErrors = validateCapacity(capacity);
+    const materialErrors = validateMaterials(materials);
+
     if (!error) return null;
 
-    // const validationErrors = {};
-    // if (error) {
-    //   for (let item of error.details)
-    //     validationErrors[item.path[0]] = item.message;
-    // }
-
-    // return validationErrors;
-
     const validationErrors = {};
-    for (let item of error.details)
-      validationErrors[item.path[0]] = item.message;
+    if (error) {
+      for (let item of error.details)
+        validationErrors[item.path[0]] = item.message;
+    }
+
+    validationErrors.sizes = sizeErrors;
+    validationErrors.capacity = capacityErrors;
+    validationErrors.materials = materialErrors;
+    // validationErrors.colors = colorErrors;
 
     return validationErrors;
+
+    // const validationErrors = {};
+    // for (let item of error.details)
+    //   validationErrors[item.path[0]] = item.message;
+
+    // return validationErrors;
   }
 
   const handleSubmit = async (e) => {
@@ -175,6 +240,10 @@ const useProductForm = () => {
 
     const sanitizedProductDetails = {
       ...productDetails,
+      colors,
+      sizes,
+      capacity,
+      materials,
       salePrice:
         productDetails.salePrice === "" ? null : productDetails.salePrice,
     };
@@ -183,6 +252,7 @@ const useProductForm = () => {
     if (validationErrors) {
       console.log("Validation errors:", validationErrors);
       setErrors(validationErrors);
+
       return;
     }
 
@@ -210,6 +280,9 @@ const useProductForm = () => {
         value: attr.value,
       })),
       colors,
+      sizes,
+      capacity,
+      materials,
       category: categoryNames,
       tags: selectedTags,
       promotion: promotionNames,
@@ -240,23 +313,13 @@ const useProductForm = () => {
     const obj = { [name]: value };
     const subSchema = schema.extract(name);
     const { error } = subSchema.validate(obj[name]);
-    let errorMessage = error ? error.details[0].message : null;
-
-    // Custom logic for salePrice, saleStartDate, and saleEndDate validation
-    if (name === "salePrice" && value) {
-      if (!productDetails.saleStartDate || !productDetails.saleEndDate) {
-        errorMessage =
-          "Both Sale Start Date and Sale End Date are required when Sale Price is set.";
-      }
-    }
-
-    return errorMessage;
+    return error ? error.details[0].message : null;
   }
 
   function handleInputChange({ target: input }) {
     const errorMessage = validateProperty(input);
-
     const newErrors = { ...errors };
+
     if (errorMessage) newErrors[input.name] = errorMessage;
     else delete newErrors[input.name];
 
@@ -270,6 +333,18 @@ const useProductForm = () => {
         newErrors.salePrice = "Sale Price must not exceed Price.";
       } else {
         delete newErrors.salePrice;
+      }
+    }
+
+    // Check for missing dates if salePrice is provided
+    if (productDetails.salePrice) {
+      if (!productDetails.saleStartDate) {
+        newErrors.saleStartDate =
+          "Sale Start Date is required when Sale Price is set.";
+      }
+      if (!productDetails.saleEndDate) {
+        newErrors.saleEndDate =
+          "Sale End Date is required when Sale Price is set.";
       }
     }
 
@@ -308,29 +383,6 @@ const useProductForm = () => {
       value: attr.value || "",
     }));
     setAttributes(formattedAttributes);
-  };
-
-  const handleColorChange = (updatedColors) => {
-    // Allow only one default color
-    const defaultColors = updatedColors.filter((color) => color.isDefault);
-    if (defaultColors.length > 1) {
-      toast.error("Only one color can be marked as default.");
-      return;
-    }
-
-    const sanitizedColors = updatedColors.map((color) => ({
-      ...color,
-      colorImages:
-        color.colorImages && typeof color.colorImages === "object"
-          ? color.colorImages
-          : {},
-    }));
-
-    setColor(sanitizedColors);
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-    }));
   };
 
   const handleEditorChange = useCallback(
@@ -404,6 +456,10 @@ const useProductForm = () => {
     handleAttributesChange,
     colors,
     handleColorChange,
+    handleRemoveColor,
+    toggleDefaultColor,
+    handleAddColor,
+    handleColorImageUpload,
     errors,
     setErrors,
     selectedTags,
@@ -423,6 +479,26 @@ const useProductForm = () => {
     handleEditorChange,
     handleImageChange,
     handleProductImagesChange,
+    handleAddSize,
+    handleRemoveSize,
+    handleSizeChange,
+    toggleDefaultSize,
+    sizes,
+    setSizes,
+    handleAddCapacity,
+    handleCapacityChange,
+    handleRemoveCapacity,
+    toggleDefaultCapacity,
+    capacity,
+    setCapacity,
+
+    materials,
+    setMaterials,
+    handleAddMaterials,
+    handleMaterialsChange,
+    handleRemoveMaterials,
+    validateMaterials,
+    toggleDefaultMaterials,
   };
 };
 

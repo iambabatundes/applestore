@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../styles/moreToLove.css";
-import { getProducts } from "./common/productDatas";
+// import { getProducts } from "./common/productDatas";
+
 import ProductCard from "./common/productCard";
+import { getProducts } from "../../services/productService";
 
 export default function MoreToLove({
   addToCart,
@@ -10,15 +12,35 @@ export default function MoreToLove({
   selectedCurrency,
 }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchedProducts = getProducts();
-    setProducts(fetchedProducts);
+    async function fetchProducts() {
+      try {
+        const { data } = await getProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
   }, []);
+
+  useEffect(() => {
+    console.log("Cart Items:", cartItems);
+  }, [cartItems]);
 
   const handleRatingChange = (newRating) => {
     console.log(`New rating for ${products.name}: ${newRating}`);
   };
+
+  if (loading) return <p>Loading products...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="moreToLove">
@@ -27,7 +49,7 @@ export default function MoreToLove({
         {products.map((product) => {
           return (
             <ProductCard
-              key={product.id}
+              key={product._id}
               addToCart={addToCart}
               item={product}
               handleRatingChange={handleRatingChange}

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import CartSummary from "./cart/CartSummary";
 import EmptyCart from "./cart/emptyCart";
 import NotLoginCart from "./cart/notLoginCart";
+import config from "../config.json";
 
 export default function Cart({
   cartItems,
@@ -27,7 +28,7 @@ export default function Cart({
     } else {
       const initialQuantities = {};
       cartItems.forEach((item) => {
-        initialQuantities[item.id] = 1;
+        initialQuantities[item._id] = 1;
       });
       setSelectedQuantities(initialQuantities);
     }
@@ -37,7 +38,7 @@ export default function Cart({
     } else {
       const initialQuantityTenPlus = {};
       cartItems.forEach((item) => {
-        initialQuantityTenPlus[item.id] = 1; // Set the initial value to false
+        initialQuantityTenPlus[item._id] = 1; // Set the initial value to false
       });
       setQuantityTenPlus(initialQuantityTenPlus); // Update the state with the initial values
     }
@@ -124,8 +125,8 @@ export default function Cart({
         <h3>Price</h3>
 
         {cartItems.map((item) => {
-          const selectedQuantity = selectedQuantities[item.id] || 1;
-          const isQuantityTenPlus = quantityTenPlus[item.id] !== undefined;
+          const selectedQuantity = selectedQuantities[item._id] || 1;
+          const isQuantityTenPlus = quantityTenPlus[item._id] !== undefined;
 
           // const itemPrice = item.discountPrice || item.price;
           // const convertedPrice = (itemPrice * conversionRate).toFixed(2);
@@ -133,13 +134,22 @@ export default function Cart({
           const convertedPrice = (item.price * conversionRate).toFixed(2);
 
           return (
-            <section className="cart-item" key={item.id}>
+            <section className="cart-item" key={item._id}>
               <article className="cart-item__main">
-                <img src={item.image} alt={item.name} width={100} />
+                {/* <img src={item.image} alt={item.name} width={100} /> */}
+                <img
+                  src={
+                    item.featureImage && item.featureImage.filename
+                      ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
+                      : "/default-image.jpg"
+                  }
+                  alt={item.name}
+                  width={100}
+                />
                 <div className="cart-item__content">
                   <div className="item-details">
                     <Link to={`/${formatPermalink(item.name)}`}>
-                      <h2>{item.name}</h2>
+                      <h1>{item.name}</h1>
                     </Link>
                     <span className="cart-item__price">
                       {selectedCurrency} {convertedPrice}
@@ -149,14 +159,14 @@ export default function Cart({
                   <div className="item-actions">
                     {isQuantityTenPlus ? (
                       <div className="cart-item__form">
-                        <form onSubmit={(e) => handleSubmit(e, item.id)}>
+                        <form onSubmit={(e) => handleSubmit(e, item._id)}>
                           <input
                             type="number"
                             className="cart-item__input"
                             min="1"
-                            value={quantityTenPlus[item.id] || 1}
+                            value={quantityTenPlus[item._id] || 1}
                             onChange={(e) =>
-                              handleQuantityTenPlusChange(e, item.id)
+                              handleQuantityTenPlusChange(e, item._id)
                             }
                           />
                           <button
@@ -172,7 +182,7 @@ export default function Cart({
                         value={selectedQuantity}
                         className="cart-item__select"
                         onChange={(e) =>
-                          handleQuantityChange(item.id, e.target.value)
+                          handleQuantityChange(item._id, e.target.value)
                         }
                       >
                         {selectedQuantity === 1 ? (
@@ -206,7 +216,7 @@ export default function Cart({
 
                     <span
                       className="cart-item__span"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => handleDelete(item._id)}
                     >
                       Delete
                     </span>

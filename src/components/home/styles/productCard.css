@@ -180,6 +180,129 @@
     color: #fff;
 }
 
+.productCard__promotion {
+    display: flex;
+    /* padding: 4px 8px; */
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.productCard__promotion-name {
+    padding: 1px 2px;
+    border-radius: 5px;
+    /* margin-right: 5px; */
+    /* background: #e60023; */
+    color: #fff;
+}
+
+.productCard__promotion-description {
+    font-weight: 600;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.productCard__promotion-name[data-promo="SuperDeal"] {
+    font-style: italic;
+    font-family: oswald;
+    background: #fedad8;
+}
+
+.productCard__promotion-name .super {
+    color: #191919;
+    font-weight: 800;
+}
+
+.productCard__promotion-name .deal {
+    color: #fd384f;
+    font-weight: 800;
+}
+
+.productCard__promotion-name[data-promo="WelcomeDeal"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="BlackFriday"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="CyberMonday"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="HolidaySale"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="FlashSale"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+/* .productCard__promotion-name .welcome {
+    color: #191919;
+    font-weight: 800;
+} */
+
+/* .productCard__promotion-name .sdeal {
+    color: #fd384f;
+    font-weight: 800;
+} */
+
+/* .productCard__promotion-name span:nth-child(odd) {
+    color: red;
+}
+
+.productCard__promotion-name span:nth-child(even) {
+    color: blue;
+} */
+
+/* .productCard__promotion:nth-child(odd) .productCard__promotion-name {
+    background-color: #fce582;
+    color: black;
+} */
+
+.productCard__promotion-name[data-promo="Sale"] {
+    background: #fd384f;
+}
+
+.productCard__promotion-name[data-promo="Choice"] {
+    background: #fd384f;
+}
+
+.productCard__promotion-name[data-promo="Shipping"] {
+    background: #fce582;
+    color: #191919;
+    font-style: italic;
+    font-weight: 700;
+
+}
+
+.productCard__promotion:nth-child(odd) .productCard__promotion-description {
+    color: #fd384f;
+}
+
+.productCard__promotion:nth-child(even) .productCard__promotion-description {
+    color: #000;
+}
+
 .productCard__superDeal-main,
 .productCard__shipping,
 .productCard__choice {

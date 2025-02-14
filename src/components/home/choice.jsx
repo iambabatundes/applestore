@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getProducts } from "./common/productDatas";
 import ProductCard from "./common/productCard";
+import { getProductsByCategorys } from "./../../services/productService";
 
 export default function Choice({
   addToCart,
@@ -12,8 +12,17 @@ export default function Choice({
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
 
   useEffect(() => {
-    const fetchedProducts = getProducts();
-    setProducts(fetchedProducts);
+    async function fetctProducts() {
+      try {
+        const { data } = await getProductsByCategorys("Category");
+        // setProducts(data);
+        setProducts([...data]);
+      } catch (error) {
+        console.error("Error fetching category products:", error);
+      }
+    }
+
+    fetctProducts();
   }, []);
 
   const handleRatingChange = (newRating) => {
@@ -49,7 +58,7 @@ export default function Choice({
           {cardsToDisplay.map((product, index) => {
             return (
               <ProductCard
-                key={index}
+                key={product._id}
                 addToCart={addToCart}
                 item={product}
                 handleRatingChange={handleRatingChange}

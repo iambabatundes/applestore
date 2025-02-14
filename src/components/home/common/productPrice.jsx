@@ -3,7 +3,7 @@ import { formatPrice } from "./utils";
 
 export default function ProductPrice({
   price,
-  originalPrice,
+  salePrice,
   selectedCurrency,
   conversionRate,
 }) {
@@ -17,9 +17,7 @@ export default function ProductPrice({
     currency: originalCurrency,
     whole: originalWhole,
     fraction: originalFraction,
-  } = originalPrice
-    ? formatPrice(originalPrice, selectedCurrency, conversionRate)
-    : {};
+  } = salePrice ? formatPrice(salePrice, selectedCurrency, conversionRate) : {};
 
   return (
     <div className="productCard__price">
@@ -28,7 +26,7 @@ export default function ProductPrice({
         <span className="whole">{saleWhole}</span>
         <span className="fraction">.{saleFraction}</span>
       </span>
-      {originalPrice && (
+      {salePrice && (
         <span className="productCard__originalPrice">
           <span className="currency">{originalCurrency}</span>
           <span className="whole">{originalWhole}</span>

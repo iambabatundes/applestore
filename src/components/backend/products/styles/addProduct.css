@@ -219,6 +219,17 @@
     border-top: 4px solid #1a1a1a;
 }
 
+.dark-mode .data-tags,
+.categories .product__promotions {
+    background-color: #333;
+}
+
+/* .dark-mode .tag-item label,
+.data-tags__no-tags {
+    color: #fff;
+
+} */
+
 /* Responsive Design */
 @media (max-width: 768px) {
 

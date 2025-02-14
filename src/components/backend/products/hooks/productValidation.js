@@ -11,24 +11,8 @@ export const schema = Joi.object({
     .label("Number In Stock"),
   price: Joi.number().min(0).max(900000000).required().label("Price"),
   salePrice: Joi.number().label("Sale Price").optional().allow(null, ""),
-  saleStartDate: Joi.date().optional().allow(null).default(null),
-  saleEndDate: Joi.date()
-    .optional()
-    .allow(null)
-    .default(null)
-    .custom((saleEndDate, helper) => {
-      const saleStartDate = helper.state.ancestors[0].saleStartDate;
-      if (
-        saleStartDate &&
-        saleEndDate &&
-        new Date(saleEndDate) < new Date(saleStartDate)
-      ) {
-        return helper.message(
-          "Sale End Date must not be earlier than Sale Start Date."
-        );
-      }
-      return saleEndDate;
-    }),
+  saleStartDate: Joi.date().optional().allow(null, "").default(null),
+  saleEndDate: Joi.date().optional().allow(null, "").default(null),
   aboutProduct: Joi.string().min(20).required().label("About the Product"),
   productDetails: Joi.string()
     .min(20)
@@ -41,6 +25,8 @@ export const schema = Joi.object({
     .optional()
     .allow(""),
   description: Joi.string().min(5).required().label("Product Description"),
+  viewCount: Joi.any(),
+  purchaseCount: Joi.any(),
   featureImage: Joi.object().label("Feature Image").required(),
   media: Joi.array().min(2).max(8).label("Media File").optional().allow(null),
   tags: Joi.array().label("Tags").optional().allow(null),
@@ -52,8 +38,8 @@ export const schema = Joi.object({
   attributes: Joi.array()
     .items(
       Joi.object({
-        key: Joi.string().required().label("Attribute Key"),
-        value: Joi.string().required().label("Attribute Value"),
+        key: Joi.string().required().label("Attribute Key").min(3).max(255),
+        value: Joi.string().required().label("Attribute Value").min(3).max(255),
       })
     )
     .label("Attributes")
@@ -61,47 +47,107 @@ export const schema = Joi.object({
   colors: Joi.array()
     .items(
       Joi.object({
-        colorName: Joi.string().required(),
-        colorImages: Joi.object().required(),
-        colorPrice: Joi.number().min(0).required(),
-        stock: Joi.number().required(),
+        _id: Joi.string(),
+        colorName: Joi.string().required().label("Color Name").min(3).max(255),
+        colorImages: Joi.object().label("Color Image"),
+        colorPrice: Joi.number()
+          .min(0)
+          .required()
+          .label("Color Price")
+          .min(0)
+          .max(900000),
+        stock: Joi.number().required().label("Color Quantity").min(0).max(2090),
         colorSalePrice: Joi.number().optional().allow(null, ""),
         colorSaleStartDate: Joi.date().optional().allow(null, ""),
         colorSaleEndDate: Joi.date().optional().allow(null, ""),
         isDefault: Joi.boolean().optional(),
         isAvailable: Joi.boolean().optional(),
-      }).custom((value, helper) => {
-        if (
-          value.colorSalePrice != null &&
-          value.colorSalePrice > value.colorPrice
-        ) {
-          return helper.message({
-            custom: `Color Sale Price (${value.colorSalePrice}) must not exceed Color Price (${value.colorPrice}).`,
-          });
-        }
-        if (
-          value.colorSalePrice != null &&
-          (!value.colorSaleStartDate || !value.colorSaleEndDate)
-        ) {
-          return helper.message(
-            "Color Sale Price requires both start and end dates."
-          );
-        }
-        return value;
       })
     )
     .optional(),
-}).custom((value, helper) => {
-  if (value.salePrice != null && value.salePrice > value.price) {
-    return helper.message(
-      "Sale Price must not exceed Price. Please set a Sale Price that is lower than the regular Price."
-    );
-  }
-  if (value.salePrice != null && (!value.saleStartDate || !value.saleEndDate)) {
-    return helper.message("Sale Price requires both start and end dates.");
-  }
-  return value;
-});
+
+  sizes: Joi.array()
+    .items(
+      Joi.object({
+        _id: Joi.string(),
+        sizeName: Joi.string().required().label("Sizes Label").min(3).max(255),
+        sizePrice: Joi.number()
+          .min(0)
+          .required()
+          .label("Size Price")
+          .min(0)
+          .max(900000),
+        sizeStock: Joi.number()
+          .required()
+          .label("Size Quantity")
+          .min(0)
+          .max(2090),
+        sizeSalePrice: Joi.number().optional().allow(null, ""),
+        sizeSaleStartDate: Joi.date().optional().allow(null, ""),
+        sizeSaleEndDate: Joi.date().optional().allow(null, ""),
+        isDefault: Joi.boolean().optional(),
+        isAvailable: Joi.boolean().optional(),
+      })
+    )
+    .optional(),
+
+  capacity: Joi.array()
+    .items(
+      Joi.object({
+        _id: Joi.string(),
+        capName: Joi.string()
+          .required()
+          .label("Capacity Label")
+          .min(3)
+          .max(255),
+        capPrice: Joi.number()
+          .min(0)
+          .required()
+          .label("Capacity Price")
+          .min(0)
+          .max(900000),
+        capStock: Joi.number()
+          .required()
+          .label("Capacity Quantity")
+          .min(0)
+          .max(2090),
+        capSalePrice: Joi.number().optional().allow(null, ""),
+        capSaleStartDate: Joi.date().optional().allow(null, ""),
+        capSaleEndDate: Joi.date().optional().allow(null, ""),
+        isDefault: Joi.boolean().optional(),
+        isAvailable: Joi.boolean().optional(),
+      })
+    )
+    .optional(),
+  materials: Joi.array()
+    .items(
+      Joi.object({
+        _id: Joi.string(),
+        matName: Joi.string()
+          .required()
+          .label("Material Label")
+          .min(3)
+          .max(255),
+        matPrice: Joi.number()
+          .min(0)
+          .required()
+          .label("Material Price")
+          .min(0)
+          .max(900000),
+        matStock: Joi.number()
+          .required()
+          .label("Material Quantity")
+          .min(0)
+          .max(2090),
+        matSalePrice: Joi.number().optional().allow(null, ""),
+        matSaleStartDate: Joi.date().optional().allow(null, ""),
+        matSaleEndDate: Joi.date().optional().allow(null, ""),
+        isDefault: Joi.boolean().optional(),
+        isAvailable: Joi.boolean().optional(),
+      })
+    )
+    .optional(),
+}).unknown(true);
 
 export function validate({ data }) {
   const { error } = schema.validate(data, { abortEarly: false });

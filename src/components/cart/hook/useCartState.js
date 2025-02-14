@@ -19,7 +19,7 @@ export function useCartState(
     } else {
       const initialQuantities = {};
       cartItems.forEach((item) => {
-        initialQuantities[item.id] = 1;
+        initialQuantities[item._id] = 1;
       });
       setSelectedQuantities(initialQuantities);
     }
@@ -29,7 +29,7 @@ export function useCartState(
     } else {
       const initialQuantityTenPlus = {};
       cartItems.forEach((item) => {
-        initialQuantityTenPlus[item.id] = 1;
+        initialQuantityTenPlus[item._id] = 1;
       });
       setQuantityTenPlus(initialQuantityTenPlus);
     }

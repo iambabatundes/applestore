@@ -1,25 +1,19 @@
 import React, { useCallback, useEffect } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import "../styles/colorForm.css";
-import ColorInput from "./ColorInput";
+import VariablesInput from "./variablesInput";
 import ColorImage from "./colorImage";
-import useColors from "../hooks/useColors";
 
 export default function ColorsForm({
   colors,
   errors,
-  onColorChange,
   darkMode,
+  handleAddColor,
+  handleRemoveColor,
+  handleColorChange,
+  toggleDefault,
+  handleColorImageUpload,
 }) {
-  const {
-    handleAddColor,
-    handleRemoveColor,
-    handleColorChange,
-    handleImageUpload,
-    toggleDefault,
-    errors: colorErrors,
-  } = useColors(colors, onColorChange, errors);
-
   useEffect(() => {
     return () => {
       colors.forEach((color) => {
@@ -50,13 +44,14 @@ export default function ColorsForm({
         <>
           <div key={index} className="productForm__color">
             <div>
-              <ColorInput
+              <VariablesInput
                 type="text"
+                name="colorName"
                 darkMode={darkMode}
                 placeholder="Color Name"
                 value={color.colorName}
                 aria-label="Color Name"
-                errors={colorErrors?.[index]?.colorName}
+                errors={errors?.[index]?.colorName}
                 onChange={(e) =>
                   handleColorChange(index, {
                     ...color,
@@ -67,54 +62,59 @@ export default function ColorsForm({
             </div>
 
             <div>
-              <ColorInput
+              <VariablesInput
                 type="number"
+                name="colorPrice"
                 placeholder="Price"
                 value={color.colorPrice}
                 aria-label="Color Price"
+                errors={errors?.[index]?.colorPrice}
                 onChange={(e) =>
                   handleColorChange(index, {
                     ...color,
                     colorPrice: e.target.value,
                   })
                 }
-                errors={colorErrors?.[index]?.price}
               />
             </div>
             <div>
-              <ColorInput
+              <VariablesInput
                 type="number"
+                name="stock"
                 placeholder="Quantity"
                 value={color.stock}
                 aria-label="Quantity"
+                errors={errors?.[index]?.stock}
                 onChange={(e) =>
                   handleColorChange(index, { ...color, stock: e.target.value })
                 }
-                errors={colorErrors?.[index]?.stock}
               />
             </div>
 
             <div>
-              <ColorInput
+              <VariablesInput
                 type="number"
+                name="colorSalePrice"
                 placeholder="Color Sale Price"
                 value={color.colorSalePrice}
                 aria-label="Color Sale Price"
+                errors={errors?.[index]?.colorSalePrice}
                 onChange={(e) =>
                   handleColorChange(index, {
                     ...color,
                     colorSalePrice: e.target.value,
                   })
                 }
-                errors={colorErrors?.[index]?.colorSalePrice}
               />
             </div>
 
             {color.colorSalePrice && (
               <>
-                <ColorInput
+                <VariablesInput
                   type="date"
+                  name="colorSaleStartDate"
                   placeholder="Color Sale Start Date"
+                  errors={errors?.[index]?.colorSaleStartDate}
                   value={
                     color.colorSaleStartDate
                       ? new Date(color.colorSaleStartDate)
@@ -129,11 +129,11 @@ export default function ColorsForm({
                       colorSaleStartDate: e.target.value,
                     })
                   }
-                  errors={errors?.[index]?.colorSaleStartDate}
                 />
 
-                <ColorInput
+                <VariablesInput
                   type="date"
+                  name="colorSaleEndDate"
                   placeholder="Color Sale End Date"
                   value={
                     color.colorSaleEndDate
@@ -143,29 +143,32 @@ export default function ColorsForm({
                       : ""
                   }
                   aria-label="Color Sale End Date"
+                  errors={errors?.[index]?.colorSaleEndDate}
                   onChange={(e) =>
                     handleColorChange(index, {
                       ...color,
                       colorSaleEndDate: e.target.value,
                     })
                   }
-                  errors={errors?.[index]?.colorSaleEndDate}
                 />
               </>
             )}
 
             <ColorImage
-              handleImageUpload={handleImageUpload}
+              handleImageUpload={handleColorImageUpload}
               handleColorChange={handleColorChange}
               color={color}
               handleDrop={handleDrop}
               index={index}
             />
+            {errors?.[index]?.colorImages && (
+              <p className="error-message">{errors[index].colorImages}</p>
+            )}
 
             <div>
               <label>Is Available</label>
 
-              <ColorInput
+              <VariablesInput
                 type="checkbox"
                 checked={color.isAvailable}
                 aria-label="Is Available"
@@ -178,7 +181,7 @@ export default function ColorsForm({
               />
 
               <label>Default</label>
-              <ColorInput
+              <VariablesInput
                 type="checkbox"
                 checked={color.isDefault}
                 aria-label="Default Color"
@@ -189,7 +192,10 @@ export default function ColorsForm({
           <hr className="color__indicationLine" />
           <span
             className="color__btn-remove"
-            onClick={() => handleRemoveColor(index)}
+            onClick={(e) => {
+              e.preventDefault();
+              handleRemoveColor(index);
+            }}
             aria-label="Color"
           >
             <FaTrash /> Remove
@@ -197,7 +203,13 @@ export default function ColorsForm({
         </>
       ))}
 
-      <button onClick={handleAddColor} className="color__btn">
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          handleAddColor();
+        }}
+        className="color__btn"
+      >
         <FaPlus /> Add Color
       </button>
     </section>

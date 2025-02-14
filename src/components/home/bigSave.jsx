@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./styles/bigSave.css";
-import { getProducts } from "./common/productDatas";
 import ProductCard from "./common/productCard";
 import ArrowButton from "./common/arrowButton";
 import useCarousel from "./hooks/useCarousel";
+import { getProductsByCategorys } from "../../services/productService";
 
 export default function BigSave({
   addToCart,
@@ -16,7 +16,7 @@ export default function BigSave({
   currencySymbols,
 }) {
   const [products, setProducts] = useState([]);
-  const [isHovered, setIsHovered] = useState(false); // Track hover state
+  const [isHovered, setIsHovered] = useState(false);
 
   const { currentCardIndex, handleNextCard, handlePrevCard } = useCarousel(
     products.length,
@@ -26,8 +26,16 @@ export default function BigSave({
   );
 
   useEffect(() => {
-    const fetchedProducts = getProducts();
-    setProducts(fetchedProducts);
+    async function fetctProducts() {
+      try {
+        const { data } = await getProductsByCategorys("Women's Clothing");
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching category products:", error);
+      }
+    }
+
+    fetctProducts();
   }, []);
 
   const handleRatingChange = (newRating) => {
@@ -60,7 +68,7 @@ export default function BigSave({
           {cardsToDisplay.map((product) => {
             return (
               <ProductCard
-                key={product.id}
+                key={product._id}
                 addToCart={addToCart}
                 item={product}
                 handleRatingChange={handleRatingChange}

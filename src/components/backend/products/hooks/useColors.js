@@ -1,77 +1,84 @@
 import { useCallback, useState } from "react";
+import { toast } from "react-toastify";
+import { colorVariations } from "../utils/colorVariations";
+import config from "../../../../config.json";
 
-export default function useColors(colors, onColorChange) {
-  const [errors, setErrors] = useState([]);
+export default function useColors({ setErrors }) {
+  const [colors, setColor] = useState([]);
+
+  const validateColor = (updatedColor) => colorVariations(updatedColor);
+
+  const handleAddColor = useCallback(() => {
+    setColor((prevSizes) => [
+      ...prevSizes,
+      {
+        colorName: "",
+        colorPrice: 0,
+        stock: 0,
+        colorSalePrice: null,
+        colorSaleStartDate: null,
+        colorSaleEndDate: null,
+        colorImages: {},
+        isAvailable: true,
+        isDefault: false,
+      },
+    ]);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      colors: [...(prevErrors.colors || []), {}],
+    }));
+  }, [setErrors]);
 
   const handleColorChange = useCallback(
     (index, updatedColor) => {
-      // Validation logic
-      if (updatedColor.colorSalePrice && updatedColor.colorPrice) {
-        if (
-          parseFloat(updatedColor.colorSalePrice) >
-          parseFloat(updatedColor.colorPrice)
-        ) {
-          setErrors((prevErrors) => {
-            const newErrors = [...prevErrors];
-            newErrors[index] = {
-              ...newErrors[index],
-              colorSalePrice: "Sale Price must not exceed Price.",
-            };
-            return newErrors;
-          });
-        } else {
-          setErrors((prevErrors) => {
-            const newErrors = [...prevErrors];
-            if (newErrors[index]) {
-              delete newErrors[index].colorSalePrice;
-            }
-            return newErrors;
-          });
-        }
+      const defaultsizes = colors.filter((color, i) =>
+        i === index ? updatedColor.isDefault : color.isDefault
+      );
+      if (defaultsizes.length > 1) {
+        toast.error("Only one color can be marked as default.");
+        return;
       }
 
+      const sanitizedColorImages =
+        updatedColor.colorImages instanceof File
+          ? updatedColor.colorImages
+          : typeof updatedColor.colorImages === "string"
+          ? updatedColor.colorImages
+          : updatedColor.colorImages?.filename
+          ? `${config.mediaUrl}/uploads/${updatedColor.colorImages.filename}`
+          : null;
+
       const updatedColors = colors.map((color, i) =>
-        i === index ? updatedColor : color
+        i === index
+          ? { ...updatedColor, colorImages: sanitizedColorImages }
+          : color
       );
-      onColorChange(updatedColors);
+
+      // const newErrors = validateColor(updatedColors);
+      setColor(updatedColors);
+
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        // colors: newErrors,
+      }));
     },
-    [colors, onColorChange]
+    [colors, setErrors]
   );
 
-  // const handleColorChange = useCallback(
-  //   (index, updatedColor) => {
-  //     const updatedColors = colors.map((color, i) =>
-  //       i === index ? updatedColor : color
-  //     );
-  //     onColorChange(updatedColors);
-  //   },
-  //   [colors, onColorChange]
-  // );
+  const handleRemoveColor = useCallback((index) => {
+    setColor((prevColors) => prevColors.filter((_, i) => i !== index));
+  }, []);
 
-  const handleAddColor = useCallback(() => {
-    const newColor = {
-      colorName: "",
-      colorPrice: 0,
-      stock: 0,
-      colorSalePrice: null,
-      colorSaleStartDate: null,
-      colorSaleEndDate: null,
-      colorImages: {},
-      isAvailable: true,
-      isDefault: false,
-    };
-    onColorChange([...colors, newColor]);
-  }, [colors, onColorChange]);
+  const toggleDefaultColor = useCallback((index) => {
+    setColor((prevSizes) =>
+      prevSizes.map((color, i) => ({
+        ...color,
+        isDefault: i === index,
+      }))
+    );
+  }, []);
 
-  const handleRemoveColor = useCallback(
-    (index) => {
-      const updatedColors = colors.filter((_, i) => i !== index);
-      onColorChange(updatedColors);
-    },
-    [colors, onColorChange]
-  );
-
-  const handleImageUpload = useCallback(
+  const handleColorImageUpload = useCallback(
     (e, index) => {
       const file = e.target.files?.[0];
       if (file) {
@@ -81,23 +88,13 @@ export default function useColors(colors, onColorChange) {
     [colors, handleColorChange]
   );
 
-  const toggleDefault = useCallback(
-    (index) => {
-      const updatedColors = colors.map((color, i) => ({
-        ...color,
-        isDefault: i === index,
-      }));
-      onColorChange(updatedColors);
-    },
-    [colors, onColorChange]
-  );
-
   return {
+    colors,
+    setColor,
     handleColorChange,
     handleAddColor,
     handleRemoveColor,
-    handleImageUpload,
-    toggleDefault,
-    errors,
+    handleColorImageUpload,
+    toggleDefaultColor,
   };
 }

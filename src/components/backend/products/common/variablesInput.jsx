@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ColorInput({
+export default function VariablesInput({
   checked,
   errors,
   value,
@@ -8,11 +8,13 @@ export default function ColorInput({
   placeholder,
   type = "text",
   onChange,
+  name,
 }) {
   return (
     <>
       <input
         type={type}
+        name={name}
         checked={checked}
         placeholder={placeholder}
         value={value || ""}
@@ -21,7 +23,7 @@ export default function ColorInput({
         className={`productForm__input ${darkMode ? "dark-mode" : ""}`}
       />
       {errors && (
-        <p className={`error-message ${darkMode ? "dark-mode" : ""}`}>
+        <p className={`product__errorMessage ${darkMode ? "dark-mode" : ""}`}>
           {errors}
         </p>
       )}

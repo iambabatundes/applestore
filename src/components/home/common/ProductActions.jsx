@@ -3,11 +3,11 @@ import CartIcon from "./cartIcon";
 import { Link } from "react-router-dom";
 
 export default function ProductActions({ item, addToCart, cartItems }) {
-  const isAdded = cartItems.some((cartItem) => cartItem.id === item.id);
+  const isAdded = cartItems.some((cartItem) => cartItem._id === item._id);
 
   const handleAddToCart = () => {
     addToCart(item);
-    localStorage.setItem(`added_${item.id}`, "true");
+    localStorage.setItem(`added_${item._id}`, "true");
   };
 
   return isAdded ? (
