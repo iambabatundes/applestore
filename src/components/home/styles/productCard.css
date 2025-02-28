@@ -3,7 +3,8 @@
     /* padding: 15px; */
     border-radius: 24px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    min-width: 220px;
+    /* min-width: 220px; */
+    min-width: 245px;
     width: 100%;
     /* height: 76%; */
     height: 355px;
@@ -61,6 +62,7 @@
 .productCard__rating {
     display: flex;
     align-items: center;
+    gap: 0.3rem;
 }
 
 .productCard__star-container {
@@ -107,9 +109,11 @@
     opacity: 1;
 }
 
-.productCard__product-sold {
+.productCard__product-sold,
+.productCard__review,
+.productCard__product-rating {
     color: #757575;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 16px;
     font-weight: 400;
     margin-left: 4px;

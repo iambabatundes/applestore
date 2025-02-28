@@ -28,7 +28,7 @@ export const schema = Joi.object({
   viewCount: Joi.any(),
   purchaseCount: Joi.any(),
   featureImage: Joi.object().label("Feature Image").required(),
-  media: Joi.array().min(2).max(8).label("Media File").optional().allow(null),
+  media: Joi.array().min(2).label("Media File").optional().allow(null),
   tags: Joi.array().label("Tags").optional().allow(null),
   promotion: Joi.array().label("Promotions").optional().allow(null),
   category: Joi.array().required("Category is requied").label("Category"),

@@ -80,7 +80,7 @@ export default function CategoryThree({
                 productName={product}
                 conversionRate={conversionRate}
                 selectedCurrency={selectedCurrency}
-                currencySymbols={currencySymbols}
+                // currencySymbols={currencySymbols}
               />
             ))}
           </div>

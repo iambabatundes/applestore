@@ -22,19 +22,21 @@ export default function PriceDisplay({
         <span className="singleProduct__price-whole">{convertedPrice}</span>
       </span>
       <div className="singleProduct__discountPrice-main">
-        {product.originalPrice && (
+        {product.salePrice && (
           <span className="singleProduct__discountPrice">
             {selectedCurrency} {convertedDiscount}
           </span>
         )}
 
-        {product.discount && (
+        {product.discountPercentage && (
           <span className="singleProduct__discountPrecentage">
-            {product.discount} Off
+            {product.discountPercentage} Off
           </span>
         )}
-
-        <p className="singleProduct__shown">Price shown before tax</p>
+        {/* <p className="singleProduct__shown">Price shown before tax</p> */}
+        <p className="singleProduct__shown">
+          Tax excluded, add at checkout if applicable.
+        </p>
       </div>
     </div>
   );

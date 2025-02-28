@@ -2,33 +2,25 @@ import React from "react";
 import StarRating from "./starRating";
 
 export default function ProductRating({
-  rating,
-  reviews,
-  numberOfSales,
-  onRatingChange,
+  rating = 0,
+  reviews = 0,
+  purchaseCount = 0,
 }) {
   return (
     <div className="productCard__rating">
-      {rating && (
-        <StarRating
-          rating={rating}
-          totalStars={5}
-          size={15}
-          onRatingChange={onRatingChange}
-          initialRating={rating}
-          readOnly={true}
-        />
-      )}
+      <StarRating totalStars={5} rating={rating || 0} readOnly={true} />
+      <span className="productCard__product-rating">
+        {rating > 0 ? `${rating} Rating` : "0.0"}
+      </span>
+      <div className="productCard__details">
+        <span className="productCard__review">
+          {reviews > 0 ? `${reviews} Reviews` : "0 Review"}
+        </span>
+      </div>
 
-      {reviews && (
-        <div className="productCard__details">
-          <span>{reviews} Reviews</span>
-        </div>
-      )}
-
-      {numberOfSales && (
-        <span className="productCard__product-sold">{numberOfSales}</span>
-      )}
+      <span className="productCard__product-sold">
+        {purchaseCount > 0 ? `${purchaseCount}  sold` : "0 sold"}
+      </span>
     </div>
   );
 }

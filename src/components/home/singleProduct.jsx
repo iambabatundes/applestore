@@ -7,9 +7,10 @@ import MediaThumbnails from "./singleProduct/MediaThumbnail";
 import PriceDisplay from "./singleProduct/priceDisplay";
 import { formatPrice } from "./singleProduct/utils/priceFormatter";
 import ProductMedia from "./singleProduct/productMedia";
-// import StarRating from "./common/starRating";
 import ProductRating from "./common/ProductRating";
 import SingleProductTab from "./common/singleProductTab";
+import config from "../../config.json";
+import ProductVariation from "./ProductVariation";
 
 export default function SingleProduct({ selectedCurrency, conversionRate }) {
   const { name } = useParams();
@@ -17,13 +18,22 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [isZoomed, setIsZoomed] = useState(false);
   const [fadeClass, setFadeClass] = useState("visible");
+  const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
     if (product) {
-      if (product.image) {
-        setSelectedMedia({ type: "image", url: product.image });
+      if (product.featureImage) {
+        setSelectedMedia({
+          type: "image",
+          url: `${config.mediaUrl}/uploads/${product.featureImage.filename}`,
+        });
       } else if (product.media && product.media.length > 0) {
-        setSelectedMedia(product.media[0]);
+        setSelectedMedia({
+          type: product.media[0]?.mimeType?.startsWith("image")
+            ? "image"
+            : "video",
+          url: `${config.mediaUrl}/uploads/${product.media[0]?.filename}`,
+        });
       }
     }
   }, [product]);
@@ -32,16 +42,20 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
   if (!product || !product.media) return <div>Loading...</div>;
 
   const handleMediaClick = (media) => {
-    setSelectedMedia(media);
+    setSelectedMedia({
+      type: media.mimeType.startsWith("image") ? "image" : "video",
+      url: `${config.mediaUrl}/uploads/${media.filename}`,
+    });
     setFadeClass("visible");
     setIsZoomed(false);
   };
 
-  const handleRatingChange = () => {};
+  const convertedPrice = formatPrice(
+    (product.salePrice || product.price) * conversionRate
+  );
+  const convertedDiscount = formatPrice(product.price * conversionRate);
 
-  // Use the conversion rate to calculate prices
-  const convertedPrice = formatPrice(product.price * conversionRate);
-  const convertedDiscount = formatPrice(product.originalPrice * conversionRate);
+  console.log(product.colors);
 
   return (
     <section className="singleProduct-container">
@@ -53,6 +67,7 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
                 mediaData={product.media}
                 onMediaClick={handleMediaClick}
                 selectedMedia={selectedMedia}
+                product={product}
               />
             )}
             {!product.media && <p>No media available for this product.</p>}
@@ -62,6 +77,7 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
               selectedMedia={selectedMedia}
               isZoomed={isZoomed}
               setIsZoomed={setIsZoomed}
+              product={product}
             />
           </section>
           <section>
@@ -71,16 +87,20 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
               product={product}
               selectedCurrency={selectedCurrency}
             />
-            <span>
-              Tax excluded, add at checkout if applicable.丨Extra 1% off with
-              coins
-            </span>
+
             <h1 className="singleProduct__productName">{product.name}</h1>
             <ProductRating
-              numberOfSales={product.numberOfSales}
-              onRatingChange={handleRatingChange}
+              purchaseCount={product.purchaseCount}
               reviews={product.reviews}
               rating={product.rating}
+            />
+
+            <ProductVariation
+              colors={product.colors}
+              sizes={product.sizes}
+              capacity={product.capacity}
+              materials={product.materials}
+              onColorSelect={setSelectedImage}
             />
           </section>
         </div>

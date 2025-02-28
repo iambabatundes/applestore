@@ -26,19 +26,31 @@ import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
 import LoadingSpinner from "./components/common/loadingSpinner";
 import { getUploads } from "./services/logoService";
+import { useCurrency } from "./components/home/hooks/useCurrency";
+import { useGeoLocation } from "./components/home/hooks/useGeoLocation";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
   const [cartItems, setCartItems] = useState([]);
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [quantityTenPlus, setQuantityTenPlus] = useState({});
-  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
-  const [conversionRate, setConversionRate] = useState(1);
+  // const [selectedCurrency, setSelectedCurrency] = useState("NGN");
+  // const [conversionRate, setConversionRate] = useState(1);
   const [loadingApp, setLoadingApp] = useState(false);
   const [logoImage, setLogoImage] = useState("");
 
   const location = useLocation();
   const mediaLogo = process.env.REACT_APP_API_URL;
+
+  const {
+    conversionRate,
+    selectedCurrency,
+    setSelectedCurrency,
+    setConversionRate,
+    currencyRates,
+  } = useCurrency();
+
+  const { geoLocation } = useGeoLocation();
 
   useEffect(() => {
     const fetchLogo = async () => {
@@ -57,21 +69,28 @@ function App() {
     fetchLogo();
   }, [mediaLogo]);
 
-  useEffect(() => {
-    const savedCurrency = localStorage.getItem("selectedCurrency");
-    const savedRate = localStorage.getItem("conversionRate");
+  // useEffect(() => {
+  //   const savedCurrency = localStorage.getItem("selectedCurrency");
+  //   const savedRate = localStorage.getItem("conversionRate");
 
-    if (savedCurrency && savedRate) {
-      setSelectedCurrency(savedCurrency);
-      setConversionRate(parseFloat(savedRate));
-    }
-  }, []);
+  //   if (savedCurrency && savedRate) {
+  //     setSelectedCurrency(savedCurrency);
+  //     setConversionRate(parseFloat(savedRate));
+  //   }
+  // }, []);
 
-  const handleCurrencyChange = (currency, rate) => {
-    setSelectedCurrency(currency);
+  // const handleCurrencyChange = (currency, rate) => {
+  //   setSelectedCurrency(currency);
+  //   setConversionRate(rate);
+  //   localStorage.setItem("selectedCurrency", currency);
+  //   localStorage.setItem("conversionRate", rate);
+  // };
+  const handleCurrencyChange = (currency) => {
+    // setSelectedCurrency(currency);
+    const rate = currencyRates[currency] || 1;
     setConversionRate(rate);
+    setSelectedCurrency(currency, rate);
     localStorage.setItem("selectedCurrency", currency);
-    localStorage.setItem("conversionRate", rate);
   };
 
   const handleSubmit = (e, itemId) => {
@@ -176,9 +195,12 @@ function App() {
         <Navbar
           cartItemCount={cartItemCount}
           user={user}
+          selectedCurrency={selectedCurrency}
+          currencyRates={currencyRates}
           onCurrencyChange={handleCurrencyChange}
           isLoading={loadingApp}
           logoImage={logoImage}
+          geoLocation={geoLocation}
         />
       );
     }
@@ -247,7 +269,6 @@ function App() {
                   />
                 }
               />
-              {/* <Route path="/:name" exact element={<SingleProduct />} /> */}
               <Route
                 path="/:name"
                 exact

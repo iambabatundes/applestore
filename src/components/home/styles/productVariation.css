@@ -1,0 +1,102 @@
+/* General Styling */
+.product-variation {
+    padding: 0.4rem 0.3rem 0.2rem 0.2rem;
+    font-family: Arial, sans-serif;
+}
+
+.productVariation__heading {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #333;
+}
+
+/* Container for options */
+.variation-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Color Selection */
+.color-option {
+    width: 50px;
+    height: 50px;
+    border: 1px solid gray;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, border-color 0.3s ease;
+}
+
+.color-option:hover,
+.color-option:focus {
+    transform: scale(1.1);
+    border-color: #ff9900;
+}
+
+.color-option.selected {
+    border: 2px solid #ff9900;
+}
+
+.size-option,
+.capacity-option,
+.material-option {
+    padding: 0.3rem 0.4rem;
+    border: 1px solid gray;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.7rem;
+    transition: background-color 0.3s ease, transform 0.2s ease-in-out;
+}
+
+.size-option:hover,
+.capacity-option:hover,
+.material-option:hover {
+    background-color: #f8f8f8;
+    transform: scale(1.05);
+}
+
+.size-option.selected,
+.capacity-option.selected,
+.material-option.selected {
+    /* border-color: #ff9900; */
+    border: 2px solid black;
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .variation-container {
+        justify-content: center;
+    }
+
+    .size-option,
+    .capacity-option,
+    .material-option {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-variation {
+        padding: 1rem;
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    .color-option {
+        width: 40px;
+        height: 40px;
+    }
+
+    .size-option,
+    .capacity-option,
+    .material-option {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+}

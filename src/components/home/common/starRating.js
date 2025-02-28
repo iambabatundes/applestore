@@ -1,40 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import Star from "./star";
 
-const StarRating = ({
-  totalStars = 5,
-  initialRating = 0,
-  readOnly = false,
-  onRatingChange,
-  // totalRatings = 100,
-}) => {
-  const [rating, setRating] = useState(initialRating);
-  const [hover, setHover] = useState(undefined);
-
-  const handleClick = (value) => {
-    if (!readOnly) {
-      setRating(value);
-      if (onRatingChange) {
-        onRatingChange(value);
-      }
-    }
-  };
-
-  const displayRating = hover !== undefined ? hover : rating;
+const StarRating = ({ totalStars = 5, rating = 0, readOnly = false }) => {
+  const fullStars = Math.floor(rating);
+  const decimalPart = rating % 1;
+  const fillPercentage = Math.round(decimalPart * 100);
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
       {Array.from({ length: totalStars }, (_, index) => {
-        const isHalf = displayRating > index && displayRating < index + 1;
+        const isFull = index < fullStars;
+        const isLastStar = index === fullStars;
+
         return (
           <Star
             key={index}
-            filled={index < Math.floor(displayRating)}
-            halfFilled={isHalf}
-            onClick={() => handleClick(index + 1)}
-            onMouseEnter={() => !readOnly && setHover(index + 1)}
-            onMouseLeave={() => setHover(undefined)}
-            ratingValue={`${displayRating.toFixed(1)}`}
+            filled={isFull}
+            fillPercentage={isLastStar ? fillPercentage : isFull ? 100 : 0}
+            readOnly={readOnly}
           />
         );
       })}

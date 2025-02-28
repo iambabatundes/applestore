@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../styles/moreToLove.css";
-// import { getProducts } from "./common/productDatas";
-
 import ProductCard from "./common/productCard";
 import { getProducts } from "../../services/productService";
 

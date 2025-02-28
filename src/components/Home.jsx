@@ -2,7 +2,7 @@ import React from "react";
 import HeroSlider from "./home/HeroSlider";
 import ExclusiveDeal from "./home/exclusiveDeal";
 import BigSave from "./home/bigSave";
-import DiscountProduct from "./home/discountProduct";
+// import DiscountProduct from "./home/discountProduct";
 // import ShopCategories from "./home/shopCategories";
 // import ChoiceDay from "./home/choiceDay";
 import Choice from "./home/choice";
@@ -77,7 +77,6 @@ function Home({
         selectedCurrency={selectedCurrency}
       />
       {/* <ChoiceDay /> */}
-      <DiscountProduct />
     </section>
   );
 }

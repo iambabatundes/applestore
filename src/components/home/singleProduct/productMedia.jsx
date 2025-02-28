@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import config from "../../../config.json";
 
 export default function ProductMedia({
   selectedMedia,
   fadeClass,
   setIsZoomed,
   isZoomed,
+  product,
 }) {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
 
@@ -26,6 +28,17 @@ export default function ProductMedia({
   const handleImageLeave = () => {
     setIsZoomed(false);
   };
+
+  // Determine default media source
+  const defaultMedia =
+    selectedMedia?.url ||
+    (product.featureImage
+      ? `${config.mediaUrl}/uploads/${product.featureImage.filename}`
+      : null) ||
+    (product.media && product.media.length > 0
+      ? `${config.mediaUrl}/uploads/${product.media[0].filename}`
+      : "/default-image.jpg");
+
   return (
     <section className="main-media">
       {selectedMedia && selectedMedia.type === "image" ? (
@@ -36,10 +49,11 @@ export default function ProductMedia({
           onMouseLeave={handleImageLeave}
         >
           <img
-            src={selectedMedia.url}
+            src={defaultMedia}
             alt="Selected media"
             className={`zoom-image ${fadeClass}`}
           />
+
           {isZoomed && (
             <div
               className={`magnifier ${isZoomed ? "visible" : ""}`}
@@ -51,7 +65,9 @@ export default function ProductMedia({
           )}
         </div>
       ) : (
-        <video src={selectedMedia.url} controls className="main-video" />
+        <video src={defaultMedia} autoPlay controls className="main-video" />
+
+        // <di></di>
       )}
     </section>
   );

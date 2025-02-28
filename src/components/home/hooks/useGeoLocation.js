@@ -1,29 +1,40 @@
 import { useState, useEffect } from "react";
 
-export function useGeoLocation(user) {
-  const [geoLocation, setGeoLocation] = useState("");
+export function useGeoLocation() {
+  const [geoLocation, setGeoLocation] = useState({ country: "", currency: "" });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          try {
-            const response = await fetch(
-              `https://api.ipgeolocation.io/ipgeo?apiKey=74d7025b99284e5ab87ede8a6b623e9b&lat=${latitude}&long=${longitude}`
-            );
-            const data = await response.json();
-            setGeoLocation(data.country_name);
-          } catch (error) {
-            console.error("Error fetching geolocation data: ", error);
-          }
-        },
-        (error) => {
-          console.error("Error getting user's location: ", error);
-        }
-      );
-    }
-  }, [user]);
+    const fetchGeoLocation = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        if (!response.ok) throw new Error("Failed to fetch location data.");
 
-  return geoLocation;
+        const data = await response.json();
+        setGeoLocation({
+          country: data.country_name,
+          currency: data.currency,
+        });
+
+        // Store in localStorage to reduce API calls
+        localStorage.setItem("geoLocation", JSON.stringify(data));
+      } catch (err) {
+        console.error("Error fetching geolocation:", err);
+        setError("Could not fetch location data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const cachedLocation = localStorage.getItem("geoLocation");
+    if (cachedLocation) {
+      setGeoLocation(JSON.parse(cachedLocation));
+      setLoading(false);
+    } else {
+      fetchGeoLocation();
+    }
+  }, []);
+
+  return { geoLocation, loading, error };
 }

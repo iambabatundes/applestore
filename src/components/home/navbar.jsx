@@ -16,28 +16,28 @@ export default function Navbar({
   cartItemCount = 0,
   onCurrencyChange,
   logoImage,
+  selectedCurrency,
+  currencyRates,
+  loading: currencyLoading,
+  error: currencyError,
+  geoLocation,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const categories = useCategories();
-  const geoLocation = useGeoLocation(user);
-  const {
-    selectedCurrency,
-    // conversionRate,
-    currencyRates,
-    handleCurrencyChange,
-    loading,
-    error,
-  } = useCurrency("NGN", onCurrencyChange, user);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+  // const {
+  //   geoLocation,
+  //   loading: locationLoading,
+  //   error: locationError,
+  // } = useGeoLocation();
+  // const {
+  //   selectedCurrency,
+  //   currencyRates,
+  //   handleCurrencyChange,
+  //   loading: currencyLoading,
+  //   error: currencyError,
+  // } = useCurrency(onCurrencyChange);
 
   return (
     <header className="navbar">
@@ -52,17 +52,17 @@ export default function Navbar({
       <Currency
         currencies={currencyRates}
         selectedCurrency={selectedCurrency}
-        onCurrencyChange={handleCurrencyChange}
-        loading={loading}
-        error={error}
+        onCurrencyChange={onCurrencyChange}
+        loading={currencyLoading}
+        error={currencyError}
       />
 
       <section className="navbar-actions">
         <UserSection
           user={user}
-          geoLocation={geoLocation}
+          geoLocation={geoLocation.country}
           isDropdownOpen={isDropdownOpen}
-          toggleDropdown={toggleDropdown}
+          toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
         />
       </section>
 
@@ -70,7 +70,7 @@ export default function Navbar({
       <div className={`navbar-menu ${isOpen ? "is-active" : ""}`}>
         <Link to="#orders">Returns & Orders</Link>
       </div>
-      <button className="navbar-burger" onClick={toggleMenu}>
+      <button className="navbar-burger" onClick={() => setIsOpen(!isOpen)}>
         <span></span>
         <span></span>
         <span></span>

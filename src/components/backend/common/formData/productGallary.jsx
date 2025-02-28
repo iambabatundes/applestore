@@ -242,8 +242,7 @@ export default function ProductGallery({
                     : "Choose files to upload or drag and drop"}
                 </span>
                 <div className="upload-instruction">
-                  Maximum upload file size: 50 MB || Upload at least 2 media
-                  files
+                  Maximum upload file size: 5MB || Upload at least 2 media files
                 </div>
               </label>
               {showMinMediaMessage && (
