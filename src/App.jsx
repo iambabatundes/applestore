@@ -40,7 +40,7 @@ function App() {
   const [logoImage, setLogoImage] = useState("");
 
   const location = useLocation();
-  const mediaLogo = process.env.REACT_APP_API_URL;
+  const mediaLogo = import.meta.env.VITE_API_URL;
 
   const {
     conversionRate,

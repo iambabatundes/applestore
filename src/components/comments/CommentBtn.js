@@ -1,6 +1,9 @@
-import { ReactComponent as IconReply } from "./Assets/images/icon-reply.svg";
-import { ReactComponent as IconDelete } from "./Assets/images/icon-delete.svg";
-import { ReactComponent as IconEdit } from "./Assets/images/icon-edit.svg";
+import IconReply from "/src/components/comments/Assets/images/icon-reply.svg?react";
+// import { ReactComponent as IconDelete } from "./Assets/images/icon-delete.svg";
+import IconDelete from "/src/components/comments/Assets/images/icon-delete.svg?react";
+import IconEdit from "/src/components/comments/Assets/images/icon-edit.svg?react";
+
+// import { ReactComponent as IconEdit } from "./Assets/images/icon-edit.svg";
 
 const CommentBtn = ({
   commentData,

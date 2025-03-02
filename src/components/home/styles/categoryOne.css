@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Accidental Presidency';
-    src: url('../../../../public/accid___.ttf') format('truetype');
+    src: url('/accid___.ttf') format('truetype');
     font-weight: bolder;
     font-style: normal;
 }
