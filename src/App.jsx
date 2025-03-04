@@ -7,8 +7,9 @@ import "./App.css";
 import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
-import SinglePost from "./components/singlePost";
+
 import Home from "./components/Home";
+import SinglePost from "./components/singlePost";
 import Product from "./components/Product";
 import Footer from "./components/footer/footer";
 import Cart from "./components/cart";
@@ -25,22 +26,28 @@ import NotFound from "./components/home/notFound";
 import useUser from "./components/home/hooks/useUser";
 import RequireAuth from "./components/home/common/requireAuth";
 import LoadingSpinner from "./components/common/loadingSpinner";
-import { getUploads } from "./services/logoService";
 import { useCurrency } from "./components/home/hooks/useCurrency";
 import { useGeoLocation } from "./components/home/hooks/useGeoLocation";
+import fetchLogo from "./utils/fetchLogo";
+import { useCart } from "./hook/useCart";
 
 function App() {
   const { user, loading, setUser, handleProfileSubmit } = useUser();
-  const [cartItems, setCartItems] = useState([]);
-  const [selectedQuantities, setSelectedQuantities] = useState({});
-  const [quantityTenPlus, setQuantityTenPlus] = useState({});
-  // const [selectedCurrency, setSelectedCurrency] = useState("NGN");
-  // const [conversionRate, setConversionRate] = useState(1);
+  const {
+    cartItems,
+    addToCart,
+    selectedQuantities,
+    setSelectedQuantities,
+    quantityTenPlus,
+    setQuantityTenPlus,
+    handleDelete,
+    setCartItems,
+  } = useCart();
+
   const [loadingApp, setLoadingApp] = useState(false);
   const [logoImage, setLogoImage] = useState("");
 
   const location = useLocation();
-  const mediaLogo = import.meta.env.VITE_API_URL;
 
   const {
     conversionRate,
@@ -53,38 +60,10 @@ function App() {
   const { geoLocation } = useGeoLocation();
 
   useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const { data } = await getUploads();
-        if (data && data.logoImage) {
-          setLogoImage(`${mediaLogo}/uploads/${data.logoImage.filename}`);
-        } else {
-          console.log("No logo found.");
-        }
-      } catch (error) {
-        console.error("Error fetching logo:", error);
-      }
-    };
+    fetchLogo(setLogoImage);
+    setTimeout(() => setLoadingApp(false), 300);
+  }, []);
 
-    fetchLogo();
-  }, [mediaLogo]);
-
-  // useEffect(() => {
-  //   const savedCurrency = localStorage.getItem("selectedCurrency");
-  //   const savedRate = localStorage.getItem("conversionRate");
-
-  //   if (savedCurrency && savedRate) {
-  //     setSelectedCurrency(savedCurrency);
-  //     setConversionRate(parseFloat(savedRate));
-  //   }
-  // }, []);
-
-  // const handleCurrencyChange = (currency, rate) => {
-  //   setSelectedCurrency(currency);
-  //   setConversionRate(rate);
-  //   localStorage.setItem("selectedCurrency", currency);
-  //   localStorage.setItem("conversionRate", rate);
-  // };
   const handleCurrencyChange = (currency) => {
     // setSelectedCurrency(currency);
     const rate = currencyRates[currency] || 1;
@@ -115,68 +94,6 @@ function App() {
     }
   };
 
-  const addToCart = (product) => {
-    // Check if the product already exists in the cart
-    const existingProduct = cartItems.find((item) => item._id === product._id);
-
-    if (existingProduct) {
-      // Product already in the cart, increase the quantity
-      setCartItems((prevCart) =>
-        prevCart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      // Product not in the cart, add it with quantity 1
-      setCartItems((prevCart) => [...prevCart, { ...product, quantity: 1 }]);
-    }
-  };
-
-  const handleDelete = (itemId) => {
-    setCartItems((prevCartItems) => {
-      const updatedCartItems = prevCartItems.filter(
-        (item) => item._id !== itemId
-      );
-      return updatedCartItems;
-    });
-
-    setSelectedQuantities((prevQuantities) => {
-      const updatedQuantities = { ...prevQuantities };
-      delete updatedQuantities[itemId];
-      return updatedQuantities;
-    });
-
-    setQuantityTenPlus((prevQuantityTenPlus) => {
-      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
-      delete updatedQuantityTenPlus[itemId];
-      return updatedQuantityTenPlus;
-    });
-
-    // Reset the selected quantity and QuantityTenPlus for the deleted item
-    setSelectedQuantities((prevQuantities) => {
-      const updatedQuantities = { ...prevQuantities };
-      updatedQuantities[itemId] = 1; // Reset the quantity to default (1)
-      return updatedQuantities;
-    });
-    setQuantityTenPlus((prevQuantityTenPlus) => {
-      const updatedQuantityTenPlus = { ...prevQuantityTenPlus };
-      updatedQuantityTenPlus[itemId] = undefined; // Reset QuantityTenPlus to default
-      return updatedQuantityTenPlus;
-    });
-  };
-
-  useEffect(() => {
-    const initialQuantities = {};
-    cartItems.forEach((item) => {
-      if (!initialQuantities.hasOwnProperty(item._id)) {
-        initialQuantities[item._id] = selectedQuantities[item._id] || 1;
-      }
-    });
-    setSelectedQuantities(initialQuantities);
-  }, [cartItems]);
-
   const cartItemCount =
     Object.values(selectedQuantities).reduce((total, quantity) => {
       if (quantity === "10+") {
@@ -184,6 +101,10 @@ function App() {
       }
       return total + parseInt(quantity);
     }, 0) + (selectedQuantities["Quantity 10+"] || 0);
+
+  const isAdminMode = location.pathname.includes("/admin");
+  const countComment = 5;
+  const companyName = "AppStore";
 
   const renderNavbar = () => {
     if (location.pathname === "/checkout") {
@@ -206,14 +127,10 @@ function App() {
     }
   };
 
-  const isAdminMode = location.pathname.includes("/admin");
-  const countComment = 5;
-  const companyName = "AppStore";
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoadingApp(false);
-    }, 300); // Delay spinner for 300ms to avoid flicker
+    }, 300);
 
     return () => clearTimeout(timer);
   }, []);

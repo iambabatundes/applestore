@@ -38,22 +38,22 @@ export default function SidebarLeft({ isOpen, toggleSidebar, user }) {
         <p>{user.email}</p>
       </div>
       <nav className="menu">
-        <Link to="my-dashboard">
+        <Link to="/users/my-dashboard">
           <FaHome className="menu-icon" /> Dashboard
         </Link>
-        <Link to="my-profile">
+        <Link to="/users/my-profile">
           <FaUser className="menu-icon" /> My Profile
         </Link>
-        <Link to="my-orders">
+        <Link to="/users/my-orders">
           <FaBox className="menu-icon" /> Orders
         </Link>
-        <Link to="my-messages">
+        <Link to="/users/my-messages">
           <FaEnvelope className="menu-icon" /> Messages
         </Link>
-        <Link to="my-address">
+        <Link to="/users/my-address">
           <FaMapMarkerAlt className="menu-icon" /> Address
         </Link>
-        <Link to="my-settings">
+        <Link to="/users/my-settings">
           <FaCog className="menu-icon" /> Settings
         </Link>
       </nav>

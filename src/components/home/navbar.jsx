@@ -60,7 +60,7 @@ export default function Navbar({
       <section className="navbar-actions">
         <UserSection
           user={user}
-          geoLocation={geoLocation.country}
+          geoLocation={geoLocation.country_name}
           isDropdownOpen={isDropdownOpen}
           toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
         />

@@ -53,14 +53,6 @@ export function useCurrency(onCurrencyChange) {
     }
   }, [selectedCurrency, currencyRates]);
 
-  // const handleCurrencyChange = (currency) => {
-  //   setSelectedCurrency(currency);
-  //   const rate = currencyRates[currency] || 1;
-  //   setConversionRate(rate);
-  //   onCurrencyChange(currency, rate);
-  //   localStorage.setItem("selectedCurrency", currency);
-  // };
-
   return {
     selectedCurrency,
     conversionRate,

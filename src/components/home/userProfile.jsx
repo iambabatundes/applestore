@@ -115,6 +115,7 @@ export default function UserProfile({ user, setUser, addToCart, cartItems }) {
 
           <Routes location={location}>
             <Route
+              index
               path="/my-dashboard"
               element={
                 <MyDashboard

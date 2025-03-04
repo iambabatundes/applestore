@@ -16,7 +16,7 @@ export default function Currency({
 
   const handleCurrencyChange = (currency) => {
     onCurrencyChange(currency);
-    setIsDropdownOpen(false); // Close dropdown after selection
+    setIsDropdownOpen(false);
   };
 
   const handleMouseEnter = () => {

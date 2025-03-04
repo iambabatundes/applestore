@@ -86,19 +86,19 @@ export default function UserSection({
             </div>
             {isDropdownOpen && (
               <div className="navbar-dropdown-menu">
-                <Link to="users/my-dashboard" className="navbar-dropdown-item">
+                <Link to="/users/my-dashboard" className="navbar-dropdown-item">
                   <i className="fa fa-user"></i> My Dashboard
                 </Link>
-                <Link to="users/my-profile" className="navbar-dropdown-item">
+                <Link to="/users/my-profile" className="navbar-dropdown-item">
                   <i className="fa fa-user"></i> My Account
                 </Link>
-                <Link to="users/my-orders" className="navbar-dropdown-item">
+                <Link to="/users/my-orders" className="navbar-dropdown-item">
                   <i className="fa fa-envelope"></i> My Orders
                 </Link>
-                <Link to="users/my-messages" className="navbar-dropdown-item">
+                <Link to="/users/my-messages" className="navbar-dropdown-item">
                   <i className="fa fa-envelope"></i> My Messages
                 </Link>
-                <Link to="users/saved-items" className="navbar-dropdown-item">
+                <Link to="/users/saved-items" className="navbar-dropdown-item">
                   <i className="fa fa-heart"></i> My Saved Items
                 </Link>
                 <Link to="/logout" className="navbar-dropdown-item logout">

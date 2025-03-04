@@ -5,12 +5,8 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "font-awesome/css/font-awesome.css";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-// Define routes using createBrowserRouter
 const router = createBrowserRouter([
   {
     path: "/*",
