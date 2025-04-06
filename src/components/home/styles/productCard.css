@@ -17,22 +17,10 @@
     margin: 0;
 }
 
-/* .product-card .visible {
-    opacity: 1;
-    transform: translateY(0);
-} */
-
 .productCard:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
-
-/* .product-card.expanded {
-    height: auto;
-    min-height: 460px;
-    transition: height 0.3s ease;
-} */
-
 
 .productCard__productImage {
     width: 100%;
@@ -260,29 +248,6 @@
     color: #000;
 }
 
-/* .productCard__promotion-name .welcome {
-    color: #191919;
-    font-weight: 800;
-} */
-
-/* .productCard__promotion-name .sdeal {
-    color: #fd384f;
-    font-weight: 800;
-} */
-
-/* .productCard__promotion-name span:nth-child(odd) {
-    color: red;
-}
-
-.productCard__promotion-name span:nth-child(even) {
-    color: blue;
-} */
-
-/* .productCard__promotion:nth-child(odd) .productCard__promotion-name {
-    background-color: #fce582;
-    color: black;
-} */
-
 .productCard__promotion-name[data-promo="Sale"] {
     background: #fd384f;
 }
@@ -296,7 +261,6 @@
     color: #191919;
     font-style: italic;
     font-weight: 700;
-
 }
 
 .productCard__promotion:nth-child(odd) .productCard__promotion-description {

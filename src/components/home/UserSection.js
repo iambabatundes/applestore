@@ -53,7 +53,7 @@ export default function UserSection({
               <i className="fa fa-map-marker map-marker"></i>
               <div className="navbar-signin-main">
                 <h1 className="navbar-user-greeting">Deliver to!</h1>
-                <span>{geoLocation}</span>
+                <span>{geoLocation || "Loading..."}</span>
               </div>
             </Link>
           </div>

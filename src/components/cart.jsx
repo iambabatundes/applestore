@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import "./styles/cart.css";
 import { calculateTotalPrice } from "./utils/utils";
 import { Link } from "react-router-dom";
@@ -6,98 +5,44 @@ import CartSummary from "./cart/CartSummary";
 import EmptyCart from "./cart/emptyCart";
 import NotLoginCart from "./cart/notLoginCart";
 import config from "../config.json";
+import { useCartStore } from "../components/store/cartStore";
 
 export default function Cart({
   cartItems,
   isLoggedIn,
-  selectedQuantities,
-  setSelectedQuantities,
   handleSubmit,
-  quantityTenPlus,
-  setQuantityTenPlus,
   handleDelete,
   conversionRate,
   selectedCurrency,
 }) {
-  useEffect(() => {
-    const storedQuantities = localStorage.getItem("selectedQuantities");
-    const storedQuantityTenPlus = localStorage.getItem("quantityTenPlus");
-
-    if (storedQuantities) {
-      setSelectedQuantities(JSON.parse(storedQuantities));
-    } else {
-      const initialQuantities = {};
-      cartItems.forEach((item) => {
-        initialQuantities[item._id] = 1;
-      });
-      setSelectedQuantities(initialQuantities);
-    }
-
-    if (storedQuantityTenPlus) {
-      setQuantityTenPlus(JSON.parse(storedQuantityTenPlus));
-    } else {
-      const initialQuantityTenPlus = {};
-      cartItems.forEach((item) => {
-        initialQuantityTenPlus[item._id] = 1; // Set the initial value to false
-      });
-      setQuantityTenPlus(initialQuantityTenPlus); // Update the state with the initial values
-    }
-  }, [cartItems, setSelectedQuantities, setQuantityTenPlus]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "selectedQuantities",
-      JSON.stringify(selectedQuantities)
-    );
-    localStorage.setItem("quantityTenPlus", JSON.stringify(quantityTenPlus));
-  }, [selectedQuantities, quantityTenPlus]);
+  const { updateQuantity, selectedQuantities, quantityTenPlus } =
+    useCartStore();
 
   const handleQuantityChange = (itemId, quantity) => {
-    if (quantity === "10+") {
-      setSelectedQuantities((prevQuantities) => ({
-        ...prevQuantities,
-        [itemId]: quantity,
-      }));
-      setQuantityTenPlus((prevQuantityTenPlus) => ({
-        ...prevQuantityTenPlus,
-        [itemId]: 1,
-      }));
-    } else {
-      setSelectedQuantities((prevQuantities) => ({
-        ...prevQuantities,
-        [itemId]: parseInt(quantity) || 1,
-      }));
-      setQuantityTenPlus((prevQuantityTenPlus) => ({
-        ...prevQuantityTenPlus,
-        [itemId]: undefined,
-      }));
-    }
+    updateQuantity(itemId, quantity);
   };
 
   const handleQuantityTenPlusChange = (e, itemId) => {
-    const inputValue = parseInt(e.target.value);
-    if (inputValue >= 1 && inputValue <= 9) {
-      setQuantityTenPlus((prevQuantityTenPlus) => ({
-        ...prevQuantityTenPlus,
-        [itemId]: inputValue,
-      }));
-    } else {
-      setQuantityTenPlus((prevQuantityTenPlus) => ({
-        ...prevQuantityTenPlus,
-        [itemId]: inputValue || 1,
+    const inputValue = parseInt(e.target.value, 10);
+    if (!isNaN(inputValue) && inputValue >= 1) {
+      useCartStore.setState((state) => ({
+        quantityTenPlus: {
+          ...state.quantityTenPlus,
+          [itemId]: inputValue,
+        },
+        selectedQuantities: {
+          ...state.selectedQuantities,
+          [itemId]: inputValue,
+        },
       }));
     }
   };
 
-  const totalItem = Object.values(selectedQuantities).reduce(
-    (total, quantity) => {
-      if (quantity === "10+") {
-        return total + 1;
-      }
-      return total + parseInt(quantity);
-    },
-    0
-  );
+  const totalItem = cartItems.reduce((total, item) => {
+    const itemQuantity =
+      quantityTenPlus[item._id] ?? selectedQuantities[item._id] ?? 1;
+    return total + itemQuantity;
+  }, 0);
 
   const price = calculateTotalPrice(
     cartItems,
@@ -106,12 +51,8 @@ export default function Cart({
     conversionRate
   );
 
-  if (cartItems.length === 0 && !isLoggedIn) {
-    return <NotLoginCart />;
-  }
-
-  if (cartItems.length === 0 && isLoggedIn) {
-    return <EmptyCart />;
+  if (cartItems.length === 0) {
+    return isLoggedIn ? <EmptyCart /> : <NotLoginCart />;
   }
 
   function formatPermalink(name) {
@@ -162,13 +103,19 @@ export default function Cart({
                         <form onSubmit={(e) => handleSubmit(e, item._id)}>
                           <input
                             type="number"
+                            name="quantity"
                             className="cart-item__input"
                             min="1"
-                            value={quantityTenPlus[item._id] || 1}
+                            value={
+                              quantityTenPlus[item._id] ??
+                              selectedQuantities[item._id] ??
+                              1
+                            }
                             onChange={(e) =>
                               handleQuantityTenPlusChange(e, item._id)
                             }
                           />
+
                           <button
                             className="cart-quantity10__btn"
                             type="submit"

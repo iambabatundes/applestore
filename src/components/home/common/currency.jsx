@@ -1,21 +1,23 @@
 import React, { useState } from "react";
+import { useCurrencyStore } from "../../store/currencyStore";
 import "../styles/currency.css";
 
-export default function Currency({
-  currencies,
-  selectedCurrency,
-  onCurrencyChange,
-  loading,
-  error,
-}) {
+export default function Currency() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const {
+    currencyRates,
+    selectedCurrency,
+    setSelectedCurrency,
+    loadingCurrency,
+    errorCurrency,
+  } = useCurrencyStore();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleCurrencyChange = (currency) => {
-    onCurrencyChange(currency);
+    setSelectedCurrency(currency);
     setIsDropdownOpen(false);
   };
 
@@ -27,12 +29,8 @@ export default function Currency({
     setIsDropdownOpen(false);
   };
 
-  if (loading) {
-    return <div className="currency-loading">Loading currencies...</div>;
-  }
-
-  if (error) {
-    return <div className="currency-error">{error}</div>;
+  if (errorCurrency) {
+    return <div className="currency-error">{errorCurrency}</div>;
   }
 
   return (
@@ -44,7 +42,6 @@ export default function Currency({
       <div className="currency-dropdown" onClick={toggleDropdown}>
         <span className="currency-button">
           {selectedCurrency}
-
           <i
             className={`fa ${
               isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
@@ -54,7 +51,7 @@ export default function Currency({
 
         {isDropdownOpen && (
           <ul className="currency-list">
-            {Object.keys(currencies).map((currency) => (
+            {Object.keys(currencyRates).map((currency) => (
               <li
                 key={currency}
                 className="currency-item"

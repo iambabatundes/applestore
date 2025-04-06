@@ -5,8 +5,6 @@ import UserSection from "./UserSection";
 import CategoriesSection from "./categoriesSection";
 import Logo from "./common/logo";
 import { useCategories } from "./hooks/useCategories";
-import { useGeoLocation } from "./hooks/useGeoLocation";
-import { useCurrency } from "./hooks/useCurrency";
 import SearchBar from "./common/searchBar";
 import Cart from "./common/cart";
 import Currency from "./common/currency";
@@ -26,18 +24,6 @@ export default function Navbar({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const categories = useCategories();
-  // const {
-  //   geoLocation,
-  //   loading: locationLoading,
-  //   error: locationError,
-  // } = useGeoLocation();
-  // const {
-  //   selectedCurrency,
-  //   currencyRates,
-  //   handleCurrencyChange,
-  //   loading: currencyLoading,
-  //   error: currencyError,
-  // } = useCurrency(onCurrencyChange);
 
   return (
     <header className="navbar">
@@ -60,7 +46,7 @@ export default function Navbar({
       <section className="navbar-actions">
         <UserSection
           user={user}
-          geoLocation={geoLocation.country_name}
+          geoLocation={geoLocation.country}
           isDropdownOpen={isDropdownOpen}
           toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
         />

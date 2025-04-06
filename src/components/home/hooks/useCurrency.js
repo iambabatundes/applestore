@@ -3,7 +3,7 @@ import config from "../../../config.json";
 
 export function useCurrency(onCurrencyChange) {
   const [currencyRates, setCurrencyRates] = useState({});
-  const [selectedCurrency, setSelectedCurrency] = useState("USD");
+  const [selectedCurrency, setSelectedCurrency] = useState("NGN");
   const [conversionRate, setConversionRate] = useState(1);
   const [errorCurrency, setErrorCurrency] = useState(null);
   const [loadingCurrency, setLoadingCurrency] = useState(true);
@@ -41,7 +41,7 @@ export function useCurrency(onCurrencyChange) {
 
   useEffect(() => {
     const detectedCurrency =
-      JSON.parse(localStorage.getItem("geoLocation"))?.currency || "USD";
+      JSON.parse(localStorage.getItem("geoLocation"))?.currency || "NGN";
     setSelectedCurrency(detectedCurrency);
   }, []);
 

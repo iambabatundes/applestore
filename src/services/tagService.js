@@ -1,5 +1,4 @@
 import http from "../services/httpService";
-// import config from "../config.json";
 const apiEndPoint = "http://localhost:4000/api/tags";
 
 // const apiEndPoint = config.apiUrl + "/tags";
