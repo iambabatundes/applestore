@@ -1,4 +1,3 @@
-import React from "react";
 import productImage from "./images/produ1.avif";
 import productImage1 from "./images/produ2.avif";
 import "./styles/exclusiveDeal.css";
@@ -17,9 +16,9 @@ export default function ExclusiveDeal({
         productImage={productImage}
         conversionRate={conversionRate}
         selectedCurrency={selectedCurrency}
+        user={user}
       />
       <FirstComers
-        user={user}
         productImage={productImage}
         productImage1={productImage1}
         conversionRate={conversionRate}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import FetchOrders from "./common/FetchOrders";
 import TopProduct from "../topProduct";
 import { getUserOrders } from "../../../services/orderService";
+import "./style/myDashboard.css";
 
 export default function MyDashboard({ user, addToCart, cartItems }) {
   const [stats, setStats] = useState({
@@ -25,12 +26,12 @@ export default function MyDashboard({ user, addToCart, cartItems }) {
   }, []);
 
   return (
-    <div>
-      <h1>My Dashboard</h1>
+    <section className="dashboard-main">
+      <h1 className="dashboard-header">My Dashboard</h1>
       <div className="stats">
         <div className="stat stat-background">
           <h2>${stats.totalSpent}</h2>
-          <p>spent</p>
+          <p>Spent</p>
         </div>
         <div className="stat stat-background1">
           <h2>{stats.completedOrders}</h2>
@@ -47,6 +48,6 @@ export default function MyDashboard({ user, addToCart, cartItems }) {
       </div>
 
       <TopProduct cartItems={cartItems} addToCart={addToCart} />
-    </div>
+    </section>
   );
 }

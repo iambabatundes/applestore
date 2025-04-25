@@ -1,5 +1,6 @@
 import React from "react";
 import { FaBell, FaSearch, FaBars } from "react-icons/fa";
+import "../style/userTopNavbar.css";
 
 export default function TopNavbar({ greeting, user }) {
   return (

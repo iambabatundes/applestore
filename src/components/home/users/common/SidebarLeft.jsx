@@ -7,7 +7,6 @@ import {
   FaMapMarkerAlt,
   FaCog,
   FaStar,
-  // FaTimes,
   FaArrowRight,
   FaArrowLeft,
 } from "react-icons/fa";
@@ -19,7 +18,7 @@ export default function SidebarLeft({ isOpen, toggleSidebar, user }) {
   return isOpen ? (
     <aside className="sidebar-left open">
       <div className="sidebar-toggle-left" onClick={toggleSidebar}>
-        <FaArrowLeft className="icon" /> Close
+        <FaArrowLeft className="open__icon" /> Close
       </div>
       <div className="profile-section">
         <Avatar
@@ -66,7 +65,7 @@ export default function SidebarLeft({ isOpen, toggleSidebar, user }) {
     </aside>
   ) : (
     <div className="sidebar-toggle-left closed" onClick={toggleSidebar}>
-      <FaArrowRight className="icon" />
+      <FaArrowRight className="closed__icon" />
       <span className="content-open">Open</span>
     </div>
   );

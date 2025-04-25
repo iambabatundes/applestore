@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./common/productCard";
 import { getProductsByCategorys } from "./../../services/productService";
+import "../styles/choice.css";
 
 export default function Choice({
   addToCart,
@@ -44,17 +45,17 @@ export default function Choice({
 
   return (
     <section>
-      <div className="bigSave__cards-wrapper">
+      <div className="choice__cards-wrapper">
         <button
-          className="bigSave-arrowBtn bigSave__leftBtn"
+          className="choice-arrowBtn choice__leftBtn"
           onClick={handlePrevCard}
         >
-          <span className="bigSave__iconBtn">
+          <span className="choice__iconBtn">
             <i className="fa fa-chevron-left" aria-hidden="true"></i>
           </span>
         </button>
 
-        <div className="bigSave__product">
+        <div className="choice__product">
           {cardsToDisplay.map((product, index) => {
             return (
               <ProductCard
@@ -71,10 +72,10 @@ export default function Choice({
           })}
         </div>
         <button
-          className="bigSave-arrowBtn bigSave__nextBtn"
+          className="choice-arrowBtn choice__nextBtn"
           onClick={handleNextCard}
         >
-          <span className=".bigSave__iconBtn">
+          <span className=".choice__iconBtn">
             <i className="fa fa-chevron-right" aria-hidden="true"></i>
           </span>
         </button>

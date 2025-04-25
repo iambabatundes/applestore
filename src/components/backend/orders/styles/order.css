@@ -12,7 +12,7 @@
     gap: 15px;
     padding-left: 20px;
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 9;
 }
 
 .order__header h1 {

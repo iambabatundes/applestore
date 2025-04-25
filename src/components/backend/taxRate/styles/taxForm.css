@@ -169,9 +169,9 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-    section {
+    /* section {
         padding: 15px;
-    }
+    } */
 
     h1 {
         font-size: 20px;

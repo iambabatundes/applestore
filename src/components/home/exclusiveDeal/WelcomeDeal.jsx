@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../styles/exclusiveDeal.css";
+import { Link } from "react-router-dom";
+import "../styles/welcomeDeal.css";
 import { formatPrice } from "../common/utils";
 import { getProductsByPromotion } from "../../../services/productService";
 
@@ -8,6 +9,7 @@ import config from "../../../config.json";
 export default function WelcomeDeal({
   selectedCurrency = "NGN",
   conversionRate = 1,
+  user,
 }) {
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,12 +33,6 @@ export default function WelcomeDeal({
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? products.length - 1 : prevIndex - 1
-    );
-  };
-
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === products.length - 1 ? 0 : prevIndex + 1
@@ -45,8 +41,20 @@ export default function WelcomeDeal({
 
   return (
     <div className="welcomeDeal">
+      {!user && (
+        <section className="welcomeDeal__action">
+          <button className="welcomeDeal__btn welcomeDeal__register">
+            <Link to="/register">Register</Link>
+          </button>
+
+          <button className="welcomeDeal__btn welcomeDeal__signIn">
+            <Link to="/login">Sign in</Link>
+          </button>
+        </section>
+      )}
+
       <header className="welcomeDeal__header-container">
-        <h1 className="welcomeDeal__header">First Comers</h1>
+        <h1 className="welcomeDeal__header">Welcome Deals</h1>
         <h4 className="welcomeDeal__subHeader">Your Exclusive Price</h4>
       </header>
 
@@ -115,30 +123,15 @@ export default function WelcomeDeal({
       </div>
 
       {products.length > 1 && (
-        <>
-          <button
-            className="welcomeDeal__control welcomeDeal__control-left"
-            onClick={handlePrev}
-          >
-            &#10094;
-          </button>
-          <button
-            className="welcomeDeal__control welcomeDeal__control-right"
-            onClick={handleNext}
-          >
-            &#10095;
-          </button>
-
-          <div className="welcomeDeal__dots">
-            {products.map((_, index) => (
-              <span
-                key={index}
-                className={`dot ${index === currentIndex ? "active" : ""}`}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
-          </div>
-        </>
+        <div className="welcomeDeal__dots">
+          {products.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === currentIndex ? "active" : ""}`}
+              onClick={() => setCurrentIndex(index)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

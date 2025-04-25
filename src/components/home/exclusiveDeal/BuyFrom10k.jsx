@@ -49,8 +49,10 @@ export default function BuyFrom10k({ conversionRate, selectedCurrency }) {
         <h1 className="buyFrom10k__offer-title">
           Free <span className="buyFrom10k__shipping">Shipping</span>, 50% off
         </h1>
-        <button className="buyFrom10k__offer-label">Shipping</button>
-        <span className="buyFrom10k__offer-subtitle">Free Shipping</span>
+        <div className="shipping__flex">
+          <button className="buyFrom10k__offer-label">Shipping</button>
+          <span className="buyFrom10k__offer-subtitle">Free Shipping</span>
+        </div>
         {displayedGroups.map((group, index) => (
           <ProductList
             products={group}

@@ -1,0 +1,224 @@
+/* Mobile-first default styles */
+.welcomeDeal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff5ef;
+    border-radius: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.welcomeDeal__action {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.welcomeDeal__btn {
+    border-radius: 30px;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 2px solid #000;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+    text-align: center;
+}
+
+.welcomeDeal__register {
+    background: #000;
+    color: #fff;
+}
+
+.welcomeDeal__signIn {
+    background: #fff;
+    color: #000;
+}
+
+.welcomeDeal__btn:hover {
+    background: #fd384f;
+    color: #fff;
+    border-color: #fd384f;
+}
+
+.welcomeDeal__header-container {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.welcomeDeal__header {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fd384f;
+}
+
+.welcomeDeal__subHeader {
+    font-size: 1rem;
+    color: #191919;
+    font-weight: 500;
+}
+
+.welcomeDeal__carousel {
+    position: relative;
+    width: 100%;
+    min-height: 260px;
+}
+
+.welcomeDeal__slide {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 1s ease-in-out;
+    width: 100%;
+}
+
+.welcomeDeal__slide.active {
+    opacity: 1;
+    position: relative;
+}
+
+.welcomeDeal__productImage {
+    width: 100%;
+    height: 345px;
+    border-radius: 24px;
+    object-fit: cover;
+    max-height: 300px;
+}
+
+.welcomeDeal__price-main {
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+    text-align: center;
+}
+
+.welcomeDeal__price {
+    color: #fd384f;
+    font-weight: bold;
+}
+
+.welcomeDeal__oldprice {
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+}
+
+.welcomeDeal__dots {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.dot.active {
+    background: #fd384f;
+}
+
+/* Tablet breakpoint */
+@media (min-width: 600px) {
+    .welcomeDeal {
+        max-width: 700px;
+    }
+
+    .welcomeDeal__action {
+        align-items: center;
+        border-radius: 24px;
+    }
+
+    .welcomeDeal__action:hover {
+        transition: box-shadow 0.3s, color 0.3s;
+    }
+
+    .welcomeDeal__btn {
+        width: 100%;
+        flex: 1;
+        border-radius: 30px;
+        padding: 10px 20px;
+        border: 2px solid #000;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+    }
+}
+
+/* Desktop and larger */
+@media (min-width: 1024px) {
+    .welcomeDeal {
+        max-width: 300px;
+        /* gap: 2rem; */
+    }
+
+    .welcomeDeal__carousel {
+        flex: 1;
+    }
+
+    .welcomeDeal__action {
+        margin: 0;
+        align-items: center;
+        border-radius: 24px;
+        justify-content: center;
+        /* margin-bottom: 20px;
+        padding: 18px 0; */
+    }
+
+    .welcomeDeal__header-container {
+        text-align: center;
+        margin-top: 1.2rem;
+    }
+
+    .welcomeDeal__price-main {
+        font-size: 1.5rem;
+        text-align: left;
+    }
+
+    .welcomeDeal__productImage {
+        max-height: 280px;
+    }
+
+    .dot,
+    .dot.active {
+        display: none;
+    }
+}
+
+/* Big TV screens */
+@media (min-width: 1400px) {
+    .welcomeDeal {
+        max-width: 1200px;
+        padding: 3rem;
+    }
+
+    .welcomeDeal__header {
+        font-size: 2rem;
+    }
+
+    .welcomeDeal__subHeader {
+        font-size: 1.25rem;
+    }
+
+    .welcomeDeal__btn {
+        font-size: 1.125rem;
+        padding: 1rem 2rem;
+    }
+
+    .welcomeDeal__productImage {
+        /* max-height: 400px; */
+        height: 225px;
+    }
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProductList from "./ProductList";
+import "../styles/superDeal.css";
 import { getProductsByPromotion } from "../../../services/productService";
 
 const groupProducts = (products, chunkSize) => {
@@ -47,8 +48,10 @@ export default function SuperDeal({ selectedCurrency, conversionRate }) {
       <h1 className="superDeal__offer-title">
         Super<span className="superDeal__deal">Deal</span>
       </h1>
-      <button className="superDeal__offer-label">Limited</button>
-      <span className="superDeal__offer-subtitle">Limited Time Offers</span>
+      <article className="superDeal__label">
+        <button className="superDeal__offer-label">Limited</button>
+        <span className="superDeal__offer-subtitle">Limited Time Offers</span>
+      </article>
       {displayedGroups.map((group, index) => (
         <ProductList
           products={group}

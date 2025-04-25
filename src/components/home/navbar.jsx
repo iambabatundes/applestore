@@ -27,40 +27,47 @@ export default function Navbar({
 
   return (
     <header className="navbar">
-      <Logo
-        logoImage={logoImage}
-        brandLogo="brand-logo"
-        navbarBrand="navbar-brand"
-      />
-      <CategoriesSection categories={categories} />
-      <SearchBar />
+      <div className="navbar-top">
+        <div className="navbar-header-main">
+          <button className="navbar-burger" onClick={() => setIsOpen(!isOpen)}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <Logo
+            logoImage={logoImage}
+            brandLogo="brand-logo"
+            navbarBrand="navbar-brand"
+          />
+        </div>
+        <div className="navbar-header-actions">
+          <section className="navbar-actions">
+            <UserSection
+              user={user}
+              geoLocation={geoLocation.country}
+              isDropdownOpen={isDropdownOpen}
+              toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
+            />
+          </section>
+          <Cart cartItemCount={cartItemCount} />
+        </div>
+      </div>
 
-      <Currency
-        currencies={currencyRates}
-        selectedCurrency={selectedCurrency}
-        onCurrencyChange={onCurrencyChange}
-        loading={currencyLoading}
-        error={currencyError}
-      />
+      <div className="nameSearch">
+        <SearchBar />
+      </div>
 
-      <section className="navbar-actions">
-        <UserSection
-          user={user}
-          geoLocation={geoLocation.country}
-          isDropdownOpen={isDropdownOpen}
-          toggleDropdown={() => setIsDropdownOpen(!isDropdownOpen)}
-        />
-      </section>
-
-      <Cart cartItemCount={cartItemCount} />
       <div className={`navbar-menu ${isOpen ? "is-active" : ""}`}>
+        <CategoriesSection categories={categories} />
+        <Currency
+          currencies={currencyRates}
+          selectedCurrency={selectedCurrency}
+          onCurrencyChange={onCurrencyChange}
+          loading={currencyLoading}
+          error={currencyError}
+        />
         <Link to="#orders">Returns & Orders</Link>
       </div>
-      <button className="navbar-burger" onClick={() => setIsOpen(!isOpen)}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </header>
   );
 }

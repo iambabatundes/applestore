@@ -1,25 +1,67 @@
 .moreToLove {
-    padding: 20px 0px 20px;
-    /* background-color: #f7f7f7; */
+    padding: 20px 16px;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
-.more-to-love h2 {
-    font-size: 24px;
+.moreToLove__title {
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #333;
+    color: #111;
     margin-bottom: 20px;
     text-align: center;
 }
 
-/* .moreToLove__main {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-} */
-
 .moreToLove__main {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+/* Tablet */
+@media (min-width: 600px) {
+    .moreToLove__title {
+        font-size: 1.75rem;
+    }
+
+    .moreToLove__main {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+}
+
+/* Small Laptop */
+@media (min-width: 900px) {
+    .moreToLove__main {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+    .moreToLove__main {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (min-width: 1444px) {
+    .moreToLove__main {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+/* Big Screens / TV */
+@media (min-width: 1800px) {
+    .moreToLove {
+        padding: 40px 24px;
+    }
+
+    .moreToLove__title {
+        font-size: 2.25rem;
+    }
+
+    .moreToLove__main {
+        gap: 32px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
 }

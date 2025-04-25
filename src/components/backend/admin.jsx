@@ -298,6 +298,8 @@ const Admin = ({ companyName, count, userName, logo }) => {
           selectedDropdownLink={selectedDropdownLink}
           setSelectedDropdownLink={setSelectedDropdownLink}
           darkMode={darkMode}
+          count={count}
+          toggleDarkMode={toggleDarkMode}
         />
         <section className="admin-main-content">
           <Routes>

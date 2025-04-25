@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Switch } from "@mui/material";
+import { FaMoon, FaSun } from "react-icons/fa";
 import "./styles/adminSidebar.css";
 import "../backend/common/styles/darkMode.css";
 
@@ -11,6 +13,8 @@ export default function AdminSidebar({
   isMobileMenuOpen,
   setSelectedDropdownLink,
   selectedDropdownLink,
+  count,
+  toggleDarkMode,
 }) {
   return (
     <aside
@@ -51,6 +55,22 @@ export default function AdminSidebar({
           </li>
         ))}
       </ul>
+
+      <div className="">
+        <i className="fa fa-comment" aria-hidden="true"></i>
+        <span>{count} this is new</span>
+      </div>
+
+      <div className="admin-navbar__dark-mode-toggles">
+        <Switch
+          checked={darkMode}
+          onChange={toggleDarkMode}
+          color="default"
+          icon={<FaMoon />}
+          checkedIcon={<FaSun />}
+          inputProps={{ "aria-label": "dark mode toggle" }}
+        />
+      </div>
     </aside>
   );
 }

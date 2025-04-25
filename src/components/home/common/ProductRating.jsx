@@ -1,5 +1,6 @@
 import React from "react";
 import StarRating from "./starRating";
+import "../styles/productRating.css";
 
 export default function ProductRating({
   rating = 0,

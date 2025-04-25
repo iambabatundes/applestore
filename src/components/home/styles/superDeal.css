@@ -1,0 +1,139 @@
+.superDeal {
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    text-align: start;
+    padding: 20px 15px;
+    margin-top: 25px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.superDeal__offer-title {
+    color: #000;
+    font-family: "Oswald", sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.6rem;
+}
+
+.superDeal__deal {
+    color: #fd384f;
+}
+
+.superDeal__label {
+    display: flex;
+}
+
+.superDeal__offer-label {
+    background: #febd69;
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 5px 6px;
+    margin: 0px 5px 0px 0px;
+    cursor: pointer;
+}
+
+.superDeal__offer-subtitle {
+    font-size: 0.546rem;
+    color: #666;
+    /* margin-bottom: 15px; */
+    display: block;
+}
+
+.superDeal__products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.superDeal__product {
+    flex: 1 1 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+.superDeal__productImage {
+    border-radius: 20px;
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.superDeal__productPrice {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #fd384f;
+}
+
+.superDeal__oldPrice {
+    font-size: 0.9rem;
+    color: gray;
+    text-decoration: line-through;
+}
+
+
+/* Tablet and up */
+@media (min-width: 600px) {
+    .superDeal__product {
+        flex: 1 1 45%;
+        max-width: 45%;
+        padding: 0px
+    }
+
+    .superDeal__productImage {
+        height: 180px;
+    }
+}
+
+/* Medium desktops and up */
+@media (min-width: 1024px) {
+    .superDeal__product {
+        flex: 1 1 30%;
+        max-width: 30%;
+    }
+
+    .superDeal__productImage {
+        height: 115px;
+    }
+
+    .superDeal__offer-title {
+        font-size: 1.4rem;
+    }
+
+    .superDeal__offer-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* Extra-large screens / TVs */
+@media (min-width: 1600px) {
+    .superDeal {
+        padding: 40px 30px;
+    }
+
+    .superDeal__offer-title {
+        font-size: 2rem;
+    }
+
+    .superDeal__productImage {
+        height: 100px;
+    }
+
+    .superDeal__productPrice {
+        font-size: 1rem;
+    }
+
+    .superDeal__oldPrice {
+        font-size: 1rem;
+    }
+}

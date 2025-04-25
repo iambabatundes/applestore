@@ -1,4 +1,5 @@
 import { formatPrice } from "./utils";
+import "../styles/productPrice.css";
 
 export default function ProductPrice({
   price,

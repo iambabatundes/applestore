@@ -1,17 +1,47 @@
-/* Reset some basic styles */
 .navbar {
     align-items: center;
     background-color: #232f3e;
     display: flex;
-    justify-content: space-between;
-    /* padding: 10px 20px; */
-    padding: 8px 15px;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    padding: 8px 10px;
     position: fixed;
     top: 0;
     width: 100%;
     margin-bottom: 40px;
     z-index: 1000;
 }
+
+.navbar-top {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    /* padding: 10px; */
+}
+
+.navbar-header-main {
+    display: flex;
+    margin-right: 30px;
+}
+
+.navbar-header-actions {
+    display: flex;
+}
+
+.navbar-burger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+}
+
+.navbar-burger span {
+    width: 20px;
+    height: 2px;
+    background: #333;
+}
+
 
 .currency-main {
     position: relative;
@@ -25,7 +55,8 @@
 }
 
 .brand-logo {
-    height: 40px;
+    height: 25px;
+    margin-left: 15px;
     transition: transform 0.3s ease-in-out;
 }
 
@@ -34,26 +65,22 @@
 }
 
 .navbar-search {
-    display: none;
     align-items: center;
-    flex: 1;
-    margin: 0 20px;
+    display: flex;
+    /* flex: 1; */
+    /* margin: 0 20px; */
+    margin-top: 8px;
+    margin-left: auto;
 }
 
-.category-select {
-    height: 40px;
-    border: none;
-    padding: 5px;
-    border-radius: 4px 0 0 4px;
-    width: 5rem;
-}
 
 .search-input {
     flex: 1;
-    height: 40px;
-    padding: 0 10px;
+    height: 30px;
+    /* padding: 0 10px; */
     border: none;
     transition: box-shadow 0.3s ease-in-out;
+    min-width: 17rem;
 }
 
 .search-input:focus {
@@ -61,8 +88,8 @@
 }
 
 .search-button {
-    height: 40px;
-    width: 40px;
+    height: 30px;
+    width: 30px;
     background-color: #febd69;
     border: none;
     display: flex;
@@ -77,6 +104,14 @@
     color: #111;
 }
 
+.category-select {
+    height: 40px;
+    border: none;
+    padding: 5px;
+    border-radius: 4px 0 0 4px;
+    width: 5rem;
+}
+
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -85,7 +120,7 @@
 .navbar-user-container {
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -98,7 +133,7 @@
     align-items: center;
     text-decoration: none;
     cursor: pointer;
-    margin-right: 10px;
+    /* margin-right: 10px; */
 }
 
 .navbar-user-image {
@@ -115,17 +150,23 @@
 }
 
 .navbar-signin-main {
-    display: flex;
+    display: none;
+    /* display: flex; */
     flex-direction: column;
     align-items: flex-start;
     margin-right: 22px;
 }
 
 .navbar-user-greeting {
+    /* display: none; */
     font-size: 0.8rem;
     color: #fff;
     margin: 0;
 
+}
+
+.chevron-display {
+    display: none;
 }
 
 .navbar-signin-main span {
@@ -289,12 +330,14 @@
     /* color: #fff; */
     font-size: 0.9rem;
     margin: 0;
+    display: none;
 }
 
 .cart-item-count {
     position: absolute;
     top: -15px;
-    right: 36px;
+    /* right: 36px; */
+    right: 4px;
     color: #febd69;
     padding: 5px 10px;
     font-size: 1.2rem;
@@ -358,27 +401,88 @@
     background-color: #131a22;
 }
 
-/* Responsive Styles */
 @media (min-width: 768px) {
+    .navbar {
+        padding: 12px 30px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
     .navbar-search {
+        margin-left: auto;
+        margin-right: 20px;
+        order: 1;
+    }
+
+
+    .navbar-signin-main {
         display: flex;
+    }
+
+    .navbar-cart-text {
+        display: block;
+    }
+
+    .chevron-display {
+        display: block;
     }
 
     .navbar-burger {
         display: none;
     }
+}
 
-    .navbar-menu {
-        display: flex;
-        position: static;
+/* === LAPTOP & UP === */
+@media (min-width: 1024px) {
+    /* .navbar {
+        padding: 15px 40px;
         flex-direction: row;
-        background: none;
-        box-shadow: none;
     }
 
-    .navbar-menu a {
-        color: #fff;
-        padding: 0;
-        margin-left: 20px;
+    .navbar-brand {
+        margin-right: 30px;
+    }
+
+    .navbar-actions {
+        gap: 20px;
+    } */
+}
+
+/* 4K TV and up */
+@media (min-width: 1920px) {
+    .navbar {
+        /* padding: 20px 60px; */
+
+    }
+
+    .search-input {
+        font-size: 1.1rem;
+    }
+
+    .navbar-cart-text {
+        font-size: 1rem;
+    }
+
+    .navbar-user-greeting {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 2560px) {
+    .navbar {
+        /* padding: 20px 60px; */
+
+    }
+
+    .search-input {
+        font-size: 1.1rem;
+    }
+
+    .navbar-cart-text {
+        font-size: 1rem;
+    }
+
+    .navbar-user-greeting {
+        font-size: 1rem;
     }
 }

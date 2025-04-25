@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/productLabels.css";
 
 export default function ProductLabels({ promotions }) {
   return (

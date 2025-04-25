@@ -101,40 +101,45 @@ export default function AdminNavbar({
   };
 
   return (
-    <header className={`admin-navbar ${darkMode ? "dark-mode" : ""}`}>
-      <Grid container alignItems="center" justifyContent="space-between">
-        {/* Left Section */}
-        <Grid item className="admin-navbar__left">
+    <nav className={`admin-navbar ${darkMode ? "dark-mode" : ""}`}>
+      <section className="adminNavbar__main">
+        <div className="admin-navbar__left">
           <IconButton onClick={handleToggle}>
             <Icon menu />
           </IconButton>
           <img src={logo} alt="Company logo" className="company-logo" />
-          <h1 className="company-name">{companyName}</h1>
-        </Grid>
+          {/* <h1 className="company-name">{companyName}</h1> */}
+        </div>
 
-        {/* Center Section */}
-        <Grid item className="admin-navbar__center">
-          <div className="admin-navbar__search">
-            <FaSearch />
-            <input type="text" placeholder="Search..." />
-          </div>
-          <div className="admin-navbar__comments">
+        <div className="admin-navbar__center">
+          <form className="admin-navbar__search">
+            <input
+              type="text"
+              className="adminSearch-input"
+              placeholder="Search..."
+            />
+            <button className="adminSearch-button">
+              <i className="fa fa-search"></i>
+            </button>
+          </form>
+
+          <div className="admin-navbar__notifications">
             <i className="fa fa-comment" aria-hidden="true"></i>
             <span>{count}</span>
           </div>
-        </Grid>
 
-        {/* Right Section */}
-        <Grid item className="admin-navbar__right">
+          <div className="admin-navbar__comments">
+            <i className="fa fa-comment" aria-hidden="true"></i>
+            <span>{notifications.length}</span>
+          </div>
+        </div>
+
+        <div item className="admin-navbar__right">
           <div className="admin-navbar__welcome">
             <h4>Welcome,</h4>
             <span className="admin__userName">{userName}</span>
           </div>
-          <div className="admin-navbar__notifications">
-            <Badge badgeContent={notifications.length} color="error">
-              <FaSearch />
-            </Badge>
-          </div>
+
           <div className="admin-navbar__user" onClick={toggleDropdown}>
             <Avatar
               src={userImage}
@@ -165,8 +170,8 @@ export default function AdminNavbar({
               inputProps={{ "aria-label": "dark mode toggle" }}
             />
           </div>
-        </Grid>
-      </Grid>
+        </div>
+      </section>
 
       <AdminProfile
         user={profileDetails}
@@ -180,6 +185,6 @@ export default function AdminNavbar({
         setProfileImage={setProfileImage}
         handleProfileImageChange={handleProfileImageChange}
       />
-    </header>
+    </nav>
   );
 }

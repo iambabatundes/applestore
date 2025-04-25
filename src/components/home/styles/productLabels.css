@@ -1,0 +1,189 @@
+.productCard__promotion {
+    display: flex;
+    /* padding: 4px 8px; */
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.productCard__promotion-name {
+    padding: 1px 2px;
+    border-radius: 5px;
+    /* margin-right: 5px; */
+    /* background: #e60023; */
+    color: #fff;
+}
+
+.productCard__promotion-description {
+    font-weight: 600;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.productCard__promotion-name[data-promo="SuperDeal"] {
+    font-style: italic;
+    font-family: oswald;
+    background: #fedad8;
+}
+
+.productCard__promotion-name .super {
+    color: #191919;
+    font-weight: 800;
+}
+
+.productCard__promotion-name .deal {
+    color: #fd384f;
+    font-weight: 800;
+}
+
+.productCard__promotion-name[data-promo="WelcomeDeal"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="BlackFriday"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="CyberMonday"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="HolidaySale"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="FlashSale"] {
+    font-style: italic;
+    /* font-family: oswald; */
+    background: #fbe3e1;
+    color: #000;
+}
+
+.productCard__promotion-name[data-promo="Sale"] {
+    background: #fd384f;
+}
+
+.productCard__promotion-name[data-promo="Choice"] {
+    background: #fd384f;
+}
+
+.productCard__promotion-name[data-promo="Shipping"] {
+    background: #fce582;
+    color: #191919;
+    font-style: italic;
+    font-weight: 700;
+}
+
+.productCard__promotion:nth-child(odd) .productCard__promotion-description {
+    color: #fd384f;
+}
+
+.productCard__promotion:nth-child(even) .productCard__promotion-description {
+    color: #000;
+}
+
+.productCard__superDeal-main,
+.productCard__shipping,
+.productCard__choice {
+    align-items: baseline;
+    display: flex;
+    font-family: Open Sans, Roboto, Arial, Helvetica, sans-serif, SimSun;
+}
+
+.productCard__superDeal {
+    background: #fedad8;
+    font-size: 0.7rem;
+    font-family: "oswald";
+    font-style: italic;
+    padding: 0px 3px;
+    margin-right: 3px;
+    border-radius: 5px;
+}
+
+.productCard__super {
+    color: #191919;
+    font-weight: 800;
+}
+
+.productCard__deal {
+    color: #fd384f;
+}
+
+.productCard__superDeal-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fd384f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.productCard__shipping-badge {
+    background: #fce582;
+    color: #191919;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-right: 3px;
+    margin-top: 3px;
+    padding: 0px 3px;
+    border-radius: 5px;
+}
+
+.productCard__shipping-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.productCard__choice-badge {
+    background: #fd384f;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-right: 3px;
+    margin-top: 3px;
+    padding: 0px 3px;
+    border-radius: 5px;
+}
+
+.productCard__choice-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.productCard__discount {
+    position: absolute;
+    top: 0px;
+    background: #fd384f;
+    border-radius: 900px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    color: #ffffff;
+    padding: 5px 5px;
+    right: -0;
+    overflow: auto;
+    display: flex;
+    font-family: Open Sans, Roboto, Arial, Helvetica, sans-serif, SimSun;
+}

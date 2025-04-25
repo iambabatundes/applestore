@@ -24,11 +24,13 @@ export default function UserSection({
                 <h1 className="navbar-user-greeting">Hello!</h1>
                 <span>Sign in</span>
               </div>
-              <i
-                className={`fa ${
-                  isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
-                } navbar-dropdown-chevron`}
-              ></i>
+              <span className="chevron-display">
+                <i
+                  className={`fa ${
+                    isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
+                  } navbar-dropdown-chevron`}
+                ></i>
+              </span>
             </div>
             {isDropdownOpen && (
               <div className="navbar-dropdown-menu">
@@ -48,7 +50,7 @@ export default function UserSection({
               </div>
             )}
           </div>
-          <div className="navbar-user-container">
+          {/* <div className="navbar-user-container">
             <Link to="/address" className="navbar-user__main">
               <i className="fa fa-map-marker map-marker"></i>
               <div className="navbar-signin-main">
@@ -56,7 +58,7 @@ export default function UserSection({
                 <span>{geoLocation || "Loading..."}</span>
               </div>
             </Link>
-          </div>
+          </div> */}
         </>
       ) : (
         <>
@@ -78,11 +80,13 @@ export default function UserSection({
                 <h1 className="navbar-user-greeting">Hello!</h1>
                 <span>{user.username}</span>
               </div>
-              <i
-                className={`fa ${
-                  isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
-                } navbar-dropdown-chevron`}
-              ></i>
+              <span className="chevron-display">
+                <i
+                  className={`fa ${
+                    isDropdownOpen ? "fa-chevron-up" : "fa-chevron-down"
+                  } navbar-dropdown-chevron`}
+                ></i>
+              </span>
             </div>
             {isDropdownOpen && (
               <div className="navbar-dropdown-menu">
@@ -107,7 +111,7 @@ export default function UserSection({
               </div>
             )}
           </div>
-          <div className="navbar-user-address">
+          {/* <div className="navbar-user-address">
             <Link to="/address" className="navbar-address__main">
               <i className="fa fa-map-marker map-marker"></i>
               <div className="navbar-address__container">
@@ -115,7 +119,7 @@ export default function UserSection({
                 <span>{user.address?.country || geoLocation}</span>
               </div>
             </Link>
-          </div>
+          </div> */}
         </>
       )}
     </>

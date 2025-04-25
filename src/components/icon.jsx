@@ -46,9 +46,9 @@ export default function Icon({
               height="19"
               viewBox="0 0 23 19"
             >
-              <rect y="16" width="23" height="3" rx="1.5" fill="#555"></rect>
-              <rect width="23" height="3" rx="1.5" fill="#555"></rect>
-              <rect y="8" width="23" height="3" rx="1.5" fill="#555"></rect>
+              <rect y="16" width="23" height="2" rx="1.5" fill="#fff"></rect>
+              <rect width="23" height="2" rx="1.5" fill="#fff"></rect>
+              <rect y="8" width="23" height="2" rx="1.5" fill="#fff"></rect>
             </svg>
           </span>
         </span>

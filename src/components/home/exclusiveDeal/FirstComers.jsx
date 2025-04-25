@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "../styles/exclusiveDeal.css";
-import { Link } from "react-router-dom";
+import "../styles/firstComers.css";
 import ProductList from "./ProductList";
 import { getProductsByPromotion } from "../../../services/productService";
+
 const groupProducts = (products, chunkSize) => {
   const groups = [];
   for (let i = 0; i < products.length; i += chunkSize) {
@@ -27,11 +27,8 @@ export default function FirstComers({
     async function fetchProducts() {
       try {
         const { data } = await getProductsByPromotion("Sale");
-        // setProducts(data);
-
         const mergedProducts = [...data];
         const groupedProducts = groupProducts(mergedProducts, 2);
-
         setProducts(groupedProducts);
         setDisplayedGroups(groupedProducts.slice(0, INITIAL_GROUP_COUNT));
       } catch (err) {
@@ -49,18 +46,6 @@ export default function FirstComers({
 
   return (
     <div className="firstComers">
-      {!user && (
-        <section className="firstComers__action">
-          <button className="firstComers__btn firstComers__register">
-            <Link to="/register">Register</Link>
-          </button>
-
-          <button className="firstComers__btn firstComers__signIn">
-            <Link to="/login">Sign in</Link>
-          </button>
-        </section>
-      )}
-
       <section className="firstComers__offer">
         <h1 className="firstComers__offer-title">
           First<span className="firstComers__come">Come, </span>
@@ -83,12 +68,6 @@ export default function FirstComers({
             discountClassName="firstComers__discount"
           />
         ))}
-
-        {/* {displayedGroups.length < allProductGroups.length && (
-          <button className="firstComers__loadMore" onClick={handleLoadMore}>
-            Load More
-          </button>
-        )} */}
       </section>
     </div>
   );

@@ -1,0 +1,41 @@
+.productCard__price {
+    align-items: end;
+    display: flex;
+    /* flex-direction: column; */
+    /* margin-top: 1rem; */
+    overflow: hidden;
+}
+
+.productCard__salePrice {
+    display: flex;
+    align-items: baseline;
+    color: #191919;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+.productCard__salePrice .currency {
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+    vertical-align: top;
+}
+
+.productCard__salePrice .whole {
+    font-size: 1.5rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+
+.productCard__salePrice .fraction {
+    font-size: 0.8rem;
+    /* margin-left: 0.1rem; */
+}
+
+.productCard__originalPrice {
+    text-decoration: line-through;
+    color: #999999;
+    font-size: 0.9rem;
+
+}
