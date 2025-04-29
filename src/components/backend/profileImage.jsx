@@ -72,7 +72,7 @@ export default function ProfileImage({
     if (e.target.files && e.target.files.length > 0) {
       validateAndAddFile(e.target.files[0]);
     }
-    fileInputRef.current.value = null; // Reset the file input
+    fileInputRef.current.value = null;
   };
 
   const handleRemoveImage = () => {

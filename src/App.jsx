@@ -123,7 +123,7 @@ function App() {
     <>
       <ToastContainer />
       {location.pathname.includes("/admin") ? (
-        <Admin companyName="AppStore" count={5} logo={logoImage} />
+        <Admin count={5} logo={logoImage} />
       ) : (
         <>
           {renderNavbar()}

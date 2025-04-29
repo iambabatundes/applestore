@@ -13,8 +13,6 @@ export default function LogoImage() {
   const [progress, setProgress] = useState(0);
   const [currentLogoId, setCurrentLogoId] = useState(null);
 
-  const mediaUrl = process.env.REACT_APP_API_URL;
-
   useEffect(() => {
     const fetchCurrentLogo = async () => {
       try {
@@ -22,7 +20,10 @@ export default function LogoImage() {
 
         if (data && data.logoImage) {
           setCurrentLogoId(data._id);
-          setPreview(`${mediaUrl}/uploads/${data.logoImage.filename}`);
+
+          setPreview(
+            `${import.meta.env.VITE_API_URL}/uploads/${data.logoImage.filename}`
+          );
         } else {
           console.log("No logo found.");
         }
@@ -31,7 +32,7 @@ export default function LogoImage() {
       }
     };
     fetchCurrentLogo();
-  }, [mediaUrl]);
+  }, []);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];

@@ -1,67 +1,85 @@
-.admin-container {
-    display: flex;
+/* Base: Mobile First */
+.admin-wrapper {
     min-height: 100vh;
-    transition: margin-left 0.3s ease-in-out, padding 0.3s ease-in-out;
-    /* flex-direction: column; */
-}
-
-
-.admin-main-content {
-    background: #f0f0f1;
-    width: 100%;
-    margin-left: 160px;
-    /* padding: 15px 20px; */
-    transition: margin-left 0.3s ease-in-out;
-}
-
-.adminDarkMode.dark-mode {
-    background-color: #333;
-    color: #fff;
-}
-
-@media (max-width: 768px) {
-    .admin-container {
-        flex-direction: column;
-    }
-
-    .admin-main-content {
-        margin-left: 0;
-        /* padding: 10px; */
-    }
-}
-
-/* .admin-container {
+    background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    transition: background-color 0.3s ease;
 }
 
-.admin-layout {
+.admin-wrapper.dark-mode {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.admin-container {
     display: flex;
     flex: 1;
+    flex-direction: column;
+    transition: all 0.3s ease;
 }
 
 .admin-main-content {
     flex: 1;
-    padding: 20px;
-    background-color: #f1f2f6;
-    overflow-y: auto;
+    width: 100%;
+    padding: 1rem;
+    background-color: #f0f0f1;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .admin-sidebar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        transform: translateX(-100%);
-    }
-
-    .admin-sidebar.open {
-        transform: translateX(0);
+@media (min-width: 768px) {
+    .admin-container {
+        flex-direction: row;
     }
 
     .admin-main-content {
-        padding: 10px;
+        margin-left: 160px;
+        /* padding: 2rem; */
+        transition: all 0.3s ease;
     }
-} */
+
+    .sidebar-collapsed .admin-main-content {
+        margin-left: 55px;
+        transition: all 0.3s ease;
+    }
+
+    .admin-main-content.sidebar-closed {
+        margin-left: 0;
+
+    }
+
+}
+
+@media (min-width: 1200px) {
+    .admin-main-content {
+        margin-left: 160px;
+        /* padding: 3rem; */
+        transition: all 0.3s ease;
+    }
+}
+
+@media (min-width: 1800px) {
+    .admin-main-content {
+        margin-left: 160px;
+        /* padding: 4rem; */
+        /* max-width: 1600px; */
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .sidebar-collapsed .admin-main-content {
+        margin-left: 55px;
+        transition: all 0.3s ease;
+    }
+}
+
+/* Dark mode for main content */
+.admin-main-content.dark-mode {
+    background-color: #2c2c2c;
+}
+
+/* Smooth Transition Everywhere */
+.admin-container,
+.admin-main-content {
+    transition: all 0.3s ease;
+}

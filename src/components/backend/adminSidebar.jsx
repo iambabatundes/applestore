@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Switch } from "@mui/material";
-import { FaMoon, FaSun } from "react-icons/fa";
+import { useAdminSidebarStore } from "./store/adminSideBarStore";
+
 import "./styles/adminSidebar.css";
 import "../backend/common/styles/darkMode.css";
+import SidebarLogout from "./adminSidebar/SidebarLogout";
+import SidebarNotifications from "./adminSidebar/SidebarNotifications";
+import SidebarDarkModeToggle from "./adminSidebar/SidebarDarkModeToggle";
+import AngleRightIcon from "./adminSidebar/icons/AngleRightIcon";
+import AngleLeftIcon from "./adminSidebar/icons/AngleLeftIcon";
+import { useAdminSidebarScroll } from "./adminSidebar/hooks/useAdminSidebarScroll";
+import SidebarLinks from "./adminSidebar/SidebarLinks";
+import CommentIcon from "./icons/CommentIcon";
 
 export default function AdminSidebar({
   darkMode,
@@ -15,62 +23,52 @@ export default function AdminSidebar({
   selectedDropdownLink,
   count,
   toggleDarkMode,
+  notifications,
+  handleLogout,
 }) {
+  const { isCollapsed, isHidden, toggleCollapse } = useAdminSidebarStore();
+
+  // useAdminSidebarScroll();
+
   return (
     <aside
       className={`admin-sidebar ${isMobileMenuOpen ? "open" : ""} ${
-        darkMode ? "dark-mode" : ""
-      }`}
+        isCollapsed ? "collapsed" : ""
+      } ${isHidden ? "sidebar-hidden" : ""} ${darkMode ? "dark-mode" : ""}`}
+      role="navigation"
+      aria-label="Admin sidebar"
     >
-      <ul>
-        {sidebarLinks.map((link) => (
-          <li key={link.to} className="sidebar-item">
-            <Link
-              to={link.to}
-              onClick={() => setSelectedLink(link.to)}
-              className={selectedLink === link.to ? "active" : ""}
-            >
-              <i className={`fa ${link.icon}`} />
-              {link.label}
-            </Link>
-            {link.dropdown && link.dropdown.length > 0 && (
-              <ul
-                className={`dropdown ${selectedLink === link.to ? "open" : ""}`}
-              >
-                {link.dropdown.map((submenu) => (
-                  <li key={submenu.to}>
-                    <Link
-                      to={submenu.to}
-                      onClick={() => setSelectedDropdownLink(submenu.to)}
-                      className={
-                        selectedDropdownLink === submenu.to ? "active" : ""
-                      }
-                    >
-                      {submenu.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
+      <button className="collapse-btn" onClick={toggleCollapse}>
+        {isCollapsed ? <AngleRightIcon /> : <AngleLeftIcon />}
+      </button>
 
-      <div className="">
-        <i className="fa fa-comment" aria-hidden="true"></i>
-        <span>{count} this is new</span>
+      <SidebarLinks
+        sidebarLinks={sidebarLinks}
+        selectedLink={selectedLink}
+        setSelectedLink={setSelectedLink}
+        isCollapsed={isCollapsed}
+        selectedDropdownLink={selectedDropdownLink}
+        setSelectedDropdownLink={setSelectedDropdownLink}
+      />
+
+      <div className="adminSidebar__comments">
+        <CommentIcon />
+        {!isCollapsed && <span>{count}</span>}
       </div>
 
-      <div className="admin-navbar__dark-mode-toggles">
-        <Switch
-          checked={darkMode}
-          onChange={toggleDarkMode}
-          color="default"
-          icon={<FaMoon />}
-          checkedIcon={<FaSun />}
-          inputProps={{ "aria-label": "dark mode toggle" }}
+      <SidebarNotifications
+        notifications={notifications}
+        isCollapsed={isCollapsed}
+      />
+
+      {!isCollapsed && (
+        <SidebarDarkModeToggle
+          darkMode={darkMode}
+          toggleDarkMode={toggleDarkMode}
         />
-      </div>
+      )}
+
+      <SidebarLogout isCollapsed={isCollapsed} handleLogout={handleLogout} />
     </aside>
   );
 }

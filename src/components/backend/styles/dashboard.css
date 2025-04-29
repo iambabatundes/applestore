@@ -1,7 +1,7 @@
 /* Mobile-first styles */
 
 .dashboard {
-    padding: 15px 18px;
+    /* padding: 15px 18px; */
     animation: fadeIn 1s ease-in;
 }
 
