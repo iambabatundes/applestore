@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useCurrencyStore } from "../../store/currencyStore";
 import "../styles/currency.css";
 
-export default function Currency() {
+export default function Currency({ className, onSelect }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const {
     currencyRates,
@@ -19,6 +19,7 @@ export default function Currency() {
   const handleCurrencyChange = (currency) => {
     setSelectedCurrency(currency);
     setIsDropdownOpen(false);
+    if (onSelect) onSelect();
   };
 
   const handleMouseEnter = () => {
@@ -35,7 +36,7 @@ export default function Currency() {
 
   return (
     <div
-      className="currency-wrapper"
+      className={`currency-wrapper ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

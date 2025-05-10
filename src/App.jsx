@@ -53,7 +53,7 @@ function App() {
     fetchGeoLocation();
     useCurrencyStore.getState().initializeCurrency();
     fetchLogo(setLogoImage);
-    setTimeout(() => setLoadingApp(false), 300);
+    setTimeout(() => setLoadingApp(false), 100);
   }, []);
 
   const handleCurrencyChange = (currency) => {

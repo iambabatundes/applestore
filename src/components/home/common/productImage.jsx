@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 export default function ProductImage({ src, alt }) {
   const [imageSrc, setImageSrc] = useState(null);
+  const [isImageLoaded, setImageLoaded] = useState(false);
   const imgRef = useRef();
 
   useEffect(() => {
@@ -26,12 +27,33 @@ export default function ProductImage({ src, alt }) {
     };
   }, [src]);
 
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+
   return (
-    <img
-      ref={imgRef}
-      src={imageSrc}
-      alt={alt}
-      className="productCard__productImage"
-    />
+    <div
+      className={`productCard__image-wrapper ${
+        isImageLoaded ? "loaded" : "loading"
+      }`}
+    >
+      <img
+        ref={imgRef}
+        src={imageSrc}
+        alt={alt}
+        className={`productCard__productImage productCard__productImage--blurred ${
+          isImageLoaded ? "hidden" : ""
+        }`}
+      />
+
+      <img
+        ref={imgRef}
+        src={imageSrc || ""}
+        alt={alt}
+        className="productCard__productImage"
+        onLoad={handleImageLoad}
+        loading="lazy"
+      />
+    </div>
   );
 }

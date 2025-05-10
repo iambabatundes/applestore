@@ -1,0 +1,52 @@
+.product-skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 250px;
+    height: 320px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-image {
+    height: 150px;
+    background: #e0e0e0;
+    border-radius: 12px;
+}
+
+.skeleton-text {
+    height: 20px;
+    background: #e0e0e0;
+    border-radius: 8px;
+}
+
+.title {
+    width: 80%;
+}
+
+.price {
+    width: 50%;
+}
+
+.button {
+    width: 60%;
+    height: 32px;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+
+    50% {
+        background-color: #f5f5f5;
+    }
+
+    100% {
+        background-color: #e0e0e0;
+    }
+}

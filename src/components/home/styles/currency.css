@@ -1,6 +1,11 @@
 .currency-wrapper {
     position: relative;
-    display: inline-block;
+    display: none;
+
+}
+
+.currency-wrapper-mobile {
+    display: block;
 }
 
 .currency-dropdown {
@@ -49,3 +54,13 @@
 .currency-item:hover {
     background-color: #f0f0f0;
 }
+
+@media (min-width: 768px) {
+    .currency-wrapper {
+        display: block;
+    }
+}
+
+@media (min-width: 1200px) {}
+
+@media (min-width: 1800px) {}

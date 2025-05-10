@@ -85,6 +85,7 @@ const Admin = ({ companyName, count, userName, logo }) => {
           toggleDarkMode={toggleDarkMode}
           notifications={notifications}
           handleLogout={logout}
+          setIsMobileMenuOpen={toggleMobileMenu}
         />
         {/* <section className="admin-main-content"> */}
         <section

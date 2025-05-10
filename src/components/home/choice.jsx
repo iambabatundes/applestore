@@ -1,84 +1,79 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "./common/productCard";
-import { getProductsByCategorys } from "./../../services/productService";
 import "../styles/choice.css";
+import CarouselControls from "./common/CarouselControls";
+import useCarousel from "./hooks/useCarousel";
+import useProductStore from "./hooks/useCategoryProducts";
 
 export default function Choice({
+  visibleCards = 5,
+  autoScroll = true,
+  scrollInterval = 3000,
   addToCart,
   cartItems,
   conversionRate,
   selectedCurrency,
 }) {
-  const [products, setProducts] = useState([]);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const categoryName = "Category";
+  const { fetchCategoryProducts, productsByCategory, loading, errors } =
+    useProductStore();
 
   useEffect(() => {
-    async function fetctProducts() {
-      try {
-        const { data } = await getProductsByCategorys("Category");
-        // setProducts(data);
-        setProducts([...data]);
-      } catch (error) {
-        console.error("Error fetching category products:", error);
-      }
-    }
+    fetchCategoryProducts(categoryName);
+  }, [categoryName, fetchCategoryProducts]);
 
-    fetctProducts();
-  }, []);
+  const productsData = productsByCategory[categoryName];
+  const products = productsData?.data || [];
+
+  const { currentCardIndex, handleNextCard, handlePrevCard } = useCarousel(
+    products.length,
+    visibleCards,
+    autoScroll && !isHovered,
+    scrollInterval
+  );
+
+  const cardsToDisplay = products.slice(
+    currentCardIndex,
+    currentCardIndex + visibleCards
+  );
 
   const handleRatingChange = (newRating) => {
     console.log(`New rating for ${products.name}: ${newRating}`);
   };
 
-  const handleNextCard = () => {
-    const nextIndex = (currentCardIndex + 1) % (products.length - 5);
-    setCurrentCardIndex(nextIndex);
-  };
-
-  const handlePrevCard = () => {
-    const prevIndex =
-      (currentCardIndex + products.length - 1) % (products.length - 5);
-    setCurrentCardIndex(prevIndex);
-  };
-
-  const cardsToDisplay = products.slice(currentCardIndex, currentCardIndex + 5);
-
   return (
-    <section>
+    <section className="choice__cards">
       <div className="choice__cards-wrapper">
-        <button
-          className="choice-arrowBtn choice__leftBtn"
-          onClick={handlePrevCard}
+        <div
+          className="choice__cards-container"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          <span className="choice__iconBtn">
-            <i className="fa fa-chevron-left" aria-hidden="true"></i>
-          </span>
-        </button>
+          <CarouselControls
+            isHovered={isHovered}
+            onNext={handleNextCard}
+            onPrev={handlePrevCard}
+          />
 
-        <div className="choice__product">
-          {cardsToDisplay.map((product, index) => {
-            return (
-              <ProductCard
-                key={product._id}
-                addToCart={addToCart}
-                item={product}
-                handleRatingChange={handleRatingChange}
-                cartItems={cartItems}
-                productName={product}
-                conversionRate={conversionRate}
-                selectedCurrency={selectedCurrency}
-              />
-            );
-          })}
+          <div className="choice__product">
+            {cardsToDisplay.map((product, index) => {
+              return (
+                <ProductCard
+                  key={product._id}
+                  addToCart={addToCart}
+                  item={product}
+                  handleRatingChange={handleRatingChange}
+                  cartItems={cartItems}
+                  productName={product}
+                  conversionRate={conversionRate}
+                  selectedCurrency={selectedCurrency}
+                />
+              );
+            })}
+          </div>
         </div>
-        <button
-          className="choice-arrowBtn choice__nextBtn"
-          onClick={handleNextCard}
-        >
-          <span className=".choice__iconBtn">
-            <i className="fa fa-chevron-right" aria-hidden="true"></i>
-          </span>
-        </button>
       </div>
     </section>
   );

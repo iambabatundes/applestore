@@ -7,6 +7,7 @@ export default function SidebarLinks({
   isCollapsed,
   selectedDropdownLink,
   setSelectedDropdownLink,
+  setIsMobileMenuOpen,
 }) {
   return (
     <ul>
@@ -14,7 +15,12 @@ export default function SidebarLinks({
         <li key={link.to} className="sidebar-item">
           <Link
             to={link.to}
-            onClick={() => setSelectedLink(link.to)}
+            onClick={() => {
+              setSelectedLink(link.to);
+              if (!link.dropdown) {
+                setIsMobileMenuOpen(false);
+              }
+            }}
             className={selectedLink === link.to ? "active" : ""}
             title={isCollapsed ? link.label : ""}
           >
@@ -22,15 +28,16 @@ export default function SidebarLinks({
             {!isCollapsed && link.label}
           </Link>
 
-          {!isCollapsed && link.dropdown && (
-            <ul
-              className={`dropdown ${selectedLink === link.to ? "open" : ""}`}
-            >
+          {!isCollapsed && link.dropdown && selectedLink === link.to && (
+            <ul className="dropdown open">
               {link.dropdown.map((submenu) => (
                 <li key={submenu.to}>
                   <Link
                     to={submenu.to}
-                    onClick={() => setSelectedDropdownLink(submenu.to)}
+                    onClick={() => {
+                      setSelectedDropdownLink(submenu.to);
+                      setIsMobileMenuOpen(false); // Close sidebar on sublink click
+                    }}
                     className={
                       selectedDropdownLink === submenu.to ? "active" : ""
                     }

@@ -48,27 +48,6 @@
     display: none;
 }
 
-/* Customize scrollbar appearance */
-/* .media-thumbnails::-webkit-scrollbar {
-    width: 3px;
-} */
-
-/* .media-thumbnails::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 10px;
-}
-
-.media-thumbnails::-webkit-scrollbar-track {
-    background: #f1f1f1;
-} */
-
-/* .thumbnail {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border 0.3s ease;
-} */
 
 .thumbnail {
     margin-right: 10px;
@@ -106,12 +85,6 @@
     transition: opacity 0.5s ease-in-out;
 }
 
-/* .main-media video {
-    border-radius: 28px;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-} */
 
 .main-media .visible {
     opacity: 1;

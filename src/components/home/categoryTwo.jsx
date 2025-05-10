@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./styles/categoryTwo.css";
-import ArrowButton from "./common/arrowButton";
 import ProductCard from "./common/productCard";
-import { getProductsByCategorys } from "../../services/productService";
 import useCarousel from "./hooks/useCarousel";
 import imageFu from "./images/Best Selling Furniture.jpg";
+import useProductStore from "./hooks/useCategoryProducts";
+import CarouselControls from "./common/CarouselControls";
 
 export default function CategoryTwo({
   addToCart,
@@ -16,8 +16,18 @@ export default function CategoryTwo({
   conversionRate,
   currencySymbols,
 }) {
-  const [products, setProducts] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
+
+  const categoryName = "Furniture";
+  const { fetchCategoryProducts, productsByCategory, loading, errors } =
+    useProductStore();
+
+  useEffect(() => {
+    fetchCategoryProducts(categoryName);
+  }, [categoryName, fetchCategoryProducts]);
+
+  const productsData = productsByCategory[categoryName];
+  const products = productsData?.data || [];
 
   const { currentCardIndex, handleNextCard, handlePrevCard } = useCarousel(
     products.length,
@@ -25,19 +35,6 @@ export default function CategoryTwo({
     autoScroll && !isHovered,
     scrollInterval
   );
-
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const { data } = await getProductsByCategorys("Furniture");
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching furniture category products:", error);
-      }
-    }
-
-    fetchProducts();
-  }, []);
 
   const handleRatingChange = (newRating) => {
     console.log(`New rating for ${products.name}: ${newRating}`);
@@ -63,10 +60,10 @@ export default function CategoryTwo({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <ArrowButton
-            direction="left"
-            onClick={handlePrevCard}
-            className={isHovered ? "show-arrow" : "hide-arrow"}
+          <CarouselControls
+            isHovered={isHovered}
+            onNext={handleNextCard}
+            onPrev={handlePrevCard}
           />
 
           <div className="cat2__product-list">
@@ -84,14 +81,6 @@ export default function CategoryTwo({
               />
             ))}
           </div>
-
-          <ArrowButton
-            direction="right"
-            onClick={handleNextCard}
-            className={`${
-              isHovered ? "show-arrow" : "hide-arrow"
-            } arrowButton__nextBtn`}
-          />
         </div>
       </div>
     </section>

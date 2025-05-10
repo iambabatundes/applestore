@@ -1,4 +1,3 @@
-/* === CategoryTwo Base Styles === */
 .cat2__main {
     width: 100%;
     display: flex;
@@ -76,8 +75,6 @@
     opacity: 0;
     pointer-events: none;
 }
-
-/* === Responsive Media Queries === */
 
 /* Tablets (min-width: 640px) */
 @media (min-width: 640px) {

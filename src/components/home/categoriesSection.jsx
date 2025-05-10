@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./styles/categoriesSection.css";
 
-export default function CategoriesSection({ categories }) {
+export default function CategoriesSection({
+  categories,
+  className,
+  onItemSelect,
+}) {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -17,11 +21,17 @@ export default function CategoriesSection({ categories }) {
     setIsDropdownVisible(!isDropdownVisible);
   };
 
+  const handleItemClick = () => {
+    if (onItemSelect) {
+      onItemSelect();
+    }
+  };
+
   return (
-    <section className="navbar-menu">
+    <section className={`navbar-category-menus ${className}`}>
       <div className="category-dropdown">
         <button className="category-button" onClick={toggleDropdownVisibility}>
-          All Categories
+          ☰ All Categories
         </button>
         {isDropdownVisible && (
           <div className="navCategory">
@@ -43,7 +53,9 @@ export default function CategoriesSection({ categories }) {
                           <ul>
                             {Array.isArray(subcategory.items) &&
                               subcategory.items.map((item, itemIndex) => (
-                                <li key={itemIndex}>{item}</li>
+                                <li key={itemIndex} onClick={handleItemClick}>
+                                  {item}
+                                </li>
                               ))}
                           </ul>
                         </div>

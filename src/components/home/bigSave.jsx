@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./styles/bigSave.css";
 import ProductCard from "./common/productCard";
-import ArrowButton from "./common/arrowButton";
 import useCarousel from "./hooks/useCarousel";
-import { getProductsByCategorys } from "../../services/productService";
+import CarouselControls from "./common/CarouselControls";
+import useProductStore from "./hooks/useCategoryProducts";
+import imagePhone from "./images/Purple Sale Mockups.jpg";
 
 export default function BigSave({
   addToCart,
@@ -15,8 +16,18 @@ export default function BigSave({
   conversionRate,
   currencySymbols,
 }) {
-  const [products, setProducts] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
+
+  const categoryName = "Women's Clothing";
+  const { fetchCategoryProducts, productsByCategory, loading, errors } =
+    useProductStore();
+
+  useEffect(() => {
+    fetchCategoryProducts(categoryName);
+  }, [categoryName, fetchCategoryProducts]);
+
+  const productsData = productsByCategory[categoryName];
+  const products = productsData?.data || [];
 
   const { currentCardIndex, handleNextCard, handlePrevCard } = useCarousel(
     products.length,
@@ -24,19 +35,6 @@ export default function BigSave({
     autoScroll && !isHovered,
     scrollInterval
   );
-
-  useEffect(() => {
-    async function fetctProducts() {
-      try {
-        const { data } = await getProductsByCategorys("Women's Clothing");
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching category products:", error);
-      }
-    }
-
-    fetctProducts();
-  }, []);
 
   const handleRatingChange = (newRating) => {
     console.log(`New rating for ${products.name}: ${newRating}`);
@@ -49,46 +47,44 @@ export default function BigSave({
 
   return (
     <section className="big-save">
-      <div className="big-save-header">
-        <div className="big-save-banner"></div>
-      </div>
-
-      <div
-        className="bigSave__cards-wrapper"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <ArrowButton
-          direction="left"
-          onClick={handlePrevCard}
-          className={isHovered ? "show-arrow" : "hide-arrow"}
-        />
-
-        <div className="bigSave__product">
-          {cardsToDisplay.map((product) => {
-            return (
-              <ProductCard
-                key={product._id}
-                addToCart={addToCart}
-                item={product}
-                handleRatingChange={handleRatingChange}
-                cartItems={cartItems}
-                productName={product}
-                conversionRate={conversionRate}
-                selectedCurrency={selectedCurrency}
-                currencySymbols={currencySymbols}
-              />
-            );
-          })}
+      <div className="bigSave__wrapper">
+        <div className="bigSave__promo-container">
+          <img
+            src={imagePhone}
+            alt="Best Selling Furniture"
+            className="big-save-banner"
+          />
         </div>
 
-        <ArrowButton
-          direction="right"
-          onClick={handleNextCard}
-          className={`${
-            isHovered ? "show-arrow" : "hide-arrow"
-          } arrowButton__nextBtn`}
-        />
+        <div
+          className="bigSave__cards-wrapper"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <CarouselControls
+            onNext={handleNextCard}
+            onPrev={handlePrevCard}
+            isHovered={isHovered}
+          />
+
+          <div className="bigSave__product">
+            {cardsToDisplay.map((product) => {
+              return (
+                <ProductCard
+                  key={product._id}
+                  addToCart={addToCart}
+                  item={product}
+                  handleRatingChange={handleRatingChange}
+                  cartItems={cartItems}
+                  productName={product}
+                  conversionRate={conversionRate}
+                  selectedCurrency={selectedCurrency}
+                  currencySymbols={currencySymbols}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -7,7 +7,7 @@
     /* background: #fff; */
     max-width: 1200px;
     margin: 20px auto;
-    height: 745px;
+    /* height: 745px; */
 }
 
 @media (min-width: 768px) {
@@ -22,6 +22,7 @@
     width: 100%;
     padding: 16px;
     text-align: center;
+    display: none;
 }
 
 .buyFrom10k__offer {
@@ -113,6 +114,10 @@
 
 /* Responsive styles */
 @media (min-width: 600px) {
+    .buyFrom10k {
+        display: block;
+    }
+
     .buyFrom10k__products {
         flex-direction: row;
         flex-wrap: wrap;

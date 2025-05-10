@@ -11,14 +11,23 @@ import ProductRating from "./common/ProductRating";
 import SingleProductTab from "./common/singleProductTab";
 import config from "../../config.json";
 import ProductVariation from "./ProductVariation";
+import { useSingleProductStore } from "./store/useSingleProductStore";
 
 export default function SingleProduct({ selectedCurrency, conversionRate }) {
   const { name } = useParams();
   const { product, error } = useProduct(name);
-  const [selectedMedia, setSelectedMedia] = useState([]);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [fadeClass, setFadeClass] = useState("visible");
-  const [selectedImage, setSelectedImage] = useState("");
+
+  const {
+    selectedMedia,
+    isZoomed,
+    fadeClass,
+    selectedImage,
+    setSelectedMedia,
+    setIsZoomed,
+    setFadeClass,
+    setSelectedImage,
+    resetMediaState,
+  } = useSingleProductStore();
 
   useEffect(() => {
     if (product) {

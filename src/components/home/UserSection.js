@@ -2,18 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import config from "../../config.json";
+import "./styles/userSection.css";
 
 export default function UserSection({
   user,
-  geoLocation,
   toggleDropdown,
   isDropdownOpen,
+  className,
 }) {
   return (
     <>
       {!user ? (
         <>
-          <div className="navbar-user-container">
+          <div className={`navbar-user-container ${className}`}>
             <div className="navbar-user__main" onClick={toggleDropdown}>
               <Avatar
                 src="/default-avatar.png"
@@ -50,19 +51,10 @@ export default function UserSection({
               </div>
             )}
           </div>
-          {/* <div className="navbar-user-container">
-            <Link to="/address" className="navbar-user__main">
-              <i className="fa fa-map-marker map-marker"></i>
-              <div className="navbar-signin-main">
-                <h1 className="navbar-user-greeting">Deliver to!</h1>
-                <span>{geoLocation || "Loading..."}</span>
-              </div>
-            </Link>
-          </div> */}
         </>
       ) : (
         <>
-          <div className="navbar-user-container">
+          <div className={`navbar-user-container ${className}`}>
             <div className="navbar-user__main" onClick={toggleDropdown}>
               <Avatar
                 src={
@@ -111,15 +103,6 @@ export default function UserSection({
               </div>
             )}
           </div>
-          {/* <div className="navbar-user-address">
-            <Link to="/address" className="navbar-address__main">
-              <i className="fa fa-map-marker map-marker"></i>
-              <div className="navbar-address__container">
-                <h1 className="navbar-user-greeting">Deliver to!</h1>
-                <span>{user.address?.country || geoLocation}</span>
-              </div>
-            </Link>
-          </div> */}
         </>
       )}
     </>
