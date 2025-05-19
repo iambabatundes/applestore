@@ -28,6 +28,7 @@ export default function CategoryTwo({
 
   const productsData = productsByCategory[categoryName];
   const products = productsData?.data || [];
+  // const products = productsData?.data?.results || [];
 
   const { currentCardIndex, handleNextCard, handlePrevCard } = useCarousel(
     products.length,

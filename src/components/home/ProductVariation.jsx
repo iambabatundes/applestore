@@ -8,6 +8,7 @@ export default function ProductVariation({
   capacity = [],
   materials = [],
   onColorSelect,
+  className,
 }) {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -38,8 +39,7 @@ export default function ProductVariation({
   };
 
   return (
-    <section className="product-variation">
-      {/* Color Selection */}
+    <section className={`product-variation ${className}`}>
       {colors.length > 0 && (
         <>
           <h1 className="productVariation__heading">

@@ -11,13 +11,13 @@ const useProductStore = create(
       loadingCategories: {},
       errors: {},
 
-      fetchCategoryProducts: async (categoryName) => {
-        const state = get();
-        const cached = state.productsByCategory[categoryName];
+      fetchCategoryProducts: async (categoryName, forceRefresh = false) => {
+        const { productsByCategory } = get();
+        const cached = productsByCategory[categoryName];
         const now = Date.now();
         const isStale = !cached || now - (cached.timestamp || 0) > TTL_MS;
 
-        if (!isStale) return;
+        if (!forceRefresh && !isStale) return;
 
         set((state) => ({
           loadingCategories: {
@@ -32,10 +32,7 @@ const useProductStore = create(
           set((state) => ({
             productsByCategory: {
               ...state.productsByCategory,
-              [categoryName]: {
-                data,
-                timestamp: now,
-              },
+              [categoryName]: { data, timestamp: now },
             },
             loadingCategories: {
               ...state.loadingCategories,
@@ -43,7 +40,7 @@ const useProductStore = create(
             },
           }));
         } catch (error) {
-          console.error("Failed to fetch products:", error);
+          console.error("Fetch error:", error);
           set((state) => ({
             errors: { ...state.errors, [categoryName]: error },
             loadingCategories: {
@@ -54,45 +51,9 @@ const useProductStore = create(
         }
       },
 
-      refreshCategoryProducts: async (categoryName) => {
-        const now = Date.now();
+      refreshCategoryProducts: (categoryName) =>
+        get().fetchCategoryProducts(categoryName, true),
 
-        set((state) => ({
-          loadingCategories: {
-            ...state.loadingCategories,
-            [categoryName]: true,
-          },
-          errors: { ...state.errors, [categoryName]: null },
-        }));
-
-        try {
-          const { data } = await getProductsByCategorys(categoryName);
-          set((state) => ({
-            productsByCategory: {
-              ...state.productsByCategory,
-              [categoryName]: {
-                data,
-                timestamp: now,
-              },
-            },
-            loadingCategories: {
-              ...state.loadingCategories,
-              [categoryName]: false,
-            },
-          }));
-        } catch (error) {
-          console.error("Refresh error:", error);
-          set((state) => ({
-            errors: { ...state.errors, [categoryName]: error },
-            loadingCategories: {
-              ...state.loadingCategories,
-              [categoryName]: false,
-            },
-          }));
-        }
-      },
-
-      // Optional: Clear cache per category
       clearCategoryCache: (categoryName) => {
         set((state) => {
           const updated = { ...state.productsByCategory };

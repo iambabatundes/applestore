@@ -66,8 +66,6 @@ export default function ProductMedia({
         </div>
       ) : (
         <video src={defaultMedia} autoPlay controls className="main-video" />
-
-        // <di></di>
       )}
     </section>
   );

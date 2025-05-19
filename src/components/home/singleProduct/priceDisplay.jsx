@@ -13,12 +13,7 @@ export default function PriceDisplay({
         <span className="singleProduct__price-currency">
           {selectedCurrency}
         </span>
-        {/* <span className="singleProduct__price-whole">
-                {Math.floor(convertedPrice)}
-              </span> */}
-        {/* <span className="singleProduct__price-fraction">
-                .{(convertedPrice % 1).toFixed(2).substring(2)}
-              </span> */}
+
         <span className="singleProduct__price-whole">{convertedPrice}</span>
       </span>
       <div className="singleProduct__discountPrice-main">
