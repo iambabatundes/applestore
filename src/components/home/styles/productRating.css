@@ -12,8 +12,8 @@
 .product__star-main {
     cursor: pointer;
     /* margin-right: 4px; */
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
 }
 
 .productCard__star {
@@ -52,8 +52,8 @@
 .productCard__review,
 .productCard__product-rating {
     color: #757575;
-    font-size: 13px;
+    font-size: 11px;
     line-height: 16px;
     font-weight: 400;
-    margin-left: 4px;
+    margin-left: -1px;
 }

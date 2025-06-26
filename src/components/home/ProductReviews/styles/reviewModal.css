@@ -1,0 +1,81 @@
+.reviewModal__overlay {
+    transition: background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.reviewModal__dragHandle {
+    width: 36px;
+    height: 4px;
+    background: #ccc;
+    border-radius: 2px;
+    margin: 0 auto;
+    margin-top: 8px;
+}
+
+.reviewModal__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.reviewModal__content {
+    background: #fff;
+    width: 100%;
+    max-height: 90vh;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reviewModal__dragHandle {
+    width: 40px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 4px;
+    margin: 8px auto;
+}
+
+.reviewModal__scrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1rem;
+}
+
+.reviewModal__loading,
+.reviewModal__end {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.reviewModal__footer {
+    padding: 1rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    background: #fafafa;
+}
+
+.reviewModal__ctaBtn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.reviewModal__ctaBtn:hover {
+    background-color: #0056b3;
+}

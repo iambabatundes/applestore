@@ -18,12 +18,23 @@ import {
   getConvertedPrices,
 } from "./singleProduct/utils/singleProductUtils";
 import MobileMediaCarousel from "./singleProduct/MobileMediaCarousel";
+import ProductLabels from "./common/ProductLabels";
+import CommitmentSection from "./mobile/CommitmentSection";
+// import useProductReviews from "./ProductReviews/hooks/useProductReviews";
+import ReviewSection from "./ProductReviews/ReviewSection";
+import useProductReviews from "./ProductReviews/hooks/useProductReviews";
 
 export default function SingleProduct({ selectedCurrency, conversionRate }) {
   const { name } = useParams();
   const { product, error } = useProduct(name);
   const [isMobile, setIsMobile] = useState(false);
   const [zoomMedia, setZoomMedia] = useState(null);
+
+  const promotionsArray = Array.isArray(product.promotion)
+    ? product.promotion
+    : product.promotion
+    ? [product.promotion]
+    : [];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -43,6 +54,9 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
     setSelectedImage,
     resetMediaState,
   } = useSingleProductStore();
+
+  const { reviews, totalReviews, rating, loading, currentUserId } =
+    useProductReviews(product._id);
 
   useEffect(() => {
     if (product) {
@@ -71,8 +85,6 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
     product,
     conversionRate
   );
-
-  console.log(product.colors);
 
   return (
     <section className="singleProduct-container">
@@ -105,14 +117,9 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
                     {product.discountPercentage} OFF
                   </span>
                 )}
-
-                {product.promotion && (
-                  <span className="mobilepromotion">
-                    {product.promotion.name}
-                    {product.promotion.decription}
-                  </span>
-                )}
               </div>
+
+              <ProductLabels promotions={promotionsArray} />
 
               <p className="mobilePrice__taxNote">
                 Tax excluded, add at checkout if applicable.
@@ -125,16 +132,18 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
               <div className="productCard__rating">
                 <StarRating
                   totalStars={5}
-                  rating={product.rating || 0}
+                  rating={parseFloat(rating).toFixed(1) || 0}
                   readOnly={true}
                 />
                 <span className="productCard__product-rating">
-                  {product.rating > 0 ? `${product.rating} Rating` : "0.0"}
+                  {rating > 0
+                    ? `${parseFloat(rating).toFixed(1)} Rating`
+                    : "0.0"}
                 </span>
                 <div className="productCard__details">
                   <span className="productCard__review">
-                    {product.reviews > 0
-                      ? `${product.reviews} Reviews`
+                    {product.reviewCount > 0
+                      ? `${product.reviewCount} Reviews`
                       : "0 Review"}
                   </span>
                 </div>
@@ -154,6 +163,21 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
                 onColorSelect={setSelectedImage}
                 className="singleProduct__variationMobile"
               />
+
+              <CommitmentSection />
+              <ReviewSection
+                product={product}
+                reviews={reviews}
+                loading={loading}
+                error={error}
+                onPreviewClick={() => setShowModal(true)}
+                totalReviews={totalReviews}
+                rating={rating}
+                currentUserId={currentUserId}
+              />
+              <section>
+                <h1>Specification</h1>
+              </section>
             </div>
           </div>
           <div className="mobileActions__stickyBar">
@@ -200,11 +224,6 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
             />
 
             <h1 className="singleProduct__productName">{product.name}</h1>
-            <ProductRating
-              purchaseCount={product.purchaseCount}
-              reviews={product.reviews}
-              rating={product.rating}
-            />
 
             <ProductVariation
               colors={product.colors}
@@ -213,6 +232,13 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
               materials={product.materials}
               onColorSelect={setSelectedImage}
             />
+
+            {promotionsArray.map((promo, index) => (
+              <div key={index} className="singleProduct__promotion">
+                <h4 className="promotion__title">{promo.name}</h4>
+                <p className="promotion__description">{promo.description}</p>
+              </div>
+            ))}
           </section>
         </div>
 

@@ -1,0 +1,202 @@
+.reviewItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    /* padding: 1rem; */
+    margin-bottom: 1rem;
+    /* border-radius: 1rem; */
+    background-color: #fff;
+    /* border: 1px solid #eee; */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.reviewItem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* User + date row */
+.reviewItem__user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #777;
+}
+
+.reviewItem__user article {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reviewItem__user img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+.reviewItem__user span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Star rating */
+.reviewItem__rating {
+    margin-top: 0.25rem;
+}
+
+/* Review content */
+.reviewItem__content h5 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.5rem 0 0.25rem;
+    color: #000;
+}
+
+.reviewItem__content p {
+    font-size: 0.9rem;
+    color: #333;
+    margin: 0;
+    line-height: 1.5;
+}
+
+
+.reviewItem__media {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    margin-top: 0.5rem;
+    scroll-snap-type: x mandatory;
+}
+
+.reviewItem__media-img,
+.reviewItem__media-video {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+}
+
+/* Scrollbar styling (optional) */
+.reviewItem__media::-webkit-scrollbar {
+    height: 6px;
+}
+
+.reviewItem__media::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.reviewItem__vote {
+    display: flex;
+    gap: 0.75rem;
+    /* margin-top: 0.75rem; */
+    align-items: center;
+    justify-content: end;
+}
+
+.reviewItem__vote,
+.helpful,
+.notHelpful,
+.reviewItem__reportBtn {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reviewItem__vote span.active {
+    background-color: #e6f4ea;
+    border-color: #a3d9a5;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.reviewItem__vote button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.reviewItem__vote button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+/* .reviewItem__reportBtn {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    border: none;
+    background-color: #fff3f2;
+    color: #b71c1c;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+} */
+
+.reviewItem__reportBtn:hover:not(:disabled) {
+    background-color: #ffeaea;
+}
+
+.reviewItem__reportBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Desktop Enhancements */
+@media (min-width: 768px) {
+    .reviewItem {
+        padding: 1.25rem;
+    }
+
+    .reviewItem__media img,
+    .reviewItem__media video {
+        width: 140px;
+        height: 140px;
+    }
+
+    .reviewItem__content h5 {
+        font-size: 1rem;
+    }
+
+    .reviewItem__content p {
+        font-size: 1rem;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    /* .reviewItem {
+        background-color: #1f1f1f;
+        border-color: #333;
+    } */
+
+    /* .reviewItem__user span,
+    .reviewItem__content h5,
+    .reviewItem__content p {
+        color: #ddd;
+    } */
+
+    /* .reviewItem__user {
+        color: #aaa;
+    } */
+
+    /* .reviewItem__media img,
+    .reviewItem__media video {
+        border-color: #444;
+    } */
+
+    /* .reviewItem__media::-webkit-scrollbar-thumb {
+        background-color: #555;
+    } */
+}

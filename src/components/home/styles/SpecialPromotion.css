@@ -1,0 +1,35 @@
+.special-promotion {
+    color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.special__Mobilepromotion-main {
+    display: flex;
+}
+
+.specialPromo__heading {
+    font-size: 0.945rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.promo-pricing {
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.special-promotion .promo-pricing .current-price {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+.special-promotion .promo-pricing .discount-price {
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+}
+
+.special-promotion .countdown {
+    margin-top: 0.5rem;
+}

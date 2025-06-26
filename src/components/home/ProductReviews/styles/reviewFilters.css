@@ -1,0 +1,63 @@
+.reviewFilters {
+    padding: 0.76rem;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.reviewFilters__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 4px;
+}
+
+.tab-button {
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px #d1d1d1;
+    height: 30px;
+    margin: 0 3px 3px 0;
+    padding: 4px 5px;
+    font-size: 0.768rem;
+    border: none;
+}
+
+.tab-button.active {
+    border: 1px solid #ff7474;
+    background-color: #ff5b00;
+    border-color: #ff5b00;
+    color: #fff;
+}
+
+/* Medium Devices (Tablets and Small Laptops) */
+@media (min-width: 600px) {
+    .filter-btn {
+        font-size: 1rem;
+        padding: 0.5rem 1.25rem;
+    }
+}
+
+/* Large Devices (Desktops and TVs) */
+@media (min-width: 1024px) {
+    .reviewFilters {
+        padding: 1.5rem 2rem;
+    }
+
+    .reviewFilters__buttons {
+        justify-content: center;
+    }
+
+    .filter-btn {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+    }
+}
+
+@media (min-width: 1600px) {
+    .filter-btn {
+        font-size: 1.25rem;
+    }
+
+    .review-filters__buttons {
+        gap: 1rem;
+    }
+}

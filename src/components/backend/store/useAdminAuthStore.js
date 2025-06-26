@@ -21,7 +21,7 @@ export const useAdminAuthStore = create((set, get) => ({
       if (token) {
         const decoded = jwtDecode(token);
         if (decoded.exp * 1000 < Date.now()) {
-          await get().refreshAccessToken(); // refresh access token if expired
+          await get().refreshAccessToken();
         }
       }
 
@@ -31,8 +31,17 @@ export const useAdminAuthStore = create((set, get) => ({
 
       // Start inactivity timer and listeners
       get().setupInactivityMonitor(navigate);
+      const lastRoute = localStorage.getItem("lastVisitedRoute");
+      if (lastRoute && lastRoute.startsWith("/admin")) {
+        localStorage.removeItem("lastVisitedRoute");
+        navigate(lastRoute);
+      } else {
+        navigate("/admin");
+      }
     } catch (err) {
       console.error("Auth failed", err);
+      localStorage.removeItem("token");
+      localStorage.removeItem("lastVisitedRoute");
       set({ isAuthenticated: false, adminUser: null, loading: false });
       navigate("/admin/login");
     }
@@ -82,6 +91,7 @@ export const useAdminAuthStore = create((set, get) => ({
   setupInactivityMonitor: (navigate) => {
     clearTimeout(logoutTimer);
     logoutTimer = setTimeout(async () => {
+      localStorage.setItem("lastVisitedRoute", window.location.pathname);
       await get().logout(true);
       navigate("/admin/login");
     }, 3600000); // 1 hour = 3600000ms

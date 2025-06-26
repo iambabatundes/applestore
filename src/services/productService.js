@@ -11,6 +11,7 @@ function productUrl(id) {
 export function getProductsByCategorys(categoryName) {
   return http.get(`${apiEndPoint}/categories/${categoryName}`);
 }
+
 export function getProductsByPromotion(promotionName) {
   return http.get(`${apiEndPoint}/promotions/${promotionName}`);
 }

@@ -1,0 +1,140 @@
+/* Overlay */
+.drawer__overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transition: opacity 0.3s ease-in-out;
+    padding: 0.5rem;
+}
+
+/* Drawer modal */
+.drawer__modal {
+    background: #fff;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 16px 16px 0 0;
+    padding: 1rem;
+    animation: slideUp 0.4s ease;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
+
+/* Header */
+.drawer__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.drawer__header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.drawer__close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Body */
+.drawer__body {
+    padding: 1rem 0;
+    flex-grow: 1;
+}
+
+.drawer__textarea {
+    width: 100%;
+    height: 120px;
+    resize: vertical;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+/* Footer */
+.drawer__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid #eee;
+    padding-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.drawer__btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    background-color: #e0e0e0;
+    color: #333;
+    transition: background 0.3s ease;
+}
+
+.drawer__btn:hover {
+    background-color: #ccc;
+}
+
+.drawer__btn.primary {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.drawer__btn.primary:hover {
+    background-color: #d9363e;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+    .drawer__modal {
+        max-width: 500px;
+        border-radius: 12px;
+        max-height: 90vh;
+    }
+
+    .drawer__overlay {
+        align-items: center;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0%);
+            opacity: 1;
+        }
+    }
+}
+
+/* Large screens */
+@media (min-width: 1280px) {
+    .drawer__modal {
+        max-width: 600px;
+    }
+}

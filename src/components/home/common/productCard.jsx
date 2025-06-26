@@ -37,9 +37,12 @@ export default function ProductCard({
           <h1 className="productCard__product-name">{item.name}</h1>
         </Link>
         <ProductRating
-          numberOfSales={item.numberOfSales}
-          onRatingChange={handleRatingChange}
-          rating={item.rating}
+          purchaseCount={item.purchaseCount}
+          reviews={item.reviewCount}
+          rating={item.ratings}
+          // numberOfSales={item.numberOfSales}
+          // onRatingChange={handleRatingChange}
+          // reviews={item.reviews}
         />
         <ProductPrice
           conversionRate={conversionRate}

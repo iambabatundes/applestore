@@ -1,0 +1,72 @@
+.commitment-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+.commitment-modal {
+    background: #fff;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+    transition: transform 0.3s ease;
+    touch-action: pan-y;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
+
+.close-button {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-icon {
+    font-size: 24px;
+    color: #d10024;
+}
+
+.modal-body {
+    font-size: 12px;
+    color: #333;
+}
+
+.commitment__modal-button {
+    margin-top: 24px;
+    width: 100%;
+    padding: 12px;
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}

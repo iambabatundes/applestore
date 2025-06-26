@@ -9,16 +9,18 @@ export default function ProductRating({
 }) {
   return (
     <div className="productCard__rating">
-      <StarRating totalStars={5} rating={rating || 0} readOnly={true} />
+      {/* <StarRating totalStars={5} rating={rating || 0} readOnly={true} /> */}
+      <StarRating totalStars={5} rating={parseFloat(rating)} readOnly />
       <span className="productCard__product-rating">
-        {rating > 0 ? `${rating} Rating` : "0.0"}
+        {rating > 0 ? `${parseFloat(rating).toFixed(1)}` : "0.0"}
       </span>
+      {"|"}
       <div className="productCard__details">
         <span className="productCard__review">
           {reviews > 0 ? `${reviews} Reviews` : "0 Review"}
         </span>
       </div>
-
+      {"|"}
       <span className="productCard__product-sold">
         {purchaseCount > 0 ? `${purchaseCount}  sold` : "0 sold"}
       </span>
