@@ -1,8 +1,7 @@
-import http from "../services/httpService";
-import config from "../config.json";
+import { publicHttpService } from "../services/httpService";
 
-const apiEndPoint = `${config.apiUrl}/top-products`;
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/top-products`;
 
 export function getTopProducts() {
-  return http.get(`${apiEndPoint}`);
+  return publicHttpService.get(`${apiEndPoint}`);
 }

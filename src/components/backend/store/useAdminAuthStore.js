@@ -1,133 +1,134 @@
 import { create } from "zustand";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
-import { adminlogout } from "../../../services/adminAuthService";
-import { getAdminUser } from "../../../services/adminService";
+import { persist } from "zustand/middleware";
+import { toast } from "react-toastify";
+import { adminHttpService } from "../../../services/httpService";
+import {
+  adminlogin,
+  adminlogout,
+  getCurrentUser,
+  adminRefreshTokenApi,
+} from "../../../services/adminAuthService";
 
-let logoutTimer = null;
-let listenersRegistered = false;
+const calculateExpiryDate = (expiresInSeconds) =>
+  Date.now() + expiresInSeconds * 1000;
 
-export const useAdminAuthStore = create((set, get) => ({
-  adminUser: null,
-  isAuthenticated: false,
-  loading: true,
-
-  // Fetch current admin user and set auth state
-  fetchAdminUser: async (navigate) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      // Check for token expiration and refresh if needed
-      if (token) {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 < Date.now()) {
-          await get().refreshAccessToken();
-        }
-      }
-
-      // Get admin user from API and set store state
-      const user = await getAdminUser();
-      set({ adminUser: user, isAuthenticated: true, loading: false });
-
-      // Start inactivity timer and listeners
-      get().setupInactivityMonitor(navigate);
-      const lastRoute = localStorage.getItem("lastVisitedRoute");
-      if (lastRoute && lastRoute.startsWith("/admin")) {
-        localStorage.removeItem("lastVisitedRoute");
-        navigate(lastRoute);
-      } else {
-        navigate("/admin");
-      }
-    } catch (err) {
-      console.error("Auth failed", err);
-      localStorage.removeItem("token");
-      localStorage.removeItem("lastVisitedRoute");
-      set({ isAuthenticated: false, adminUser: null, loading: false });
-      navigate("/admin/login");
-    }
-  },
-
-  // Refresh access token using the refresh token from cookies
-  refreshAccessToken: async () => {
-    try {
-      const { data } = await axios.post(
-        "/admin/auth/refresh",
-        {},
-        { withCredentials: true }
-      );
-      localStorage.setItem("token", data.accessToken);
-      set({ isAuthenticated: true });
-    } catch (err) {
-      console.error("Token refresh failed", err);
-      await get().logout(true);
-    }
-  },
-
-  // Logout function — handles both auto and manual logout
-  logout: async (auto = false) => {
-    if (auto) {
-      localStorage.setItem("logoutType", "automatic");
-      localStorage.setItem(
-        "logoutMessage",
-        "Session expired due to inactivity. Please login again."
-      );
-    } else {
-      localStorage.setItem("logoutType", "manual");
-      localStorage.setItem(
-        "logoutMessage",
-        "You have successfully logged out."
-      );
-    }
-
-    clearTimeout(logoutTimer);
-    get().removeActivityListeners();
-    await adminlogout();
-
-    localStorage.removeItem("token");
-    set({ adminUser: null, isAuthenticated: false });
-  },
-
-  // Setup inactivity timer and event listeners
-  setupInactivityMonitor: (navigate) => {
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(async () => {
-      localStorage.setItem("lastVisitedRoute", window.location.pathname);
-      await get().logout(true);
-      navigate("/admin/login");
-    }, 3600000); // 1 hour = 3600000ms
-
-    if (!listenersRegistered) {
-      const events = ["mousemove", "keydown", "click", "scroll", "keypress"];
-      const activityHandler = () => {
-        clearTimeout(logoutTimer);
-        logoutTimer = setTimeout(async () => {
-          await get().logout(true);
-          navigate("/admin/login");
-        }, 3600000);
-      };
-
-      events.forEach((event) =>
-        window.addEventListener(event, activityHandler)
-      );
-      listenersRegistered = true;
-
-      // Multi-tab logout sync
-      window.addEventListener("storage", (e) => {
-        if (e.key === "token" && !e.newValue) {
-          get().logout(true);
-          navigate("/admin/login");
-        }
-      });
-    }
-  },
-
-  // Clean up event listeners and timers
-  removeActivityListeners: () => {
-    const events = ["mousemove", "keydown", "click", "scroll", "keypress"];
-    events.forEach((event) =>
-      window.removeEventListener(event, get().resetInactivityTimer)
+// Custom storage for multi-tab synchronization
+const secureStorage = {
+  getItem: (name) => localStorage.getItem(name),
+  setItem: (name, value) => {
+    localStorage.setItem(name, value);
+    window.dispatchEvent(
+      new CustomEvent("adminAuthStorage", { detail: { name, value } })
     );
-    clearTimeout(logoutTimer);
-    listenersRegistered = false;
   },
-}));
+  removeItem: (name) => {
+    localStorage.removeItem(name);
+    window.dispatchEvent(
+      new CustomEvent("adminAuthStorage", { detail: { name, value: null } })
+    );
+  },
+};
+
+export const useAdminAuthStore = create(
+  persist(
+    (set, get) => ({
+      adminUser: null,
+      isAuthenticated: false,
+      loading: true,
+      accessToken: null,
+      expiryDate: null,
+
+      setTokens: (accessToken, expiresIn) => {
+        set({
+          accessToken,
+          expiryDate: calculateExpiryDate(expiresIn),
+          isAuthenticated: true,
+        });
+      },
+
+      fetchAdminUser: async (navigate, currentPath) => {
+        if (currentPath === "/admin/login") return; // Prevent loop on login page
+        set({ loading: true });
+        try {
+          const user = await getCurrentUser();
+          if (user) {
+            set({ adminUser: user, isAuthenticated: true });
+          } else {
+            set({ adminUser: null, isAuthenticated: false });
+            navigate("/admin/login");
+          }
+        } catch (err) {
+          set({ adminUser: null, isAuthenticated: false });
+          navigate("/admin/login");
+          toast.error("Failed to load admin user. Please log in again.");
+        } finally {
+          set({ loading: false });
+        }
+      },
+
+      login: async (email, password, navigate) => {
+        set({ loading: true });
+        try {
+          const { accessToken, expiresIn } = await adminlogin(email, password);
+          const user = await getCurrentUser();
+          if (!user) throw new Error("Failed to fetch user after login");
+          set({
+            adminUser: user,
+            accessToken,
+            expiryDate: calculateExpiryDate(expiresIn),
+            isAuthenticated: true,
+            loading: false,
+          });
+          navigate("/admin");
+        } catch (err) {
+          set({ loading: false, isAuthenticated: false });
+          toast.error(
+            err.response?.data?.message || "Login failed. Please try again."
+          );
+          throw err;
+        }
+      },
+
+      logout: async () => {
+        try {
+          await adminlogout();
+          set({
+            adminUser: null,
+            accessToken: null,
+            expiryDate: null,
+            isAuthenticated: false,
+          });
+        } catch (err) {
+          console.error("Logout failed:", err);
+          toast.error("Logout failed. Please try again.");
+        }
+      },
+
+      refreshAccessToken: async () => {
+        try {
+          const { accessToken, expiresIn } = await adminRefreshTokenApi();
+          set({
+            accessToken,
+            expiryDate: calculateExpiryDate(expiresIn),
+            isAuthenticated: true,
+          });
+          return { accessToken, expiresIn };
+        } catch (err) {
+          set({ accessToken: null, expiryDate: null, isAuthenticated: false });
+          toast.error("Session expired. Please log in again.");
+          throw err;
+        }
+      },
+    }),
+    {
+      name: "admin-auth",
+      storage: secureStorage,
+      partialize: (state) => ({
+        adminUser: state.adminUser,
+        accessToken: state.accessToken,
+        isAuthenticated: state.isAuthenticated,
+        expiryDate: state.expiryDate,
+      }),
+    }
+  )
+);

@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import useProductReviews from "../../hooks/useProductReviews";
 import ReviewItem from "./ReviewItem";
-// import StarRating from "../common/StarRating";
 import ReviewModal from "./ReviewModal";
 
+import { useLocation } from "react-router-dom";
 export default function ReviewSection({ productId }) {
   const { reviews, totalReviews, rating, loading } =
     useProductReviews(productId);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.action === "vote" && location.state?.reviewId) {
+      setIsModalOpen(true);
+    }
+  }, [location.state]);
 
   if (loading) return <div className="review-loading">Loading reviews...</div>;
   if (!reviews.length) return null;

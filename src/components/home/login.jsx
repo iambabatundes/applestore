@@ -1,16 +1,24 @@
 import React, { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useStore } from "zustand";
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./styles/login.css";
-import { login } from "../../services/authService";
+import { getVoteIntent } from "./ProductReviews/hooks/useVoteIntent";
+import { authStore, login } from "../../services/authService";
 
-export default function Login({ companyName, user }) {
+export default function Login({ companyName }) {
   const [data, setData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { state } = useLocation();
+  const { user } = useStore(authStore);
+
+  // const { state } = useLocation();
+  const location = useLocation();
   const navigate = useNavigate();
+  const { state } = location;
+
+  const voteIntent = getVoteIntent();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +36,12 @@ export default function Login({ companyName, user }) {
     try {
       await login(data.email, data.password);
       toast.success("You are now logged in");
-      navigate(state?.from || "/", { state });
+      if (voteIntent) {
+        navigate(voteIntent.path, { state: { ...voteIntent, action: "vote" } });
+        sessionStorage.removeItem("voteIntent");
+      } else {
+        navigate(state?.path || "/");
+      }
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         setErrors("Invalid email or password");
@@ -44,14 +57,7 @@ export default function Login({ companyName, user }) {
     }
   };
 
-  // if (user) return <Navigate to="/" replace />;
-
-  if (user) {
-    const redirectPath =
-      state?.path + (state?.openReviewModal ? "?openReviewModal=true" : "") ||
-      "/";
-    return <Navigate to={redirectPath} replace />;
-  }
+  if (user) return <Navigate to="/" replace />;
 
   return (
     <section className="login-section">

@@ -87,11 +87,12 @@ export default function ProfileDisplay({ user, onEdit }) {
         </Box>
         <Typography variant="body1" color="textSecondary">
           <strong>Address:</strong>{" "}
-          {user.address
+          {/* {user.address
             ? `${user.address.address}, 
             ${user.address.state}, ${user.address.country}, 
             ${user.address.zipCode}`
-            : "N/A"}
+            : "N/A"} */}
+          {user.address}
         </Typography>
         <Typography variant="body1" color="textSecondary">
           <strong>Role:</strong> {user.role}

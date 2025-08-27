@@ -1,7 +1,5 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "@react-spring/web";
-import { useDrag } from "@use-gesture/react";
-import StarRating from "../common/starRating";
 import ReviewItem from "./ReviewItem";
 import ReviewFilters from "./common/ReviewFilters";
 import "./styles/reviewModal.css";
@@ -20,6 +18,8 @@ export default function ReviewModal({
   loading,
   currentUserId,
   hasPurchased,
+  reporting,
+  setShowModalReport,
 }) {
   const [showOnlyPhotos, setShowOnlyPhotos] = useState(false);
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -97,6 +97,8 @@ export default function ReviewModal({
               key={review._id}
               review={review}
               currentUserId={currentUserId}
+              reporting={reporting}
+              setShowModalReport={setShowModalReport}
             />
           ))}
           {loading && <p className="reviewModal__loading">Loading more...</p>}

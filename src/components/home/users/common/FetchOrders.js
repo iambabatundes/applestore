@@ -11,7 +11,7 @@ const FetchOrders = ({ user }) => {
     const fetchOrders = async () => {
       try {
         const response = await getUserOrders();
-        const latestOrders = response.data.slice(0, 5); // Get the latest 5 orders
+        const latestOrders = response.orders.slice(0, 5); // Get the latest 5 orders
         setOrders(latestOrders);
       } catch (err) {
         setError(err);
@@ -32,7 +32,7 @@ const FetchOrders = ({ user }) => {
   }
 
   if (orders.length === 0) {
-    return null; // Do not render if there are no orders
+    return null;
   }
 
   return (

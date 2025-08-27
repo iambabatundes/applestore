@@ -15,7 +15,7 @@ export default function MyDashboard({ user, addToCart, cartItems }) {
     async function fetchData() {
       try {
         const response = await getUserOrders();
-        const { totalSpent, completedOrders, totalOrders } = response.data;
+        const { totalSpent, completedOrders, totalOrders } = response;
         setStats({ totalSpent, completedOrders, totalOrders });
       } catch (error) {
         console.error("Error fetching user data", error);
@@ -44,7 +44,7 @@ export default function MyDashboard({ user, addToCart, cartItems }) {
       </div>
       <div className="yourOrders">
         <h2>My Orders</h2>
-        <FetchOrders />
+        <FetchOrders user={user} />
       </div>
 
       <TopProduct cartItems={cartItems} addToCart={addToCart} />

@@ -1,25 +1,57 @@
-import http from "../services/httpService";
+import { publicHttpService, adminHttpService } from "../services/httpService";
 
-const apiEndPoint = "http://localhost:4000/api/upload-logo";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/upload-logo`;
+
+function logoUrl(id) {
+  return `${apiEndPoint}/${id}`;
+}
+
+function createFormData(upload, companyName) {
+  const formData = new FormData();
+  if (upload) {
+    formData.append("logos", upload);
+  }
+  if (companyName) {
+    formData.append("companyName", companyName);
+  }
+
+  // Log FormData for debugging
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value instanceof File ? value.name : value}`);
+  }
+
+  return formData;
+}
 
 export function getUploads() {
-  return http.get(apiEndPoint);
+  try {
+    return publicHttpService.get(apiEndPoint);
+  } catch (err) {
+    console.error("Failed to fetch logos:", err);
+    throw err;
+  }
 }
 
-export function saveUpload(upload, companyName) {
-  const formData = new FormData();
-  formData.append("logos", upload);
-  formData.append("companyName", companyName);
-
-  console.log("Saving upload:", upload, "CompanyName:", companyName);
-
-  return http.post(apiEndPoint, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+export async function saveUpload(upload, companyName) {
+  try {
+    console.log("Saving logo:", upload, "CompanyName:", companyName);
+    const formData = createFormData(upload, companyName);
+    const { data } = await adminHttpService.post(apiEndPoint, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to save logo:", err);
+    throw err;
+  }
 }
 
-export function deleteLogo(id) {
-  return http.delete(`${apiEndPoint}/${id}`);
+export async function deleteLogo(id) {
+  try {
+    const { data } = await adminHttpService.delete(logoUrl(id));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete logo:", err);
+    throw err;
+  }
 }

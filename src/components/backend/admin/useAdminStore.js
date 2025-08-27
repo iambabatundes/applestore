@@ -9,8 +9,6 @@ const useAdminStore = create(
       selectedDropdownLink: null,
       darkMode: localStorage.getItem("darkMode") === "true",
 
-      // darkMode: typeof window !== 'undefined' ? localStorage.getItem('darkMode') === 'true' : false,
-
       setSelectedLink: (link) => set({ selectedLink: link }),
       toggleMobileMenu: () =>
         set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),

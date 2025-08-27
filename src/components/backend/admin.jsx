@@ -1,24 +1,31 @@
 import { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import AdminNavbar from "./adminNavbar";
-import "./styles/admin.css"; // Good, clean import
+import "./styles/admin.css";
 import "../backend/common/styles/darkMode.css";
 import Dashboard from "./dashboard";
 import CreatePost from "./createPost";
 import AddProduct from "./addProduct";
 import AdminSidebar from "./adminSidebar";
 import AdminLogin from "./adminLogin";
-import { useAdminAuthStore } from "./store/useAdminAuthStore";
 import AdminSkeleton from "./skeleton/adminSkeleton";
 import { sidebarLinks } from "./config/adminRoutesConfig";
 import useAdminStore from "./admin/useAdminStore";
 import { useAdminSidebarStore } from "./store/adminSideBarStore";
+import { useAdminAuthStore } from "./store/useAdminAuthStore";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const navigate = useNavigate();
 
   const { adminUser, isAuthenticated, loading, fetchAdminUser, logout } =
     useAdminAuthStore();
+
+  // useEffect(() => {
+  //   initializeInterceptors({
+  //     adminRefreshAccessToken: useAdminAuthStore.getState().refreshAccessToken, // Add admin refresh
+  //   });
+  //   rehydrate();
+  // }, []);
   const {
     selectedLink,
     setSelectedLink,
@@ -32,9 +39,17 @@ const Admin = ({ companyName, count, userName, logo }) => {
 
   const { isCollapsed, isHidden } = useAdminSidebarStore();
 
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     fetchAdminUser(navigate);
+  //   }
+  // }, [fetchAdminUser, navigate, isAuthenticated]);
+
   useEffect(() => {
-    fetchAdminUser(navigate);
-  }, [fetchAdminUser, navigate]);
+    if (!isAuthenticated && !loading) {
+      fetchAdminUser(navigate);
+    }
+  }, [isAuthenticated, loading, fetchAdminUser, navigate]);
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);

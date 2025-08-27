@@ -1,24 +1,56 @@
-import http from "../services/httpService";
-// import config from "../config.json";
+import { httpService, adminHttpService } from "../services/httpService";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/tax-rates`;
 
-const apiEndPoint = "http://localhost:4000/api/tax-rates";
-
-export function getTaxRates() {
-  return http.get(apiEndPoint);
+function taxRateUrl(id) {
+  return `${apiEndPoint}/${id}`;
 }
 
-export function getTaxRate(taxId) {
-  return http.get(`${apiEndPoint}/${taxId}`);
+export async function getTaxRates() {
+  try {
+    const { data } = await httpService.get(apiEndPoint);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch tax rates:", err);
+    throw err;
+  }
 }
 
-export function saveTaxRate(tax) {
-  return http.post(apiEndPoint, tax);
+export async function getTaxRate(taxId) {
+  try {
+    const { data } = await httpService.get(taxRateUrl(taxId));
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch tax rate:", err);
+    throw err;
+  }
 }
 
-export function updateTaxRate(taxId, tax) {
-  return http.put(`${apiEndPoint}/${taxId}`, tax);
+export async function saveTaxRate(tax) {
+  try {
+    const { data } = await adminHttpService.post(apiEndPoint, tax);
+    return data;
+  } catch (err) {
+    console.error("Failed to save tax rate:", err);
+    throw err;
+  }
 }
 
-export function deleteTaxRate(taxId) {
-  return http.delete(`${apiEndPoint}/${taxId}`);
+export async function updateTaxRate(taxId, tax) {
+  try {
+    const { data } = await adminHttpService.put(taxRateUrl(taxId), tax);
+    return data;
+  } catch (err) {
+    console.error("Failed to update tax rate:", err);
+    throw err;
+  }
+}
+
+export async function deleteTaxRate(taxId) {
+  try {
+    const { data } = await adminHttpService.delete(taxRateUrl(taxId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete tax rate:", err);
+    throw err;
+  }
 }

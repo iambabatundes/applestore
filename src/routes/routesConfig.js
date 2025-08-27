@@ -17,13 +17,13 @@ const routesConfig = (props) => [
   { path: "/blog/:title", element: <SinglePost /> },
   { path: "/:name", element: <SingleProducts {...props} /> },
   { path: "/register", element: <Register user={props.user} /> },
-  { path: "/login", element: <Login user={props.user} /> },
+  { path: "/login", element: <Login /> },
   { path: "/logout", element: <Logout /> },
   {
     path: "users/*",
     element: (
-      <RequireAuth user={props.user}>
-        <UserProfile {...props} />
+      <RequireAuth>
+        <UserProfile />
       </RequireAuth>
     ),
   },

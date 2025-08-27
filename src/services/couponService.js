@@ -1,28 +1,69 @@
-import http from "../services/httpService";
-// import config from "../config.json";
+import { userHttpService, adminHttpService } from "../services/httpService";
 
-const apiEndPoint = "http://localhost:4000/api/coupons";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/coupons`;
 
-export function getCoupons() {
-  return http.get(apiEndPoint);
+function couponUrl(id) {
+  return `${apiEndPoint}/${id}`;
 }
 
-export function getCoupon(couponId) {
-  return http.get(apiEndPoint + "/" + couponId);
+export async function getCoupons() {
+  try {
+    const { data } = await adminHttpService.get(apiEndPoint);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch coupons:", err);
+    throw err;
+  }
 }
 
-export function saveCoupon(coupon) {
-  return http.post(apiEndPoint, coupon);
+export async function getCoupon(couponId) {
+  try {
+    const { data } = await adminHttpService.get(couponUrl(couponId));
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch coupon:", err);
+    throw err;
+  }
 }
 
-export function validateCoupon(coupon) {
-  return http.post(apiEndPoint + "/validate" + coupon);
+export async function saveCoupon(coupon) {
+  try {
+    const { data } = await adminHttpService.post(apiEndPoint, coupon);
+    return data;
+  } catch (err) {
+    console.error("Failed to save coupon:", err);
+    throw err;
+  }
 }
 
-export function updateCoupon(couponId, coupon) {
-  return http.put(apiEndPoint + "/" + couponId, coupon);
+export async function validateCoupon(coupon) {
+  try {
+    const { data } = await userHttpService.post(`${apiEndPoint}/validate`, {
+      coupon,
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to validate coupon:", err);
+    throw err;
+  }
 }
 
-export function deleteCoupon(couponId) {
-  return http.delete(`${apiEndPoint}/${couponId}`);
+export async function updateCoupon(couponId, coupon) {
+  try {
+    const { data } = await adminHttpService.put(couponUrl(couponId), coupon);
+    return data;
+  } catch (err) {
+    console.error("Failed to update coupon:", err);
+    throw err;
+  }
+}
+
+export async function deleteCoupon(couponId) {
+  try {
+    const { data } = await adminHttpService.delete(couponUrl(couponId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete coupon:", err);
+    throw err;
+  }
 }

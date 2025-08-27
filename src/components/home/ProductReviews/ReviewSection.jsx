@@ -1,8 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./styles/reviewSection.css";
 import ReviewModal from "./ReviewModal";
 import ReviewItem from "./ReviewItem";
 import StarRating from "../common/starRating";
+import { useLocation, useNavigate } from "react-router-dom";
+import ReportReviewModal from "./ReportReviewModal";
+import { reportReview } from "../../../services/reviewService";
+import { toast } from "react-toastify";
 
 export default function ReviewSection({
   product,
@@ -15,9 +19,35 @@ export default function ReviewSection({
   hasPurchased,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModalReport, setShowModalReport] = useState(false);
+  const [reporting, setReporting] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.state?.action === "vote" && location.state?.reviewId) {
+      setIsModalOpen(true);
+
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, location.pathname, navigate]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleReportSubmit = async (reason) => {
+    setReporting(true);
+    try {
+      await reportReview(review._id, reason);
+      toast.success("Thank you. Your report has been submitted.");
+    } catch (err) {
+      toast.error("Failed to report review.");
+    } finally {
+      setReporting(false);
+      setShowModal(false);
+    }
+  };
 
   // Pick a random review using useMemo
   const randomReview = useMemo(() => {
@@ -54,6 +84,8 @@ export default function ReviewSection({
             key={randomReview._id}
             review={randomReview}
             currentUserId={currentUserId}
+            setShowModalReport={setShowModalReport}
+            reporting={reporting}
           />
         )}
       </div>
@@ -67,8 +99,17 @@ export default function ReviewSection({
           loading={loading}
           reviews={reviews}
           hasPurchased={hasPurchased}
+          currentUserId={currentUserId}
+          reporting={reporting}
+          setShowModalReport={setShowModalReport}
         />
       )}
+
+      <ReportReviewModal
+        isOpen={showModalReport}
+        onClose={() => setShowModalReport(false)}
+        onSubmit={handleReportSubmit}
+      />
     </section>
   );
 }

@@ -1,54 +1,193 @@
-import http from "./httpService";
 import { jwtDecode } from "jwt-decode";
-import config from "../config.json";
+import { loginApi, refreshTokenApi, logoutApi, getUserApi } from "./apiService";
+import { createAuthStore } from "../components/home/store/useAuthStore";
 
-const apiEndPoint = config.apiUrl + "/auth";
-const endPoint = `${config.apiUrl}/users/me`;
-// const apiEndPointCheck = config.apiUrl + "/auth/check-user";
+// Create auth store with API dependencies
+export const authStore = createAuthStore({
+  loginApi,
+  refreshTokenApi,
+  logoutApi,
+  getUserApi,
+});
 
-const tokenKey = "token";
-
-async function getUser() {
-  const token = localStorage.getItem(tokenKey);
-  if (token) {
-    http.setJwt(token);
-  }
-
-  const { data } = await http.get(endPoint);
-  return data;
-}
-
-http.setJwt(getJwt());
-
-// async function checkUser(emailPhone) {
-//   const { data } = await http.post(apiEndPointCheck, { emailPhone });
-//   return data;
-// }
-
-async function login(email, password) {
-  const { data: jwt } = await http.post(apiEndPoint, { email, password });
-  localStorage.setItem(tokenKey, jwt);
-}
-
-function loginWithJwt(jwt) {
-  localStorage.setItem(tokenKey, jwt);
-}
-
-function logout() {
-  localStorage.removeItem(tokenKey);
-}
-
-function getCurrentUser() {
+// Initialize auth state on app start - CRITICAL FIX
+export const initializeAuth = async () => {
+  console.log("Initializing authentication...");
   try {
-    const jwt = localStorage.getItem(tokenKey);
-    return jwtDecode(jwt);
+    // Call the initialize method that was missing
+    await authStore.getState().initialize();
+    console.log("Authentication initialization completed");
   } catch (error) {
+    console.error("Authentication initialization failed:", error);
+    // Ensure auth is marked as ready even if initialization fails
+    authStore.setState({ isAuthReady: true });
+  }
+};
+
+// Login function
+export async function login(email, password) {
+  return authStore.getState().login(email, password);
+}
+
+// Refresh token function
+export async function refreshAccessToken() {
+  return authStore.getState().refreshAccessToken();
+}
+
+// Get user profile
+export async function getUser() {
+  return authStore.getState().getUser();
+}
+
+// Get current user from token
+export function getCurrentUser() {
+  try {
+    const { accessToken } = authStore.getState();
+    return accessToken ? jwtDecode(accessToken) : null;
+  } catch (error) {
+    console.error("Error decoding token:", error);
     return null;
   }
 }
 
-function getJwt() {
-  return localStorage.getItem(tokenKey);
+// Login with JWT
+export async function loginWithJwt(jwt, expiresIn) {
+  try {
+    if (!expiresIn) {
+      try {
+        const decoded = jwtDecode(jwt);
+        const now = Math.floor(Date.now() / 1000);
+        expiresIn = decoded.exp ? decoded.exp - now : 900;
+      } catch (decodeError) {
+        console.warn(
+          "Could not decode JWT for expiry, using default:",
+          decodeError
+        );
+        expiresIn = 900;
+      }
+    }
+
+    console.log("Logging in with JWT, expiresIn:", expiresIn);
+    return await authStore.getState().loginWithToken(jwt, expiresIn);
+  } catch (error) {
+    console.error("loginWithJwt failed:", error);
+    throw error;
+  }
 }
 
-export { getUser, login, loginWithJwt, logout, getCurrentUser, getJwt };
+// Logout function
+export async function logout() {
+  return authStore.getState().logout();
+}
+
+// Check if user is authenticated
+export function isAuthenticated() {
+  const { isAuthenticated, expiryDate } = authStore.getState();
+  return isAuthenticated && expiryDate && Date.now() < expiryDate;
+}
+
+// Get access token
+export function getAccessToken() {
+  const { accessToken, expiryDate } = authStore.getState();
+  if (!accessToken || !expiryDate || Date.now() >= expiryDate) {
+    return null;
+  }
+  return accessToken;
+}
+
+// Multi-tab sync - Enhanced error handling
+let isHandlingLogout = false;
+
+const handleLogoutEvent = () => {
+  if (isHandlingLogout) return;
+  isHandlingLogout = true;
+
+  try {
+    const { logout, isAuthenticated } = authStore.getState();
+    if (isAuthenticated) {
+      logout().finally(() => {
+        setTimeout(() => {
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
+          isHandlingLogout = false;
+        }, 100);
+      });
+    } else {
+      isHandlingLogout = false;
+    }
+  } catch (error) {
+    console.error("Error handling logout event:", error);
+    isHandlingLogout = false;
+  }
+};
+
+// Storage event listener for cross-tab logout
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (e) => {
+    if (e.key === "auth-logout" && e.newValue) {
+      handleLogoutEvent();
+    }
+  });
+
+  window.addEventListener("authStorage", (e) => {
+    const { name, value } = e.detail || {};
+    if (name === "auth-logout" && value) {
+      handleLogoutEvent();
+    }
+  });
+
+  // Enhanced page visibility handling
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      const { expiryDate, isAuthenticated, checkTokenExpiry } =
+        authStore.getState();
+
+      if (isAuthenticated) {
+        if (!expiryDate || Date.now() > expiryDate) {
+          console.log("Token expired while page was hidden, logging out");
+          authStore.getState().logout();
+        } else {
+          if (typeof checkTokenExpiry === "function") {
+            checkTokenExpiry();
+          }
+        }
+      }
+    }
+  });
+
+  // Periodic token check
+  let tokenCheckInterval = null;
+
+  const startTokenCheck = () => {
+    if (tokenCheckInterval) clearInterval(tokenCheckInterval);
+    tokenCheckInterval = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        const { isAuthenticated, checkTokenExpiry } = authStore.getState();
+        if (isAuthenticated && typeof checkTokenExpiry === "function") {
+          checkTokenExpiry();
+        }
+      }
+    }, 30000);
+  };
+
+  const stopTokenCheck = () => {
+    if (tokenCheckInterval) {
+      clearInterval(tokenCheckInterval);
+      tokenCheckInterval = null;
+    }
+  };
+
+  // Subscribe to auth state changes
+  authStore.subscribe((state) => {
+    if (state.isAuthenticated && state.isAuthReady) {
+      startTokenCheck();
+    } else {
+      stopTokenCheck();
+    }
+  });
+
+  window.addEventListener("beforeunload", () => {
+    stopTokenCheck();
+  });
+}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useStore } from "zustand";
 
 import "./styles/userProfile.css";
 import MyProfile from "./users/myProfile";
@@ -12,8 +13,13 @@ import SidebarLeft from "./users/common/SidebarLeft";
 import SidebarRight from "./users/common/SidebarRight";
 import TopNavbar from "./users/common/TopNavbar";
 import { useUserProfile } from "./users/hooks/useUserProfile";
+import { authStore } from "../../services/authService";
+import { useCartStore } from "../store/cartStore";
 
-export default function UserProfile({ user, setUser, addToCart, cartItems }) {
+export default function UserProfile() {
+  const { user } = useStore(authStore);
+  const { cartItems, addToCart } = useCartStore();
+
   const {
     userData,
     setUserData,
@@ -25,7 +31,7 @@ export default function UserProfile({ user, setUser, addToCart, cartItems }) {
     greeting,
     handleSubmit,
     handleProfileImageChange,
-  } = useUserProfile(user, setUser);
+  } = useUserProfile();
 
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const location = useLocation();
@@ -33,8 +39,6 @@ export default function UserProfile({ user, setUser, addToCart, cartItems }) {
   const toggleLeftSidebar = () => {
     setIsLeftSidebarOpen(!isLeftSidebarOpen);
   };
-
-  if (!user) return <Navigate to="/login" replace />;
 
   return (
     <section className="userProfile">

@@ -4,14 +4,12 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import "./styles/createNew.css";
-// import "./styles/allPosts.css";
-import { getPost, savePost, updatePost } from "../../services/postService";
+import { getPost, savePost } from "../../services/postService";
 import FormContent from "./common/formData/formContent";
 import CategoriesHeader from "./common/CategoriesHeader";
 import TagsHeader from "./common/TagsHeader";
 import FeaturedImageHeader from "./common/featuredImageHeader";
 import PostTags from "./common/postTags";
-
 import {
   getPostTags,
   savePostTag,
@@ -64,7 +62,7 @@ export default function CreatePost() {
 
   const fetchPostCategory = useCallback(async () => {
     try {
-      const { data: categories } = await getPostCategories([]);
+      const { data: categories } = await getPostCategories();
       setCategory(categories);
     } catch (error) {
       console.error("Failed to fetch categories", error);
@@ -78,19 +76,19 @@ export default function CreatePost() {
     async function getPostDetails(postId) {
       try {
         const { data: post } = await getPost(postId);
-
         setBlogPost({
           ...post,
           postMainImage: post.postMainImage,
         });
-        setSelectedTags(post.tags.map((tag) => tag.name));
+        setSelectedTags(post.tags?.map((tag) => tag.name) || []);
         setSelectedCategories(post.category || []);
         setPostMainImage(post.postMainImage);
-        setEditorContent(post.content);
+        setEditorContent(post.content || "");
       } catch (ex) {
         if (ex.response && ex.response.status === 404) {
           navigate("/admin/not-found");
         }
+        console.error("Error fetching post details:", ex);
       }
     }
 
@@ -100,7 +98,6 @@ export default function CreatePost() {
       getPostDetails(postId);
     } else {
       setEditingMode(false);
-      // Reset the form state when creating a new post
       setBlogPost({
         title: "",
         content: "",
@@ -119,34 +116,32 @@ export default function CreatePost() {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const user = getCurrentUser();
+    if (!user || !user.isAdmin) {
+      toast.error("You must be an admin to create or update posts");
+      setIsSubmitting(false);
+      return;
+    }
+
     const categoryNames = selectedCategories.map((category) => category.name);
-
-    const user = getCurrentUser(); // Get the current user
-    const userId = user ? user._id : null;
-
     const postToSubmit = {
       ...blogPost,
       category: categoryNames,
       tags: selectedTags,
       postMainImage: postMainImage,
-      userId: userId,
     };
 
-    console.error("This is user", userId);
+    console.log("Submitting post:", postToSubmit);
 
     try {
-      if (editingMode) {
-        await updatePost(postToSubmit._id, postToSubmit);
-        toast.success("Post updated successfully");
-      } else {
-        await savePost(postToSubmit);
-        toast.success("Post added successfully");
-      }
-
+      await savePost(postToSubmit);
+      toast.success(
+        editingMode ? "Post updated successfully" : "Post added successfully"
+      );
       navigate("/admin/posts");
     } catch (error) {
       console.error("Error occurred while submitting post:", error);
-      toast.error("An error occurred while saving the product");
+      toast.error("An error occurred while saving the post");
     } finally {
       setIsSubmitting(false);
     }
@@ -239,8 +234,6 @@ export default function CreatePost() {
                   setSelectedCategories={setSelectedCategories}
                   categories={category}
                   setCategories={setCategory}
-                  // savePostCategory={savePostCategory}
-                  // getPostCategories={getPostCategories}
                   getCategories={getPostCategories}
                   saveCategory={savePostCategory}
                 />

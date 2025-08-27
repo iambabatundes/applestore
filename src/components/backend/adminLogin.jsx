@@ -1,43 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/adminLogin.css";
-import { adminlogin, getCurrentUser } from "../../services/adminAuthService";
+import { useAdminAuthStore } from "./store/useAdminAuthStore";
 
-export default function AdminLogin({ adminUser, setAuth }) {
+export default function AdminLogin() {
   const [data, setData] = useState({ email: "", password: "" });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
   const [logoutMessage, setLogoutMessage] = useState(null);
   const [logoutType, setLogoutType] = useState(null);
 
+  const { adminUser, isAuthenticated, loading, login } = useAdminAuthStore();
+  const navigate = useNavigate();
   const { state } = useLocation();
 
   // Load the logout message and type if present and clear them after display
   useEffect(() => {
     const message = localStorage.getItem("logoutMessage");
-    const type = localStorage.getItem("logoutType"); // Fetch logout type
+    const type = localStorage.getItem("logoutType");
 
     if (message) {
       setLogoutMessage(message);
-      setLogoutType(type); // Set the logout type to apply appropriate styles
+      setLogoutType(type);
       localStorage.removeItem("logoutMessage");
-      localStorage.removeItem("logoutType"); // Clear after reading
+      localStorage.removeItem("logoutType");
     }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await adminlogin(data.email, data.password);
-      window.location = state ? state.path : "/admin/home"; // Redirect after login
-      setAuth(true); // Set authentication state
+      await login(data.email, data.password, navigate);
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const newErrors = { ...errors };
         newErrors.email = ex.response.data;
-        setErrors(newErrors); // Display error on incorrect email or password
+        setErrors(newErrors);
       } else {
         setErrors({ ...errors, general: "Invalid email or password" });
       }
@@ -53,10 +53,12 @@ export default function AdminLogin({ adminUser, setAuth }) {
   };
 
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible); // Toggle password visibility
+    setPasswordVisible(!passwordVisible);
   };
 
-  if (getCurrentUser()) return <Navigate to="/admin/home" />;
+  // if (getCurrentUser()) return <Navigate to="/admin/home" />;
+  if (loading) return <div>Loading...</div>;
+  if (isAuthenticated) return <Navigate to="/admin/home" replace />;
 
   const messageClass =
     logoutType === "manual"

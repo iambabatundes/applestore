@@ -1,10 +1,11 @@
 import React from "react";
+import { useStore } from "zustand";
 import ProfileEditForm from "./common/ProfileEditForm";
 import ProfileDisplay from "./common/ProfileDisplay";
 import TopProduct from "../topProduct";
+import { authStore } from "../../../services/authService";
 
 export default function MyProfile({
-  user,
   handleSubmit,
   profileImage,
   setProfileImage,
@@ -15,6 +16,8 @@ export default function MyProfile({
   setIsEditing,
   handleProfileImageChange,
 }) {
+  const { user } = useStore(authStore);
+
   const handleEdit = () => {
     setIsEditing(true);
   };

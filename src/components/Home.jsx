@@ -1,4 +1,6 @@
 import React from "react";
+import { useStore } from "zustand";
+import { authStore } from "../services/authService";
 import HeroSlider from "./home/HeroSlider";
 import ExclusiveDeal from "./home/exclusiveDeal";
 import BigSave from "./home/bigSave";
@@ -10,16 +12,18 @@ import MoreToLove from "./home/moreToLove";
 import CategoryOne from "./home/categoryOne";
 import CategoryTwo from "./home/categoryTwo";
 import CategoryThree from "./home/categoryThree";
+import { useCartStore } from "./store/cartStore";
+import { useCurrencyStore } from "./store/currencyStore";
 
 function Home({
-  addToCart,
-  cartItems,
-  user,
-  conversionRate,
-  selectedCurrency,
+  // conversionRate,
+  // selectedCurrency,
   currencySymbols,
   isLoading,
 }) {
+  const { user } = useStore(authStore);
+  const { addToCart, cartItems } = useCartStore();
+  const { selectedCurrency, conversionRate } = useCurrencyStore();
   return (
     <section>
       <HeroSlider

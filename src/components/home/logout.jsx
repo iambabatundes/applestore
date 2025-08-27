@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { useStore } from "zustand";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
 
 export default function Logout() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     logout();
-    window.location = "/";
-  }, []);
+    navigate("/");
+  }, [logout, navigate]);
   return null;
 }

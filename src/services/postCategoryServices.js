@@ -1,25 +1,61 @@
-import http from "../services/httpService";
-import config from "../config.json";
+import { httpService, adminHttpService } from "../services/httpService";
 
-const apiEndPoint = config.apiUrl + "/post-categories";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/post-categories`;
 
-export function getPostCategories() {
-  return http.get(apiEndPoint);
+function postCategoryUrl(id) {
+  return `${apiEndPoint}/${id}`;
 }
 
-export function getPostCategory(categoryId) {
-  return http.get(apiEndPoint + "/" + categoryId);
+export async function getPostCategories() {
+  try {
+    const { data } = await httpService.get(apiEndPoint);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch post categories:", err);
+    throw err;
+  }
 }
 
-export function savePostCategory(category) {
-  console.log("Saving Category:", category);
-  return http.post(apiEndPoint, category);
+export async function getPostCategory(categoryId) {
+  try {
+    const { data } = await httpService.get(postCategoryUrl(categoryId));
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch post category:", err);
+    throw err;
+  }
 }
 
-export function updatePostCategory(categoryId, category) {
-  return http.put(apiEndPoint + "/" + categoryId, category);
+export async function savePostCategory(category) {
+  try {
+    console.log("Saving Category:", category);
+    const { data } = await adminHttpService.post(apiEndPoint, category);
+    return data;
+  } catch (err) {
+    console.error("Failed to save post category:", err);
+    throw err;
+  }
 }
 
-export function deletePostCategory(categoryId) {
-  return http.delete(apiEndPoint + "/" + categoryId);
+export async function updatePostCategory(categoryId, category) {
+  try {
+    const { data } = await adminHttpService.put(
+      postCategoryUrl(categoryId),
+      category
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to update post category:", err);
+    throw err;
+  }
+}
+
+export async function deletePostCategory(categoryId) {
+  try {
+    const { data } = await adminHttpService.delete(postCategoryUrl(categoryId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete post category:", err);
+    throw err;
+  }
 }

@@ -28,19 +28,38 @@ export default function ProfileEditForm({
       setError("Only image files are allowed.");
       return;
     }
-
     if (file.size > 5242880) {
       setError("File size should not exceed 5MB");
       return;
     }
-
-    setUserData({ ...userData, profileImage: file });
     const fileUrl = URL.createObjectURL(file);
+    setUserData((prev) => ({
+      ...prev,
+      profileImage: { file, preview: fileUrl },
+    }));
     setProfileImage({ file, preview: fileUrl });
     handleProfileImageChange(file, fileUrl);
-
     setError("");
   };
+
+  // const validateAndAddFile = (file) => {
+  //   if (!file.type.startsWith("image/")) {
+  //     setError("Only image files are allowed.");
+  //     return;
+  //   }
+
+  //   if (file.size > 5242880) {
+  //     setError("File size should not exceed 5MB");
+  //     return;
+  //   }
+
+  //   setUserData({ ...userData, profileImage: file });
+  //   const fileUrl = URL.createObjectURL(file);
+  //   setProfileImage({ file, preview: fileUrl });
+  //   handleProfileImageChange(file, fileUrl);
+
+  //   setError("");
+  // };
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -73,7 +92,6 @@ export default function ProfileEditForm({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     if (name.includes("address.")) {
       const addressField = name.split(".")[1];
       setUserData((prevFormData) => ({
@@ -84,7 +102,10 @@ export default function ProfileEditForm({
         },
       }));
     } else {
-      setUserData({ ...userData, [name]: value });
+      setUserData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
     }
   };
 
@@ -122,8 +143,8 @@ export default function ProfileEditForm({
             src={
               profileImage && profileImage.preview
                 ? profileImage.preview
-                : user.profileImage
-                ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
+                : user.profileImage && user.profileImage.filename
+                ? `${config.mediaUrl}/Uploads/${user.profileImage.filename}`
                 : "/default-avatar.png"
             }
             alt={`${user.firstName} ${user.lastName}`}
@@ -157,7 +178,7 @@ export default function ProfileEditForm({
             id="firstName"
             name="firstName"
             label="First Name"
-            value={userData.firstName}
+            value={userData.firstName || ""}
             onChange={handleInputChange}
             margin="normal"
           />
@@ -166,7 +187,7 @@ export default function ProfileEditForm({
             id="lastName"
             name="lastName"
             label="Last Name"
-            value={userData.lastName}
+            value={userData.lastName || ""}
             onChange={handleInputChange}
             margin="normal"
           />
@@ -176,7 +197,7 @@ export default function ProfileEditForm({
           id="username"
           name="username"
           label="Username"
-          value={userData.username}
+          value={userData.username || ""}
           onChange={handleInputChange}
           margin="normal"
         />
@@ -185,7 +206,7 @@ export default function ProfileEditForm({
           id="email"
           name="email"
           label="Email"
-          value={userData.email}
+          value={userData.email || ""}
           onChange={handleInputChange}
           margin="normal"
         />
@@ -194,7 +215,7 @@ export default function ProfileEditForm({
           id="phoneNumber"
           name="phoneNumber"
           label="Phone Number"
-          value={userData.phoneNumber}
+          value={userData.phoneNumber || ""}
           onChange={handleInputChange}
           margin="normal"
         />
@@ -204,7 +225,7 @@ export default function ProfileEditForm({
             id="gender"
             name="gender"
             label="Gender"
-            value={userData.gender}
+            value={userData.gender || ""}
             onChange={handleInputChange}
             margin="normal"
           />
@@ -214,7 +235,7 @@ export default function ProfileEditForm({
             name="dateOfBirth"
             label="Date Of Birth"
             type="date"
-            value={userData.dateOfBirth}
+            value={userData.dateOfBirth || ""}
             onChange={handleInputChange}
             margin="normal"
             InputLabelProps={{
@@ -226,10 +247,10 @@ export default function ProfileEditForm({
         <TextField
           fullWidth
           id="address"
-          name="address"
+          name="address.addressLine"
           label="Address"
-          // value={userData.address}
-          value={userData.address.address}
+          // value={userData.address.address}
+          value={userData.address?.addressLine || ""}
           onChange={handleInputChange}
           margin="normal"
         />
@@ -237,9 +258,9 @@ export default function ProfileEditForm({
         <TextField
           fullWidth
           id="city"
-          name="city"
+          name="address.city"
           label="City"
-          value={userData.city}
+          value={userData.address?.city || ""}
           onChange={handleInputChange}
           margin="normal"
         />
@@ -247,27 +268,27 @@ export default function ProfileEditForm({
         <TextField
           fullWidth
           id="state"
-          name="state"
+          name="address.state"
           label="State"
-          value={userData.state}
+          value={userData.address?.state || ""}
           onChange={handleInputChange}
           margin="normal"
         />
         <TextField
           fullWidth
           id="country"
-          name="country"
+          name="address.country"
           label="Country"
-          value={userData.country}
+          value={userData.address?.country || ""}
           onChange={handleInputChange}
           margin="normal"
         />
         <TextField
           fullWidth
-          id="zipCode"
-          name="zipCode"
+          id="postalCode"
+          name="address.postalCode"
           label="Zip Code"
-          value={userData.zipCode}
+          value={userData.address?.postalCode || ""}
           onChange={handleInputChange}
           margin="normal"
         />

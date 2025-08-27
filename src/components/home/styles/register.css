@@ -176,125 +176,133 @@
     }
 }
 
-
-
-/* Register main section */
-.register-main {
-    background-color: #f0f2f5;
-    display: flex;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
+/* Country selector styles */
+.contact-input-container {
+    position: relative;
     width: 100%;
-    padding: 20px;
 }
 
-/* Container */
-.register__container {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+.input-wrapper {
+    position: relative;
     width: 100%;
-    animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Title styles */
-.register__title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-}
-
-/* Form styles */
-.register__form {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Input styles */
-.register__input {
-    margin-bottom: 15px;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    background: #f9f9f9;
-    transition: border 0.3s ease-in-out;
-}
-
-.register__input:focus {
-    border: 1px solid #007bff;
-    outline: none;
-}
-
-/* Button styles */
-.register__btn {
-    padding: 12px;
-    background: linear-gradient(90deg, #007bff, #0056b3);
+.country-code-overlay {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
     border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 16px;
     cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.register__btn:hover {
-    background: linear-gradient(90deg, #0056b3, #007bff);
-    transform: translateY(-2px);
-}
-
-/* Steps styles */
-.steps {
+    font-size: 14px;
+    color: #FF9500;
+    font-weight: 500;
+    z-index: 2;
+    padding: 0;
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    align-items: center;
+    gap: 4px;
 }
 
-.step {
-    width: 20px;
-    height: 20px;
-    background: #ddd;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 0 5px;
-    transition: background 0.3s, transform 0.3s;
+.country-code-overlay:hover {
+    color: #e6850e;
 }
 
-.step.active {
-    background: #007bff;
-    transform: scale(1.2);
+.register__input.with-country-code {
+    padding-left: 120px !important;
 }
 
-/* Animations */
-@keyframes fadeIn {
+.country-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.country-dropdown-content {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.country-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.country-option:hover {
+    background: #f0f8ff;
+}
+
+.country-option.selected {
+    background: #e3f2fd;
+    font-weight: 500;
+}
+
+.country-flag {
+    font-size: 12px;
+    font-weight: bold;
+    color: #0f1111;
+    min-width: 24px;
+}
+
+.country-name {
+    flex: 1;
+    color: #0f1111;
+}
+
+.country-calling-code {
+    color: #565959;
+    font-size: 12px;
+}
+
+.register__input.with-country-code {
+    padding-left: 120px !important;
+}
+
+/* Remove unused styles */
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .country-code-overlay {
+        left: 8px;
+        font-size: 12px;
+    }
+
+    .register__input.with-country-code {
+        padding-left: 100px !important;
+    }
+}
+
+/* Close dropdown when clicking outside */
+.country-dropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
     from {
         opacity: 0;
+        transform: translateY(-10px);
     }
 
     to {
         opacity: 1;
-    }
-}
-
-/* Media queries for responsiveness */
-@media (min-width: 600px) {
-    .register__container {
-        width: 80%;
-    }
-}
-
-@media (min-width: 768px) {
-    .register__container {
-        width: 60%;
-    }
-}
-
-@media (min-width: 1024px) {
-    .register__container {
-        width: 40%;
+        transform: translateY(0);
     }
 }

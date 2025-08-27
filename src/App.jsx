@@ -12,16 +12,23 @@ import AppRoutes from "./routes/AppRoutes";
 import CheckoutNavbar from "./components/checkoutNavbar";
 import Admin from "./components/backend/admin";
 import Navbar from "./components/home/navbar";
-import useUser from "./components/home/hooks/useUser";
 import Footer from "./components/footer/footer";
 import LoadingSpinner from "./components/common/loadingSpinner";
 import fetchLogo from "./utils/fetchLogo";
 import { useCartStore } from "../src/components/store/cartStore";
 import { useCurrencyStore } from "../src/components/store/currencyStore";
 import { useGeoLocationStore } from "../src/components/store/geoLocationStore";
+import { useStore } from "zustand";
+import { authStore, initializeAuth } from "./services/authService"; // Import initializeAuth
+import { httpService, ClientType } from "./services/httpService";
+
+import { useAdminAuthStore } from "./components/backend/store/useAdminAuthStore";
 
 function App() {
-  const { user, loading, setUser, handleProfileSubmit } = useUser();
+  const { user, isAuthReady, accessToken, isAuthenticated } =
+    useStore(authStore);
+  const [appInitialized, setAppInitialized] = useState(false);
+  const [authInitialized, setAuthInitialized] = useState(false); // Track auth initialization
 
   const {
     cartItems,
@@ -34,9 +41,7 @@ function App() {
     setCartItems,
   } = useCartStore();
 
-  const [loadingApp, setLoadingApp] = useState(false);
   const [logoImage, setLogoImage] = useState("");
-
   const location = useLocation();
 
   const {
@@ -49,21 +54,56 @@ function App() {
 
   const { geoLocation, fetchGeoLocation } = useGeoLocationStore();
 
+  // Initialize interceptors and auth once
   useEffect(() => {
-    fetchGeoLocation();
-    useCurrencyStore.getState().initializeCurrency();
-    fetchLogo(setLogoImage);
-    setTimeout(() => setLoadingApp(false), 100);
-  }, []);
+    let isInitialized = false;
 
+    const initializeApp = async () => {
+      if (isInitialized) return;
+      isInitialized = true;
+
+      try {
+        console.log("Starting app initialization...");
+
+        await initializeAuth();
+        setAuthInitialized(true);
+
+        httpService.setRefreshCallback(ClientType.USER, () =>
+          authStore.getState().refreshAccessToken()
+        );
+
+        httpService.setRefreshCallback(ClientType.ADMIN, () => {
+          console.warn("Admin refresh not implemented");
+          return Promise.reject(new Error("Admin refresh not implemented"));
+        });
+
+        // Initialize other services in parallel
+        await Promise.all([
+          fetchGeoLocation(),
+          useCurrencyStore.getState().initializeCurrency(),
+          fetchLogo(setLogoImage),
+        ]);
+
+        console.log("App initialization completed");
+      } catch (error) {
+        console.error("App initialization error:", error);
+      } finally {
+        setAppInitialized(true);
+      }
+    };
+
+    initializeApp();
+  }, []); // Empty dependency array - run once
+
+  // Handle currency changes
   const handleCurrencyChange = (currency) => {
-    // setSelectedCurrency(currency);
     const rate = currencyRates[currency] || 1;
     setConversionRate(rate);
     setSelectedCurrency(currency, rate);
     localStorage.setItem("selectedCurrency", currency);
   };
 
+  // Handle cart quantity updates
   const handleSubmit = (e, itemId) => {
     e.preventDefault();
     const input = e.target.querySelector('input[name="quantity"]');
@@ -74,7 +114,6 @@ function App() {
       quantity = 1;
     }
 
-    // Update Zustand store correctly
     useCartStore.setState((state) => ({
       selectedQuantities: {
         ...state.selectedQuantities,
@@ -92,36 +131,67 @@ function App() {
     }));
   };
 
+  // Calculate cart item count
   const cartItemCount =
     Object.values(selectedQuantities).reduce((total, quantity) => {
       if (quantity === "10+") {
-        return total + 1; // Increment count by 1 "Quantity 10+"
+        return total + 1;
       }
-      return total + parseInt(quantity);
+      return total + parseInt(quantity || 0);
     }, 0) + (selectedQuantities["Quantity 10+"] || 0);
 
+  // Render appropriate navbar
   const renderNavbar = () => {
-    return location.pathname === "/checkout" ? (
-      <CheckoutNavbar cartItemCount={cartItemCount} logoImage={logoImage} />
-    ) : (
+    if (location.pathname === "/checkout") {
+      return (
+        <CheckoutNavbar cartItemCount={cartItemCount} logoImage={logoImage} />
+      );
+    }
+
+    return (
       <Navbar
         cartItemCount={cartItemCount}
         user={user}
         selectedCurrency={selectedCurrency}
         currencyRates={currencyRates}
         onCurrencyChange={handleCurrencyChange}
-        isLoading={loadingApp}
+        isLoading={!appInitialized}
         logoImage={logoImage}
         geoLocation={geoLocation}
       />
     );
   };
 
-  if (loadingApp || loading) return <LoadingSpinner />;
+  // Show loading spinner while critical components initialize
+  if (!appInitialized || !authInitialized || !isAuthReady) {
+    return <LoadingSpinner />;
+  }
+
+  // Debug logging for auth state (remove in production)
+  console.log("App render - Auth state:", {
+    user: !!user,
+    isAuthenticated,
+    accessToken: !!accessToken,
+    isAuthReady,
+    authInitialized,
+    appInitialized,
+  });
 
   return (
     <>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        toastClassName="custom-toast"
+      />
+
       {location.pathname.includes("/admin") ? (
         <Admin count={5} logo={logoImage} />
       ) : (
@@ -129,9 +199,6 @@ function App() {
           {renderNavbar()}
           <main className="main">
             <AppRoutes
-              user={user}
-              setUser={setUser}
-              handleProfileSubmit={handleProfileSubmit}
               addToCart={addToCart}
               cartItems={cartItems}
               selectedQuantities={selectedQuantities}
@@ -141,7 +208,6 @@ function App() {
               handleSubmit={handleSubmit}
               setCartItems={setCartItems}
               handleDelete={handleDelete}
-              isLoggedIn={user}
               selectedCurrency={selectedCurrency}
               conversionRate={conversionRate}
             />

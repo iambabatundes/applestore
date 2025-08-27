@@ -1,7 +1,12 @@
-import http from "../services/httpService";
+import { publicHttpService } from "../services/httpService";
 
-const apiEndPoint = import.meta.env.VITE_APIURL + "geolocation";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/geolocation`;
 
-export function getGeoLocations() {
-  return http.get(apiEndPoint);
+export async function getGeoLocations() {
+  try {
+    return publicHttpService.get(apiEndPoint);
+  } catch (err) {
+    console.error("Failed to fetch geolocations:", err);
+    throw err;
+  }
 }

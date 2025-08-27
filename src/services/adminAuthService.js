@@ -1,54 +1,46 @@
-import http from "./httpService";
-import { jwtDecode } from "jwt-decode";
-import config from "../config.json";
+import { useAdminAuthStore } from "../components/backend/store/useAdminAuthStore";
 
-const apiEndPoint = config.apiUrl + "/admin/auth";
-const apiEndPointRefresh = config.apiUrl + "/admin/refresh";
-const tokenKey = "token";
-
-http.setJwt(getJwt());
+const endPoint = "/api/admin/auth";
+const endPointMe = "/api/admin";
+const adminRefreshEndPoint = "/api/admin/refresh";
 
 async function adminlogin(email, password) {
-  const { data: jwt } = await http.post(apiEndPoint, { email, password });
-  localStorage.setItem(tokenKey, jwt);
+  const { data } = await http.post(endPoint, { email, password });
+  console.log("Admin login response:", data);
+  const expiresIn = 3600;
+  setAdminTokens(data.accessToken, expiresIn);
+  useAdminAuthStore.getState().setTokens(data.accessToken, expiresIn);
+  return { accessToken: data.accessToken, expiresIn };
 }
 
-function loginWithJwt(jwt) {
-  localStorage.setItem(tokenKey, jwt);
+async function adminRefreshTokenApi() {
+  console.log("Refreshing admin token at:", adminRefreshEndPoint);
+  const { data } = await http.post(
+    adminRefreshEndPoint,
+    {},
+    { withCredentials: true }
+  );
+  console.log("Admin refresh response:", data);
+  const expiresIn = 3600; // Default to 1 hour
+  setAdminTokens(data.accessToken, expiresIn);
+  useAdminAuthStore.getState().setTokens(data.accessToken, expiresIn);
+  return { accessToken: data.accessToken, expiresIn };
 }
 
-function adminlogout() {
-  localStorage.removeItem(tokenKey);
+async function adminlogout() {
+  await http.post(`${endPoint}/logout`, {}, { withCredentials: true });
+  clearAdminTokens();
+  useAdminAuthStore.getState().logout();
 }
 
-// function getCurrentUser() {
-//   try {
-//     const jwt = localStorage.getItem(tokenKey);
-//     return jwtDecode(jwt);
-//   } catch (error) {
-//     return null;
-//   }
-// }
-
-function getCurrentUser() {
+async function getCurrentUser() {
   try {
-    const jwt = localStorage.getItem(tokenKey);
-    const decodedToken = jwtDecode(jwt);
-
-    if (decodedToken.exp * 1000 < Date.now()) {
-      // Token has expired
-      adminlogout();
-      return null;
-    }
-
-    return decodedToken;
-  } catch (error) {
+    const { data } = await http.get(`${endPointMe}/me`);
+    return data;
+  } catch (err) {
+    console.error("Failed to get current user:", err);
     return null;
   }
 }
 
-function getJwt() {
-  return localStorage.getItem(tokenKey);
-}
-
-export { adminlogin, loginWithJwt, adminlogout, getCurrentUser, getJwt };
+export { adminlogin, adminRefreshTokenApi, adminlogout, getCurrentUser };

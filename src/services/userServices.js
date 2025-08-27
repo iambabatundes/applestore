@@ -1,59 +1,161 @@
-import http from "../services/httpService";
-import config from "../config.json";
+import {
+  adminHttpService,
+  publicHttpService,
+  userHttpService,
+} from "../services/httpService";
 
-const apiEndPoint = `${config.apiUrl}/users`;
-const tokenKey = "token";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/users`;
 
 function userUrl(id) {
   return `${apiEndPoint}/${id}`;
 }
 
-export function getUsers() {
-  return http.get(apiEndPoint);
+export async function getUsers() {
+  try {
+    const { data } = await adminHttpService.get(apiEndPoint);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch users:", err);
+    throw err;
+  }
 }
 
-export function getUser(userId) {
-  return http.get(userUrl(userId));
+export async function getUser(userId) {
+  try {
+    const { data } = await adminHttpService.get(userUrl(userId));
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user:", err);
+    throw err;
+  }
 }
 
 export async function getUserProfile() {
-  const token = localStorage.getItem(tokenKey);
-  if (token) {
-    http.setJwt(token);
+  console.log("Fetching user profile from:", `${apiEndPoint}/me`);
+  try {
+    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
+    console.log("User profile response:", data);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user profile:", err);
+    throw err;
   }
-
-  const { data } = await http.get(`${apiEndPoint}/me`);
-  return data;
 }
 
-export function createUser(user) {
-  return http.post(apiEndPoint, {
-    firstName: user.firstName,
-    username: user.username,
-    phoneNumber: user.phoneNumber,
-    email: user.email,
-    password: user.password,
-  });
+// Step 1: Initiate registration with just email or phone
+export async function initiateRegistration(contactData) {
+  try {
+    const { data } = await publicHttpService.post(
+      `${apiEndPoint}/initiate`,
+      contactData
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to initiate registration:", err);
+    throw err;
+  }
 }
 
-export function verifyUser({ email, phoneNumber }, verificationCode) {
-  return http.post(`${apiEndPoint}/verify`, {
-    email,
-    phoneNumber,
-    verificationCode,
-  });
+// Step 2: Verify the email/phone code
+export async function verifyContact({ registrationToken, channel, code }) {
+  try {
+    const { data } = await publicHttpService.post(
+      `${apiEndPoint}/verify-contact`,
+      {
+        registrationToken,
+        channel,
+        code,
+      }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to verify contact:", err);
+    throw err;
+  }
 }
 
-export function resendValidationCode(email, phoneNumber) {
-  return http.post(`${apiEndPoint}/resend-code`, { email, phoneNumber });
+// Step 3: Complete registration with profile info
+export async function completeRegistration(profileData) {
+  try {
+    const { data } = await publicHttpService.post(
+      `${apiEndPoint}/complete`,
+      profileData
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to complete registration:", err);
+    throw err;
+  }
+}
+
+export async function resendVerificationCode({ registrationToken, channel }) {
+  try {
+    const { data } = await publicHttpService.post(
+      `${apiEndPoint}/resend-code`,
+      {
+        registrationToken,
+        channel,
+      }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to resend verification code:", err);
+    throw err;
+  }
+}
+
+// Keep existing functions for backward compatibility
+export async function createUser(user) {
+  try {
+    const { data } = await publicHttpService.post(apiEndPoint, {
+      firstName: user.firstName,
+      username: user.username,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+      password: user.password,
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to create user:", err);
+    throw err;
+  }
+}
+
+export async function sendVerificationCode({ registrationToken, channel }) {
+  try {
+    const { data } = await publicHttpService.post(
+      `${apiEndPoint}/send-verification`,
+      {
+        registrationToken,
+        channel,
+      }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to send verification code:", err);
+    throw err;
+  }
+}
+
+export async function verifyUser({ registrationToken, channel, code }) {
+  try {
+    const { data } = await publicHttpService.post(`${apiEndPoint}/verify`, {
+      registrationToken,
+      channel,
+      code,
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to verify user:", err);
+    throw err;
+  }
 }
 
 function createFormData(user) {
   const formData = new FormData();
-
   for (const key in user) {
     if (key === "_id") {
-      continue; // Skip the _id field
+      continue;
     } else if (key === "profileImage") {
       if (user[key] && user[key].file) {
         formData.append("profileImage", user[key].file);
@@ -64,18 +166,32 @@ function createFormData(user) {
       formData.append(key, user[key]);
     }
   }
-
   return formData;
 }
 
-export function updateUser(user) {
-  const formData = createFormData(user);
-
-  return http.put(`${apiEndPoint}/profile`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+export async function updateUser(user) {
+  try {
+    const formData = createFormData(user);
+    const { data } = await userHttpService.put(
+      `${apiEndPoint}/profile`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to update user:", err);
+    throw err;
+  }
 }
 
-export function deleteUser(userId) {
-  return http.delete(userUrl(userId));
+export async function deleteUser(userId) {
+  try {
+    const { data } = await adminHttpService.delete(userUrl(userId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete user:", err);
+    throw err;
+  }
 }

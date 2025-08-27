@@ -1,44 +1,74 @@
-import http from "../services/httpService";
-import config from "../config.json";
-
-const apiEndPoint = `${config.apiUrl}/orders`;
-const tokenKey = "token";
+import { userHttpService, adminHttpService } from "../services/httpService";
+const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/orders`;
 
 function orderUrl(id) {
   return `${apiEndPoint}/${id}`;
 }
 
-export function fetchUsersOrder(userId) {
-  return http.get(`${apiEndPoint}/users/${userId}`);
+export async function fetchUsersOrder(userId) {
+  try {
+    const { data } = await userHttpService.get(
+      `${apiEndPoint}/users/${userId}`
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user's orders:", err);
+    throw err;
+  }
 }
 
 export async function getUserOrders() {
-  const token = localStorage.getItem(tokenKey);
-  if (token) {
-    http.setJwt(token);
+  try {
+    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user orders:", err);
+    throw err;
   }
-
-  const { data } = await http.get(`${apiEndPoint}/me`);
-  return data;
 }
 
-export function getOrders() {
-  return http.get(apiEndPoint);
-}
-
-export function getOrder(orderId) {
-  return http.get(orderUrl(orderId));
-}
-
-export function saveOrder(order) {
-  if (order._id) {
-    const body = { ...order };
-    delete body._id;
-    return http.put(orderUrl(order._id), body);
+export async function getOrders() {
+  try {
+    const { data } = await adminHttpService.get(apiEndPoint);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch orders:", err);
+    throw err;
   }
-  return http.post(apiEndPoint, order);
 }
 
-export function deleteOrder(orderId) {
-  return http.delete(orderUrl(orderId));
+export async function getOrder(orderId) {
+  try {
+    const { data } = await adminHttpService.get(orderUrl(orderId));
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch order:", err);
+    throw err;
+  }
+}
+
+export async function saveOrder(order) {
+  try {
+    if (order._id) {
+      const body = { ...order };
+      delete body._id;
+      const { data } = await userHttpService.put(orderUrl(order._id), body);
+      return data;
+    }
+    const { data } = await userHttpService.post(apiEndPoint, order);
+    return data;
+  } catch (err) {
+    console.error("Failed to save order:", err);
+    throw err;
+  }
+}
+
+export async function deleteOrder(orderId) {
+  try {
+    const { data } = await adminHttpService.delete(orderUrl(orderId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete order:", err);
+    throw err;
+  }
 }
