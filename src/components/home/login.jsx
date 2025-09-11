@@ -40,7 +40,9 @@ export default function Login({ companyName }) {
         navigate(voteIntent.path, { state: { ...voteIntent, action: "vote" } });
         sessionStorage.removeItem("voteIntent");
       } else {
-        navigate(state?.path || "/");
+        const redirectPath = state?.path || "/";
+        console.log("Redirecting user after login to:", redirectPath);
+        navigate(redirectPath);
       }
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
@@ -99,7 +101,10 @@ export default function Login({ companyName }) {
         <hr />
         <div className="createNew__account">
           <h1 className="createNew__title">New in {companyName}</h1>
-          <Link to="/register">
+          <Link
+            to="/register"
+            state={{ path: state?.path, from: location.pathname }}
+          >
             <button className="createNew__btn">
               Create your {companyName} Account
             </button>

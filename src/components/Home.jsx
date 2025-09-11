@@ -14,6 +14,7 @@ import CategoryTwo from "./home/categoryTwo";
 import CategoryThree from "./home/categoryThree";
 import { useCartStore } from "./store/cartStore";
 import { useCurrencyStore } from "./store/currencyStore";
+import OfferByCategory from "./home/category/offerByCategory";
 
 function Home({
   // conversionRate,
@@ -51,6 +52,8 @@ function Home({
         selectedCurrency={selectedCurrency}
         currencySymbols={currencySymbols}
       />
+
+      {/* <OfferByCategory /> */}
       {/* <ShopCategories /> */}
       <Choice
         addToCart={addToCart}

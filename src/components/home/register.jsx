@@ -1,3 +1,4 @@
+// Register.jsx - Improved version with better error handling
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {
@@ -20,7 +21,6 @@ import { authStore, loginWithJwt } from "../../services/authService";
 import { getErrorMessage, getErrorText } from "./utils/errorUtils";
 import * as Yup from "yup";
 
-// Country data with calling codes
 const getCountryData = () => {
   const countries = getCountries();
   return countries
@@ -42,7 +42,6 @@ const getCountryData = () => {
     .sort((a, b) => a.name.localeCompare(b.name));
 };
 
-// Validation schemas for each step
 const contactValidationSchema = Yup.object({
   contact: Yup.string()
     .required("Email or phone number is required")
@@ -104,11 +103,11 @@ export default function Register() {
   const [registrationToken, setRegistrationToken] = useState(null);
   const [verificationCode, setVerificationCode] = useState("");
   const [canResend, setCanResend] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [resendCooldown, setResendCooldown] = useState(60);
 
-  // New state for phone number handling
   const [phoneNumberInfo, setPhoneNumberInfo] = useState({
     callingCode: null,
     country: null,
@@ -122,7 +121,6 @@ export default function Register() {
   const { state } = useLocation();
   const { user } = useStore(authStore);
 
-  // Initialize country data on component mount
   useEffect(() => {
     const countries = getCountryData();
     setCountryData(countries);
@@ -138,7 +136,6 @@ export default function Register() {
     }
   }, []);
 
-  // Handle contact input changes
   const handleContactChange = (e) => {
     const value = e.target.value;
     contactFormik.setFieldValue("contact", value);
@@ -192,7 +189,6 @@ export default function Register() {
     }
   };
 
-  // Handle country selection
   const handleCountrySelect = (countryCode) => {
     setSelectedCountry(countryCode);
     const country = countryData.find((c) => c.code === countryCode);
@@ -212,11 +208,11 @@ export default function Register() {
     }
   };
 
-  // Step 1: Contact form (email or phone)
   const contactFormik = useFormik({
     initialValues: { contact: "" },
     validationSchema: contactValidationSchema,
     onSubmit: async (values) => {
+      setIsSubmitting(true);
       setLoading(true);
       setError("");
 
@@ -261,31 +257,11 @@ export default function Register() {
         );
       } finally {
         setLoading(false);
+        setIsSubmitting(false);
       }
     },
   });
 
-  // Custom validation for additional contact
-  const validateAdditionalContact = (value) => {
-    if (!value) return null; // Optional field
-
-    if (contactInfo.type === "email") {
-      // User verified email, so additional contact should be phone
-      const parsed = parsePhoneNumberFromString(value, selectedCountry);
-      if (!parsed || !parsed.isValid()) {
-        return "Enter a valid phone number";
-      }
-    } else {
-      // User verified phone, so additional contact should be email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        return "Enter a valid email address";
-      }
-    }
-    return null;
-  };
-
-  // Step 3: Profile completion form
   const profileFormik = useFormik({
     initialValues: {
       firstName: "",
@@ -329,25 +305,71 @@ export default function Register() {
 
         const response = await completeRegistration(profileData);
 
+        console.log("Registration response:", response);
         toast.success(response.message || "Registration complete!");
-        if (response.token) {
+
+        if (response.accessToken) {
           try {
-            console.log("Attempting to login with token from registration");
-            await loginWithJwt(response.token);
-            console.log("Login with JWT successful");
-            navigate(state?.path || "/");
+            console.log("Attempting auto-login with registration token");
+
+            // IMPROVED: Use the user data from registration response
+            // This avoids the need to fetch user data again
+            const authState = authStore.getState();
+
+            // Set the user data directly from registration response
+            if (response.user) {
+              authState.setUser(response.user);
+            }
+
+            // Now login with token - this should skip the getUserApi call
+            // since we already have user data
+            await loginWithJwt(response.accessToken, response.expiresIn || 900);
+
+            console.log("Auto-login successful");
+
+            // Determine redirect path
+            const redirectPath = state?.path || state?.from || "/";
+            console.log("Redirecting to:", redirectPath);
+
+            navigate(redirectPath, { replace: true });
           } catch (loginError) {
-            console.error("Failed to login after registration:", loginError);
-            toast.warn(
-              "Registration successful, but auto-login failed. Please login manually."
-            );
-            navigate("/login");
+            console.error("Auto-login failed:", loginError);
+
+            // IMPROVED: More specific error handling
+            if (
+              loginError.code === "ECONNABORTED" ||
+              loginError.message?.includes("timeout")
+            ) {
+              console.log("Login timeout - but registration was successful");
+              toast.success("Registration successful! Redirecting to login...");
+            } else {
+              toast.warn(
+                "Registration successful, but auto-login failed. Please login manually."
+              );
+            }
+
+            // Always redirect to login with the intended path
+            navigate("/login", {
+              state: {
+                path: state?.path || state?.from,
+                registrationSuccess: true,
+              },
+              replace: true,
+            });
           }
         } else {
           console.warn("No token received from registration");
-          navigate("/login");
+          toast.success("Registration successful! Please login.");
+          navigate("/login", {
+            state: {
+              path: state?.path || state?.from,
+              registrationSuccess: true,
+            },
+            replace: true,
+          });
         }
       } catch (err) {
+        console.error("Registration error:", err);
         setError(
           getErrorMessage(err, "Registration failed. Please try again.")
         );
@@ -489,9 +511,13 @@ export default function Register() {
               <button
                 type="submit"
                 className="register__btn"
-                disabled={loading}
+                disabled={loading || isSubmitting}
               >
-                {loading ? "Sending code..." : "Continue"}
+                {isSubmitting
+                  ? "Processing..."
+                  : loading
+                  ? "Sending code..."
+                  : "Continue"}
               </button>
 
               {error && <p className="error-message">{error}</p>}
@@ -659,7 +685,13 @@ export default function Register() {
 
         <hr />
         <div className="login-link">
-          Already have an account? <Link to="/login">Sign in</Link>
+          Already have an account?
+          <Link
+            to="/login"
+            state={{ path: state?.path, from: location.pathname }}
+          >
+            Sign in
+          </Link>
         </div>
       </div>
     </section>

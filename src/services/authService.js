@@ -1,8 +1,8 @@
 import { jwtDecode } from "jwt-decode";
 import { loginApi, refreshTokenApi, logoutApi, getUserApi } from "./apiService";
 import { createAuthStore } from "../components/home/store/useAuthStore";
+import { httpService, ClientType } from "./httpService";
 
-// Create auth store with API dependencies
 export const authStore = createAuthStore({
   loginApi,
   refreshTokenApi,
@@ -10,7 +10,6 @@ export const authStore = createAuthStore({
   getUserApi,
 });
 
-// Initialize auth state on app start - CRITICAL FIX
 export const initializeAuth = async () => {
   console.log("Initializing authentication...");
   try {
@@ -50,7 +49,7 @@ export function getCurrentUser() {
   }
 }
 
-// Login with JWT
+// Login with JWT - UPDATED for your httpService
 export async function loginWithJwt(jwt, expiresIn) {
   try {
     if (!expiresIn) {
@@ -68,6 +67,13 @@ export async function loginWithJwt(jwt, expiresIn) {
     }
 
     console.log("Logging in with JWT, expiresIn:", expiresIn);
+
+    // CRITICAL: Set tokens in httpService first
+    httpService.setTokens(ClientType.USER, {
+      accessToken: jwt,
+      expiresIn: expiresIn,
+    });
+
     return await authStore.getState().loginWithToken(jwt, expiresIn);
   } catch (error) {
     console.error("loginWithJwt failed:", error);
@@ -86,8 +92,20 @@ export function isAuthenticated() {
   return isAuthenticated && expiryDate && Date.now() < expiryDate;
 }
 
-// Get access token
+// Get access token - UPDATED to use httpService
 export function getAccessToken() {
+  // Try httpService first (most current)
+  const httpServiceToken = httpService.tokenManager.getAccessToken(
+    ClientType.USER
+  );
+  if (
+    httpServiceToken &&
+    !httpService.tokenManager.isTokenExpired(ClientType.USER)
+  ) {
+    return httpServiceToken;
+  }
+
+  // Fallback to auth store
   const { accessToken, expiryDate } = authStore.getState();
   if (!accessToken || !expiryDate || Date.now() >= expiryDate) {
     return null;

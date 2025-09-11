@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Avatar } from "@mui/material";
 import config from "../../config.json";
 import "./styles/userSection.css";
+import { getProfileImageUrl } from "./utils/profileImageUtils";
 
 export default function UserSection({
   user,
@@ -57,15 +58,12 @@ export default function UserSection({
           <div className={`navbar-user-container ${className}`}>
             <div className="navbar-user__main" onClick={toggleDropdown}>
               <Avatar
-                src={
-                  user.profileImage instanceof File
-                    ? URL.createObjectURL(user.profileImage)
-                    : user.profileImage
-                    ? `${config.mediaUrl}/uploads/${user.profileImage.filename}`
-                    : "/default-avatar.png"
-                }
+                src={getProfileImageUrl(user.profileImage)}
                 alt={`${user.firstName} ${user.lastName}`}
                 sx={{ width: 40, height: 40, mr: 1 }}
+                onError={(e) => {
+                  e.target.src = "/default-avatar.png";
+                }}
               />
 
               <div className="navbar-signin-main">

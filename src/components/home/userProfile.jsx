@@ -31,6 +31,12 @@ export default function UserProfile() {
     greeting,
     handleSubmit,
     handleProfileImageChange,
+    contactInfo,
+    pendingVerifications,
+    setPendingVerifications,
+    verificationLoading,
+    handleSendVerification,
+    handleVerifyContact,
   } = useUserProfile();
 
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
@@ -81,6 +87,11 @@ export default function UserProfile() {
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   handleProfileImageChange={handleProfileImageChange}
+                  contactInfo={contactInfo}
+                  pendingVerifications={pendingVerifications}
+                  handleSendVerification={handleSendVerification}
+                  handleVerifyContact={handleVerifyContact}
+                  verificationLoading={verificationLoading}
                 />
               }
             />

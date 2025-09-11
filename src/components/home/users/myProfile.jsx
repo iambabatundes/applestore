@@ -15,6 +15,11 @@ export default function MyProfile({
   isEditing,
   setIsEditing,
   handleProfileImageChange,
+  contactInfo,
+  pendingVerifications,
+  handleSendVerification,
+  handleVerifyContact,
+  verificationLoading,
 }) {
   const { user } = useStore(authStore);
 
@@ -24,6 +29,32 @@ export default function MyProfile({
 
   const handleCancel = () => {
     setIsEditing(false);
+    // Reset userData to current user data on cancel
+    if (user) {
+      setUserData({
+        ...user,
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        username: user.username || "",
+        email: user.email || "",
+        phoneNumber: user.phoneNumber || "",
+        // Normalize gender here too
+        gender: user.gender
+          ? user.gender.charAt(0).toUpperCase() +
+            user.gender.slice(1).toLowerCase()
+          : "",
+        dateOfBirth: user.dateOfBirth || "",
+        profileImage: user.profileImage || null,
+        address: {
+          addressLine: user.address?.addressLine || "",
+          city: user.address?.city || "",
+          state: user.address?.state || "",
+          country: user.address?.country || "",
+          postalCode: user.address?.postalCode || "",
+        },
+      });
+      setProfileImage(user.profileImage || null);
+    }
   };
 
   if (!user) {
@@ -43,10 +74,23 @@ export default function MyProfile({
           onCancel={handleCancel}
           loading={loading}
           handleProfileImageChange={handleProfileImageChange}
+          contactInfo={contactInfo}
+          pendingVerifications={pendingVerifications}
+          handleSendVerification={handleSendVerification}
+          handleVerifyContact={handleVerifyContact}
+          verificationLoading={verificationLoading}
         />
       ) : (
         <>
-          <ProfileDisplay user={user} onEdit={handleEdit} />
+          <ProfileDisplay
+            user={user}
+            onEdit={handleEdit}
+            contactInfo={contactInfo}
+            pendingVerifications={pendingVerifications}
+            handleSendVerification={handleSendVerification}
+            handleVerifyContact={handleVerifyContact}
+            verificationLoading={verificationLoading}
+          />
           <TopProduct />
         </>
       )}

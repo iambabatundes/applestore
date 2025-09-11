@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "NodeNext",
     "jsx": "react-jsx",
     "allowJs": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "baseUrl": "./src",
     "paths": {
       "@components/*": ["components/*"],

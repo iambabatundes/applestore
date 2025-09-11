@@ -1,9 +1,11 @@
 import React from "react";
 import { Avatar, Box, Typography, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import config from "../../../../config.json";
+import { getProfileImageUrl } from "../../../home/utils/profileImageUtils";
 
 export default function ProfileDisplay({ user, onEdit }) {
+  const imageUrl = getProfileImageUrl(user.profileImage);
+
   return (
     <Box
       p={3}
@@ -36,15 +38,12 @@ export default function ProfileDisplay({ user, onEdit }) {
         width="100%"
       >
         <Avatar
-          src={
-            user.profileImage instanceof File
-              ? URL.createObjectURL(user.profileImage)
-              : user.profileImage
-              ? `${config.mediaUrl}/uploads/${user.profileImage?.filename}`
-              : "/default-avatar.png"
-          }
+          src={imageUrl}
           alt={`${user.firstName} ${user.lastName}`}
-          sx={{ width: 100, height: 100 }}
+          sx={{ width: 100, height: 100, mb: 2 }}
+          onError={(e) => {
+            e.target.src = "/default-avatar.png";
+          }}
         />
 
         <Typography variant="h1" mt={2} fontSize="1.5rem" fontWeight={500}>
@@ -86,13 +85,7 @@ export default function ProfileDisplay({ user, onEdit }) {
           </Typography>
         </Box>
         <Typography variant="body1" color="textSecondary">
-          <strong>Address:</strong>{" "}
-          {/* {user.address
-            ? `${user.address.address}, 
-            ${user.address.state}, ${user.address.country}, 
-            ${user.address.zipCode}`
-            : "N/A"} */}
-          {user.address}
+          <strong>Address:</strong> {user.address}
         </Typography>
         <Typography variant="body1" color="textSecondary">
           <strong>Role:</strong> {user.role}

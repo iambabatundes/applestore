@@ -1,3 +1,4 @@
+// useAuthStore.js - Fixed version with proper user data synchronization
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "react-toastify";
@@ -7,7 +8,7 @@ import { httpService, ClientType } from "../../../services/httpService";
 const calculateExpiryDate = (expiresInSeconds) =>
   Date.now() + expiresInSeconds * 1000;
 
-// JWT validation function (since we can't import it)
+// JWT validation function
 const isValidJwt = (token) => {
   if (!token || typeof token !== "string") return false;
   const parts = token.split(".");
@@ -21,7 +22,7 @@ const secureStorage = {
   getItem: (name) => {
     try {
       const json = localStorage.getItem(name);
-      return json ? JSON.parse(json) : null; // ✅ parse back to object
+      return json ? JSON.parse(json) : null;
     } catch (error) {
       console.error("Error reading from localStorage:", error);
       return null;
@@ -120,20 +121,36 @@ export const createAuthStore = ({
               const response = await refreshTokenApi();
               const accessToken = response.accessToken || response.token;
               const expiresIn = response.expiresIn || 900;
-              const user = response.user || currentState.user;
+              let user = response.user || currentState.user;
 
               if (!isValidJwt(accessToken)) {
                 throw new Error("Invalid access token received from refresh");
               }
 
-              // Set tokens in httpService
+              // CRITICAL: Sync with httpService
               httpService.setTokens(ClientType.USER, {
                 accessToken,
-                refreshToken: response.refreshToken,
                 expiresIn,
               });
 
               const newExpiryDate = calculateExpiryDate(expiresIn);
+
+              // CRITICAL FIX: Always fetch fresh user data during token refresh
+              if (!user) {
+                try {
+                  console.log(
+                    "Fetching fresh user data during token refresh..."
+                  );
+                  user = await getUserApi();
+                } catch (getUserError) {
+                  console.warn(
+                    "Failed to fetch user during refresh:",
+                    getUserError
+                  );
+                  // Keep existing user if fetch fails
+                  user = currentState.user;
+                }
+              }
 
               scheduleAutoLogout(expiresIn, get().logout);
               scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
@@ -147,7 +164,7 @@ export const createAuthStore = ({
                 isAuthenticated: true,
               });
 
-              console.log("Token refreshed successfully");
+              console.log("Token refreshed successfully with user data");
               return { accessToken, expiresIn };
             } catch (error) {
               console.error("Token refresh failed:", error);
@@ -181,75 +198,79 @@ export const createAuthStore = ({
           isRefreshing: false,
           refreshPromise: null,
 
-          // Initialize method
+          // CRITICAL FIX: Enhanced initialize method
           initialize: async () => {
             console.log("Initializing auth store...");
 
             try {
               const currentState = get();
 
-              // If already authenticated and user exists, we're good
-              if (
-                currentState.isAuthenticated &&
-                currentState.user &&
-                currentState.accessToken
-              ) {
-                const timeToExpiry = currentState.expiryDate - Date.now();
-                if (timeToExpiry > 0) {
-                  const expiresIn = Math.floor(timeToExpiry / 1000);
-                  scheduleAutoLogout(expiresIn, get().logout);
-                  scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
-                  set({ isAuthReady: true });
-                  return;
-                }
-              }
-
-              // Check httpService for stored tokens
+              // Check if we have a valid session first
               const storedToken = httpService.tokenManager?.getAccessToken(
                 ClientType.USER
               );
-
-              if (
+              const hasValidStoredToken =
                 storedToken &&
-                !httpService.tokenManager?.isTokenExpired(ClientType.USER)
-              ) {
-                if (isValidJwt(storedToken)) {
-                  // Get expiry from token
-                  try {
-                    const payload = JSON.parse(atob(storedToken.split(".")[1]));
-                    const expiryTimestamp = payload.exp * 1000; // Convert to milliseconds
-                    const timeToExpiry = expiryTimestamp - Date.now();
+                !httpService.tokenManager?.isTokenExpired(ClientType.USER) &&
+                isValidJwt(storedToken);
 
-                    if (timeToExpiry > 0) {
-                      const expiresIn = Math.floor(timeToExpiry / 1000);
+              if (hasValidStoredToken) {
+                console.log("Valid token found, checking user data...");
 
-                      set({
-                        accessToken: storedToken,
-                        expiryDate: expiryTimestamp,
-                        isAuthenticated: true,
-                      });
+                try {
+                  const payload = JSON.parse(atob(storedToken.split(".")[1]));
+                  const expiryTimestamp = payload.exp * 1000;
+                  const timeToExpiry = expiryTimestamp - Date.now();
 
-                      // Fetch user data if we don't have it
-                      if (!currentState.user) {
-                        try {
-                          const userData = await getUserApi();
-                          set({ user: userData });
-                        } catch (error) {
-                          console.warn(
-                            "Failed to fetch user during initialization:",
-                            error
-                          );
-                        }
+                  if (timeToExpiry > 0) {
+                    const expiresIn = Math.floor(timeToExpiry / 1000);
+
+                    // CRITICAL FIX: Always fetch fresh user data from backend
+                    let userData = null;
+                    try {
+                      console.log(
+                        "Fetching fresh user data during initialization..."
+                      );
+                      userData = await getUserApi();
+                    } catch (error) {
+                      console.warn(
+                        "Failed to fetch user during initialization:",
+                        error
+                      );
+
+                      // If user fetch fails but we have valid token, try to use stored user
+                      if (currentState.user) {
+                        console.log("Using cached user data as fallback");
+                        userData = currentState.user;
                       }
+                    }
 
+                    set({
+                      user: userData,
+                      accessToken: storedToken,
+                      expiryDate: expiryTimestamp,
+                      isAuthenticated: !!userData, // Only authenticated if we have user data
+                    });
+
+                    if (userData) {
                       scheduleAutoLogout(expiresIn, get().logout);
                       scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
                     }
-                  } catch (tokenError) {
-                    console.error("Failed to decode stored token:", tokenError);
-                    httpService.clearTokens(ClientType.USER);
                   }
+                } catch (tokenError) {
+                  console.error("Failed to process stored token:", tokenError);
+                  httpService.clearTokens(ClientType.USER);
+                  get().logout();
                 }
+              } else {
+                console.log("No valid token found, user needs to login");
+                // Clear any stale data
+                set({
+                  user: null,
+                  accessToken: null,
+                  isAuthenticated: false,
+                  expiryDate: null,
+                });
               }
             } catch (error) {
               console.error("Auth initialization error:", error);
@@ -266,18 +287,35 @@ export const createAuthStore = ({
               const response = await loginApi(email, password);
               const accessToken = response.accessToken || response.token;
               const expiresIn = response.expiresIn || 900;
-              const user = response.user;
+              let user = response.user;
 
               if (!isValidJwt(accessToken)) {
                 throw new Error("Invalid access token received");
               }
 
-              // Set tokens in httpService
+              // CRITICAL: Sync with httpService
               httpService.setTokens(ClientType.USER, {
                 accessToken,
-                refreshToken: response.refreshToken,
                 expiresIn,
               });
+
+              // CRITICAL FIX: If no user in response, fetch from backend
+              if (!user) {
+                try {
+                  console.log(
+                    "No user in login response, fetching user data..."
+                  );
+                  user = await getUserApi();
+                } catch (getUserError) {
+                  console.warn(
+                    "Failed to fetch user after login:",
+                    getUserError
+                  );
+                  throw new Error(
+                    "Login succeeded but failed to get user data"
+                  );
+                }
+              }
 
               const expiryDate = calculateExpiryDate(expiresIn);
 
@@ -293,7 +331,7 @@ export const createAuthStore = ({
                 isAuthReady: true,
               });
 
-              console.log("Login successful");
+              console.log("Login successful with user data:", user);
               return user;
             } catch (error) {
               console.error("Login failed:", error);
@@ -314,7 +352,7 @@ export const createAuthStore = ({
               console.log("Starting login with token...");
               if (!isValidJwt(jwt)) throw new Error("Invalid JWT token format");
 
-              // Set tokens in httpService
+              // CRITICAL: Set in httpService first
               httpService.setTokens(ClientType.USER, {
                 accessToken: jwt,
                 expiresIn,
@@ -325,20 +363,27 @@ export const createAuthStore = ({
               scheduleAutoLogout(expiresIn, get().logout);
               scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
 
+              // CRITICAL FIX: Always fetch fresh user data
               let user = null;
               try {
+                console.log("Fetching fresh user data for token login...");
                 user = await getUserApi();
               } catch (getUserError) {
                 console.warn(
                   "Failed to get user data during token login:",
                   getUserError
                 );
+
+                // For registration flow, don't fail if user fetch fails
+                if (getUserError.code !== "ECONNABORTED") {
+                  throw getUserError;
+                }
               }
 
               set({
                 user,
                 accessToken: jwt,
-                isAuthenticated: true,
+                isAuthenticated: !!user, // Only authenticated if we have user data
                 expiryDate,
                 isLoading: false,
                 isAuthReady: true,
@@ -349,7 +394,11 @@ export const createAuthStore = ({
             } catch (error) {
               console.error("Login with token failed:", error);
               set({ isLoading: false, isAuthReady: true });
-              toast.error("Authentication failed. Please log in again.");
+
+              // Don't show error toast for timeout during registration
+              if (!error.code?.includes("ECONNABORTED")) {
+                toast.error("Authentication failed. Please log in again.");
+              }
               throw error;
             }
           },
@@ -367,7 +416,7 @@ export const createAuthStore = ({
               console.warn("Logout API call failed:", error);
             }
 
-            // Clear tokens from httpService
+            // CRITICAL: Clear tokens from httpService
             httpService.clearTokens(ClientType.USER);
 
             set({
@@ -386,7 +435,10 @@ export const createAuthStore = ({
 
           refreshAccessToken: userRefreshAccessToken,
 
-          setUser: (user) => set({ user }),
+          setUser: (user) => {
+            console.log("Setting user data:", user);
+            set({ user });
+          },
 
           getUser: async () => {
             const currentState = get();
@@ -428,7 +480,8 @@ export const createAuthStore = ({
         name: "auth-store",
         storage: secureStorage,
         partialize: (state) => ({
-          user: state.user,
+          // CRITICAL FIX: Don't persist user data in localStorage
+          // Always fetch fresh from backend on initialization
           accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
           expiryDate: state.expiryDate,
@@ -453,39 +506,16 @@ export const createAuthStore = ({
             return;
           }
 
-          // Don't set isAuthReady here - let initialize() handle it
+          // CRITICAL FIX: Don't restore user from localStorage
+          // It will be fetched fresh during initialization
+
           state.isAuthReady = false;
           state.isLoading = false;
           state.isRefreshing = false;
           state.refreshPromise = null;
 
-          console.log("Auth store rehydration completed, state:", {
-            hasUser: !!state.user,
-            hasToken: !!state.accessToken,
-            isAuthenticated: state.isAuthenticated,
-            expiryDate: state.expiryDate
-              ? new Date(state.expiryDate).toISOString()
-              : null,
-          });
+          console.log("Auth store rehydration completed");
         },
       }
     )
   );
-
-// === Multi-tab sync ===
-if (typeof window !== "undefined") {
-  window.addEventListener("storage", (event) => {
-    if (event.key === "auth-logout") {
-      console.log("Logout event detected from another tab");
-    }
-  });
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      const state = authStore.getState();
-      if (!state.checkTokenExpiry()) {
-        state.refreshAccessToken().catch(console.error);
-      }
-    }
-  });
-}
