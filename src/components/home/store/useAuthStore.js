@@ -1,8 +1,6 @@
-// useAuthStore.js - Fixed version with proper user data synchronization
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "react-toastify";
-import { httpService, ClientType } from "../../../services/httpService";
 
 // === Utility functions ===
 const calculateExpiryDate = (expiresInSeconds) =>
@@ -40,6 +38,7 @@ const secureStorage = {
       console.error("Error writing to localStorage:", error);
     }
   },
+
   removeItem: (name) => {
     try {
       localStorage.removeItem(name);
@@ -101,6 +100,7 @@ export const createAuthStore = ({
   refreshTokenApi,
   logoutApi,
   getUserApi,
+  userHttpService,
 }) =>
   create(
     persist(
@@ -120,6 +120,7 @@ export const createAuthStore = ({
             try {
               const response = await refreshTokenApi();
               const accessToken = response.accessToken || response.token;
+              const refreshToken = response.refreshToken;
               const expiresIn = response.expiresIn || 900;
               let user = response.user || currentState.user;
 
@@ -127,15 +128,15 @@ export const createAuthStore = ({
                 throw new Error("Invalid access token received from refresh");
               }
 
-              // CRITICAL: Sync with httpService
-              httpService.setTokens(ClientType.USER, {
+              // Use the service instance's token management
+              userHttpService.setTokens({
                 accessToken,
+                refreshToken,
                 expiresIn,
               });
 
               const newExpiryDate = calculateExpiryDate(expiresIn);
 
-              // CRITICAL FIX: Always fetch fresh user data during token refresh
               if (!user) {
                 try {
                   console.log(
@@ -198,7 +199,6 @@ export const createAuthStore = ({
           isRefreshing: false,
           refreshPromise: null,
 
-          // CRITICAL FIX: Enhanced initialize method
           initialize: async () => {
             console.log("Initializing auth store...");
 
@@ -206,12 +206,11 @@ export const createAuthStore = ({
               const currentState = get();
 
               // Check if we have a valid session first
-              const storedToken = httpService.tokenManager?.getAccessToken(
-                ClientType.USER
-              );
+              const storedToken =
+                userHttpService.tokenManager?.getAccessToken();
               const hasValidStoredToken =
                 storedToken &&
-                !httpService.tokenManager?.isTokenExpired(ClientType.USER) &&
+                !userHttpService.tokenManager?.isTokenExpired() &&
                 isValidJwt(storedToken);
 
               if (hasValidStoredToken) {
@@ -225,7 +224,6 @@ export const createAuthStore = ({
                   if (timeToExpiry > 0) {
                     const expiresIn = Math.floor(timeToExpiry / 1000);
 
-                    // CRITICAL FIX: Always fetch fresh user data from backend
                     let userData = null;
                     try {
                       console.log(
@@ -259,7 +257,7 @@ export const createAuthStore = ({
                   }
                 } catch (tokenError) {
                   console.error("Failed to process stored token:", tokenError);
-                  httpService.clearTokens(ClientType.USER);
+                  userHttpService.clearTokens();
                   get().logout();
                 }
               } else {
@@ -286,6 +284,7 @@ export const createAuthStore = ({
               console.log("Starting login process...");
               const response = await loginApi(email, password);
               const accessToken = response.accessToken || response.token;
+              const refreshToken = response.refreshToken;
               const expiresIn = response.expiresIn || 900;
               let user = response.user;
 
@@ -293,13 +292,13 @@ export const createAuthStore = ({
                 throw new Error("Invalid access token received");
               }
 
-              // CRITICAL: Sync with httpService
-              httpService.setTokens(ClientType.USER, {
+              // Use the service instance's token management
+              userHttpService.setTokens({
                 accessToken,
+                refreshToken,
                 expiresIn,
               });
 
-              // CRITICAL FIX: If no user in response, fetch from backend
               if (!user) {
                 try {
                   console.log(
@@ -352,8 +351,7 @@ export const createAuthStore = ({
               console.log("Starting login with token...");
               if (!isValidJwt(jwt)) throw new Error("Invalid JWT token format");
 
-              // CRITICAL: Set in httpService first
-              httpService.setTokens(ClientType.USER, {
+              userHttpService.setTokens({
                 accessToken: jwt,
                 expiresIn,
               });
@@ -363,7 +361,6 @@ export const createAuthStore = ({
               scheduleAutoLogout(expiresIn, get().logout);
               scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
 
-              // CRITICAL FIX: Always fetch fresh user data
               let user = null;
               try {
                 console.log("Fetching fresh user data for token login...");
@@ -416,8 +413,7 @@ export const createAuthStore = ({
               console.warn("Logout API call failed:", error);
             }
 
-            // CRITICAL: Clear tokens from httpService
-            httpService.clearTokens(ClientType.USER);
+            userHttpService.clearTokens();
 
             set({
               user: null,
@@ -480,8 +476,6 @@ export const createAuthStore = ({
         name: "auth-store",
         storage: secureStorage,
         partialize: (state) => ({
-          // CRITICAL FIX: Don't persist user data in localStorage
-          // Always fetch fresh from backend on initialization
           accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
           expiryDate: state.expiryDate,
@@ -505,9 +499,6 @@ export const createAuthStore = ({
             console.warn("No state to rehydrate");
             return;
           }
-
-          // CRITICAL FIX: Don't restore user from localStorage
-          // It will be fetched fresh during initialization
 
           state.isAuthReady = false;
           state.isLoading = false;

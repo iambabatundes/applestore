@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "react-toastify";
-import { adminHttpService } from "../../../services/httpService";
+import { adminHttpService } from "../../../services/http/index";
 import {
   adminlogin,
   adminlogout,

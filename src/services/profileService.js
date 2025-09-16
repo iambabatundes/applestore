@@ -1,7 +1,8 @@
-import { userHttpService } from "../services/httpService";
+import { userHttpService } from "./http/index";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/users/profile`;
+// Use relative path - let the service handle base URL
+const profilePath = "/api/users/profile";
 
 function createFormData(user) {
   const formData = new FormData();
@@ -49,7 +50,7 @@ function createFormData(user) {
 export async function updateUser(user) {
   try {
     const formData = createFormData(user);
-    const response = await userHttpService.put(apiEndPoint, formData, {
+    const response = await userHttpService.put(profilePath, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -61,11 +62,11 @@ export async function updateUser(user) {
   }
 }
 
-// New function to send verification code for secondary contact
+// Function to send verification code for secondary contact
 export async function sendVerificationCode(contactType) {
   try {
     const { data } = await userHttpService.post(
-      `${apiEndPoint}/send-verification`,
+      `${profilePath}/send-verification`,
       {
         contactType, // 'email' or 'phone'
       }
@@ -77,11 +78,11 @@ export async function sendVerificationCode(contactType) {
   }
 }
 
-// New function to verify contact update
+// Function to verify contact update
 export async function verifyContactUpdate(contactType, code) {
   try {
     const { data } = await userHttpService.post(
-      `${apiEndPoint}/verify-contact`,
+      `${profilePath}/verify-contact`,
       {
         contactType,
         code,
@@ -94,10 +95,10 @@ export async function verifyContactUpdate(contactType, code) {
   }
 }
 
-// New function to get user profile with contact status
+// Function to get user profile with contact status
 export async function getUserProfileWithContactStatus() {
   try {
-    const { data } = await userHttpService.get(`${apiEndPoint}/contact-status`);
+    const { data } = await userHttpService.get(`${profilePath}/contact-status`);
     return data;
   } catch (err) {
     console.error("Failed to get user profile with contact status:", err);

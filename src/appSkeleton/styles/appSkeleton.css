@@ -1,0 +1,244 @@
+.app-skeleton {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+.navbar-skeleton {
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-items-skeleton {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.nav-right-skeleton {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.main-skeleton {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px;
+}
+
+.hero-skeleton {
+    text-align: center;
+    margin-bottom: 60px;
+    padding: 40px 0;
+}
+
+.content-grid-skeleton {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.content-card-skeleton {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer-skeleton {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    margin-top: auto;
+}
+
+.footer-content-skeleton {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Enhanced skeleton animation with wave effect */
+.skeleton {
+    background: linear-gradient(90deg,
+            #f0f0f0 0%,
+            #f0f0f0 40%,
+            #e0e0e0 50%,
+            #f0f0f0 60%,
+            #f0f0f0 100%);
+    background-size: 200% 100%;
+    animation: skeleton-wave 1.5s ease-in-out infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-wave {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Different skeleton variants with staggered animations */
+.skeleton-logo {
+    animation-delay: 0s;
+}
+
+.skeleton-nav-item:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.skeleton-nav-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.skeleton-nav-item:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.skeleton-currency {
+    animation-delay: 0.4s;
+}
+
+.skeleton-cart {
+    animation-delay: 0.5s;
+}
+
+.skeleton-user {
+    animation-delay: 0.6s;
+}
+
+.skeleton-hero-title {
+    animation-delay: 0.2s;
+}
+
+.skeleton-hero-subtitle {
+    animation-delay: 0.4s;
+}
+
+.skeleton-hero-button {
+    animation-delay: 0.6s;
+}
+
+/* Staggered card animations */
+.content-card-skeleton:nth-child(1) .skeleton {
+    animation-delay: 0.1s;
+}
+
+.content-card-skeleton:nth-child(2) .skeleton {
+    animation-delay: 0.2s;
+}
+
+.content-card-skeleton:nth-child(3) .skeleton {
+    animation-delay: 0.3s;
+}
+
+.content-card-skeleton:nth-child(4) .skeleton {
+    animation-delay: 0.4s;
+}
+
+.content-card-skeleton:nth-child(5) .skeleton {
+    animation-delay: 0.5s;
+}
+
+.content-card-skeleton:nth-child(6) .skeleton {
+    animation-delay: 0.6s;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .app-skeleton {
+        background-color: #1a1a1a;
+    }
+
+    .navbar-skeleton,
+    .content-card-skeleton {
+        background-color: #2a2a2a;
+        border-color: #3a3a3a;
+    }
+
+    .footer-skeleton {
+        background-color: #1f1f1f;
+        border-color: #3a3a3a;
+    }
+
+    .skeleton {
+        background: linear-gradient(90deg,
+                #2a2a2a 0%,
+                #2a2a2a 40%,
+                #3a3a3a 50%,
+                #2a2a2a 60%,
+                #2a2a2a 100%);
+        background-size: 200% 100%;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 16px;
+    }
+
+    .nav-items-skeleton {
+        display: none;
+        /* Hide nav items on mobile */
+    }
+
+    .nav-right-skeleton {
+        gap: 12px;
+    }
+
+    .main-skeleton {
+        padding: 16px;
+    }
+
+    .hero-skeleton {
+        padding: 20px 0;
+        margin-bottom: 40px;
+    }
+
+    .content-grid-skeleton {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .footer-content-skeleton {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content-skeleton {
+        grid-template-columns: 1fr;
+    }
+
+    .skeleton-hero-title {
+        height: 36px;
+    }
+
+    .skeleton-hero-subtitle {
+        height: 20px;
+    }
+}

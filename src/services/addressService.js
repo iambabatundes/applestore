@@ -1,13 +1,16 @@
-import { adminHttpService, userHttpService } from "../services/httpService";
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/addresses`;
+import { adminHttpService, userHttpService } from "./http/index";
+
+// Use relative path - let services handle their base URLs
+const addressesPath = "/api/addresses";
 
 function addressUrl(id) {
-  return `${apiEndPoint}/${id}`;
+  return `${addressesPath}/${id}`;
 }
 
+// Admin functions - can access all addresses
 export async function getAddresses() {
   try {
-    const { data } = await adminHttpService.get(apiEndPoint);
+    const { data } = await adminHttpService.get(addressesPath);
     return data;
   } catch (err) {
     console.error("Failed to fetch addresses:", err);
@@ -25,19 +28,21 @@ export async function getAddress(addressId) {
   }
 }
 
-export async function getUserAddress() {
+// User functions - can only access their own addresses
+export async function getUserAddresses() {
+  // Renamed for clarity - users typically have multiple addresses
   try {
-    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
+    const { data } = await userHttpService.get(`${addressesPath}/me`);
     return data;
   } catch (err) {
-    console.error("Failed to fetch user address:", err);
+    console.error("Failed to fetch user addresses:", err);
     throw err;
   }
 }
 
 export async function saveAddress(address) {
   try {
-    const { data } = await userHttpService.post(apiEndPoint, address);
+    const { data } = await userHttpService.post(addressesPath, address);
     return data;
   } catch (err) {
     console.error("Failed to save address:", err);
@@ -55,12 +60,25 @@ export async function updateAddress(addressId, address) {
   }
 }
 
+// Security concern: Should users be able to delete any address?
+// Consider making this user-specific or admin-only
 export async function deleteAddress(addressId) {
+  try {
+    const { data } = await userHttpService.delete(addressUrl(addressId)); // Changed to userHttpService
+    return data;
+  } catch (err) {
+    console.error("Failed to delete address:", err);
+    throw err;
+  }
+}
+
+// Admin-only delete function (if needed)
+export async function adminDeleteAddress(addressId) {
   try {
     const { data } = await adminHttpService.delete(addressUrl(addressId));
     return data;
   } catch (err) {
-    console.error("Failed to delete address:", err);
+    console.error("Failed to delete address (admin):", err);
     throw err;
   }
 }

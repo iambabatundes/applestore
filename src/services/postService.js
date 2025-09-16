@@ -1,13 +1,13 @@
 import {
-  httpService,
   userHttpService,
   adminHttpService,
-} from "../services/httpService";
+  publicHttpService,
+} from "./http/index.js";
 
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/posts`;
+const postsPath = "/api/posts";
 
 function postUrl(id) {
-  return `${apiEndPoint}/${id}`;
+  return `${postsPath}/${id}`;
 }
 
 function createFormData(post) {
@@ -31,7 +31,7 @@ function createFormData(post) {
     }
   }
 
-  // Log FormData for debugging
+  // Log FormData for debugging (consider removing in production)
   for (let [key, value] of formData.entries()) {
     console.log(`${key}: ${value}`);
   }
@@ -39,9 +39,10 @@ function createFormData(post) {
   return formData;
 }
 
+// Public functions - anyone can view posts
 export async function getPosts() {
   try {
-    const { data } = await httpService.get(apiEndPoint);
+    const { data } = await publicHttpService.get(postsPath);
     return data;
   } catch (err) {
     console.error("Failed to fetch posts:", err);
@@ -49,19 +50,9 @@ export async function getPosts() {
   }
 }
 
-export async function getUserPosts() {
-  try {
-    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
-    return data;
-  } catch (err) {
-    console.error("Failed to fetch user posts:", err);
-    throw err;
-  }
-}
-
 export async function getPost(postId) {
   try {
-    const { data } = await userHttpService.get(postUrl(postId));
+    const { data } = await publicHttpService.get(postUrl(postId));
     return data;
   } catch (err) {
     console.error("Failed to fetch post:", err);
@@ -69,6 +60,76 @@ export async function getPost(postId) {
   }
 }
 
+export async function getPostsByTag(tagId) {
+  try {
+    const { data } = await publicHttpService.get(`${postsPath}/tag/${tagId}`);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch posts by tag:", err);
+    throw err;
+  }
+}
+
+export async function getPostByCategory(categoryId) {
+  try {
+    const { data } = await publicHttpService.get(
+      `${postsPath}/category/${categoryId}`
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch posts by category:", err);
+    throw err;
+  }
+}
+
+// User functions - user-specific operations
+export async function getUserPosts() {
+  try {
+    const { data } = await userHttpService.get(`${postsPath}/me`);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user posts:", err);
+    throw err;
+  }
+}
+
+export async function createUserPost(post) {
+  try {
+    const formData = createFormData(post);
+    const { data } = await userHttpService.post(postsPath, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to create post:", err);
+    throw err;
+  }
+}
+
+export async function updateUserPost(postId, post) {
+  try {
+    const formData = createFormData(post);
+    const { data } = await userHttpService.put(postUrl(postId), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to update post:", err);
+    throw err;
+  }
+}
+
+export async function deleteUserPost(postId) {
+  try {
+    const { data } = await userHttpService.delete(postUrl(postId));
+    return data;
+  } catch (err) {
+    console.error("Failed to delete user post:", err);
+    throw err;
+  }
+}
+
+// Admin functions - full post management
 export async function savePost(post) {
   try {
     const formData = createFormData(post);
@@ -78,7 +139,7 @@ export async function savePost(post) {
       });
       return data;
     }
-    const { data } = await adminHttpService.post(apiEndPoint, formData, {
+    const { data } = await adminHttpService.post(postsPath, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return data;
@@ -98,24 +159,27 @@ export async function deletePost(postId) {
   }
 }
 
-export async function getPostsByTag(tagId) {
+export async function getAllPosts() {
   try {
-    const { data } = await httpService.get(`${apiEndPoint}/tag/${tagId}`);
+    const { data } = await adminHttpService.get(postsPath);
     return data;
   } catch (err) {
-    console.error("Failed to fetch posts by tag:", err);
+    console.error("Failed to fetch all posts:", err);
     throw err;
   }
 }
 
-export async function getPostByCategory(categoryId) {
+export async function moderatePost(postId, action) {
   try {
-    const { data } = await httpService.get(
-      `${apiEndPoint}/category/${categoryId}`
+    const { data } = await adminHttpService.post(
+      `${postUrl(postId)}/moderate`,
+      {
+        action, // 'approve', 'reject', 'flag', etc.
+      }
     );
     return data;
   } catch (err) {
-    console.error("Failed to fetch posts by category:", err);
+    console.error("Failed to moderate post:", err);
     throw err;
   }
 }

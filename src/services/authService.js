@@ -1,19 +1,20 @@
 import { jwtDecode } from "jwt-decode";
 import { loginApi, refreshTokenApi, logoutApi, getUserApi } from "./apiService";
 import { createAuthStore } from "../components/home/store/useAuthStore";
-import { httpService, ClientType } from "./httpService";
+import { userHttpService } from "./http/index";
 
 export const authStore = createAuthStore({
   loginApi,
   refreshTokenApi,
   logoutApi,
   getUserApi,
+  userHttpService, // Pass the service instance
 });
 
 export const initializeAuth = async () => {
   console.log("Initializing authentication...");
   try {
-    // Call the initialize method that was missing
+    // Call the initialize method
     await authStore.getState().initialize();
     console.log("Authentication initialization completed");
   } catch (error) {
@@ -49,7 +50,7 @@ export function getCurrentUser() {
   }
 }
 
-// Login with JWT - UPDATED for your httpService
+// Login with JWT - CORRECTED
 export async function loginWithJwt(jwt, expiresIn) {
   try {
     if (!expiresIn) {
@@ -68,12 +69,7 @@ export async function loginWithJwt(jwt, expiresIn) {
 
     console.log("Logging in with JWT, expiresIn:", expiresIn);
 
-    // CRITICAL: Set tokens in httpService first
-    httpService.setTokens(ClientType.USER, {
-      accessToken: jwt,
-      expiresIn: expiresIn,
-    });
-
+    // The auth store will handle setting tokens in the service
     return await authStore.getState().loginWithToken(jwt, expiresIn);
   } catch (error) {
     console.error("loginWithJwt failed:", error);
@@ -92,16 +88,11 @@ export function isAuthenticated() {
   return isAuthenticated && expiryDate && Date.now() < expiryDate;
 }
 
-// Get access token - UPDATED to use httpService
+// Get access token - CORRECTED to use userHttpService
 export function getAccessToken() {
-  // Try httpService first (most current)
-  const httpServiceToken = httpService.tokenManager.getAccessToken(
-    ClientType.USER
-  );
-  if (
-    httpServiceToken &&
-    !httpService.tokenManager.isTokenExpired(ClientType.USER)
-  ) {
+  // Try userHttpService first (most current)
+  const httpServiceToken = userHttpService.tokenManager?.getAccessToken();
+  if (httpServiceToken && !userHttpService.tokenManager?.isTokenExpired()) {
     return httpServiceToken;
   }
 
@@ -209,3 +200,6 @@ if (typeof window !== "undefined") {
     stopTokenCheck();
   });
 }
+
+// Export token manager for backward compatibility if needed
+export const tokenManager = userHttpService.tokenManager;

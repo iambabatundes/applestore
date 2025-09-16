@@ -1,15 +1,15 @@
-import { userHttpService, adminHttpService } from "../services/httpService";
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/orders`;
+import { userHttpService, adminHttpService } from "./http/index";
+
+// Use relative path - let services handle their base URLs
+const ordersPath = "/api/orders";
 
 function orderUrl(id) {
-  return `${apiEndPoint}/${id}`;
+  return `${ordersPath}/${id}`;
 }
 
 export async function fetchUsersOrder(userId) {
   try {
-    const { data } = await userHttpService.get(
-      `${apiEndPoint}/users/${userId}`
-    );
+    const { data } = await userHttpService.get(`${ordersPath}/users/${userId}`);
     return data;
   } catch (err) {
     console.error("Failed to fetch user's orders:", err);
@@ -19,7 +19,7 @@ export async function fetchUsersOrder(userId) {
 
 export async function getUserOrders() {
   try {
-    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
+    const { data } = await userHttpService.get(`${ordersPath}/me`);
     return data;
   } catch (err) {
     console.error("Failed to fetch user orders:", err);
@@ -29,7 +29,7 @@ export async function getUserOrders() {
 
 export async function getOrders() {
   try {
-    const { data } = await adminHttpService.get(apiEndPoint);
+    const { data } = await adminHttpService.get(ordersPath);
     return data;
   } catch (err) {
     console.error("Failed to fetch orders:", err);
@@ -55,7 +55,7 @@ export async function saveOrder(order) {
       const { data } = await userHttpService.put(orderUrl(order._id), body);
       return data;
     }
-    const { data } = await userHttpService.post(apiEndPoint, order);
+    const { data } = await userHttpService.post(ordersPath, order);
     return data;
   } catch (err) {
     console.error("Failed to save order:", err);

@@ -1,28 +1,139 @@
 import {
-  httpService,
   publicHttpService,
   userHttpService,
   adminHttpService,
-} from "../services/httpService";
-import config from "../config.json";
+} from "./http/index.js";
 
-const apiEndPoint = `${config.apiUrl}/products`;
+const buildEndpoint = (path = "") => {
+  const baseUrl = import.meta.env.VITE_API_URL;
+  return path ? `${baseUrl}/api/products${path}` : `${baseUrl}/api/products`;
+};
 
-function productUrl(id) {
-  return `${apiEndPoint}/${id}`;
-}
-
-export function getProductsByCategorys(categoryName) {
-  return publicHttpService.get(`${apiEndPoint}/categories/${categoryName}`);
-}
-
-export function getProductsByPromotion(promotionName) {
-  return publicHttpService.get(`${apiEndPoint}/promotions/${promotionName}`);
-}
-
-export async function getUserProducts() {
+// Public product operations
+export async function getProducts(params = {}) {
   try {
-    const { data } = await userHttpService.get(`${apiEndPoint}/me`);
+    const { data } = await publicHttpService.get(buildEndpoint(), { params });
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch products:", err);
+    throw err;
+  }
+}
+
+export async function getProduct(productId) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/${productId}`)
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch product:", err);
+    throw err;
+  }
+}
+
+export async function getProductsByCategorys(categoryId, params = {}) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/category/${categoryId}`),
+      { params }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch products by category:", err);
+    throw err;
+  }
+}
+
+export async function getProductsByTag(tagId, params = {}) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/tag/${tagId}`),
+      { params }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch products by tag:", err);
+    throw err;
+  }
+}
+
+export async function getProductsByPromotion(promotionName, params = {}) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/promotions/${promotionName}`),
+      { params }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch products by promotion:", err);
+    throw err;
+  }
+}
+
+// Search and filtering
+export async function searchProducts(query, filters = {}) {
+  try {
+    const { data } = await publicHttpService.get(buildEndpoint("/search"), {
+      params: {
+        q: query,
+        ...filters,
+      },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to search products:", err);
+    throw err;
+  }
+}
+
+// Get featured/trending products
+export async function getFeaturedProducts(limit = 10) {
+  try {
+    const { data } = await publicHttpService.get(buildEndpoint("/featured"), {
+      params: { limit },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch featured products:", err);
+    throw err;
+  }
+}
+
+// Get product reviews
+export async function getProductReviews(productId, params = {}) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/${productId}/reviews`),
+      { params }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch product reviews:", err);
+    throw err;
+  }
+}
+
+// Get related products
+export async function getRelatedProducts(productId, limit = 6) {
+  try {
+    const { data } = await publicHttpService.get(
+      buildEndpoint(`/${productId}/related`),
+      { params: { limit } }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch related products:", err);
+    throw err;
+  }
+}
+
+// User-specific product operations
+export async function getUserProducts(params = {}) {
+  try {
+    const { data } = await userHttpService.get(buildEndpoint("/me"), {
+      params,
+    });
     return data;
   } catch (err) {
     console.error("Failed to fetch user products:", err);
@@ -30,222 +141,354 @@ export async function getUserProducts() {
   }
 }
 
-export function getProducts() {
-  return publicHttpService.get(apiEndPoint);
+// Wishlist operations using UserHttpService built-in methods
+export async function addProductToWishlist(productId) {
+  try {
+    const { data } = await userHttpService.addToWishlist(productId);
+    return data;
+  } catch (err) {
+    console.error("Failed to add product to wishlist:", err);
+    throw err;
+  }
 }
 
-export function getProduct(productId) {
-  return publicHttpService.get(productUrl(productId));
+export async function removeProductFromWishlist(productId) {
+  try {
+    const { data } = await userHttpService.removeFromWishlist(productId);
+    return data;
+  } catch (err) {
+    console.error("Failed to remove product from wishlist:", err);
+    throw err;
+  }
 }
 
-function createFormData(product, userId) {
+export async function getUserWishlist() {
+  try {
+    const { data } = await userHttpService.getWishlist();
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch user wishlist:", err);
+    throw err;
+  }
+}
+
+// User reviews
+export async function createProductReview(productId, reviewData) {
+  try {
+    const { data } = await userHttpService.createReview(
+      productId,
+      reviewData.rating,
+      reviewData.review,
+      reviewData.title
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to create product review:", err);
+    throw err;
+  }
+}
+
+// Admin product operations
+export async function saveProduct(product) {
+  try {
+    const formData = createFormData(product);
+
+    if (product._id) {
+      const { data } = await adminHttpService.put(
+        buildEndpoint(`/${product._id}`),
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      return data;
+    } else {
+      const { data } = await adminHttpService.post(buildEndpoint(), formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return data;
+    }
+  } catch (error) {
+    console.error("Failed to save product:", error);
+    throw error;
+  }
+}
+
+export async function updateProduct(productId, product) {
+  try {
+    const formData = createFormData(product);
+    const { data } = await adminHttpService.put(
+      buildEndpoint(`/${productId}`),
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to update product:", error);
+    throw error;
+  }
+}
+
+export async function deleteProduct(productId) {
+  try {
+    const { data } = await adminHttpService.delete(
+      buildEndpoint(`/${productId}`)
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to delete product:", error);
+    throw error;
+  }
+}
+
+// Bulk admin operations
+export async function bulkDeleteProducts(productIds) {
+  try {
+    const { data } = await adminHttpService.post(
+      buildEndpoint("/bulk-delete"),
+      { productIds }
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to bulk delete products:", error);
+    throw error;
+  }
+}
+
+export async function bulkUpdateProducts(updates) {
+  try {
+    const { data } = await adminHttpService.put(buildEndpoint("/bulk-update"), {
+      updates,
+    });
+    return data;
+  } catch (error) {
+    console.error("Failed to bulk update products:", error);
+    throw error;
+  }
+}
+
+// Product status management
+export async function toggleProductStatus(productId) {
+  try {
+    const { data } = await adminHttpService.patch(
+      buildEndpoint(`/${productId}/toggle-status`)
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to toggle product status:", error);
+    throw error;
+  }
+}
+
+// Inventory management
+export async function updateProductInventory(productId, inventory) {
+  try {
+    const { data } = await adminHttpService.put(
+      buildEndpoint(`/${productId}/inventory`),
+      inventory
+    );
+    return data;
+  } catch (error) {
+    console.error("Failed to update product inventory:", error);
+    throw error;
+  }
+}
+
+// Cache management
+export function invalidateProductCache() {
+  publicHttpService.clearCache();
+  userHttpService.clearCache();
+  adminHttpService.clearCache();
+}
+
+// Get cached products
+export async function getCachedProducts(params = {}, ttl = 5 * 60 * 1000) {
+  try {
+    const { data } = await publicHttpService.get(buildEndpoint(), {
+      params,
+      cache: { ttl },
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch cached products:", err);
+    throw err;
+  }
+}
+
+// Utility function for creating FormData (enhanced)
+function createFormData(product) {
   const formData = new FormData();
 
-  if (userId) {
-    for (const key in userId) {
-      if (userId.hasOwnProperty(key)) {
-        formData.append(`userId[${key}]`, userId[key]);
-      }
-    }
-  }
+  // Skip these fields entirely
+  const skipFields = ["_id", "ratings", "createdAt", "updatedAt", "__v"];
 
-  for (const key in product) {
-    if (product.hasOwnProperty(key)) {
-      if (key === "salePrice" && !product[key]) {
-        continue;
-      } else if (key === "saleStartDate" && !product[key]) {
-        continue;
-      } else if (key === "saleEndDate" && !product[key]) {
-        continue;
-      } else if (key === "discountPercentage" && !product[key]) {
-        continue;
-      } else if (key === "colorSalePrice" && !product[key]) {
-        continue;
-      } else if (key === "colorSaleStartDate" && !product[key]) {
-        continue;
-      } else if (key === "colorSaleEndDate" && !product[key]) {
-        continue;
-      } else if (key === "_id") {
-        continue;
-      } else if (key === "ratings") {
-        continue;
-      } else if (key === "featureImage") {
-        if (product[key] && product[key].file) {
-          formData.append("featureImage", product[key].file);
-        }
-      } else if (key === "media") {
-        if (Array.isArray(product[key])) {
-          product[key].forEach((file) => formData.append("media", file));
-        }
-      } else if (key === "attributes") {
-        if (Array.isArray(product[key])) {
-          product[key].forEach((attr, index) => {
-            formData.append(`attributes[${index}][key]`, attr.key);
-            formData.append(`attributes[${index}][value]`, attr.value);
-          });
-        }
-      } else if (key === "colors" && Array.isArray(product[key])) {
-        product[key].forEach((color, index) => {
-          Object.entries(color).forEach(([colorKey, colorValue]) => {
-            if (colorKey === "_id") {
-              return;
-            }
-            if (colorKey === "colorImages") {
-              if (colorValue instanceof File) {
-                formData.append(`colorImages`, colorValue);
-              } else if (
-                typeof colorValue === "string" &&
-                colorValue.startsWith("http")
-              ) {
-                formData.append(`colorImages`, colorValue);
-              } else if (colorValue && colorValue.filename) {
-                formData.append(
-                  `colors[${index}][colorImages]`,
-                  colorValue.filename
-                );
-              } else {
-                formData.append(`colors[${index}][colorImages]`, "");
-              }
-            } else {
-              formData.append(`colors[${index}][${colorKey}]`, colorValue);
-            }
-          });
-        });
-      } else if (key === "sizes" && Array.isArray(product[key])) {
-        product[key].forEach((size, index) => {
-          if (typeof size === "object" && size !== null) {
-            Object.entries(size).forEach(([sizeKey, sizeValue]) => {
-              if (
-                sizeKey === "sizeSalePrice" &&
-                (sizeValue === null ||
-                  sizeValue === undefined ||
-                  isNaN(sizeValue))
-              ) {
-                return;
-              }
-              if (
-                sizeKey === "sizeSaleStartDate" &&
-                (sizeValue === null ||
-                  sizeValue === undefined ||
-                  isNaN(Date.parse(sizeValue)))
-              ) {
-                return;
-              }
-              if (
-                sizeKey === "sizeSaleEndDate" &&
-                (sizeValue === null ||
-                  sizeValue === undefined ||
-                  isNaN(Date.parse(sizeValue)))
-              ) {
-                return;
-              }
-              formData.append(`sizes[${index}][${sizeKey}]`, sizeValue);
-            });
-          } else {
-            console.error(`Size at index ${index} is not an object:`, size);
-          }
-        });
-      } else if (key === "capacity" && Array.isArray(product[key])) {
-        product[key].forEach((cap, index) => {
-          if (typeof cap === "object" && cap !== null) {
-            Object.entries(cap).forEach(([capKey, capValue]) => {
-              if (
-                capKey === "capSalePrice" &&
-                (capValue === null || capValue === undefined || isNaN(capValue))
-              ) {
-                return;
-              }
-              if (
-                capKey === "sizeSaleStartDate" &&
-                (capValue === null ||
-                  capValue === undefined ||
-                  isNaN(Date.parse(capValue)))
-              ) {
-                return;
-              }
-              if (
-                capKey === "sizeSaleEndDate" &&
-                (capValue === null ||
-                  capValue === undefined ||
-                  isNaN(Date.parse(capValue)))
-              ) {
-                return;
-              }
-              formData.append(`capacity[${index}][${capKey}]`, capValue);
-            });
-          } else {
-            console.error(`Capacity at index ${index} is not an object:`, cap);
-          }
-        });
-      } else if (key === "materials" && Array.isArray(product[key])) {
-        product[key].forEach((mat, index) => {
-          if (typeof mat === "object" && mat !== null) {
-            Object.entries(mat).forEach(([matKey, matValue]) => {
-              if (
-                matKey === "matSalePrice" &&
-                (matValue === null || matValue === undefined || isNaN(matValue))
-              ) {
-                return;
-              }
-              if (
-                matKey === "matSaleStartDate" &&
-                (matValue === null ||
-                  matValue === undefined ||
-                  isNaN(Date.parse(matValue)))
-              ) {
-                return;
-              }
-              if (
-                matKey === "matSaleEndDate" &&
-                (matValue === null ||
-                  matValue === undefined ||
-                  isNaN(Date.parse(matValue)))
-              ) {
-                return;
-              }
-              formData.append(`materials[${index}][${matKey}]`, matValue);
-            });
-          } else {
-            console.error(`Materials at index ${index} is not an object:`, mat);
-          }
-        });
-      } else if (Array.isArray(product[key])) {
-        product[key].forEach((item) => formData.append(`${key}[]`, item));
-      } else {
-        formData.append(key, product[key]);
+  // Handle optional sale fields - only include if they have valid values
+  const optionalSaleFields = [
+    "salePrice",
+    "saleStartDate",
+    "saleEndDate",
+    "discountPercentage",
+    "colorSalePrice",
+    "colorSaleStartDate",
+    "colorSaleEndDate",
+  ];
+
+  Object.entries(product).forEach(([key, value]) => {
+    if (skipFields.includes(key)) {
+      return; // Skip these fields
+    }
+
+    if (optionalSaleFields.includes(key)) {
+      if (!value || (typeof value === "string" && value.trim() === "")) {
+        return; // Skip empty sale fields
       }
     }
-  }
+
+    switch (key) {
+      case "featureImage":
+        if (value?.file) {
+          formData.append("featureImage", value.file);
+        } else if (typeof value === "string" && value) {
+          formData.append("featureImage", value);
+        }
+        break;
+
+      case "media":
+        if (Array.isArray(value)) {
+          value.forEach((file, index) => {
+            if (file instanceof File) {
+              formData.append("media", file);
+            } else if (typeof file === "string" && file) {
+              formData.append(`media[${index}]`, file);
+            }
+          });
+        }
+        break;
+
+      case "attributes":
+        if (Array.isArray(value)) {
+          value.forEach((attr, index) => {
+            if (attr && attr.key && attr.value) {
+              formData.append(`attributes[${index}][key]`, attr.key);
+              formData.append(`attributes[${index}][value]`, attr.value);
+            }
+          });
+        }
+        break;
+
+      case "colors":
+        if (Array.isArray(value)) {
+          value.forEach((color, index) => {
+            if (color && typeof color === "object") {
+              Object.entries(color).forEach(([colorKey, colorValue]) => {
+                if (colorKey === "_id" || !colorValue) return;
+
+                if (colorKey === "colorImages") {
+                  if (colorValue instanceof File) {
+                    formData.append(
+                      `colors[${index}][colorImages]`,
+                      colorValue
+                    );
+                  } else if (typeof colorValue === "string" && colorValue) {
+                    formData.append(
+                      `colors[${index}][colorImages]`,
+                      colorValue
+                    );
+                  }
+                } else {
+                  formData.append(`colors[${index}][${colorKey}]`, colorValue);
+                }
+              });
+            }
+          });
+        }
+        break;
+
+      case "sizes":
+        if (Array.isArray(value)) {
+          value.forEach((size, index) => {
+            if (size && typeof size === "object") {
+              Object.entries(size).forEach(([sizeKey, sizeValue]) => {
+                if (sizeKey === "_id") return;
+
+                // Handle optional size sale fields
+                if (
+                  sizeKey.includes("Sale") &&
+                  (!sizeValue || sizeValue === "")
+                ) {
+                  return;
+                }
+
+                if (sizeValue != null && sizeValue !== "") {
+                  formData.append(`sizes[${index}][${sizeKey}]`, sizeValue);
+                }
+              });
+            }
+          });
+        }
+        break;
+
+      case "capacity":
+        if (Array.isArray(value)) {
+          value.forEach((cap, index) => {
+            if (cap && typeof cap === "object") {
+              Object.entries(cap).forEach(([capKey, capValue]) => {
+                if (capKey === "_id") return;
+
+                // Handle optional capacity sale fields
+                if (capKey.includes("Sale") && (!capValue || capValue === "")) {
+                  return;
+                }
+
+                if (capValue != null && capValue !== "") {
+                  formData.append(`capacity[${index}][${capKey}]`, capValue);
+                }
+              });
+            }
+          });
+        }
+        break;
+
+      case "materials":
+        if (Array.isArray(value)) {
+          value.forEach((mat, index) => {
+            if (mat && typeof mat === "object") {
+              Object.entries(mat).forEach(([matKey, matValue]) => {
+                if (matKey === "_id") return;
+
+                // Handle optional material sale fields
+                if (matKey.includes("Sale") && (!matValue || matValue === "")) {
+                  return;
+                }
+
+                if (matValue != null && matValue !== "") {
+                  formData.append(`materials[${index}][${matKey}]`, matValue);
+                }
+              });
+            }
+          });
+        }
+        break;
+
+      default:
+        if (value != null && value !== "") {
+          if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+              if (typeof item === "object") {
+                formData.append(`${key}[${index}]`, JSON.stringify(item));
+              } else {
+                formData.append(`${key}[]`, item);
+              }
+            });
+          } else {
+            formData.append(key, value);
+          }
+        }
+        break;
+    }
+  });
 
   return formData;
-}
-
-export function saveProduct(product, userId) {
-  const formData = createFormData(product, userId);
-  const endpoint = product._id
-    ? productUrl(product._id)
-    : "/api/admin/products";
-
-  return adminHttpService[product._id ? "put" : "post"](endpoint, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
-
-export function updateProduct(productId, product, userId) {
-  const formData = createFormData(product, userId);
-  return adminHttpService.put(productUrl(productId), formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
-
-export function deleteProduct(productId) {
-  return adminHttpService.delete(productUrl(productId));
-}
-
-export function getProductsByTag(tagId) {
-  return publicHttpService.get(`${apiEndPoint}/tag/${tagId}`);
-}
-
-export function getProductsByCategory(categoryId) {
-  return publicHttpService.get(`${apiEndPoint}/category/${categoryId}`);
 }

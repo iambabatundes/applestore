@@ -1,0 +1,325 @@
+/* styles/adminSetupScreens.css */
+
+/* Setup Loading Screen */
+.setup-loading-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.setup-loading-screen.dark-mode {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.setup-loading-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+.setup-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+.setup-loading-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.setup-loading-content p {
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+/* Setup Required Screen */
+.setup-required-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #2c3e50;
+    padding: 2rem;
+}
+
+.setup-required-screen.dark-mode {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: #ecf0f1;
+}
+
+.setup-required-content {
+    max-width: 600px;
+    text-align: center;
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.setup-required-screen.dark-mode .setup-required-content {
+    background: #34495e;
+    color: #ecf0f1;
+}
+
+.setup-required-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3498db;
+    border-radius: 50%;
+    color: white;
+}
+
+.setup-required-content h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.setup-required-screen.dark-mode .setup-required-content h2 {
+    color: #ecf0f1;
+}
+
+.setup-required-content>p {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #5a6c7d;
+}
+
+.setup-required-screen.dark-mode .setup-required-content>p {
+    color: #bdc3c7;
+}
+
+.setup-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.setup-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.setup-required-screen.dark-mode .setup-feature {
+    background: #2c3e50;
+}
+
+.setup-feature-icon {
+    font-size: 1.25rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e3f2fd;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.setup-required-screen.dark-mode .setup-feature-icon {
+    background: #34495e;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    justify-content: center;
+}
+
+.btn--primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn--primary:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn--secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn--secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn--large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+.setup-help-text {
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #7f8c8d;
+}
+
+.setup-required-screen.dark-mode .setup-help-text {
+    color: #95a5a6;
+}
+
+/* Admin Setup Wrapper */
+.admin-setup-wrapper {
+    min-height: 100vh;
+    background: #f8f9fa;
+}
+
+.admin-setup-wrapper.dark-mode {
+    background: #2c3e50;
+}
+
+/* Admin Error Screen */
+.admin-error-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+    padding: 2rem;
+}
+
+.admin-error-screen.dark-mode {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+}
+
+.admin-error-content {
+    max-width: 500px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.admin-error-content h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.admin-error-content p {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.error-details {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+    font-size: 0.875rem;
+    text-align: left;
+    word-break: break-all;
+}
+
+.admin-error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .setup-features {
+        grid-template-columns: 1fr;
+    }
+
+    .setup-required-content,
+    .admin-error-content {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .admin-error-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+
+/* Animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Focus styles for accessibility */
+.btn:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+.setup-required-screen.dark-mode .btn:focus-visible {
+    outline-color: #5dade2;
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.25rem 0.5rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border: 1px solid #3498db;
+    background: #3498db;
+    color: white;
+}

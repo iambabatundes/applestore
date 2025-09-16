@@ -1,14 +1,16 @@
-import { httpService, adminHttpService } from "../services/httpService";
+import { publicHttpService, adminHttpService } from "./http/index.js";
 
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/post-categories`;
+// Use relative path - let services handle their base URLs
+const postCategoriesPath = "/api/post-categories";
 
 function postCategoryUrl(id) {
-  return `${apiEndPoint}/${id}`;
+  return `${postCategoriesPath}/${id}`;
 }
 
+// Public functions - viewing categories (anyone can see available categories)
 export async function getPostCategories() {
   try {
-    const { data } = await httpService.get(apiEndPoint);
+    const { data } = await publicHttpService.get(postCategoriesPath);
     return data;
   } catch (err) {
     console.error("Failed to fetch post categories:", err);
@@ -18,7 +20,7 @@ export async function getPostCategories() {
 
 export async function getPostCategory(categoryId) {
   try {
-    const { data } = await httpService.get(postCategoryUrl(categoryId));
+    const { data } = await publicHttpService.get(postCategoryUrl(categoryId));
     return data;
   } catch (err) {
     console.error("Failed to fetch post category:", err);
@@ -26,10 +28,36 @@ export async function getPostCategory(categoryId) {
   }
 }
 
+export async function getPostsByCategory(categoryId) {
+  try {
+    const { data } = await publicHttpService.get(
+      `${postCategoryUrl(categoryId)}/posts`
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch posts by category:", err);
+    throw err;
+  }
+}
+
+export async function getCategoryHierarchy() {
+  try {
+    const { data } = await publicHttpService.get(
+      `${postCategoriesPath}/hierarchy`
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch category hierarchy:", err);
+    throw err;
+  }
+}
+
+// Admin functions - managing categories
 export async function savePostCategory(category) {
   try {
+    // Consider removing console.log in production
     console.log("Saving Category:", category);
-    const { data } = await adminHttpService.post(apiEndPoint, category);
+    const { data } = await adminHttpService.post(postCategoriesPath, category);
     return data;
   } catch (err) {
     console.error("Failed to save post category:", err);
@@ -56,6 +84,31 @@ export async function deletePostCategory(categoryId) {
     return data;
   } catch (err) {
     console.error("Failed to delete post category:", err);
+    throw err;
+  }
+}
+
+export async function getAllPostCategories() {
+  try {
+    const { data } = await adminHttpService.get(`${postCategoriesPath}/all`);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch all post categories:", err);
+    throw err;
+  }
+}
+
+export async function reorderCategories(categoryOrders) {
+  try {
+    const { data } = await adminHttpService.post(
+      `${postCategoriesPath}/reorder`,
+      {
+        orders: categoryOrders,
+      }
+    );
+    return data;
+  } catch (err) {
+    console.error("Failed to reorder categories:", err);
     throw err;
   }
 }

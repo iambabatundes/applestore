@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import "./styles/categoryModel.css";
-import { getProductsByCategory } from "../../../services/productService";
+import { getProductsByCategorys } from "../../../services/productService";
 
 export default function CategoryModel({ category, onClose }) {
   const [products, setProducts] = useState([]);
@@ -16,7 +16,7 @@ export default function CategoryModel({ category, onClose }) {
   async function fetchProducts() {
     try {
       setLoading(true);
-      const { data: fetchedProducts } = await getProductsByCategory(
+      const { data: fetchedProducts } = await getProductsByCategorys(
         category._id
       );
       setProducts(fetchedProducts);

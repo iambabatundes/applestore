@@ -6,7 +6,7 @@ import AddressCard from "./address/AddressCard";
 import CustomModal from "./common/customModal";
 import {
   deleteAddress,
-  getUserAddress,
+  getUserAddresses,
 } from "../../../services/addressService";
 
 export default function MyAddress() {
@@ -21,7 +21,7 @@ export default function MyAddress() {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const addresses = await getUserAddress();
+        const addresses = await getUserAddresses();
         setAddresses(addresses);
         setError(null);
       } catch (err) {

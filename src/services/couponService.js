@@ -1,14 +1,18 @@
-import { userHttpService, adminHttpService } from "../services/httpService";
+import {
+  adminHttpService,
+  userHttpService,
+  publicHttpService,
+} from "./http/index.js";
 
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/coupons`;
+const couponsPath = "/api/coupons";
 
 function couponUrl(id) {
-  return `${apiEndPoint}/${id}`;
+  return `${couponsPath}/${id}`;
 }
 
 export async function getCoupons() {
   try {
-    const { data } = await adminHttpService.get(apiEndPoint);
+    const { data } = await adminHttpService.get(couponsPath);
     return data;
   } catch (err) {
     console.error("Failed to fetch coupons:", err);
@@ -28,22 +32,10 @@ export async function getCoupon(couponId) {
 
 export async function saveCoupon(coupon) {
   try {
-    const { data } = await adminHttpService.post(apiEndPoint, coupon);
+    const { data } = await adminHttpService.post(couponsPath, coupon);
     return data;
   } catch (err) {
-    console.error("Failed to save coupon:", err);
-    throw err;
-  }
-}
-
-export async function validateCoupon(coupon) {
-  try {
-    const { data } = await userHttpService.post(`${apiEndPoint}/validate`, {
-      coupon,
-    });
-    return data;
-  } catch (err) {
-    console.error("Failed to validate coupon:", err);
+    console.error("Failed to create coupon:", err);
     throw err;
   }
 }
@@ -64,6 +56,43 @@ export async function deleteCoupon(couponId) {
     return data;
   } catch (err) {
     console.error("Failed to delete coupon:", err);
+    throw err;
+  }
+}
+
+// User functions - applying and validating coupons
+export async function applyCoupon(couponCode) {
+  try {
+    const { data } = await userHttpService.post(`${couponsPath}/apply`, {
+      code: couponCode,
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to apply coupon:", err);
+    throw err;
+  }
+}
+
+export async function validateCoupon(couponCode, cartTotal = null) {
+  try {
+    const { data } = await userHttpService.post(`${couponsPath}/validate`, {
+      code: couponCode,
+      cartTotal,
+    });
+    return data;
+  } catch (err) {
+    console.error("Failed to validate coupon:", err);
+    throw err;
+  }
+}
+
+// Public functions - get active/public coupons
+export async function getPublicCoupons() {
+  try {
+    const { data } = await publicHttpService.get(`${couponsPath}/public`);
+    return data;
+  } catch (err) {
+    console.error("Failed to fetch public coupons:", err);
     throw err;
   }
 }

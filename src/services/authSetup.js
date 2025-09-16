@@ -2,7 +2,7 @@ import {
   initializeInterceptors,
   setUserTokens,
   setAdminTokens,
-} from "./httpService";
+} from "./http/httpService";
 import { createAuthStore } from "../components/home/store/useAuthStore";
 import { useAdminAuthStore } from "../components/backend/store/useAdminAuthStore";
 import { loginApi, refreshTokenApi, logoutApi, getUserApi } from "./apiService";

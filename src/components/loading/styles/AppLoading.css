@@ -1,0 +1,209 @@
+/* components/loading/AppLoading.css */
+
+.app-partial-loading {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-loading-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.app-loading-container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+.content-loading-skeleton {
+    width: 100%;
+}
+
+/* Base skeleton animation */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Specific skeleton elements */
+.skeleton-title {
+    width: 60%;
+    height: 48px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+.skeleton-subtitle {
+    width: 40%;
+    height: 24px;
+    margin-bottom: 32px;
+    border-radius: 4px;
+}
+
+/* Grid layout */
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* Card skeleton */
+.skeleton-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.skeleton-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+}
+
+.skeleton-text-primary {
+    width: 80%;
+    height: 20px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+.skeleton-text-secondary {
+    width: 60%;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Navbar skeleton */
+.navbar-skeleton {
+    height: 70px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Footer skeleton */
+.footer-skeleton {
+    height: 200px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-top: 1px solid #e0e0e0;
+    margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-loading-container {
+        padding: 16px;
+    }
+
+    .skeleton-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .skeleton-title {
+        width: 80%;
+        height: 36px;
+    }
+
+    .skeleton-subtitle {
+        width: 60%;
+        height: 20px;
+    }
+
+    .skeleton-card {
+        padding: 12px;
+    }
+
+    .skeleton-image {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-loading-container {
+        padding: 12px;
+    }
+
+    .skeleton-grid {
+        gap: 12px;
+    }
+
+    .skeleton-title {
+        width: 90%;
+        height: 32px;
+    }
+
+    .skeleton-subtitle {
+        width: 70%;
+        height: 18px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .skeleton {
+        background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+        background-size: 200% 100%;
+    }
+
+    .skeleton-card {
+        background-color: #1f1f1f;
+        border-color: #333;
+    }
+
+    .navbar-skeleton,
+    .footer-skeleton {
+        background: linear-gradient(90deg, #2a2a2a 25%, #1a1a1a 50%, #2a2a2a 75%);
+        background-size: 200% 100%;
+        border-color: #333;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    .skeleton,
+    .navbar-skeleton,
+    .footer-skeleton {
+        animation: none;
+        background: #f0f0f0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+        .skeleton,
+        .navbar-skeleton,
+        .footer-skeleton {
+            background: #2a2a2a;
+        }
+    }
+}

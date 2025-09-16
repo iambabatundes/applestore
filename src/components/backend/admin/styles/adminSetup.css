@@ -1,0 +1,637 @@
+/* Main container */
+.admin-setup {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+}
+
+.admin-setup__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.admin-setup__card {
+    max-width: 48rem;
+    margin: 0 auto;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+}
+
+/* Progress Steps */
+.progress-steps {
+    margin-bottom: 2rem;
+}
+
+.progress-steps__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-steps__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.progress-steps__circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.progress-steps__circle--completed {
+    background-color: #10b981;
+    color: white;
+}
+
+.progress-steps__circle--current {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.progress-steps__circle--pending {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.progress-steps__label {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    text-align: center;
+    max-width: 5rem;
+}
+
+.progress-steps__connector {
+    flex: 1;
+    height: 2px;
+    margin: 0 0.5rem;
+}
+
+.progress-steps__connector--completed {
+    background-color: #10b981;
+}
+
+.progress-steps__connector--pending {
+    background-color: #e5e7eb;
+}
+
+/* Error display */
+.error-display {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.error-display__icon {
+    color: #ef4444;
+    margin-right: 0.5rem;
+}
+
+.error-display__text {
+    color: #991b1b;
+    font-size: 0.875rem;
+}
+
+/* Form elements */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .form-grid--cols-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    /* ring: 2px solid #3b82f6; */
+    border-color: transparent;
+}
+
+.form-input--center {
+    text-align: center;
+}
+
+.form-input--code {
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+}
+
+.form-input--small {
+    max-width: 18rem;
+    margin: 0 auto;
+}
+
+/* Password strength indicator */
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.password-strength__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.password-strength__label {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.password-strength__score {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.password-strength__bar {
+    width: 100%;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    height: 0.5rem;
+}
+
+.password-strength__fill {
+    height: 0.5rem;
+    border-radius: 9999px;
+    transition: all 0.3s;
+}
+
+.password-strength__fill--weak {
+    background-color: #ef4444;
+}
+
+.password-strength__fill--fair {
+    background-color: #eab308;
+}
+
+.password-strength__fill--good {
+    background-color: #3b82f6;
+}
+
+.password-strength__fill--strong {
+    background-color: #10b981;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn--primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn--primary:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.btn--success {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn--success:hover:not(:disabled) {
+    background-color: #059669;
+}
+
+.btn--secondary {
+    background-color: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.btn--secondary:hover:not(:disabled) {
+    background-color: #f9fafb;
+}
+
+.btn--full-width {
+    width: 100%;
+    justify-content: center;
+}
+
+.btn--large {
+    padding: 1rem 2rem;
+}
+
+.btn--link {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+}
+
+.btn--link:hover:not(:disabled) {
+    color: #1d4ed8;
+}
+
+/* Icons */
+.icon--large {
+    width: 4rem;
+    height: 4rem;
+}
+
+.icon--medium {
+    width: 3rem;
+    height: 3rem;
+}
+
+.icon--small {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.icon--spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Layout utilities */
+.text-center {
+    text-align: center;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+    margin-bottom: 2rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+/* Step content */
+.step-content {
+    margin-bottom: 2rem;
+}
+
+.step-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.step-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.step-description {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+/* Status display */
+.status-card {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-item {
+    font-size: 0.875rem;
+    color: #1e40af;
+}
+
+.status-item strong {
+    font-weight: 600;
+}
+
+/* Info boxes */
+.info-box {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-box--warning {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+}
+
+.info-box--success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.info-box__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.info-box__icon {
+    margin-right: 0.5rem;
+}
+
+.info-box__title {
+    font-weight: 500;
+}
+
+.info-box--warning .info-box__title {
+    color: #92400e;
+}
+
+.info-box--warning .info-box__icon {
+    color: #d97706;
+}
+
+.info-box--success .info-box__title {
+    color: #166534;
+}
+
+.info-box--success .info-box__icon {
+    color: #10b981;
+}
+
+.info-box__content {
+    font-size: 0.875rem;
+}
+
+.info-box--warning .info-box__content {
+    color: #92400e;
+}
+
+.info-box--success .info-box__content {
+    color: #166534;
+}
+
+.info-box__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-box__list-item {
+    margin-bottom: 0.25rem;
+}
+
+/* QR Code display */
+.qr-code-container {
+    text-align: center;
+}
+
+.qr-code-image {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.qr-code-image img {
+    max-width: 12rem;
+    max-height: 12rem;
+}
+
+.qr-code-manual {
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.qr-code-manual__label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.qr-code-manual__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.qr-code-manual__key {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #d1d5db;
+}
+
+.qr-code-manual__button {
+    padding: 0.25rem;
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+}
+
+.qr-code-manual__button:hover {
+    color: #374151;
+}
+
+.qr-code-manual__feedback {
+    font-size: 0.75rem;
+    color: #10b981;
+    margin-top: 0.25rem;
+}
+
+/* Backup codes */
+.backup-codes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.backup-code {
+    background-color: #f9fafb;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.backup-code code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.backup-codes-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Navigation */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Loading states */
+.loading-container {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.loading-text {
+    color: #6b7280;
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    max-width: 24rem;
+}
+
+.toast--success {
+    background-color: #10b981;
+    color: white;
+}
+
+.toast--error {
+    background-color: #ef4444;
+    color: white;
+}
+
+.toast--warning {
+    background-color: #eab308;
+    color: white;
+}
+
+.toast--info {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.toast__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toast__message {
+    font-size: 0.875rem;
+}
+
+.toast__close {
+    margin-left: 0.5rem;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.toast__close:hover {
+    opacity: 1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .admin-setup__container {
+        padding: 1rem;
+    }
+
+    .admin-setup__card {
+        padding: 1.5rem;
+    }
+
+    .backup-codes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps__label {
+        font-size: 0.6rem;
+        max-width: 3rem;
+    }
+}

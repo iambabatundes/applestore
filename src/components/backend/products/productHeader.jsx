@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import config from "../../../config.json";
-import { saveExcelFile } from "../../../services/uploadExcelService";
+import { uploadExcelFile } from "../../../services/uploadExcelService";
 
 export default function ProductHeader() {
   function handleExport() {
@@ -38,7 +38,7 @@ export default function ProductHeader() {
       try {
         const formData = new FormData();
         formData.append("excelFile", file);
-        await saveExcelFile(formData);
+        await uploadExcelFile(formData);
         alert("Products imported successfully!");
       } catch (error) {
         console.error("Error importing products:", error);
