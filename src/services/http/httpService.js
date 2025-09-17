@@ -36,7 +36,7 @@ export class HttpError extends Error {
 }
 
 export const defaultConfig = {
-  baseURL: getEnv("VITE_API_URL", getEnv("REACT_APP_API_URL", "/api")),
+  baseURL: getEnv("VITE_API_URL", getEnv("REACT_APP_API_URL")),
   timeout: 30000,
   retryAttempts: 3,
   retryDelay: 1000,

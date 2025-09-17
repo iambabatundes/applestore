@@ -1,22 +1,20 @@
 import { BaseHttpService, ClientType, HttpError } from "./httpService";
 
-// Admin-specific configuration (moved outside class to be accessible immediately)
 const ADMIN_CONFIG = {
   API_VERSION: "v1",
   CLIENT_TYPE: "admin",
   RATE_LIMITS: {
-    DEFAULT: 100, // requests per minute
-    SENSITIVE: 10, // for sensitive operations
+    DEFAULT: 100,
+    SENSITIVE: 10,
   },
   CACHE_SETTINGS: {
-    STATS: 2 * 60 * 1000, // 2 minutes
-    METRICS: 5 * 60 * 1000, // 5 minutes
-    LOGS: 30 * 1000, // 30 seconds
-    HEALTH: 10 * 1000, // 10 seconds
+    STATS: 2 * 60 * 1000,
+    METRICS: 5 * 60 * 1000,
+    LOGS: 30 * 1000,
+    HEALTH: 10 * 1000,
   },
 };
 
-// Admin-specific error codes
 const ADMIN_ERROR_CODES = {
   INSUFFICIENT_PRIVILEGES: "ADMIN_INSUFFICIENT_PRIVILEGES",
   ADMIN_LOCKED: "ADMIN_ACCOUNT_LOCKED",
@@ -28,10 +26,9 @@ const ADMIN_ERROR_CODES = {
 
 class AdminHttpService extends BaseHttpService {
   constructor(config = {}) {
-    // Enhanced configuration for admin service
     const adminConfig = {
-      timeout: 45000, // Longer timeout for admin operations
-      retryAttempts: 2, // Fewer retries for admin operations
+      timeout: 45000,
+      retryAttempts: 2,
       retryDelay: 2000,
       cacheConfig: {
         maxSize: 150,
@@ -39,10 +36,10 @@ class AdminHttpService extends BaseHttpService {
       },
       securityConfig: {
         enableCSRF: true,
-        tokenRefreshThreshold: 10 * 60 * 1000, // 10 minutes
-        maxConcurrentRequests: 5, // Lower for admin operations
+        tokenRefreshThreshold: 10 * 60 * 1000,
+        maxConcurrentRequests: 5,
       },
-      // Pass API version in config so it's available during parent constructor
+
       apiVersion: ADMIN_CONFIG.API_VERSION,
       ...config,
     };
@@ -68,10 +65,10 @@ class AdminHttpService extends BaseHttpService {
     // Get API version from config (available during parent constructor)
     // or fall back to adminConfig (available after constructor completes)
     // const apiVersion =
-    //   this.config.apiVersion || this.adminConfig?.API_VERSION || "v1";
+    // this.config.apiVersion || this.adminConfig?.API_VERSION || "v1";
     // const adminPath = apiVersion ? `/admins/${apiVersion}` : "/admin";
     // return `${base}${adminPath}`;
-    return `${base}`;
+    return base;
   }
 
   getClientSpecificHeaders(headers) {
@@ -178,10 +175,6 @@ class AdminHttpService extends BaseHttpService {
     }
   }
 
-  // ============================================================================
-  // ADMIN-SPECIFIC ERROR HANDLERS
-  // ============================================================================
-
   handleInsufficientPrivileges(data, config) {
     const operation = this.extractOperation(config.url);
     this.logger?.error &&
@@ -229,13 +222,8 @@ class AdminHttpService extends BaseHttpService {
     });
   }
 
-  // ============================================================================
-  // ADMIN-SPECIFIC UTILITY METHODS
-  // ============================================================================
-
   isSensitiveEndpoint(url) {
     if (!url) return false;
-    // Use fallback if sensitiveEndpoints not yet initialized
     const endpoints =
       this.sensitiveEndpoints ||
       new Set(["/security/", "/admins/", "/cleanup", "/system/", "/audit"]);
@@ -253,7 +241,6 @@ class AdminHttpService extends BaseHttpService {
   }
 
   getTenantId() {
-    // Get tenant ID from storage, URL, or environment
     return (
       this.storage?.getItem("tenantId", false) ||
       (typeof window !== "undefined"
@@ -264,7 +251,6 @@ class AdminHttpService extends BaseHttpService {
   }
 
   getSessionId() {
-    // Get session ID for audit tracking
     return this.storage?.getItem("sessionId", false) || null;
   }
 
@@ -294,7 +280,6 @@ class AdminHttpService extends BaseHttpService {
   }
 
   emitAdminEvent(eventType, data) {
-    // Emit custom events for admin-specific situations
     if (typeof window !== "undefined" && window.dispatchEvent) {
       const event = new CustomEvent(`admin:${eventType}`, {
         detail: data,
@@ -303,12 +288,7 @@ class AdminHttpService extends BaseHttpService {
     }
   }
 
-  // ============================================================================
-  // ENHANCED CACHING FOR ADMIN OPERATIONS
-  // ============================================================================
-
   async request(config) {
-    // Apply admin-specific cache TTL based on endpoint
     const originalTTL = this.config.cacheConfig?.defaultTTL;
     const cacheSettings =
       this.adminConfig?.CACHE_SETTINGS || ADMIN_CONFIG.CACHE_SETTINGS;
@@ -338,10 +318,6 @@ class AdminHttpService extends BaseHttpService {
 
     return result;
   }
-
-  // ============================================================================
-  // ADMIN-SPECIFIC METHODS
-  // ============================================================================
 
   async validateAdminSession() {
     try {
@@ -384,7 +360,6 @@ class AdminHttpService extends BaseHttpService {
     }
   }
 
-  // Override clearTokens to also clear admin-specific data
   clearTokens() {
     super.clearTokens();
     this.storage?.removeItem("tenantId");

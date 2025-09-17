@@ -32,8 +32,6 @@ import { authStore, initializeAuth } from "./services/authService";
 import { userHttpService, adminHttpService } from "./services/http/index";
 import { useAdminAuthStore } from "./components/backend/store/useAdminAuthStore";
 import { useSetupStatus } from "./components/backend/admin/hooks/useSetupStatus";
-
-// Import constants
 import {
   TOAST_CONFIG,
   INITIALIZATION_TIMEOUT,
@@ -42,7 +40,6 @@ import {
   ERROR_MESSAGES,
   DEFAULTS,
 } from "./config/constants";
-import { useSetupStatus } from "./components/backend/admin/hooks/useSetupStatus";
 
 function App() {
   const { user, isAuthReady, accessToken, isAuthenticated } =
@@ -309,12 +306,10 @@ function App() {
     );
   }
 
-  // Show loading spinner while critical components initialize
   if (!authInitialized || !isAuthReady) {
     return <AppSkeleton message={LOADING_MESSAGES.AUTH} />;
   }
 
-  // For admin routes, show loading while checking setup status
   if (isAdminRoute && setupLoading && !appInitialized) {
     return <AppSkeleton message={LOADING_MESSAGES.SYSTEM_SETUP} />;
   }

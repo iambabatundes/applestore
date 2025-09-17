@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import AdminNavbar from "./adminNavbar";
 import "./styles/admin.css";
+import "./admin/styles/adminSetupScreens.css";
 import "../backend/common/styles/darkMode.css";
 import Dashboard from "./dashboard";
 import CreatePost from "./createPost";
@@ -14,7 +15,7 @@ import { sidebarLinks } from "./config/adminRoutesConfig";
 import useAdminStore from "./admin/useAdminStore";
 import { useAdminSidebarStore } from "./store/adminSideBarStore";
 import { useAdminAuthStore } from "./store/useAdminAuthStore";
-import { useSetupStatus } from "../../hooks/useSetupStatus"; // The hook we created above
+import { useSetupStatus } from "../backend/admin/hooks/useSetupStatus";
 
 const SetupLoadingScreen = ({ darkMode }) => (
   <div className={`setup-loading-screen ${darkMode ? "dark-mode" : ""}`}>
@@ -73,9 +74,17 @@ const Admin = ({ companyName, count, userName, logo }) => {
   const location = useLocation();
   const [showSetupFlow, setShowSetupFlow] = useState(false);
   const [setupInitialized, setSetupInitialized] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
-  const { adminUser, isAuthenticated, loading, fetchAdminUser, logout } =
-    useAdminAuthStore();
+  const {
+    adminUser,
+    isAuthenticated,
+    loading,
+    fetchAdminUser,
+    logout,
+    shouldRedirectToLogin,
+    initialized: authInitialized,
+  } = useAdminAuthStore();
 
   const {
     selectedLink,
@@ -99,6 +108,17 @@ const Admin = ({ companyName, count, userName, logo }) => {
     refreshStatus,
   } = useSetupStatus();
 
+  const isLoginRoute = location.pathname === "/admin/login";
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
+  const actuallyNeedsSetup =
+    needsSetup ||
+    (setupStatus && setupStatus.adminCount === 0) ||
+    !setupStatus?.hasInitialAdmin;
+  const actuallySetupComplete =
+    isSetupComplete && setupStatus && setupStatus.adminCount > 0;
+
+  // Handle setup completion
   const handleSetupComplete = async () => {
     try {
       console.log("[Admin] Setup completed, refreshing status...");
@@ -124,50 +144,123 @@ const Admin = ({ companyName, count, userName, logo }) => {
     setShowSetupFlow(true);
   };
 
-  // Effect to handle authentication flow
+  // FIXED: Authentication effect with proper setup status handling
   useEffect(() => {
-    // Skip auth check if we're in setup mode or setup is needed
-    if (setupLoading || needsSetup || showSetupFlow) {
-      return;
-    }
+    const checkAuthentication = async () => {
+      // Skip if we're already checking, in setup mode, or on login page
+      if (
+        authChecked ||
+        setupLoading ||
+        actuallyNeedsSetup ||
+        showSetupFlow ||
+        isLoginRoute
+      ) {
+        console.log("[Admin] Skipping auth check:", {
+          authChecked,
+          setupLoading,
+          actuallyNeedsSetup,
+          showSetupFlow,
+          isLoginRoute,
+        });
+        return;
+      }
 
-    if (!isAuthenticated && !loading && isSetupComplete) {
-      fetchAdminUser(navigate);
+      // IMPORTANT: Only proceed with auth check if setup is definitively complete
+      // If setupStatus is null or undefined, don't proceed
+      if (!setupStatus || !actuallySetupComplete) {
+        console.log("[Admin] Waiting for setup status:", {
+          setupStatus,
+          actuallySetupComplete,
+        });
+        return;
+      }
+
+      try {
+        // Only fetch user if we don't have one and we're not already authenticated
+        if (!adminUser && !isAuthenticated && authInitialized) {
+          console.log("[Admin] Fetching admin user...");
+          const user = await fetchAdminUser();
+
+          // If no user and we should redirect, navigate to login
+          if (!user && shouldRedirectToLogin()) {
+            console.log("[Admin] No user found, redirecting to login");
+            navigate("/admin/login", { replace: true });
+          }
+        }
+      } catch (error) {
+        console.error("[Admin] Auth check error:", error);
+        if (shouldRedirectToLogin()) {
+          navigate("/admin/login", { replace: true });
+        }
+      } finally {
+        setAuthChecked(true);
+      }
+    };
+
+    // Only run the check if we're on an admin route and NOT on login page
+    if (isAdminRoute && !isLoginRoute) {
+      checkAuthentication();
     }
   }, [
-    isAuthenticated,
-    loading,
-    fetchAdminUser,
-    navigate,
+    authChecked,
     setupLoading,
-    needsSetup,
+    actuallyNeedsSetup, // Use our enhanced logic
     showSetupFlow,
-    isSetupComplete,
+    isLoginRoute,
+    actuallySetupComplete, // Use our enhanced logic
+    setupStatus, // Add setupStatus as dependency
+    adminUser,
+    isAuthenticated,
+    authInitialized,
+    fetchAdminUser,
+    shouldRedirectToLogin,
+    navigate,
+    isAdminRoute,
   ]);
+
+  // Reset auth check when location changes
+  useEffect(() => {
+    setAuthChecked(false);
+  }, [location.pathname]);
 
   // Effect to handle dark mode persistence
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  // Handle setup routing
-  useEffect(() => {
-    const isAdminRoute = location.pathname.startsWith("/admin");
-    const isLoginRoute = location.pathname === "/admin/login";
+  console.log("[Admin] Current state:", {
+    isLoginRoute,
+    setupLoading,
+    needsSetup,
+    showSetupFlow,
+    setupInitialized,
+    isSetupComplete,
+    isAuthenticated,
+    adminUser: !!adminUser,
+    loading,
+    authChecked,
+    pathname: location.pathname,
+    setupStatus,
+    adminCount: setupStatus?.adminCount,
+    hasInitialAdmin: setupStatus?.hasInitialAdmin,
+  });
 
-    if (isAdminRoute && !isLoginRoute && needsSetup && !setupInitialized) {
-      console.log("[Admin] Setup required, redirecting to setup flow");
-      // Don't redirect immediately, show the setup required screen
-    }
-  }, [location.pathname, needsSetup, setupInitialized]);
+  console.log("[Admin] Setup status analysis:", {
+    apiNeedsSetup: needsSetup,
+    apiSetupComplete: isSetupComplete,
+    adminCount: setupStatus?.adminCount,
+    hasInitialAdmin: setupStatus?.hasInitialAdmin,
+    actuallyNeedsSetup,
+    actuallySetupComplete,
+  });
 
-  // Loading states
+  // Loading states - Setup check
   if (setupLoading && !setupInitialized) {
     return <SetupLoadingScreen darkMode={darkMode} />;
   }
 
-  // Setup required state
-  if (needsSetup && !showSetupFlow && !setupInitialized) {
+  // Setup required state - use our enhanced logic
+  if (actuallyNeedsSetup && !showSetupFlow && !setupInitialized) {
     return (
       <SetupRequiredScreen
         onContinueSetup={handleInitiateSetup}
@@ -177,7 +270,7 @@ const Admin = ({ companyName, count, userName, logo }) => {
   }
 
   // Setup flow state
-  if (showSetupFlow || (needsSetup && !isSetupComplete)) {
+  if (showSetupFlow || (actuallyNeedsSetup && !actuallySetupComplete)) {
     return (
       <div className={`admin-setup-wrapper ${darkMode ? "dark-mode" : ""}`}>
         <AdminSetup onSetupComplete={handleSetupComplete} darkMode={darkMode} />
@@ -209,14 +302,14 @@ const Admin = ({ companyName, count, userName, logo }) => {
     );
   }
 
-  // Authentication loading state
-  if (loading) {
-    return <AdminSkeleton darkMode={darkMode} />;
+  // Show login page if on login route or not authenticated (but only if setup is complete)
+  if (isLoginRoute || (!isAuthenticated && actuallySetupComplete && !loading)) {
+    return <AdminLogin setAuth={() => {}} />;
   }
 
-  // Not authenticated - show login
-  if (!isAuthenticated && isSetupComplete) {
-    return <AdminLogin setAuth={() => {}} />;
+  // Authentication loading state
+  if (loading || !authChecked) {
+    return <AdminSkeleton darkMode={darkMode} />;
   }
 
   // Main admin interface (authenticated and setup complete)

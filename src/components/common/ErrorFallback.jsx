@@ -1,5 +1,5 @@
 import React from "react";
-import "./ErrorFallback.css";
+import "./styles/ErrorFallback.css";
 
 const ErrorFallback = ({ error, resetError, resetErrorBoundary }) => {
   const handleReset = resetErrorBoundary || resetError;

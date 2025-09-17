@@ -16,9 +16,8 @@ import {
   Users,
 } from "lucide-react";
 import "./styles/adminSetup.css";
-import { AdminService, ERROR_TYPES } from "../../../services/adminService";
+import AdminService, { ERROR_TYPES } from "../../../services/adminService";
 
-// Simplified Admin Setup Service Hook - leverages existing service layer
 const useAdminSetupService = () => {
   return {
     getSetupStatus: () => AdminService.getSetupStatus(),
@@ -29,10 +28,12 @@ const useAdminSetupService = () => {
   };
 };
 
-// Enhanced Password Strength with accessibility
 const PasswordStrength = ({ password, id }) => {
   const getStrength = (pass) => {
-    if (!pass) return { score: 0, label: "Enter password", color: "" };
+    // Add null/undefined check at the start
+    if (!pass || typeof pass !== "string") {
+      return { score: 0, label: "Enter password", color: "", checks: [] };
+    }
 
     let score = 0;
     const checks = [
@@ -97,7 +98,7 @@ const PasswordStrength = ({ password, id }) => {
           style={{ width: `${(strength.score / 5) * 100}%` }}
         />
       </div>
-      {strength.checks.length > 0 && (
+      {strength.checks && strength.checks.length > 0 && (
         <div
           className="password-strength__checks"
           aria-label="Password requirements met"
@@ -409,7 +410,8 @@ const ProgressSteps = ({ currentStep, steps }) => {
 };
 
 // Main Enhanced Admin Setup Component
-const AdminSetup = () => {
+const AdminSetup = ({ onSetupComplete, darkMode }) => {
+  // ✅ Accept props
   const [currentStep, setCurrentStep] = useState(0);
   const [setupData, setSetupData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -441,32 +443,75 @@ const AdminSetup = () => {
     { id: "complete", label: "Complete" },
   ];
 
-  // Enhanced error handling
+  // Enhanced error handling with better user feedback
   const handleError = (error, operation) => {
     console.error(`[AdminSetup] ${operation} failed:`, error);
 
     let message = error.message || "An unexpected error occurred";
+    let suggestions = [];
 
-    // Handle specific error types from service
+    // Handle specific error types from service with suggestions
     switch (error.type) {
       case ERROR_TYPES.VALIDATION_ERROR:
         message = "Please check your input and try again";
+        suggestions = [
+          "Verify all required fields are filled",
+          "Check password requirements",
+        ];
         break;
       case ERROR_TYPES.AUTH_ERROR:
         message = "Authentication failed. Please check your credentials";
+        suggestions = [
+          "Double-check your email and password",
+          "Try resetting if you forgot your password",
+        ];
         break;
       case ERROR_TYPES.RATE_LIMIT_ERROR:
         message = "Too many requests. Please wait a moment before trying again";
+        suggestions = [
+          "Wait 1-2 minutes before retrying",
+          "Check your internet connection",
+        ];
         break;
       case ERROR_TYPES.NETWORK_ERROR:
         message = "Network error. Please check your connection";
+        suggestions = [
+          "Check your internet connection",
+          "Try refreshing the page",
+        ];
         break;
       default:
+        // Provide helpful suggestions based on current step
+        switch (currentStep) {
+          case 1:
+            suggestions = [
+              "Check all form fields are valid",
+              "Ensure password meets requirements",
+            ];
+            break;
+          case 2:
+            suggestions = [
+              "Check your email for the verification code",
+              "Try resending the code",
+            ];
+            break;
+          case 3:
+            suggestions = [
+              "Wait for a new code from your authenticator app",
+              "Ensure your device time is correct",
+            ];
+            break;
+          default:
+            suggestions = [
+              "Try refreshing the page",
+              "Contact support if the issue persists",
+            ];
+        }
         break;
     }
 
     setError(message);
-    showToast(message, "error", error);
+    showToast(message, "error", { ...error, suggestions });
   };
 
   // Check setup status on mount
@@ -483,11 +528,13 @@ const AdminSetup = () => {
       const statusData = status.data || status;
       setSetupStatus(statusData);
 
-      if (statusData.setupCompleted) {
+      // ✅ Only jump to complete if setup is truly complete AND we have an admin
+      if (statusData.setupCompleted && statusData.adminCount > 0) {
         setCurrentStep(5); // Jump to complete step
         showToast("System setup already completed", "info");
-      } else if (!statusData.needsSetup) {
-        showToast("Setup not needed", "info");
+      } else {
+        // Reset to beginning if setup is needed
+        setCurrentStep(0);
       }
     } catch (err) {
       handleError(err, "checkSetupStatus");
@@ -503,7 +550,7 @@ const AdminSetup = () => {
 
   const validateForm = (step) => {
     switch (step) {
-      case 1: // Create admin
+      case 1: // Validate Step 1 data (Create admin form)
         if (!formData.firstName.trim()) return "First name is required";
         if (!formData.lastName.trim()) return "Last name is required";
         if (!formData.email.trim()) return "Email is required";
@@ -514,12 +561,12 @@ const AdminSetup = () => {
         if (formData.password !== formData.confirmPassword)
           return "Passwords do not match";
         return null;
-      case 2: // Verify email
+      case 2: // Validate Step 2 data (Email verification)
         if (!formData.emailCode.trim())
           return "Email verification code is required";
         if (formData.emailCode.length !== 6) return "Code must be 6 digits";
         return null;
-      case 3: // Setup 2FA
+      case 3: // Validate Step 3 data (2FA setup)
         if (!formData.totpCode.trim()) return "2FA code is required";
         if (formData.totpCode.length !== 6) return "Code must be 6 digits";
         return null;
@@ -529,10 +576,13 @@ const AdminSetup = () => {
   };
 
   const handleNext = async () => {
-    const validationError = validateForm(currentStep + 1);
-    if (validationError) {
-      setError(validationError);
-      return;
+    // ✅ Fixed: Validate the CURRENT step's data before proceeding
+    if (currentStep > 0) {
+      const validationError = validateForm(currentStep); // Remove the +1
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
     }
 
     setLoading(true);
@@ -540,7 +590,7 @@ const AdminSetup = () => {
 
     try {
       switch (currentStep) {
-        case 0: // Status check
+        case 0: // Status check - Just move to next step
           setCurrentStep(1);
           break;
 
@@ -586,6 +636,11 @@ const AdminSetup = () => {
         case 4: // Backup codes saved
           setCurrentStep(5);
           showToast("Setup completed successfully!", "success");
+
+          // Call the completion callback after successful setup
+          if (onSetupComplete) {
+            await onSetupComplete();
+          }
           break;
 
         default:
@@ -664,7 +719,11 @@ const AdminSetup = () => {
             {setupStatus && (
               <div className="status-card">
                 <p className="status-item">
-                  Status: <strong>{setupStatus.setupStatus}</strong>
+                  Status:{" "}
+                  <strong>
+                    {setupStatus.setupStatus ||
+                      (setupStatus.setupCompleted ? "Complete" : "Needs Setup")}
+                  </strong>
                 </p>
                 <p className="status-item">
                   Admin Count: <strong>{setupStatus.adminCount}</strong>
@@ -672,11 +731,13 @@ const AdminSetup = () => {
               </div>
             )}
             <button
-              onClick={() => setCurrentStep(1)}
-              disabled={setupStatus?.setupCompleted}
+              onClick={handleNext} // ✅ Use handleNext instead of directly setting step
+              disabled={
+                setupStatus?.setupCompleted && setupStatus?.adminCount > 0
+              }
               className="btn btn--primary btn--large"
             >
-              {setupStatus?.setupCompleted
+              {setupStatus?.setupCompleted && setupStatus?.adminCount > 0
                 ? "Setup Already Complete"
                 : "Start Setup"}
             </button>
@@ -961,7 +1022,7 @@ const AdminSetup = () => {
                 onDownload={() => {
                   console.info("[AdminSetup] Backup codes downloaded");
                 }}
-                onContinue={handleNext}
+                onContinue={handleNext} // ✅ Use handleNext for proper flow
               />
             )}
           </div>
@@ -997,15 +1058,42 @@ const AdminSetup = () => {
 
             <div className="setup-complete-actions">
               <button
-                onClick={() => (window.location.href = "/admin/dashboard")}
+                onClick={() => {
+                  // ✅ Navigate to login instead of dashboard since user needs to login
+                  window.location.href = "/admin/login";
+                }}
                 className="btn btn--success btn--large"
               >
-                Go to Admin Dashboard
+                Go to Admin Login
               </button>
 
               <button
                 onClick={() => {
-                  // Log successful setup completion
+                  // Log successful setup completion and download summary
+                  const setupSummary = `Admin Panel Setup Summary
+Generated: ${new Date().toLocaleString()}
+
+Setup Details:
+- Admin Email: ${formData.email}
+- Admin Name: ${formData.firstName} ${formData.lastName}
+- 2FA Enabled: Yes
+- Backup Codes Generated: Yes
+- Setup Completed: ${new Date().toLocaleString()}
+
+Next Steps:
+1. Log in to your admin account
+2. Review system settings
+3. Create additional admin accounts if needed
+4. Configure security policies`;
+
+                  const blob = new Blob([setupSummary], { type: "text/plain" });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `admin-setup-summary-${Date.now()}.txt`;
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+
                   console.info("[AdminSetup] Setup completed successfully", {
                     timestamp: new Date().toISOString(),
                     adminEmail: formData.email,
@@ -1053,7 +1141,7 @@ const AdminSetup = () => {
   }, [loading, currentStep]);
 
   return (
-    <div className="admin-setup">
+    <div className={`admin-setup ${darkMode ? "dark-mode" : ""}`}>
       <div className="admin-setup__container">
         <div className="admin-setup__card">
           {/* Skip to content link for screen readers */}
@@ -1143,5 +1231,4 @@ const AdminSetup = () => {
     </div>
   );
 };
-
 export default AdminSetup;

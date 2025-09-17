@@ -642,10 +642,6 @@ export function getServiceHealth() {
   };
 }
 
-// ============================================================================
-// SERVICE OBJECT EXPORT
-// ============================================================================
-
 export const AdminService = {
   // Setup & Initialization
   getSetupStatus,
@@ -707,3 +703,4 @@ export const AdminService = {
 };
 
 export default AdminService;
+export { ERROR_TYPES };
