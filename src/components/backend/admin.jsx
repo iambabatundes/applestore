@@ -16,76 +16,43 @@ import useAdminStore from "./admin/useAdminStore";
 import { useAdminSidebarStore } from "./store/adminSideBarStore";
 import { useAdminAuthStore } from "./store/useAdminAuthStore";
 import { useSetupStatus } from "../backend/admin/hooks/useSetupStatus";
-
-const SetupLoadingScreen = ({ darkMode }) => (
-  <div className={`setup-loading-screen ${darkMode ? "dark-mode" : ""}`}>
-    <div className="setup-loading-content">
-      <div className="setup-loading-spinner"></div>
-      <h2>Checking System Status...</h2>
-      <p>Please wait while we verify the admin panel setup.</p>
-    </div>
-  </div>
-);
-
-const SetupRequiredScreen = ({ onContinueSetup, darkMode }) => (
-  <div className={`setup-required-screen ${darkMode ? "dark-mode" : ""}`}>
-    <div className="setup-required-content">
-      <div className="setup-required-icon">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V9H21ZM19 21H5V3H13V9H19V21Z" />
-        </svg>
-      </div>
-      <h2>Admin Panel Setup Required</h2>
-      <p>
-        This appears to be your first time accessing the admin panel. You'll
-        need to set up an initial super administrator account to get started.
-      </p>
-      <div className="setup-features">
-        <div className="setup-feature">
-          <span className="setup-feature-icon">👤</span>
-          <span>Create Super Admin Account</span>
-        </div>
-        <div className="setup-feature">
-          <span className="setup-feature-icon">🔐</span>
-          <span>Configure Two-Factor Authentication</span>
-        </div>
-        <div className="setup-feature">
-          <span className="setup-feature-icon">🔑</span>
-          <span>Generate Backup Access Codes</span>
-        </div>
-        <div className="setup-feature">
-          <span className="setup-feature-icon">✅</span>
-          <span>Verify Email & Security Settings</span>
-        </div>
-      </div>
-      <button onClick={onContinueSetup} className="btn btn--primary btn--large">
-        Begin Setup Process
-      </button>
-      <p className="setup-help-text">
-        This process takes about 5-10 minutes and ensures your admin panel is
-        secure.
-      </p>
-    </div>
-  </div>
-);
+import SetupRequiredScreen from "./common/SetupRequiredScreen";
+import SetupLoadingScreen from "./common/SetupLoadingScreen";
 
 const Admin = ({ companyName, count, userName, logo }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSetupFlow, setShowSetupFlow] = useState(false);
-  const [setupInitialized, setSetupInitialized] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
 
+  // STATE-BASED SETUP FLOW MANAGEMENT
+  const [setupFlowState, setSetupFlowState] = useState({
+    showSetupFlow: false,
+    setupInitialized: false,
+    authCheckComplete: false,
+    setupForced: false, // For manual setup forcing
+  });
+
+  // SETUP STATUS HOOK
+  const {
+    setupStatus,
+    isLoading: setupLoading,
+    error: setupError,
+    needsSetup,
+    isSetupComplete,
+    refreshStatus,
+  } = useSetupStatus();
+
+  // ADMIN AUTH STORE
   const {
     adminUser,
     isAuthenticated,
-    loading,
+    loading: authLoading,
     fetchAdminUser,
     logout,
     shouldRedirectToLogin,
     initialized: authInitialized,
   } = useAdminAuthStore();
 
+  // ADMIN UI STORES
   const {
     selectedLink,
     setSelectedLink,
@@ -99,33 +66,56 @@ const Admin = ({ companyName, count, userName, logo }) => {
 
   const { isCollapsed, isHidden } = useAdminSidebarStore();
 
-  const {
-    setupStatus,
-    isLoading: setupLoading,
-    error: setupError,
-    needsSetup,
-    isSetupComplete,
-    refreshStatus,
-  } = useSetupStatus();
-
+  // ROUTE ANALYSIS (but not for routing decisions)
   const isLoginRoute = location.pathname === "/admin/login";
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  // ENHANCED SETUP STATE DETERMINATION
   const actuallyNeedsSetup =
-    needsSetup ||
-    (setupStatus && setupStatus.adminCount === 0) ||
-    !setupStatus?.hasInitialAdmin;
-  const actuallySetupComplete =
-    isSetupComplete && setupStatus && setupStatus.adminCount > 0;
+    setupStatus &&
+    ((setupStatus.adminCount === 0 &&
+      setupStatus.superAdminCount === 0 &&
+      !setupStatus.setupLocked) ||
+      setupStatus.needsSetup === true);
 
-  // Handle setup completion
+  const actuallySetupComplete =
+    setupStatus &&
+    (setupStatus.setupCompleted === true ||
+      setupStatus.adminCount > 0 ||
+      setupStatus.superAdminCount > 0 ||
+      setupStatus.setupLocked === true);
+
+  console.log("[Admin] Setup state analysis:", {
+    actuallyNeedsSetup,
+    actuallySetupComplete,
+    setupStatus,
+    setupFlowState,
+  });
+
+  // SETUP FLOW HANDLERS
+  const handleInitiateSetup = () => {
+    console.log("[Admin] Initiating setup flow via state");
+    setSetupFlowState((prev) => ({
+      ...prev,
+      showSetupFlow: true,
+      setupForced: true,
+    }));
+  };
+
   const handleSetupComplete = async () => {
     try {
       console.log("[Admin] Setup completed, refreshing status...");
       await refreshStatus();
-      setShowSetupFlow(false);
-      setSetupInitialized(true);
 
+      // Update setup flow state
+      setSetupFlowState((prev) => ({
+        ...prev,
+        showSetupFlow: false,
+        setupInitialized: true,
+        setupForced: false,
+      }));
+
+      // Navigate to login with success message
       navigate("/admin/login", {
         replace: true,
         state: {
@@ -139,51 +129,50 @@ const Admin = ({ companyName, count, userName, logo }) => {
     }
   };
 
-  // Initialize setup flow
-  const handleInitiateSetup = () => {
-    setShowSetupFlow(true);
+  const handleForceSetup = () => {
+    console.log("[Admin] Forcing setup flow");
+    setSetupFlowState((prev) => ({
+      ...prev,
+      showSetupFlow: true,
+      setupForced: true,
+    }));
   };
 
-  // FIXED: Authentication effect with proper setup status handling
+  // AUTHENTICATION LOGIC - Only when setup is complete
   useEffect(() => {
     const checkAuthentication = async () => {
-      // Skip if we're already checking, in setup mode, or on login page
+      // Skip auth check if setup is not complete or we're in setup flow
       if (
-        authChecked ||
-        setupLoading ||
-        actuallyNeedsSetup ||
-        showSetupFlow ||
-        isLoginRoute
+        !actuallySetupComplete ||
+        setupFlowState.showSetupFlow ||
+        setupFlowState.authCheckComplete ||
+        isLoginRoute ||
+        !isAdminRoute ||
+        authLoading ||
+        setupLoading
       ) {
         console.log("[Admin] Skipping auth check:", {
-          authChecked,
-          setupLoading,
-          actuallyNeedsSetup,
-          showSetupFlow,
-          isLoginRoute,
-        });
-        return;
-      }
-
-      // IMPORTANT: Only proceed with auth check if setup is definitively complete
-      // If setupStatus is null or undefined, don't proceed
-      if (!setupStatus || !actuallySetupComplete) {
-        console.log("[Admin] Waiting for setup status:", {
-          setupStatus,
           actuallySetupComplete,
+          showSetupFlow: setupFlowState.showSetupFlow,
+          authCheckComplete: setupFlowState.authCheckComplete,
+          isLoginRoute,
+          isAdminRoute,
+          authLoading,
+          setupLoading,
         });
         return;
       }
 
       try {
-        // Only fetch user if we don't have one and we're not already authenticated
+        console.log("[Admin] Performing authentication check...");
+
         if (!adminUser && !isAuthenticated && authInitialized) {
-          console.log("[Admin] Fetching admin user...");
           const user = await fetchAdminUser();
 
-          // If no user and we should redirect, navigate to login
           if (!user && shouldRedirectToLogin()) {
-            console.log("[Admin] No user found, redirecting to login");
+            console.log(
+              "[Admin] No authenticated user found, redirecting to login"
+            );
             navigate("/admin/login", { replace: true });
           }
         }
@@ -193,98 +182,145 @@ const Admin = ({ companyName, count, userName, logo }) => {
           navigate("/admin/login", { replace: true });
         }
       } finally {
-        setAuthChecked(true);
+        setSetupFlowState((prev) => ({
+          ...prev,
+          authCheckComplete: true,
+        }));
       }
     };
 
-    // Only run the check if we're on an admin route and NOT on login page
-    if (isAdminRoute && !isLoginRoute) {
+    if (isAdminRoute && !isLoginRoute && actuallySetupComplete) {
       checkAuthentication();
     }
   }, [
-    authChecked,
-    setupLoading,
-    actuallyNeedsSetup, // Use our enhanced logic
-    showSetupFlow,
+    actuallySetupComplete,
+    setupFlowState.showSetupFlow,
+    setupFlowState.authCheckComplete,
     isLoginRoute,
-    actuallySetupComplete, // Use our enhanced logic
-    setupStatus, // Add setupStatus as dependency
+    isAdminRoute,
+    authLoading,
+    setupLoading,
     adminUser,
     isAuthenticated,
     authInitialized,
     fetchAdminUser,
     shouldRedirectToLogin,
     navigate,
-    isAdminRoute,
   ]);
 
-  // Reset auth check when location changes
+  // SETUP FLOW LOGIC - Determine when to show setup
   useEffect(() => {
-    setAuthChecked(false);
+    // Don't make decisions while loading
+    if (setupLoading || !setupStatus) {
+      return;
+    }
+
+    // If setup is actually complete but we're showing setup flow, hide it
+    if (
+      actuallySetupComplete &&
+      setupFlowState.showSetupFlow &&
+      !setupFlowState.setupForced
+    ) {
+      console.log("[Admin] Setup complete detected, hiding setup flow");
+      setSetupFlowState((prev) => ({
+        ...prev,
+        showSetupFlow: false,
+        setupInitialized: true,
+      }));
+      return;
+    }
+
+    // If setup is needed and we haven't initialized setup flow, prepare to show it
+    if (
+      actuallyNeedsSetup &&
+      !setupFlowState.setupInitialized &&
+      !setupFlowState.showSetupFlow
+    ) {
+      console.log("[Admin] Setup needed, ready to show setup flow");
+      // Don't automatically show setup flow, wait for user action
+    }
+  }, [
+    setupLoading,
+    setupStatus,
+    actuallyNeedsSetup,
+    actuallySetupComplete,
+    setupFlowState.showSetupFlow,
+    setupFlowState.setupInitialized,
+    setupFlowState.setupForced,
+  ]);
+
+  // Reset auth check when route changes
+  useEffect(() => {
+    setSetupFlowState((prev) => ({
+      ...prev,
+      authCheckComplete: false,
+    }));
   }, [location.pathname]);
 
-  // Effect to handle dark mode persistence
+  // Dark mode persistence
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  console.log("[Admin] Current state:", {
-    isLoginRoute,
-    setupLoading,
-    needsSetup,
-    showSetupFlow,
-    setupInitialized,
-    isSetupComplete,
-    isAuthenticated,
-    adminUser: !!adminUser,
-    loading,
-    authChecked,
-    pathname: location.pathname,
-    setupStatus,
-    adminCount: setupStatus?.adminCount,
-    hasInitialAdmin: setupStatus?.hasInitialAdmin,
-  });
+  // SECURITY: Prevent setup access when setup is complete (unless forced)
+  useEffect(() => {
+    if (
+      actuallySetupComplete &&
+      setupFlowState.showSetupFlow &&
+      !setupFlowState.setupForced &&
+      !setupError
+    ) {
+      console.warn(
+        "[Admin] Security: Blocking setup access - setup already complete"
+      );
+      setSetupFlowState((prev) => ({
+        ...prev,
+        showSetupFlow: false,
+      }));
 
-  console.log("[Admin] Setup status analysis:", {
-    apiNeedsSetup: needsSetup,
-    apiSetupComplete: isSetupComplete,
-    adminCount: setupStatus?.adminCount,
-    hasInitialAdmin: setupStatus?.hasInitialAdmin,
+      navigate("/admin/login", {
+        replace: true,
+        state: {
+          message:
+            "System setup is already complete. Please log in with your admin credentials.",
+          type: "info",
+        },
+      });
+    }
+  }, [
+    actuallySetupComplete,
+    setupFlowState.showSetupFlow,
+    setupFlowState.setupForced,
+    setupError,
+    navigate,
+  ]);
+
+  console.log("[Admin] Current render state:", {
+    setupLoading,
+    setupError,
     actuallyNeedsSetup,
     actuallySetupComplete,
+    setupFlowState,
+    isAuthenticated,
+    adminUser: !!adminUser,
+    authLoading,
+    pathname: location.pathname,
   });
 
-  // Loading states - Setup check
-  if (setupLoading && !setupInitialized) {
+  // RENDER LOGIC - State-based decisions (no routing)
+
+  // 1. LOADING STATE
+  if (setupLoading && !setupFlowState.setupInitialized) {
     return <SetupLoadingScreen darkMode={darkMode} />;
   }
 
-  // Setup required state - use our enhanced logic
-  if (actuallyNeedsSetup && !showSetupFlow && !setupInitialized) {
-    return (
-      <SetupRequiredScreen
-        onContinueSetup={handleInitiateSetup}
-        darkMode={darkMode}
-      />
-    );
-  }
-
-  // Setup flow state
-  if (showSetupFlow || (actuallyNeedsSetup && !actuallySetupComplete)) {
-    return (
-      <div className={`admin-setup-wrapper ${darkMode ? "dark-mode" : ""}`}>
-        <AdminSetup onSetupComplete={handleSetupComplete} darkMode={darkMode} />
-      </div>
-    );
-  }
-
-  // Setup error state
-  if (setupError && !setupInitialized) {
+  // 2. SETUP ERROR STATE
+  if (setupError && !setupFlowState.setupInitialized) {
     return (
       <div className={`admin-error-screen ${darkMode ? "dark-mode" : ""}`}>
         <div className="admin-error-content">
-          <h2>Setup Check Failed</h2>
-          <p>Unable to verify admin panel setup status.</p>
+          <h2>Setup Verification Failed</h2>
+          <p>Unable to verify system setup status.</p>
           <p className="error-details">{setupError}</p>
           <div className="admin-error-actions">
             <button
@@ -293,7 +329,7 @@ const Admin = ({ companyName, count, userName, logo }) => {
             >
               Retry
             </button>
-            <button onClick={handleInitiateSetup} className="btn btn--primary">
+            <button onClick={handleForceSetup} className="btn btn--primary">
               Force Setup
             </button>
           </div>
@@ -302,17 +338,48 @@ const Admin = ({ companyName, count, userName, logo }) => {
     );
   }
 
-  // Show login page if on login route or not authenticated (but only if setup is complete)
-  if (isLoginRoute || (!isAuthenticated && actuallySetupComplete && !loading)) {
+  // 3. SETUP FLOW STATE
+  if (setupFlowState.showSetupFlow) {
+    return (
+      <div className={`admin-setup-wrapper ${darkMode ? "dark-mode" : ""}`}>
+        <AdminSetup onSetupComplete={handleSetupComplete} darkMode={darkMode} />
+      </div>
+    );
+  }
+
+  // 4. SETUP REQUIRED SCREEN
+  if (
+    actuallyNeedsSetup &&
+    !setupFlowState.setupInitialized &&
+    !setupFlowState.showSetupFlow
+  ) {
+    return (
+      <SetupRequiredScreen
+        onContinueSetup={handleInitiateSetup}
+        darkMode={darkMode}
+      />
+    );
+  }
+
+  // 5. LOGIN SCREEN
+  if (
+    isLoginRoute ||
+    (!isAuthenticated && actuallySetupComplete && !authLoading)
+  ) {
     return <AdminLogin setAuth={() => {}} />;
   }
 
-  // Authentication loading state
-  if (loading || !authChecked) {
+  // 6. AUTHENTICATION LOADING
+  if (authLoading || !setupFlowState.authCheckComplete) {
     return <AdminSkeleton darkMode={darkMode} />;
   }
 
-  // Main admin interface (authenticated and setup complete)
+  // 7. UNAUTHENTICATED STATE
+  if (!isAuthenticated && actuallySetupComplete) {
+    return <AdminSkeleton darkMode={darkMode} />;
+  }
+
+  // 8. MAIN ADMIN INTERFACE
   const notifications = () => {
     console.log("notification");
   };

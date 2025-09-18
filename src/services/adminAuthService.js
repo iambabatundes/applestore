@@ -1,10 +1,10 @@
-import adminHttpService from "../services/http/index";
+import { adminHttpService } from "../services/http/index";
 
-const endPoint = "/api/admin/auth";
-const endPointMe = "/api/admin";
-const adminRefreshEndPoint = "/api/admin/refresh";
+const endPoint = "/api/admins/auth";
+const endPointMe = "/api/admins/auth"; // FIXED: Changed from "/api/admins" to "/api/admins/auth"
+const adminRefreshEndPoint = "/api/admins/auth/refresh"; // FIXED: Use full path
 
-// Token management functions
+// Token management functions (unchanged)
 function setAdminTokens(accessToken, expiresIn) {
   if (typeof window !== "undefined") {
     localStorage.setItem("adminAccessToken", accessToken);
@@ -40,15 +40,25 @@ function isTokenExpired() {
 async function adminlogin(email, password) {
   try {
     const response = await adminHttpService.post(endPoint, { email, password });
-    const data = response.data;
 
-    console.log("Admin login response:", data);
+    // Handle different response structures
+    let data = response.data;
 
+    // Check if response is wrapped in sendSuccessResponse format
+    if (data.success && data.data) {
+      data = data.data;
+      console.log("Admin login response (unwrapped):", data);
+    } else {
+      console.log("Admin login response (direct):", data);
+    }
+
+    // Check for access token in the data
     if (!data.accessToken) {
+      console.error("Response structure:", response.data);
       throw new Error("No access token received from server");
     }
 
-    const expiresIn = data.expiresIn || 3600; // Use server value or default to 1 hour
+    const expiresIn = data.expiresIn || 3600;
 
     // Set tokens in localStorage
     setAdminTokens(data.accessToken, expiresIn);
@@ -56,10 +66,11 @@ async function adminlogin(email, password) {
     return {
       accessToken: data.accessToken,
       expiresIn,
-      user: data.user, // Include user data if available
+      user: data.admin || data.user,
     };
   } catch (error) {
     console.error("Admin login error:", error);
+    console.error("Response data:", error.response?.data);
     throw error;
   }
 }
@@ -74,10 +85,18 @@ async function adminRefreshTokenApi() {
       { withCredentials: true }
     );
 
-    const data = response.data;
-    console.log("Admin refresh response:", data);
+    // Handle different response structures
+    let data = response.data;
+
+    if (data.success && data.data) {
+      data = data.data;
+      console.log("Admin refresh response (unwrapped):", data);
+    } else {
+      console.log("Admin refresh response (direct):", data);
+    }
 
     if (!data.accessToken) {
+      console.error("Refresh response structure:", response.data);
       throw new Error("No access token received from refresh");
     }
 
@@ -92,6 +111,7 @@ async function adminRefreshTokenApi() {
     };
   } catch (error) {
     console.error("Token refresh error:", error);
+    console.error("Response data:", error.response?.data);
     clearAdminTokens();
     throw error;
   }
@@ -112,7 +132,7 @@ async function adminlogout() {
   }
 }
 
-// FIXED: Improved getCurrentUser with better error handling
+// FIXED: Use correct route path
 async function getCurrentUser() {
   try {
     // Check if we have a valid token first
@@ -129,11 +149,22 @@ async function getCurrentUser() {
       return null;
     }
 
+    // FIXED: Use the correct route - /api/admins/auth/me
     const response = await adminHttpService.get(`${endPointMe}/me`);
 
-    if (response.data) {
+    // Handle different response structures
+    let data = response.data;
+
+    if (data.success && data.data) {
+      data = data.data;
+    }
+
+    // Handle both 'admin' and direct user data
+    const userData = data.admin || data;
+
+    if (userData) {
       console.log("Successfully fetched current user");
-      return response.data;
+      return userData;
     }
 
     console.log("No user data returned from server");
@@ -154,7 +185,6 @@ async function getCurrentUser() {
     }
 
     // For network errors or server errors, don't clear tokens
-    // The user might still be valid, just can't reach the server
     if (error.code === "NETWORK_ERROR" || error.response?.status >= 500) {
       console.log("Network/Server error - keeping tokens");
       return null;
@@ -166,17 +196,15 @@ async function getCurrentUser() {
   }
 }
 
-// IMPROVED: Enhanced authentication status check
+// Enhanced authentication status check
 async function checkAuthStatus() {
   const { accessToken } = getAdminTokens();
 
-  // No token means definitely not authenticated
   if (!accessToken) {
     console.log("No access token found - not authenticated");
     return { isAuthenticated: false, user: null };
   }
 
-  // Expired token means not authenticated
   if (isTokenExpired()) {
     console.log("Token expired - clearing and not authenticated");
     clearAdminTokens();
@@ -184,10 +212,9 @@ async function checkAuthStatus() {
   }
 
   try {
-    // Try to get current user to verify token is still valid
     const user = await getCurrentUser();
-
     const isAuthenticated = !!user;
+
     console.log(
       `Auth status check: ${
         isAuthenticated ? "authenticated" : "not authenticated"

@@ -183,7 +183,7 @@ export default function AdminLogin() {
 
   // Redirect if already authenticated
   if (isAuthenticated && adminUser) {
-    const redirectTo = state?.from?.pathname || "/admin/dashboard";
+    const redirectTo = state?.from?.pathname || "/admin/dashboard/home";
     return <Navigate to={redirectTo} replace />;
   }
 

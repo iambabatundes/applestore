@@ -16,34 +16,34 @@ export const useSetupStatus = () => {
       const response = await AdminService.getSetupStatus();
       const statusData = response.data || response;
 
-      console.log("[useSetupStatus] Raw response:", statusData);
+      console.log("[useSetupStatus] Raw API response:", statusData);
 
-      // Enhanced status processing with better defaults
+      // CONSISTENT processing with backend - single source of truth
       const processedStatus = {
-        needsSetup: statusData.needsSetup !== false, // Default to true if undefined
-        setupCompleted: statusData.setupCompleted === true, // Default to false
+        // Primary flags from backend (consistent naming)
+        needsSetup: statusData.needsSetup === true,
+        setupCompleted: statusData.setupCompleted === true,
+        setupLocked: statusData.setupLocked === true,
+
+        // Counts
         adminCount: statusData.adminCount || 0,
-        setupStep: statusData.setupStep || "initial",
+        superAdminCount: statusData.superAdminCount || 0,
+
+        // Status indicators
+        setupStatus: statusData.setupStatus || "unknown",
         systemInitialized: statusData.systemInitialized === true,
+
+        // Legacy compatibility
         hasInitialAdmin: statusData.hasInitialAdmin === true,
-        requiresSetup: statusData.requiresSetup !== false, // Alternative field name
+        hasAdmins: statusData.hasAdmins === true,
+        hasSuperAdmin: statusData.hasSuperAdmin === true,
+
+        // Additional fields
+        setupStep: statusData.setupStep || "initial",
+        requiresSetup: statusData.requiresSetup === true,
+        lastSetupAt: statusData.lastSetupAt || null,
+        setupCompletedAt: statusData.setupCompletedAt || null,
       };
-
-      // Logic: If adminCount is 0, definitely need setup
-      if (processedStatus.adminCount === 0) {
-        processedStatus.needsSetup = true;
-        processedStatus.setupCompleted = false;
-      }
-
-      // Logic: If setup is not completed, need setup
-      if (!processedStatus.setupCompleted) {
-        processedStatus.needsSetup = true;
-      }
-
-      // Logic: If no initial admin, need setup
-      if (!processedStatus.hasInitialAdmin) {
-        processedStatus.needsSetup = true;
-      }
 
       console.log("[useSetupStatus] Processed status:", processedStatus);
 
@@ -52,7 +52,7 @@ export const useSetupStatus = () => {
     } catch (err) {
       console.error("[useSetupStatus] Setup status check failed:", err);
 
-      // Enhanced error handling based on error type
+      // Enhanced error handling with safe defaults
       if (err.response?.status === 404) {
         console.log(
           "[useSetupStatus] Setup endpoint not found - assuming setup needed"
@@ -60,10 +60,15 @@ export const useSetupStatus = () => {
         const fallbackStatus = {
           needsSetup: true,
           setupCompleted: false,
+          setupLocked: false,
           adminCount: 0,
-          setupStep: "initial",
+          superAdminCount: 0,
+          setupStatus: "required",
           systemInitialized: false,
           hasInitialAdmin: false,
+          hasAdmins: false,
+          hasSuperAdmin: false,
+          setupStep: "initial",
           requiresSetup: true,
         };
         setSetupStatus(fallbackStatus);
@@ -77,17 +82,22 @@ export const useSetupStatus = () => {
         const fallbackStatus = {
           needsSetup: true,
           setupCompleted: false,
+          setupLocked: false,
           adminCount: 0,
-          setupStep: "initial",
+          superAdminCount: 0,
+          setupStatus: "required",
           systemInitialized: false,
           hasInitialAdmin: false,
+          hasAdmins: false,
+          hasSuperAdmin: false,
+          setupStep: "initial",
           requiresSetup: true,
         };
         setSetupStatus(fallbackStatus);
         return fallbackStatus;
       }
 
-      // For other errors, don't assume - let the error bubble up
+      // For critical errors, don't make assumptions
       const errorMessage = err.message || "Failed to check setup status";
       setError(errorMessage);
       throw new Error(errorMessage);
@@ -100,45 +110,37 @@ export const useSetupStatus = () => {
     checkSetupStatus();
   }, []);
 
-  const refreshStatus = () => {
+  const refreshStatus = async () => {
     console.log("[useSetupStatus] Refreshing setup status...");
     return checkSetupStatus();
   };
 
-  // More robust derived values with logging
-  const needsSetup = (() => {
-    const needs = setupStatus?.needsSetup ?? true; // Default to true if unknown
-    console.log(
-      "[useSetupStatus] needsSetup:",
-      needs,
-      "from setupStatus:",
-      setupStatus
-    );
-    return needs;
-  })();
+  // CONSISTENT derived values based on processed status
+  const needsSetup = setupStatus?.needsSetup ?? true; // Safe default
+  const isSetupComplete = setupStatus?.setupCompleted ?? false; // Safe default
 
-  const isSetupComplete = (() => {
-    const complete = setupStatus?.setupCompleted ?? false; // Default to false if unknown
-    console.log(
-      "[useSetupStatus] isSetupComplete:",
-      complete,
-      "from setupStatus:",
-      setupStatus
-    );
-    return complete;
-  })();
+  console.log("[useSetupStatus] Derived values:", {
+    needsSetup,
+    isSetupComplete,
+    rawSetupStatus: setupStatus,
+  });
 
   return {
     setupStatus,
     isLoading,
     error,
     refreshStatus,
+
+    // Primary flags - CONSISTENT with backend
     needsSetup,
     isSetupComplete,
-    // Additional helpful properties
+
+    // Additional computed properties
     adminCount: setupStatus?.adminCount ?? 0,
+    superAdminCount: setupStatus?.superAdminCount ?? 0,
     setupStep: setupStatus?.setupStep ?? "initial",
     systemInitialized: setupStatus?.systemInitialized ?? false,
     hasInitialAdmin: setupStatus?.hasInitialAdmin ?? false,
+    setupLocked: setupStatus?.setupLocked ?? false,
   };
 };

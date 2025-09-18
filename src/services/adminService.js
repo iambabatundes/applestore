@@ -223,8 +223,8 @@ export async function verifyEmail(verificationData) {
     {
       data: verificationData,
       validationSchema: {
-        token: { required: true, type: "string" },
-        code: { required: true, type: "string" },
+        setupToken: { required: true, type: "string" },
+        emailCode: { required: true, type: "string" },
       },
       context: { sensitive: true },
     }
@@ -244,8 +244,8 @@ export async function complete2FA(twoFAData) {
       {
         data: twoFAData,
         validationSchema: {
-          token: { required: true, type: "string" },
-          code: { required: true, type: "string" },
+          setupToken: { required: true, type: "string" },
+          totpCode: { required: true, type: "string" },
         },
         context: { sensitive: true, authenticationFlow: true },
       }
@@ -280,15 +280,13 @@ export async function resendVerificationCode(tokenData) {
       adminHttpService.post(buildUrl(ENDPOINTS.SETUP.RESEND_CODES), tokenData),
     {
       data: tokenData,
-      validationSchema: { token: { required: true, type: "string" } },
+      validationSchema: {
+        verificationToken: { required: true, type: "string" },
+      },
       context: { sensitive: true },
     }
   );
 }
-
-// ============================================================================
-// INVITE MANAGEMENT OPERATIONS
-// ============================================================================
 
 export async function createAdminInvite(inviteData) {
   return executeOperation(

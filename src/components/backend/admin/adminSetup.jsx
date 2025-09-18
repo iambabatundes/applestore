@@ -418,6 +418,8 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
   const [setupStatus, setSetupStatus] = useState(null);
+  const [canResend, setCanResend] = useState(true);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -576,9 +578,8 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
   };
 
   const handleNext = async () => {
-    // ✅ Fixed: Validate the CURRENT step's data before proceeding
     if (currentStep > 0) {
-      const validationError = validateForm(currentStep); // Remove the +1
+      const validationError = validateForm(currentStep);
       if (validationError) {
         setError(validationError);
         return;
@@ -590,11 +591,11 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
 
     try {
       switch (currentStep) {
-        case 0: // Status check - Just move to next step
+        case 0:
           setCurrentStep(1);
           break;
 
-        case 1: // Create initial admin
+        case 1:
           const adminResult = await adminSetupService.createInitialAdmin({
             firstName: formData.firstName,
             lastName: formData.lastName,
@@ -609,9 +610,9 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
           setCurrentStep(2);
           break;
 
-        case 2: // Verify email
+        case 2:
           const verifyResult = await adminSetupService.verifyEmail({
-            verificationToken: setupData.verificationToken,
+            setupToken: setupData.setupToken,
             emailCode: formData.emailCode,
           });
 
@@ -654,14 +655,77 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
   };
 
   const handleResendCode = async () => {
+    if (!canResend) {
+      showToast(
+        `Please wait ${resendCooldown} seconds before resending`,
+        "warning"
+      );
+      return;
+    }
+
     try {
       setLoading(true);
+      setCanResend(false);
+
+      const tokenToSend = setupData.setupToken;
+
+      if (!tokenToSend) {
+        showToast("Setup session expired. Please restart setup.", "error");
+        setCurrentStep(0);
+        return;
+      }
+
       await adminSetupService.resendVerificationCode({
-        verificationToken: setupData.verificationToken,
+        verificationToken: tokenToSend,
       });
+
       showToast("Verification code resent", "success");
+
+      // Start 60-second cooldown
+      let countdown = 60;
+      setResendCooldown(countdown);
+
+      const cooldownInterval = setInterval(() => {
+        countdown--;
+        setResendCooldown(countdown);
+
+        if (countdown <= 0) {
+          clearInterval(cooldownInterval);
+          setCanResend(true);
+          setResendCooldown(0);
+        }
+      }, 1000);
     } catch (err) {
-      handleError(err, "resendCode");
+      if (
+        err.type === "RATE_LIMIT_ERROR" ||
+        err.message.includes("rate limit")
+      ) {
+        // Extract wait time from error if available, otherwise default to 2 minutes
+        const waitTime = 120; // 2 minutes in seconds
+        setResendCooldown(waitTime);
+
+        const cooldownInterval = setInterval(() => {
+          setResendCooldown((prev) => {
+            const newTime = prev - 1;
+            if (newTime <= 0) {
+              clearInterval(cooldownInterval);
+              setCanResend(true);
+              return 0;
+            }
+            return newTime;
+          });
+        }, 1000);
+
+        showToast(
+          `Rate limited. Please wait ${Math.ceil(
+            waitTime / 60
+          )} minutes before trying again.`,
+          "warning"
+        );
+      } else {
+        handleError(err, "resendCode");
+        setCanResend(true); // Re-enable button on other errors
+      }
     } finally {
       setLoading(false);
     }
@@ -897,7 +961,6 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
               We've sent a 6-digit verification code to{" "}
               <strong>{formData.email}</strong>
             </p>
-
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -931,11 +994,13 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
 
             <button
               onClick={handleResendCode}
-              disabled={loading}
+              disabled={loading || !canResend}
               className="btn btn--link mt-4"
               type="button"
             >
-              Didn't receive the code? Resend
+              {!canResend && resendCooldown > 0
+                ? `Resend in ${resendCooldown}s`
+                : "Didn't receive the code? Resend"}
             </button>
           </div>
         );
