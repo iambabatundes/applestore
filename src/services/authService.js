@@ -8,7 +8,7 @@ export const authStore = createAuthStore({
   refreshTokenApi,
   logoutApi,
   getUserApi,
-  userHttpService, // Pass the service instance
+  userHttpService,
 });
 
 export const initializeAuth = async () => {

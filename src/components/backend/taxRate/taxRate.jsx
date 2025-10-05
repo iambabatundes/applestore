@@ -17,12 +17,17 @@ export default function TaxRate() {
 
   const fetchTaxRates = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const { data: taxRates } = await getTaxRates();
-      setTaxRates(taxRates);
+      const taxRates = await getTaxRates();
+      setTaxRates(taxRates || []);
     } catch (error) {
-      setError(error);
-      console.error("Error fetching tax rates:", error);
+      if (error.response?.status !== 404) {
+        setError(error);
+        console.error("Error fetching tax rates:", error);
+      } else {
+        setTaxRates([]);
+      }
     } finally {
       setLoading(false);
     }

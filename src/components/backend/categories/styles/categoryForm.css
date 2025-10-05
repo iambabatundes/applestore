@@ -106,3 +106,119 @@ textarea.categoryForm__input {
         align-self: flex-end;
     }
 }
+
+/* Add these styles to your existing categoryForm.css */
+
+/* Image Upload Styles */
+.categoryForm__label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.categoryForm__image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.categoryForm__upload-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.categoryForm__upload-btn:hover {
+    background-color: #45a049;
+}
+
+.categoryForm__image-preview {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+.categoryForm__image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.categoryForm__remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.categoryForm__remove-btn:hover {
+    background-color: rgba(255, 0, 0, 1);
+}
+
+/* Storage Type Selection Styles */
+.categoryForm__storage-options {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+}
+
+.categoryForm__radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+}
+
+.categoryForm__radio input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.categoryForm__radio span {
+    user-select: none;
+}
+
+.categoryForm__radio input[type="radio"]:checked+span {
+    color: #4CAF50;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .categoryForm__image-preview {
+        width: 150px;
+        height: 150px;
+    }
+
+    .categoryForm__storage-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

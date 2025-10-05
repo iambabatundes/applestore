@@ -2,7 +2,7 @@ import { Avatar } from "@mui/material";
 import "./styles/UserDropDown.css";
 
 export default function UserDropdown({
-  userName,
+  firstName,
   userImage,
   dropdownOpen,
   toggleDropdown,
@@ -11,8 +11,8 @@ export default function UserDropdown({
 }) {
   return (
     <div className="admin-navbar__user" onClick={toggleDropdown}>
-      <Avatar src={userImage} alt={userName} sx={{ width: 40, height: 40 }}>
-        {!userImage && userName.charAt(0)}
+      <Avatar src={userImage} alt={firstName} sx={{ width: 40, height: 40 }}>
+        {!userImage && firstName.charAt(0)}
       </Avatar>
       <div className={`adminNavbar__dropdown ${dropdownOpen ? "open" : ""}`}>
         <div className="dropdown-item" onClick={toggleModal}>

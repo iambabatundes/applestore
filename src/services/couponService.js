@@ -10,10 +10,16 @@ function couponUrl(id) {
   return `${couponsPath}/${id}`;
 }
 
+function clearCouponCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
+
 export async function getCoupons() {
   try {
-    const { data } = await adminHttpService.get(couponsPath);
-    return data;
+    const response = await adminHttpService.get(couponsPath);
+    clearCouponCache();
+    return response;
   } catch (err) {
     console.error("Failed to fetch coupons:", err);
     throw err;
@@ -23,6 +29,7 @@ export async function getCoupons() {
 export async function getCoupon(couponId) {
   try {
     const { data } = await adminHttpService.get(couponUrl(couponId));
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch coupon:", err);
@@ -33,6 +40,7 @@ export async function getCoupon(couponId) {
 export async function saveCoupon(coupon) {
   try {
     const { data } = await adminHttpService.post(couponsPath, coupon);
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to create coupon:", err);
@@ -43,6 +51,7 @@ export async function saveCoupon(coupon) {
 export async function updateCoupon(couponId, coupon) {
   try {
     const { data } = await adminHttpService.put(couponUrl(couponId), coupon);
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to update coupon:", err);
@@ -53,6 +62,7 @@ export async function updateCoupon(couponId, coupon) {
 export async function deleteCoupon(couponId) {
   try {
     const { data } = await adminHttpService.delete(couponUrl(couponId));
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to delete coupon:", err);
@@ -66,6 +76,7 @@ export async function applyCoupon(couponCode) {
     const { data } = await userHttpService.post(`${couponsPath}/apply`, {
       code: couponCode,
     });
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to apply coupon:", err);
@@ -79,6 +90,7 @@ export async function validateCoupon(couponCode, cartTotal = null) {
       code: couponCode,
       cartTotal,
     });
+    // clearCouponCache()
     return data;
   } catch (err) {
     console.error("Failed to validate coupon:", err);
@@ -90,6 +102,7 @@ export async function validateCoupon(couponCode, cartTotal = null) {
 export async function getPublicCoupons() {
   try {
     const { data } = await publicHttpService.get(`${couponsPath}/public`);
+    clearCouponCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch public coupons:", err);

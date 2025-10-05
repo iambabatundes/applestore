@@ -13,6 +13,7 @@ import NotFound from "../components/home/notFound";
 
 const routesConfig = (props) => [
   { path: "/", element: <Home {...props} /> },
+
   { path: "/product", element: <Product {...props} /> },
   { path: "/blog/:title", element: <SinglePost /> },
   { path: "/:name", element: <SingleProducts {...props} /> },

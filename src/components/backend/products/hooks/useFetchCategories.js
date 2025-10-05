@@ -6,8 +6,9 @@ const useFetchCategories = () => {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const { data } = await getCategories();
-      setCategories(data);
+      const fetchCategories = await getCategories();
+
+      setCategories(fetchCategories);
     } catch (error) {
       console.error("Failed to fetch categories", error);
     }

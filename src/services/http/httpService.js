@@ -261,9 +261,34 @@ export class TokenManager {
     return this.tokens?.refreshToken || null;
   }
 
+  // ADD THESE MISSING METHODS:
+  getTokenExpiryDate() {
+    if (!this.tokens)
+      this.tokens = this.storage.getItem(this.cacheKey, true) || null;
+    return this.tokens?.expiresAt || null;
+  }
+
+  getTokenExpiry() {
+    return this.getTokenExpiryDate();
+  }
+
   isTokenExpired(threshold = 0) {
     if (!this.tokens) return true;
     return Date.now() + threshold >= (this.tokens.expiresAt || 0);
+  }
+
+  // ADD: Method to get remaining time until expiry
+  getTimeUntilExpiry() {
+    const expiryDate = this.getTokenExpiryDate();
+    if (!expiryDate) return 0;
+    return Math.max(0, expiryDate - Date.now());
+  }
+
+  // ADD: Method to check if token will expire soon
+  willExpireSoon(threshold = 5 * 60 * 1000) {
+    // 5 minutes default
+    const timeUntilExpiry = this.getTimeUntilExpiry();
+    return timeUntilExpiry > 0 && timeUntilExpiry <= threshold;
   }
 
   async refreshAccessToken(refreshFn) {
@@ -287,6 +312,27 @@ export class TokenManager {
     this.storage.removeItem(this.cacheKey);
     this.logger?.info &&
       this.logger.info(`Tokens cleared for ${this.clientType}`);
+  }
+
+  // ADD: Method to validate token structure
+  isValidToken(token) {
+    if (!token || typeof token !== "string") return false;
+    const parts = token.split(".");
+    if (parts.length !== 3) return false;
+
+    try {
+      const payload = JSON.parse(atob(parts[1]));
+      return payload && payload.exp && payload.iat;
+    } catch {
+      return false;
+    }
+  }
+
+  // ADD: Get all tokens info
+  getAllTokens() {
+    if (!this.tokens)
+      this.tokens = this.storage.getItem(this.cacheKey, true) || null;
+    return this.tokens;
   }
 }
 

@@ -7,7 +7,7 @@ class UserHttpService extends BaseHttpService {
 
   // Override base URL for user-specific endpoints
   getClientSpecificBaseURL(base) {
-    return `${base}/user`;
+    return base;
   }
 
   // Override headers for user requests

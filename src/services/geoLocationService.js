@@ -1,6 +1,6 @@
 import { publicHttpService } from "./http/index.js";
 
-const buildEndpoint = (path = "") => `/geolocation${path}`;
+const buildEndpoint = (path = "") => `/api/geolocation${path}`;
 
 export async function getGeoLocations(params = {}) {
   try {

@@ -104,7 +104,12 @@ export default function TaxList({
           ))}
         </div>
       ) : (
-        <p className="taxRate__vat-no">No VAT rates available</p>
+        <div className="taxRate__empty-state">
+          <p className="taxRate__vat-no">📋 No VAT rates available yet</p>
+          <p className="taxRate__vat-subtitle">
+            Get started by creating your first tax rate using the form above.
+          </p>
+        </div>
       )}
     </section>
   );

@@ -66,7 +66,7 @@ export default function AddCategories({ className }) {
     return flatCategories;
   };
 
-  const flattenedCategories = flattenCategories(category);
+  const flattenedCategories = flattenCategories(category || []);
 
   let filtered = flattenedCategories;
   if (searchQuery)

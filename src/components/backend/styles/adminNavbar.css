@@ -1,219 +1,444 @@
+/* Modern Admin Navbar - Apple-inspired Design with Perfect Mobile Support */
+
+/* Base Navbar Styles */
 .admin-navbar {
-    background-color: #2271b1;
-    color: #000;
-    padding: 0.1rem 0.1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
     width: 100%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.admin-navbar.dark-mode {
+    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Main Container - Mobile First */
 .adminNavbar__main {
     display: flex;
-    flex-direction: column;
-
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0.5rem 0.75rem;
+    gap: 0.5rem;
 }
 
-/* Sections - default to stacked (mobile-first) */
+/* Left Section - Menu & Logo */
 .admin-navbar__left {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    /* justify-content: space-between; */
-    flex-wrap: wrap;
     gap: 0.5rem;
-    /* margin-bottom: 0.5rem; */
+    flex-shrink: 0;
 }
 
-.admin-navbar__center {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+.admin-navbar__left .MuiIconButton-root {
+    color: #ffffff;
+    padding: 0.375rem;
+    transition: all 0.2s ease;
 }
 
-.admin-navbar__right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: -37px;
+.admin-navbar__left .MuiIconButton-root:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
 }
 
 .company-logo {
-    height: 40px;
-    transition: transform 0.3s;
-    margin-right: 0.75rem;
+    height: 28px;
+    width: auto;
+    transition: transform 0.2s ease;
+    border-radius: 4px;
 }
 
 .company-logo:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .company-name {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: none;
+    color: #ffffff;
+}
+
+/* Center Section - Search (Hidden on mobile, shows on larger screens) */
+.admin-navbar__center {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    max-width: 600px;
 }
 
 .admin-navbar__search {
-    display: flex;
-    align-items: center;
-    /* width: 100%; */
+    position: relative;
     flex: 1;
-    margin: 0 5px;
+    width: 100%;
 }
 
 .adminSearch-input {
-    flex: 1;
-    padding: 6px 10px;
-    border-radius: 4px 0 0 4px;
-    border: 1px solid #ccc;
+    width: 100%;
+    padding: 0.625rem 2.5rem 0.625rem 2.75rem;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.adminSearch-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.adminSearch-input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.01);
 }
 
 .adminSearch-button {
-    height: 40.8px;
-    width: 40px;
-    background-color: #febd69;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-    transition: background-color 0.3s ease-in-out;
+    font-size: 1rem;
+    transition: color 0.2s ease;
 }
 
+.adminSearch-button:hover {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Notification Badges - Hidden on mobile */
+.admin-navbar__notifications,
 .admin-navbar__comments {
+    position: relative;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.admin-navbar__notifications:hover,
+.admin-navbar__comments:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-navbar__notifications span,
+.admin-navbar__comments span {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: linear-gradient(135deg, #ff3b30 0%, #ff6b6b 100%);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 600;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    font-size: 1rem;
-    display: none;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-.admin-navbar__notifications {
-    display: none;
+/* Right Section - User Info & Controls */
+.admin-navbar__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .admin-navbar__welcome {
     display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.125rem;
+    margin-right: 0.5rem;
 }
 
+.admin-navbar__welcome h4 {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.admin__userName {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+}
+
+/* Dark Mode Toggle - Hidden on smallest mobile */
 .admin-navbar__dark-mode-toggle {
-    margin-left: auto;
     display: none;
+    align-items: center;
 }
 
-/* Responsive: Tablet and up */
-@media (min-width: 640px) {
-    .admin-navbar {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+.admin-navbar__dark-mode-toggle .MuiSwitch-root {
+    width: 44px;
+    height: 24px;
+    padding: 0;
+}
 
+.admin-navbar__dark-mode-toggle .MuiSwitch-switchBase {
+    padding: 3px;
+    color: #ffffff;
+}
+
+.admin-navbar__dark-mode-toggle .MuiSwitch-thumb {
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.admin-navbar__dark-mode-toggle .MuiSwitch-track {
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Breakpoints - Mobile First Approach */
+
+/* Small phones (375px+) - Show dark mode toggle */
+@media (min-width: 375px) {
     .adminNavbar__main {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0px 2px;
+        padding: 0.5rem 1rem;
+        gap: 0.75rem;
     }
 
-    .adminNav__mobile-toggle {
-        display: none;
+    .admin-navbar__dark-mode-toggle {
+        display: flex;
     }
 
     .company-logo {
         height: 30px;
     }
+}
+
+/* Larger phones (480px+) - Better spacing */
+@media (min-width: 480px) {
+    .adminNavbar__main {
+        padding: 0.625rem 1rem;
+    }
+
+    .admin-navbar__left {
+        gap: 0.75rem;
+    }
 
     .admin-navbar__right {
-        flex-direction: row;
-        margin-bottom: 0px;
-
-    }
-
-    /* .admin-navbar__user {
-        position: static;
-    } */
-
-    .admin-navbar__center,
-    .admin-navbar__left {
-        /* flex: 1; */
-        margin-bottom: 0;
-    }
-
-    .admin-navbar__search {
-        flex: 1;
-        margin: 0;
-    }
-
-    .adminSearch-input {
-        /* max-width: 300px; */
-        padding: 8px 12px;
-        font-size: 1rem;
-        flex-wrap: wrap;
-        width: 600px;
-    }
-
-    .admin-navbar__comments {
-        display: block;
-    }
-
-    .admin-navbar__welcome {
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        /* align-items: flex-end; */
-        margin-right: 1rem;
-    }
-
-    .admin-navbar__dark-mode-toggle {
-        display: block;
+        gap: 0.75rem;
     }
 }
 
-/* Responsive: Desktop and bigger screens */
-@media (min-width: 1024px) {
+/* Small tablets (640px+) - Show search and notifications */
+@media (min-width: 640px) {
+    .adminNavbar__main {
+        padding: 0.75rem 1.5rem;
+        gap: 1.5rem;
+    }
+
     .company-name {
-        font-size: 1.5rem;
+        display: block;
+        font-size: 1.125rem;
+    }
+
+    .company-logo {
+        height: 32px;
+    }
+
+    .admin-navbar__center {
+        display: flex;
+    }
+
+    .admin-navbar__notifications,
+    .admin-navbar__comments {
+        display: flex;
+    }
+
+    .adminSearch-input {
+        padding: 0.75rem 2.5rem 0.75rem 3rem;
+    }
+}
+
+/* Medium tablets (768px+) - Show welcome message */
+@media (min-width: 768px) {
+    .adminNavbar__main {
+        padding: 0.75rem 2rem;
+    }
+
+    .admin-navbar__center {
+        max-width: 500px;
+    }
+
+    .admin-navbar__welcome {
+        display: flex;
+    }
+
+    .admin__userName {
+        font-size: 0.9375rem;
+    }
+}
+
+/* Large tablets/small desktops (1024px+) - Full layout */
+@media (min-width: 1024px) {
+    .adminNavbar__main {
+        padding: 0.4rem 0.8rem;
+    }
+
+    .company-logo {
+        height: 36px;
+    }
+
+    .company-name {
+        font-size: 1.25rem;
+    }
+
+    .admin-navbar__center {
+        max-width: 600px;
+    }
+
+    .adminSearch-input {
+        font-size: 0.7rem;
     }
 
     .admin__userName {
         font-size: 1rem;
     }
 
-    .admin-navbar__notifications,
-    .admin-navbar__comments,
-    .admin-navbar__user,
-    .admin-navbar__welcome {
-        display: block;
+    .admin-navbar__welcome h4 {
+        font-size: 0.75rem;
     }
-
-    /* .dropdown-item {
-        font-size: 0.95rem;
-    } */
 }
 
-/* Responsive: 4K / TV screens */
+/* Desktop (1280px+) - Optimal spacing */
+@media (min-width: 1280px) {
+    .adminNavbar__main {
+        padding: 1rem 3rem;
+    }
+
+    .admin-navbar__center {
+        max-width: 700px;
+    }
+}
+
+/* Large desktops (1440px+) */
+@media (min-width: 1440px) {
+    .adminNavbar__main {
+        padding: 1.125rem 3rem;
+    }
+}
+
+/* 4K and ultra-wide (1920px+) */
 @media (min-width: 1920px) {
-    .admin-navbar {
-        padding: 1rem 2rem;
+    .adminNavbar__main {
+        padding: 1.25rem 4rem;
+    }
+
+    .company-logo {
+        height: 40px;
     }
 
     .company-name {
-        font-size: 2rem;
+        font-size: 1.375rem;
+    }
+
+    .admin-navbar__center {
+        max-width: 800px;
     }
 
     .adminSearch-input {
-        flex: 1;
-        width: 1000px;
+        padding: 0.875rem 2.75rem 0.875rem 3.25rem;
+        font-size: 1.0625rem;
     }
 
-    /* .dropdown-item {
-        font-size: 1.1rem;
-    } */
+    .admin__userName {
+        font-size: 1.0625rem;
+    }
+
+    .admin-navbar__welcome h4 {
+        font-size: 0.8125rem;
+    }
+}
+
+/* Smooth rendering */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessibility - Focus states */
+.adminSearch-input:focus-visible,
+.admin-navbar__notifications:focus-visible,
+.admin-navbar__comments:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Dark mode adjustments for text visibility */
+.dark-mode .admin-navbar__left .MuiIconButton-root {
+    color: #f5f5f7;
+}
+
+.dark-mode .adminSearch-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f5f5f7;
+}
+
+.dark-mode .adminSearch-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode .adminSearch-button {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Ensure proper overflow handling on mobile */
+@media (max-width: 374px) {
+    .adminNavbar__main {
+        padding: 0.5rem;
+        gap: 0.375rem;
+    }
+
+    .admin-navbar__left .MuiIconButton-root {
+        padding: 0.25rem;
+    }
+
+    .company-logo {
+        height: 24px;
+    }
+
+    .admin-navbar__right {
+        gap: 0.375rem;
+    }
 }

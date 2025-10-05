@@ -1,4 +1,4 @@
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect, Suspense, lazy, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { ErrorBoundary } from "react-error-boundary";
@@ -40,6 +40,7 @@ import {
   ERROR_MESSAGES,
   DEFAULTS,
 } from "./config/constants";
+import AdminSkeleton from "./components/backend/skeleton/adminSkeleton";
 
 function App() {
   const { user, isAuthReady, accessToken, isAuthenticated } =
@@ -82,7 +83,37 @@ function App() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  // Enhanced initialization with timeout and better error handling
+  // to be deleted
+  const refreshLogo = useCallback(async () => {
+    try {
+      console.log("Refreshing logo...");
+      await fetchLogo(setLogoImage);
+    } catch (error) {
+      console.error("Failed to refresh logo:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.refreshAppLogo = refreshLogo;
+
+    return () => {
+      delete window.refreshAppLogo;
+    };
+  }, [refreshLogo]);
+
+  useEffect(() => {
+    const handleLogoUpdate = async (event) => {
+      console.log("Logo update event received:", event.detail);
+      await refreshLogo();
+    };
+
+    window.addEventListener("logoUpdated", handleLogoUpdate);
+
+    return () => {
+      window.removeEventListener("logoUpdated", handleLogoUpdate);
+    };
+  }, [refreshLogo]);
+
   useEffect(() => {
     let isInitialized = false;
     let timeoutId;
@@ -94,12 +125,10 @@ function App() {
       try {
         logger.info("Starting app initialization...");
 
-        // Set initialization timeout
         timeoutId = setTimeout(() => {
           throw new Error(ERROR_MESSAGES.INITIALIZATION_TIMEOUT);
         }, INITIALIZATION_TIMEOUT);
 
-        // Initialize auth first
         await initializeAuth();
         setAuthInitialized(true);
         logger.info("Authentication initialized successfully");
@@ -197,6 +226,7 @@ function App() {
       }
     };
   }, []);
+  // to be this ends
 
   // Enhanced currency change handler
   const handleCurrencyChange = (currency) => {
@@ -311,16 +341,14 @@ function App() {
   }
 
   if (isAdminRoute && setupLoading && !appInitialized) {
-    return <AppSkeleton message={LOADING_MESSAGES.SYSTEM_SETUP} />;
+    return <AdminSkeleton />;
   }
 
   // Handle admin setup flow
   if (isAdminRoute && needsSetup) {
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense
-          fallback={<AppSkeleton message={LOADING_MESSAGES.ADMIN_SETUP} />}
-        >
+        <Suspense>
           <Admin count={5} logo={logoImage} />
         </Suspense>
         <ToastContainer {...TOAST_CONFIG} />
@@ -361,9 +389,7 @@ function App() {
       <ToastContainer {...TOAST_CONFIG} />
 
       {location.pathname.includes("/admin") ? (
-        <Suspense
-          fallback={<AppSkeleton message={LOADING_MESSAGES.ADMIN_INTERFACE} />}
-        >
+        <Suspense>
           <Admin count={5} logo={logoImage} />
         </Suspense>
       ) : (

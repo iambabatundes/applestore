@@ -39,7 +39,6 @@ class AdminHttpService extends BaseHttpService {
         tokenRefreshThreshold: 10 * 60 * 1000,
         maxConcurrentRequests: 5,
       },
-
       apiVersion: ADMIN_CONFIG.API_VERSION,
       ...config,
     };
@@ -49,7 +48,6 @@ class AdminHttpService extends BaseHttpService {
       refreshFn: config.refreshFunction || null,
     });
 
-    // Now safe to set instance properties after super() completes
     this.adminConfig = ADMIN_CONFIG;
     this.errorCodes = ADMIN_ERROR_CODES;
     this.sensitiveEndpoints = new Set([
@@ -62,17 +60,11 @@ class AdminHttpService extends BaseHttpService {
   }
 
   getClientSpecificBaseURL(base) {
-    // Get API version from config (available during parent constructor)
-    // or fall back to adminConfig (available after constructor completes)
-    // const apiVersion =
-    // this.config.apiVersion || this.adminConfig?.API_VERSION || "v1";
-    // const adminPath = apiVersion ? `/admins/${apiVersion}` : "/admin";
-    // return `${base}${adminPath}`;
+    // Return the base URL as-is since we want /api/admins/auth
     return base;
   }
 
   getClientSpecificHeaders(headers) {
-    // Safely access config values with fallbacks
     const clientType = this.adminConfig?.CLIENT_TYPE || "admin";
     const apiVersion =
       this.config.apiVersion || this.adminConfig?.API_VERSION || "v1";
@@ -85,7 +77,7 @@ class AdminHttpService extends BaseHttpService {
       "X-Request-Priority": "high",
     };
 
-    // Add tenant ID if available (for multi-tenant systems)
+    // Add tenant ID if available
     const tenantId = this.getTenantId();
     if (tenantId) {
       adminHeaders["X-Tenant-ID"] = tenantId;
@@ -151,6 +143,31 @@ class AdminHttpService extends BaseHttpService {
       const { status, data } = response;
 
       switch (status) {
+        case 401:
+          // Handle token refresh for admin endpoints
+          if (!config._adminRetry && this.refreshFn) {
+            config._adminRetry = true;
+            try {
+              console.log("Admin: Attempting token refresh due to 401");
+              const newToken = await this.tokenManager.refreshAccessToken(
+                this.refreshFn
+              );
+              if (newToken) {
+                config.headers = config.headers || {};
+                config.headers.Authorization = `Bearer ${newToken}`;
+                return this.client.request(config);
+              }
+            } catch (refreshError) {
+              console.error("Admin: Token refresh failed:", refreshError);
+              this.tokenManager.clearTokens();
+              // Emit event for UI to handle
+              this.emitAdminEvent("token_refresh_failed", {
+                originalError: error,
+                refreshError,
+              });
+            }
+          }
+          break;
         case 403:
           this.handleInsufficientPrivileges(data, config);
           break;
@@ -183,7 +200,6 @@ class AdminHttpService extends BaseHttpService {
         method: config.method,
       });
 
-    // Emit event for UI to handle
     this.emitAdminEvent("insufficient_privileges", {
       operation,
       requiredPermission: data?.requiredPermission,
@@ -308,7 +324,6 @@ class AdminHttpService extends BaseHttpService {
       }
     }
 
-    // Call parent request method
     const result = await super.request(config);
 
     // Restore original TTL
@@ -367,7 +382,6 @@ class AdminHttpService extends BaseHttpService {
     this.emitAdminEvent("session_cleared", {});
   }
 
-  // Get admin-specific cache metrics
   getAdminCacheMetrics() {
     const baseMetrics = this.getCacheMetrics();
     const adminConfig = this.adminConfig || ADMIN_CONFIG;

@@ -10,11 +10,10 @@ function shippingRateUrl(id) {
   return `${shippingRatesPath}/${id}`;
 }
 
-// Public functions - viewing shipping rates and calculating costs
 export async function getShippingRates() {
   try {
-    const { data } = await publicHttpService.get(shippingRatesPath);
-    return data;
+    const response = await publicHttpService.get(shippingRatesPath);
+    return response.data;
   } catch (err) {
     console.error("Failed to fetch shipping rates:", err);
     throw err;
@@ -60,7 +59,6 @@ export async function getShippingRatesByRegion(region) {
   }
 }
 
-// User functions - getting personalized shipping options
 export async function getUserShippingOptions(cartItems, shippingAddress) {
   try {
     const { data } = await userHttpService.post(
@@ -77,7 +75,6 @@ export async function getUserShippingOptions(cartItems, shippingAddress) {
   }
 }
 
-// Admin functions - managing shipping rates
 export async function getAllShippingRates() {
   try {
     const { data } = await adminHttpService.get(shippingRatesPath);

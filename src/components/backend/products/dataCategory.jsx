@@ -10,7 +10,7 @@ export default function DataCategory({
   setCategories,
   saveCategory,
   getCategories,
-  errors,
+  errors = {},
   setErrors,
 }) {
   const [newCategory, setNewCategory] = useState({
@@ -48,7 +48,7 @@ export default function DataCategory({
         setErrors({ ...errors, category: "Failed to add category" });
       }
     } else {
-      setErrors({ ...errors, category: "Choose atleast onet Categorys" });
+      setErrors({ ...errors, category: "Choose atleast one Category" });
     }
   };
 
@@ -76,38 +76,55 @@ export default function DataCategory({
     <>
       {isCategoriesVisible && (
         <section className="categories">
-          <div className="categories__list">
-            {flattenedCategories.map((category) => (
-              <div
-                key={category._id}
-                className="categories__item"
-                style={{ marginLeft: category.depth * 20 }}
-              >
-                <label>
-                  <input
-                    className="categories__checkbox"
-                    type="checkbox"
-                    value={category._id}
-                    checked={selectedCategories.some(
-                      (selected) => selected._id === category._id
-                    )}
-                    onChange={() => handleCategoryChange(category)}
-                  />
-                  {category.label}
-                </label>
-              </div>
-            ))}
-          </div>
-          {selectedCategories.length > 0 && (
-            <p className="categories__info">
-              The first selected category will be used as the primary category.
-            </p>
+          {/* Show friendly message when no categories exist */}
+          {flattenedCategories.length === 0 && !isAddingNewCategory && (
+            <div className="categories__empty">
+              <p className="categories__empty-message">
+                No categories available. Add your first category to get started.
+              </p>
+            </div>
           )}
+
+          {/* Show categories list only if categories exist */}
+          {flattenedCategories.length > 0 && (
+            <>
+              <div className="categories__list">
+                {flattenedCategories.map((category) => (
+                  <div
+                    key={category._id}
+                    className="categories__item"
+                    style={{ marginLeft: category.depth * 20 }}
+                  >
+                    <label>
+                      <input
+                        className="categories__checkbox"
+                        type="checkbox"
+                        value={category._id}
+                        checked={selectedCategories.some(
+                          (selected) => selected._id === category._id
+                        )}
+                        onChange={() => handleCategoryChange(category)}
+                      />
+                      {category.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {selectedCategories.length > 0 && (
+                <p className="categories__info">
+                  The first selected category will be used as the primary
+                  category.
+                </p>
+              )}
+            </>
+          )}
+
           <Button
             title={isAddingNewCategory ? null : "+ Add New Category"}
             onClick={() => setIsAddingNewCategory(!isAddingNewCategory)}
             className="categories__add-button"
           />
+
           {isAddingNewCategory && (
             <form onSubmit={handleAddNewCategory} className="categories__form">
               <input

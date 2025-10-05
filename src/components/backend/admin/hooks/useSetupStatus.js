@@ -11,12 +11,8 @@ export const useSetupStatus = () => {
       setIsLoading(true);
       setError(null);
 
-      console.log("[useSetupStatus] Checking setup status...");
-
       const response = await AdminService.getSetupStatus();
       const statusData = response.data || response;
-
-      console.log("[useSetupStatus] Raw API response:", statusData);
 
       // CONSISTENT processing with backend - single source of truth
       const processedStatus = {
@@ -45,18 +41,11 @@ export const useSetupStatus = () => {
         setupCompletedAt: statusData.setupCompletedAt || null,
       };
 
-      console.log("[useSetupStatus] Processed status:", processedStatus);
-
       setSetupStatus(processedStatus);
       return processedStatus;
     } catch (err) {
-      console.error("[useSetupStatus] Setup status check failed:", err);
-
       // Enhanced error handling with safe defaults
       if (err.response?.status === 404) {
-        console.log(
-          "[useSetupStatus] Setup endpoint not found - assuming setup needed"
-        );
         const fallbackStatus = {
           needsSetup: true,
           setupCompleted: false,
@@ -76,9 +65,6 @@ export const useSetupStatus = () => {
       }
 
       if (err.response?.status === 503) {
-        console.log(
-          "[useSetupStatus] Service unavailable - assuming setup needed"
-        );
         const fallbackStatus = {
           needsSetup: true,
           setupCompleted: false,
@@ -111,7 +97,6 @@ export const useSetupStatus = () => {
   }, []);
 
   const refreshStatus = async () => {
-    console.log("[useSetupStatus] Refreshing setup status...");
     return checkSetupStatus();
   };
 
@@ -119,11 +104,11 @@ export const useSetupStatus = () => {
   const needsSetup = setupStatus?.needsSetup ?? true; // Safe default
   const isSetupComplete = setupStatus?.setupCompleted ?? false; // Safe default
 
-  console.log("[useSetupStatus] Derived values:", {
-    needsSetup,
-    isSetupComplete,
-    rawSetupStatus: setupStatus,
-  });
+  // console.log("[useSetupStatus] Derived values:", {
+  //   needsSetup,
+  //   isSetupComplete,
+  //   rawSetupStatus: setupStatus,
+  // });
 
   return {
     setupStatus,

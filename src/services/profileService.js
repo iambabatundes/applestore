@@ -1,7 +1,6 @@
 import { userHttpService } from "./http/index";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
-// Use relative path - let the service handle base URL
 const profilePath = "/api/users/profile";
 
 function createFormData(user) {
@@ -54,7 +53,6 @@ export async function updateUser(user) {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    // Backend returns { message, user, contactInfo, verificationNotices?, pendingVerifications? }
     return response.data;
   } catch (err) {
     console.error("Failed to update user profile:", err);
@@ -62,7 +60,6 @@ export async function updateUser(user) {
   }
 }
 
-// Function to send verification code for secondary contact
 export async function sendVerificationCode(contactType) {
   try {
     const { data } = await userHttpService.post(
@@ -78,7 +75,6 @@ export async function sendVerificationCode(contactType) {
   }
 }
 
-// Function to verify contact update
 export async function verifyContactUpdate(contactType, code) {
   try {
     const { data } = await userHttpService.post(
@@ -95,7 +91,6 @@ export async function verifyContactUpdate(contactType, code) {
   }
 }
 
-// Function to get user profile with contact status
 export async function getUserProfileWithContactStatus() {
   try {
     const { data } = await userHttpService.get(`${profilePath}/contact-status`);

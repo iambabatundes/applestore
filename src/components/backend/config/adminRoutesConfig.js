@@ -23,204 +23,223 @@ import AllUsers from "../allUsers";
 import Profile from "../profile";
 import GeneralSettings from "../generalSettings";
 import AppearanceSettings from "../appearanceSettings";
+import AdminInvite from "../AdminInvite";
+import { Icons } from "../common/modernIcons";
 
-export const sidebarLinks = (darkMode, adminUser) => [
-  {
-    label: "Dashboard",
-    to: "/admin/home",
-    content: <Dashboard darkMode={darkMode} />,
-    icon: "fa-tachometer",
-    dropdown: [
-      { label: "Home", to: "/admin/home", content: <Dashboard /> },
-      { label: "Updates", to: "/admin/updates", content: <Updates /> },
-      { label: "SEO", to: "/admin/seo", content: <SEO /> },
-      {
-        label: "Shipping Rate",
-        to: "/admin/shipping",
-        content: <ShippingRate />,
-      },
-      {
-        label: "Tax Rate",
-        to: "/admin/tax-rate",
-        content: <TaxRate />,
-      },
-    ],
-  },
-  {
-    label: "Posts",
-    to: "/admin/posts",
-    icon: "fa-pencil-square-o",
-    content: <AllPosts darkMode={darkMode} />,
-    dropdown: [
-      {
-        label: "All Posts",
-        to: "/admin/posts",
-        content: <AllPosts />,
-      },
-      {
-        label: "Create Post",
-        to: "/admin/create",
-        content: <CreatePost adminUser={adminUser} />,
-      },
-      {
-        label: "Categories",
-        to: "/admin/posts-categories",
-        content: <AddPostCategories />,
-      },
-      {
-        label: "Tags",
-        to: "/admin/posts-tags",
-        content: <AddPostTags />,
-      },
-    ],
-  },
-  {
-    label: "Products",
-    to: "/admin/all-products",
-    content: <AllProduct />,
-    icon: "fa-tag",
-    dropdown: [
-      {
-        label: "All Products",
-        to: "/admin/all-products",
-        content: <AllProduct />,
-      },
-      {
-        label: "Add Product",
-        to: "/admin/add-product",
-        content: <AddProduct darkMode={darkMode} user={adminUser} />,
-      },
-      {
-        label: "Categories",
-        to: "/admin/add-categories",
-        content: <AddCategories />,
-      },
-      {
-        label: "Tags",
-        to: "/admin/add-tags",
-        content: <AddTags />,
-      },
-    ],
-  },
-  {
-    label: "Media",
-    to: "/admin/upload",
-    content: <Upload />,
-    icon: "fa-tag",
-    dropdown: [
-      {
-        label: "Library",
-        to: "/admin/upload",
-        content: <Upload />,
-      },
-      {
-        label: "Add New",
-        to: "/admin/new-media",
-        content: <NewMedia />,
-      },
-    ],
-  },
-  {
-    label: "Orders",
-    to: "/admin/orders",
-    icon: "fa-file",
-    content: <Orders />,
-    dropdown: [
-      {
-        label: "All Order",
-        to: "/admin/orders",
-        content: <Orders />,
-      },
-      {
-        label: "All Pages",
-        to: "/admin/all-pages",
-        content: <AllPages />,
-      },
-    ],
-  },
-  {
-    label: "Promotion",
-    to: "/admin/promotions",
-    icon: "fa-file",
-    content: <Promotion />,
-    dropdown: [
-      {
-        label: "Create",
-        to: "/admin/create-promotions",
-        content: <Promotions />,
-      },
-    ],
-  },
-  {
-    label: "Coupon",
-    to: "/admin/coupons",
-    icon: "fa-file",
-    content: <Coupon />,
-    dropdown: [
-      {
-        label: "Create",
-        to: "/admin/create-promotions",
-        content: <Promotions />,
-      },
-    ],
-  },
-  {
-    label: "Pages",
-    to: "/admin/all-pages",
-    icon: "fa-file",
-    content: <AllPages />,
-    dropdown: [
-      {
-        label: "All Pages",
-        to: "/admin/all-pages",
-        content: <AllPages />,
-      },
-      {
-        label: "Add New",
-        to: "/admin/new-page",
-        content: <NewPage />,
-      },
-    ],
-  },
-  {
-    label: "Users",
-    to: "/admin/all-users",
-    icon: "fa-users",
-    content: <AllUsers />,
-    dropdown: [
-      {
-        label: "All Users",
-        to: "/admin/all-users",
-        content: <AllUsers />,
-      },
-      {
-        label: "Add New",
-        to: "/admin/new-user",
-        content: <NewPage />,
-      },
-      {
-        label: "Profile",
-        to: "/admin/profile",
-        content: <Profile />,
-      },
-    ],
-  },
-  {
-    label: "Settings",
-    to: "/admin/general",
-    icon: "fa-cog",
-    content: <GeneralSettings />,
-    dropdown: [
-      {
-        label: "General Settings",
-        to: "/admin/general",
-        content: <GeneralSettings />,
-      },
-      {
-        label: "Appearance",
-        to: "/admin/appearance",
-        content: <AppearanceSettings />,
-      },
-    ],
-  },
-];
+export const sidebarLinks = (darkMode, adminUser) => {
+  const baseLinks = [
+    {
+      label: "Dashboard",
+      to: "/admin/home",
+      content: <Dashboard darkMode={darkMode} />,
+      icon: Icons.Dashboard,
+      dropdown: [
+        { label: "Home", to: "/admin/home", content: <Dashboard /> },
+        { label: "Updates", to: "/admin/updates", content: <Updates /> },
+        { label: "SEO", to: "/admin/seo", content: <SEO /> },
+        {
+          label: "Shipping Rate",
+          to: "/admin/shipping",
+          content: <ShippingRate />,
+        },
+        {
+          label: "Tax Rate",
+          to: "/admin/tax-rate",
+          content: <TaxRate />,
+        },
+      ],
+    },
+    {
+      label: "Posts",
+      to: "/admin/posts",
+      icon: Icons.Posts,
+      content: <AllPosts darkMode={darkMode} />,
+      dropdown: [
+        {
+          label: "All Posts",
+          to: "/admin/posts",
+          content: <AllPosts />,
+        },
+        {
+          label: "Create Post",
+          to: "/admin/create",
+          content: <CreatePost adminUser={adminUser} />,
+        },
+        {
+          label: "Categories",
+          to: "/admin/posts-categories",
+          content: <AddPostCategories />,
+        },
+        {
+          label: "Tags",
+          to: "/admin/posts-tags",
+          content: <AddPostTags />,
+        },
+      ],
+    },
+    {
+      label: "Products",
+      to: "/admin/all-products",
+      content: <AllProduct />,
+      icon: Icons.Products,
+      dropdown: [
+        {
+          label: "All Products",
+          to: "/admin/all-products",
+          content: <AllProduct />,
+        },
+        {
+          label: "Add Product",
+          to: "/admin/add-product",
+          content: <AddProduct darkMode={darkMode} user={adminUser} />,
+        },
+        {
+          label: "Categories",
+          to: "/admin/add-categories",
+          content: <AddCategories />,
+        },
+        {
+          label: "Tags",
+          to: "/admin/add-tags",
+          content: <AddTags />,
+        },
+      ],
+    },
+    {
+      label: "Media",
+      to: "/admin/upload",
+      content: <Upload />,
+      icon: Icons.Media,
+      dropdown: [
+        {
+          label: "Library",
+          to: "/admin/upload",
+          content: <Upload />,
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-media",
+          content: <NewMedia />,
+        },
+      ],
+    },
+    {
+      label: "Orders",
+      to: "/admin/orders",
+      icon: Icons.Orders,
+      content: <Orders />,
+      dropdown: [
+        {
+          label: "All Order",
+          to: "/admin/orders",
+          content: <Orders />,
+        },
+        {
+          label: "All Pages",
+          to: "/admin/all-pages",
+          content: <AllPages />,
+        },
+      ],
+    },
+    {
+      label: "Promotion",
+      to: "/admin/promotions",
+      icon: Icons.Promotion,
+      content: <Promotion />,
+      dropdown: [
+        {
+          label: "Create",
+          to: "/admin/create-promotions",
+          content: <Promotions />,
+        },
+      ],
+    },
+    {
+      label: "Coupon",
+      to: "/admin/coupons",
+      icon: Icons.Coupon,
+      content: <Coupon />,
+      dropdown: [
+        {
+          label: "Create",
+          to: "/admin/create-promotions",
+          content: <Promotions />,
+        },
+      ],
+    },
+    {
+      label: "Pages",
+      to: "/admin/all-pages",
+      icon: Icons.Pages,
+      content: <AllPages />,
+      dropdown: [
+        {
+          label: "All Pages",
+          to: "/admin/all-pages",
+          content: <AllPages />,
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-page",
+          content: <NewPage />,
+        },
+      ],
+    },
+    {
+      label: "Users",
+      to: "/admin/all-users",
+      icon: Icons.Users,
+      content: <AllUsers />,
+      dropdown: [
+        {
+          label: "All Users",
+          to: "/admin/all-users",
+          content: <AllUsers />,
+        },
+        {
+          label: "Add New",
+          to: "/admin/new-user",
+          content: <NewPage />,
+        },
+        {
+          label: "Profile",
+          to: "/admin/profile",
+          content: <Profile />,
+        },
+      ],
+    },
+    {
+      label: "Settings",
+      to: "/admin/general",
+      icon: Icons.Settings,
+      content: <GeneralSettings />,
+      dropdown: [
+        {
+          label: "General Settings",
+          to: "/admin/general",
+          content: <GeneralSettings />,
+        },
+        {
+          label: "Appearance",
+          to: "/admin/appearance",
+          content: <AppearanceSettings />,
+        },
+      ],
+    },
+  ];
+
+  if (
+    adminUser &&
+    (adminUser.role === "super_admin" || adminUser.hasPermission?.("admins"))
+  ) {
+    baseLinks.push({
+      to: "/admin/manage-admins",
+      icon: Icons.AdminManagement,
+      label: "Admin Management",
+      content: <AdminInvite darkMode={darkMode} />,
+      dropdown: [],
+    });
+  }
+
+  return baseLinks;
+};

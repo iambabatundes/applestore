@@ -1,25 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import "./styles/dataPromotions.css";
 
 export default function DataPromotions({
   isPromotionsVisible,
   selectedPromotions,
   setSelectedPromotions,
-  dataPromotions,
+  dataPromotions = [], // Default to empty array
 }) {
   const [promotion, setPromotion] = useState("");
-  const [filteredPromotions, setFilteredPromotions] = useState([]);
 
-  useEffect(() => {
+  // Use useMemo to compute filtered promotions without useEffect
+  const filteredPromotions = useMemo(() => {
+    if (!dataPromotions || dataPromotions.length === 0) return [];
+
     const lowerCasedInput = promotion.toLowerCase();
-    setFilteredPromotions(
-      dataPromotions.filter(
-        (promo) =>
-          promo.name.toLowerCase().includes(lowerCasedInput) ||
-          promo.promotionType.toLowerCase().includes(lowerCasedInput)
-      )
+    return dataPromotions.filter(
+      (promo) =>
+        promo.name.toLowerCase().includes(lowerCasedInput) ||
+        promo.promotionType.toLowerCase().includes(lowerCasedInput)
     );
   }, [promotion, dataPromotions]);
+
+  // Early return with friendly message if no promotions exist
+  if (isPromotionsVisible && (!dataPromotions || dataPromotions.length === 0)) {
+    return (
+      <section className="product__promotions">
+        <div className="promotion__item--empty">
+          No promotions available. Please create promotions first.
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>

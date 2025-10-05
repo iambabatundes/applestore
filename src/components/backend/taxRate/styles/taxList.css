@@ -4,14 +4,12 @@
     overflow-y: auto;
     height: 100%;
     scrollbar-width: none;
-    /* Hide scrollbar */
 }
 
 .taxRate__list::-webkit-scrollbar {
     display: none;
 }
 
-/* Cards container with a grid layout */
 .taxRate__cards {
     display: grid;
     grid-template-columns: 1fr;
@@ -19,7 +17,6 @@
     padding-bottom: 1rem;
 }
 
-/* Single card styling */
 .taxRate__card {
     background-color: #fff;
     padding: 1.5rem;
@@ -34,7 +31,6 @@
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
-/* Details section inside the card */
 .taxRate__details {
     margin-bottom: 0.3rem;
     display: flex;
@@ -52,7 +48,6 @@
     font-size: 0.95rem;
 }
 
-/* Buttons in the card actions section */
 .taxRate__actions {
     display: flex;
     justify-content: space-between;
@@ -94,7 +89,6 @@
     outline: none;
 }
 
-/* Loading & Error messages */
 .taxRate__loading,
 .tax__error,
 .taxRate__vat-no {
@@ -104,7 +98,6 @@
     padding: 1rem;
 }
 
-/* Responsive Design */
 @media (min-width: 576px) {
     .taxRate__cards {
         grid-template-columns: repeat(2, 1fr);
@@ -129,4 +122,35 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
     }
+}
+
+.taxRate__empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.taxRate__vat-no {
+    font-size: 1.25rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.taxRate__vat-subtitle {
+    font-size: 0.95rem;
+    color: #868e96;
+    margin: 0;
+}
+
+.tax__error-container {
+    text-align: center;
+    padding: 2rem;
+}
+
+.tax__error {
+    color: #dc3545;
+    font-size: 1rem;
 }

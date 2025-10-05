@@ -1,67 +1,68 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { getProductsByTag } from "../../../services/productService";
-
-const customStyles = {
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    width: "600px", // corrected typo
-    maxWidth: "80%",
-    maxHeight: "80%",
-    overflow: "auto",
-  },
-};
+import "./styles/tagModal.css";
 
 export default function TagModal({ tag, onClose }) {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
+      setLoading(true);
       try {
-        const { data: fetchedProducts } = await getProductsByTag(tag._id); // Fetch products using the tag ID
-        setProducts(fetchedProducts);
+        const { data: fetchedProducts } = await getProductsByTag(tag._id);
+        setProducts(fetchedProducts || []);
       } catch (error) {
         console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
-    if (tag) {
-      fetchProducts();
-    }
+    if (tag) fetchProducts();
   }, [tag]);
 
   return (
     <Modal
-      isOpen={tag !== null}
+      isOpen={!!tag}
       onRequestClose={onClose}
-      style={customStyles}
+      className="tagModal__content"
+      overlayClassName="tagModal__overlay"
+      closeTimeoutMS={300}
       ariaHideApp={false}
     >
-      <section>
-        <span className="close" onClick={onClose}>
+      <section className="tagModal">
+        <button className="tagModal__close" onClick={onClose}>
           &times;
-        </span>
-        <h2>{tag.name} Details</h2>
-        {/* Display tag details */}
-        <p>Tag ID: {tag._id}</p>
-        {/* Display associated products */}
-        <h3>Associated Products:</h3>
+        </button>
 
-        <ul>
-          {products.map((product) => (
-            <li key={product._id}>{product.name}</li>
-          ))}
-        </ul>
+        <h2 className="tagModal__title">{tag.name} Details</h2>
+        <p className="tagModal__id">Tag ID: {tag._id}</p>
 
-        <button onClick={onClose}>Close</button>
+        <h3 className="tagModal__subtitle">Associated Products</h3>
+
+        {loading ? (
+          <p className="tagModal__loading">Loading products...</p>
+        ) : products.length > 0 ? (
+          <ul className="tagModal__list">
+            {products.map((product) => (
+              <li key={product._id} className="tagModal__list-item">
+                {product.name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="tagModal__empty">
+            🌱 No associated products yet — add one to bring this tag to life!
+          </p>
+        )}
+
+        <div className="tagModal__footer">
+          <button onClick={onClose} className="tagModal__button">
+            Close
+          </button>
+        </div>
       </section>
     </Modal>
   );

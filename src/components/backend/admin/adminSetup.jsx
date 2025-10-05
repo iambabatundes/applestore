@@ -795,7 +795,7 @@ const AdminSetup = ({ onSetupComplete, darkMode }) => {
               </div>
             )}
             <button
-              onClick={handleNext} // ✅ Use handleNext instead of directly setting step
+              onClick={handleNext}
               disabled={
                 setupStatus?.setupCompleted && setupStatus?.adminCount > 0
               }

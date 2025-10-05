@@ -1,0 +1,340 @@
+/* Account Lockout Modal Styles */
+.adminLogin__lockout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.adminLogin__lockout-modal {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 28rem;
+  width: 100%;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+  /* scroll-behavior: auto; */
+}
+
+/* Header */
+.adminLogin__lockout-header {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  padding: 1.5rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.adminLogin__lockout-icon {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+}
+
+.adminLogin__lockout-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.adminLogin__lockout-header p {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Content */
+.adminLogin__lockout-content {
+  padding: 1.5rem;
+}
+
+/* Countdown Display */
+.adminLogin__lockout-countdown {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.adminLogin__countdown-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  background: #fef2f2;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  color: #ef4444;
+  font-size: 2rem;
+}
+
+.adminLogin__countdown-time {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 0.5rem;
+  font-family: monospace;
+}
+
+.adminLogin__lockout-countdown p {
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Progress Bar */
+.adminLogin__progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.adminLogin__progress-bar {
+  background: #e5e7eb;
+  border-radius: 9999px;
+  height: 0.5rem;
+  overflow: hidden;
+}
+
+.adminLogin__progress-fill {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  height: 100%;
+  transition: width 1s ease-out;
+  border-radius: 9999px;
+}
+
+/* Explanation */
+.adminLogin__lockout-explanation {
+  background: #fffbeb;
+  border: 1px solid #fed7aa;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.adminLogin__lockout-explanation svg {
+  color: #d97706;
+  margin-top: 0.125rem;
+  min-width: 1.25rem;
+}
+
+.adminLogin__explanation-title {
+  font-weight: 500;
+  color: #92400e;
+  margin: 0 0 0.25rem 0;
+}
+
+.adminLogin__lockout-explanation p {
+  color: #92400e;
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Security Tips */
+.adminLogin__security-tips {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.adminLogin__security-tips h4 {
+  font-weight: 500;
+  color: #1e40af;
+  margin: 0 0 0.5rem 0;
+}
+
+.adminLogin__security-tips ul {
+  color: #1e40af;
+  font-size: 0.875rem;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.adminLogin__security-tips li {
+  margin-bottom: 0.25rem;
+}
+
+/* Expired State */
+.adminLogin__lockout-expired {
+  text-align: center;
+}
+
+.adminLogin__expired-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background: #dcfce7;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  color: #16a34a;
+  font-size: 2rem;
+}
+
+.adminLogin__lockout-expired h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+}
+
+.adminLogin__lockout-expired p {
+  color: #6b7280;
+  margin: 0 0 1.5rem 0;
+}
+
+.adminLogin__retry-btn {
+  width: 100%;
+  background: #16a34a;
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.adminLogin__retry-btn:hover {
+  background: #15803d;
+}
+
+/* Footer */
+.adminLogin__lockout-footer {
+  background: #f9fafb;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adminLogin__close-btn {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.adminLogin__close-btn:hover {
+  color: #374151;
+}
+
+.adminLogin__lockout-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .adminLogin__lockout-modal {
+    margin: 1rem;
+    max-width: none;
+  }
+
+  .adminLogin__lockout-header {
+    padding: 1rem;
+  }
+
+  .adminLogin__lockout-content {
+    padding: 1rem;
+  }
+
+  .adminLogin__countdown-time {
+    font-size: 2.5rem;
+  }
+
+  .adminLogin__countdown-icon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.5rem;
+  }
+
+  .adminLogin__lockout-footer {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .adminLogin__lockout-modal {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .adminLogin__countdown-time {
+    color: #f9fafb;
+  }
+
+  .adminLogin__lockout-expired h4 {
+    color: #f9fafb;
+  }
+
+  .adminLogin__lockout-footer {
+    background: #111827;
+  }
+}
+
+/* Focus states for accessibility */
+.adminLogin__close-btn:focus,
+.adminLogin__retry-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  .adminLogin__lockout-overlay,
+  .adminLogin__lockout-modal,
+  .adminLogin__progress-fill {
+    animation: none;
+    transition: none;
+  }
+}

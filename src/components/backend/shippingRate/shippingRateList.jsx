@@ -17,7 +17,11 @@ export default function ShippingRateList({
 
   if (error) {
     return (
-      <span className="shipping__error">Error loading shipping rates</span>
+      <div className="shipping__error-container">
+        <span className="shipping__error">
+          Unable to load shipping rates. Please try again later.
+        </span>
+      </div>
     );
   }
 
@@ -53,7 +57,7 @@ export default function ShippingRateList({
               <div className="shippingRate__actions">
                 <button
                   className="shippingRate__edit-btn"
-                  onClick={() => onEdit(rate)} // Pass rate data to the form
+                  onClick={() => onEdit(rate)}
                 >
                   <FaEdit /> Edit
                 </button>
@@ -69,7 +73,14 @@ export default function ShippingRateList({
           ))}
         </div>
       ) : (
-        <p className="No__shipping">No shipping rates available</p>
+        <div className="shippingRate__empty-state">
+          <p className="shippingRate__no-rates">
+            No shipping rates available yet
+          </p>
+          <p className="shippingRate__subtitle">
+            Create your first shipping rate using the form above.
+          </p>
+        </div>
       )}
     </section>
   );

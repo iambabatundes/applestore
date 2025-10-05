@@ -55,14 +55,6 @@ async function executeOperation(
   try {
     // Log operation start if audit is enabled
     if (ADMIN_SERVICE_CONFIG.AUDIT_ENABLED) {
-      console.info(
-        `[AdminService] Starting ${operationType} operation: ${operationName}`,
-        {
-          operationId,
-          timestamp: new Date().toISOString(),
-          context: options.context || {},
-        }
-      );
     }
 
     // Input validation if schema provided
@@ -84,29 +76,12 @@ async function executeOperation(
     // Log successful operation
     const duration = Date.now() - startTime;
     if (ADMIN_SERVICE_CONFIG.AUDIT_ENABLED) {
-      console.info(`[AdminService] Operation completed: ${operationName}`, {
-        operationId,
-        duration: `${duration}ms`,
-        success: true,
-        timestamp: new Date().toISOString(),
-      });
     }
 
     return data;
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorType = categorizeError(error);
-
-    // Enhanced error logging
-    console.error(`[AdminService] Operation failed: ${operationName}`, {
-      operationId,
-      duration: `${duration}ms`,
-      error: error.message,
-      errorType,
-      status: error.response?.status,
-      timestamp: new Date().toISOString(),
-      context: options.context || {},
-    });
 
     // Create enhanced error with suggestions
     const suggestions = getSuggestions(errorType, operationName);
@@ -259,15 +234,10 @@ export async function complete2FA(twoFAData) {
         expiresIn: data.expiresIn,
         expiresAt: data.expiresAt,
       });
-
-      console.info(
-        "[AdminService] Admin authentication completed successfully"
-      );
     }
 
     return data;
   } catch (error) {
-    console.error("[AdminService] 2FA completion failed:", error);
     throw error;
   }
 }
@@ -326,10 +296,6 @@ export async function cancelInvite(inviteId) {
   );
 }
 
-// ============================================================================
-// STATISTICS & MONITORING OPERATIONS
-// ============================================================================
-
 export async function getAdminStats() {
   return executeOperation(
     "getAdminStats",
@@ -347,10 +313,6 @@ export async function getMetrics() {
     { context: { cacheable: true } }
   );
 }
-
-// ============================================================================
-// ADMIN MANAGEMENT OPERATIONS
-// ============================================================================
 
 export async function getAdminList(params = {}) {
   return executeOperation(
@@ -413,10 +375,6 @@ export async function updateAdminStatus(adminId, statusData) {
   );
 }
 
-// ============================================================================
-// SECURITY MANAGEMENT OPERATIONS
-// ============================================================================
-
 export async function enable2FA() {
   return executeOperation(
     "enable2FA",
@@ -472,10 +430,6 @@ export async function updatePassword(passwordData) {
   );
 }
 
-// ============================================================================
-// LOGGING & AUDIT OPERATIONS
-// ============================================================================
-
 export async function getActivityLogs(params = {}) {
   return executeOperation(
     "getActivityLogs",
@@ -494,10 +448,6 @@ export async function getAuditLogs(params = {}) {
   );
 }
 
-// ============================================================================
-// SYSTEM MANAGEMENT OPERATIONS
-// ============================================================================
-
 export async function performCleanup() {
   return executeOperation(
     "performCleanup",
@@ -515,10 +465,6 @@ export async function getSystemHealth() {
     { context: { systemOperation: true, cacheable: true } }
   );
 }
-
-// ============================================================================
-// PROFILE & SETTINGS OPERATIONS
-// ============================================================================
 
 export async function updateProfile(profileData) {
   return executeOperation(
@@ -549,10 +495,6 @@ export async function updateSettings(settings) {
   );
 }
 
-// ============================================================================
-// USER DATA OPERATIONS
-// ============================================================================
-
 export async function getAdminUser() {
   return executeOperation(
     "getAdminUser",
@@ -561,10 +503,6 @@ export async function getAdminUser() {
     { context: { userProfile: true, cacheable: true } }
   );
 }
-
-// ============================================================================
-// BUSINESS INTELLIGENCE & ANALYTICS
-// ============================================================================
 
 export async function getDashboardData() {
   try {
@@ -584,7 +522,6 @@ export async function getDashboardData() {
         .map((result) => result.reason.message),
     };
   } catch (error) {
-    console.error("[AdminService] Failed to get dashboard data:", error);
     throw new AdminServiceError("Failed to load dashboard data", {
       type: ERROR_TYPES.SERVER_ERROR,
       operation: "getDashboardData",
@@ -617,17 +554,13 @@ export async function getAdminOverview(adminId) {
   }
 }
 
-// ============================================================================
-// UTILITY & SERVICE MANAGEMENT
-// ============================================================================
-
 export function getServiceConfig() {
   return { ...ADMIN_SERVICE_CONFIG };
 }
 
 export function updateServiceConfig(newConfig) {
   Object.assign(ADMIN_SERVICE_CONFIG, newConfig);
-  console.info("[AdminService] Configuration updated:", newConfig);
+  // console.info("[AdminService] Configuration updated:", newConfig);
 }
 
 export function getServiceHealth() {

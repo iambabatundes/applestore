@@ -6,8 +6,8 @@ const useFetchTags = () => {
 
   const fetchTags = useCallback(async () => {
     try {
-      const { data } = await getTags();
-      setTags(data);
+      const { data: fetchTags } = await getTags();
+      setTags(fetchTags || []);
     } catch (error) {
       console.error("Failed to fetch tags", error);
     }

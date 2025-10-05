@@ -16,11 +16,13 @@ export default function CategoryTable({
   onFilter,
 }) {
   if (loading) {
-    return <span className="tagList__loading">Loading Tags list...</span>;
+    return <span className="tagList__loading">Loading Categories list...</span>;
   }
 
   if (error) {
-    return <span className="tagList__error">Error loading Tags list</span>;
+    return (
+      <span className="tagList__error">Error loading Categories list</span>
+    );
   }
 
   const renderCategoryName = (category) => {
@@ -32,7 +34,39 @@ export default function CategoryTable({
     );
   };
 
+  const renderCategoryImage = (category) => {
+    const imageUrl =
+      category.categoryImage?.url ||
+      category.categoryImage?.cloudUrl ||
+      category.categoryImage?.publicUrl;
+
+    if (!imageUrl) {
+      return <span style={{ color: "#999" }}>No image</span>;
+    }
+
+    return (
+      <img
+        src={imageUrl}
+        alt={category.name}
+        style={{
+          width: "50px",
+          height: "50px",
+          objectFit: "cover",
+          borderRadius: "4px",
+        }}
+        onError={(e) => {
+          e.target.style.display = "none";
+          e.target.nextSibling.style.display = "inline";
+        }}
+      />
+    );
+  };
+
   const columns = [
+    {
+      label: "Image",
+      content: (category) => renderCategoryImage(category),
+    },
     {
       label: "Name",
       path: "name",
@@ -45,6 +79,28 @@ export default function CategoryTable({
     },
     { label: "Description", path: "description" },
     { label: "Slug", path: "slug" },
+    {
+      label: "Storage",
+      content: (category) => (
+        <span
+          style={{
+            fontSize: "12px",
+            padding: "2px 8px",
+            borderRadius: "12px",
+            backgroundColor:
+              category.categoryImage?.storageType === "cloudinary"
+                ? "#e3f2fd"
+                : "#f3e5f5",
+            color:
+              category.categoryImage?.storageType === "cloudinary"
+                ? "#1976d2"
+                : "#7b1fa2",
+          }}
+        >
+          {category.categoryImage?.storageType || "local"}
+        </span>
+      ),
+    },
     {
       label: "Count",
       path: "productCount",
@@ -71,7 +127,6 @@ export default function CategoryTable({
         </section>
       ),
     },
-    // Add more headings as needed
   ];
 
   return (

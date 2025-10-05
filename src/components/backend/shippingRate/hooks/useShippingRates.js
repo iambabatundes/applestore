@@ -10,21 +10,36 @@ export function useShippingRates() {
 
   const fetchShippingRates = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const { data: shippingRates } = await getShippingRates();
+      const shippingRates = await getShippingRates();
+
+      // Handle geocoding errors gracefully
       const ratesWithAddresses = await Promise.all(
         shippingRates.map(async (rate) => {
-          const address = await getAddressFromCoordinates(
-            rate.storeLocation.lat,
-            rate.storeLocation.lon
-          );
-          return { ...rate, address };
+          try {
+            const address = await getAddressFromCoordinates(
+              rate.storeLocation.lat,
+              rate.storeLocation.lon
+            );
+            return { ...rate, address };
+          } catch (error) {
+            // If geocoding fails, return rate without address
+            console.warn("Failed to geocode rate:", rate._id, error);
+            return { ...rate, address: "Address not available" };
+          }
         })
       );
       setShippingRates(ratesWithAddresses);
     } catch (error) {
-      setError(error);
-      toast.error("Failed to load shipping rates");
+      console.error("Error fetching shipping rates:", error);
+
+      if (error.response?.status === 500 || !error.response) {
+        setError(error);
+        toast.error("Failed to load shipping rates");
+      } else {
+        setShippingRates([]);
+      }
     } finally {
       setLoading(false);
     }

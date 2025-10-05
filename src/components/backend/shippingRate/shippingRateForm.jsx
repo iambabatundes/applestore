@@ -90,7 +90,7 @@ export default function ShippingRateForm({ rateToEdit, onFormSubmit }) {
 
   const fetchLocationSuggestions = async (query) => {
     try {
-      const apiKey = "0636d54539ea4a298f36acf75edcf3c8";
+      const apiKey = "e62227997ef1470d95fa3a67338d71f0";
       const response = await axios.get(
         `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
           query

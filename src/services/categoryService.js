@@ -8,12 +8,15 @@ const getApiEndpoint = (path = "") => {
     : `${baseUrl}/api/categories`;
 };
 
-// CRUD Operations for Categories
+function clearCategoriesCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
 
-// Public operations (no authentication required)
 export async function getCategories(params = {}) {
   try {
     const { data } = await publicHttpService.get(getApiEndpoint(), { params });
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch categories:", err);
@@ -24,6 +27,7 @@ export async function getCategories(params = {}) {
 export async function getCategory(categoryId) {
   try {
     const { data } = await publicHttpService.get(getApiEndpoint(categoryId));
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch category:", err);
@@ -31,13 +35,13 @@ export async function getCategory(categoryId) {
   }
 }
 
-// Get categories with products (public endpoint with additional data)
 export async function getCategoriesWithProducts(params = {}) {
   try {
     const { data } = await publicHttpService.get(
       getApiEndpoint("with-products"),
       { params }
     );
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch categories with products:", err);
@@ -59,9 +63,18 @@ export async function getCategoryBySlug(slug) {
 }
 
 // Admin operations (authentication required)
-export async function saveCategory(category) {
+export async function saveCategory(formData, storageType = "local") {
   try {
-    const { data } = await adminHttpService.post(getApiEndpoint(), category);
+    // Build URL with storage query parameter
+    const baseUrl = import.meta.env.VITE_API_URL;
+    const url = `${baseUrl}/api/categories?storage=${storageType}`;
+
+    const { data } = await adminHttpService.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to save category:", err);
@@ -69,12 +82,22 @@ export async function saveCategory(category) {
   }
 }
 
-export async function updateCategory(categoryId, category) {
+export async function updateCategory(
+  categoryId,
+  formData,
+  storageType = "local"
+) {
   try {
-    const { data } = await adminHttpService.put(
-      getApiEndpoint(categoryId),
-      category
-    );
+    // Build URL with storage query parameter
+    const baseUrl = import.meta.env.VITE_API_URL;
+    const url = `${baseUrl}/api/categories/${categoryId}?storage=${storageType}`;
+
+    const { data } = await adminHttpService.put(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to update category:", err);
@@ -86,6 +109,7 @@ export async function deleteCategory(categoryId) {
   try {
     const { data } = await adminHttpService.delete(getApiEndpoint(categoryId));
     return data;
+    clearCategoriesCache();
   } catch (err) {
     console.error("Failed to delete category:", err);
     throw err;
@@ -99,6 +123,7 @@ export async function bulkDeleteCategories(categoryIds) {
       getApiEndpoint("bulk-delete"),
       { categoryIds }
     );
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to bulk delete categories:", err);
@@ -140,6 +165,7 @@ export async function searchCategories(query, filters = {}) {
         ...filters,
       },
     });
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to search categories:", err);
@@ -151,6 +177,7 @@ export async function searchCategories(query, filters = {}) {
 export async function getCategoryTree() {
   try {
     const { data } = await publicHttpService.get(getApiEndpoint("tree"));
+    clearCategoriesCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch category tree:", err);

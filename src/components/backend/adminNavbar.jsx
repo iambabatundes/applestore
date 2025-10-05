@@ -3,7 +3,6 @@ import "../backend/common/styles/darkMode.css";
 import Icon from "../icon";
 import AdminProfile from "./adminProfile";
 
-// Material UI imports
 import { Switch, IconButton } from "@mui/material";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useAdminNavStore } from "./store/adminNavbarStore";
@@ -30,7 +29,7 @@ export default function AdminNavbar({
     notifications,
     isEditing,
     profileImage,
-    userName,
+    firstName,
     userImage,
     toggleDropdown,
     toggleModal,
@@ -39,6 +38,8 @@ export default function AdminNavbar({
     handleProfileImageChange,
     submitProfileUpdate,
   } = useAdminNavbarLogic(user);
+
+  const safeNotifications = notifications || [];
 
   return (
     <nav className={`admin-navbar ${darkMode ? "dark-mode" : ""}`}>
@@ -66,23 +67,24 @@ export default function AdminNavbar({
 
           <div className="admin-navbar__notifications">
             <CommentIcon />
-            <span>{count}</span>
+            <span>{count || 0}</span>
           </div>
 
           <div className="admin-navbar__comments">
             <BellIcon />
-            <span>{notifications.length}</span>
+            <span>{safeNotifications.length}</span>
           </div>
         </div>
 
         <div className="admin-navbar__right">
           <div className="admin-navbar__welcome">
             <h4>Welcome,</h4>
-            <span className="admin__userName">{userName}</span>
+            <span className="admin__userName">{firstName}</span>
           </div>
 
           <UserDropdown
-            userName={userName}
+            // userName={userName}
+            firstName={firstName}
             userImage={userImage}
             dropdownOpen={dropdownOpen}
             toggleDropdown={toggleDropdown}

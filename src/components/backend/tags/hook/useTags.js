@@ -20,7 +20,7 @@ export default function useTags({ setSelectedTag }) {
     setLoading(true);
     try {
       const { data: fetchedTags } = await getTags();
-      setTags(fetchedTags);
+      setTags(fetchedTags || []);
     } catch (error) {
       setErrors(errors);
       console.error("Error fetching tags:", error);
@@ -53,16 +53,13 @@ export default function useTags({ setSelectedTag }) {
   };
 
   async function deleteTags(tagId) {
-    if (!window.confirm("Are you sure you want to delete this tax rate?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this tag?")) return;
 
-    const originalTags = [...tags]; // Make a copy of the tags array
+    const originalTags = [...tags];
 
     try {
-      // First, try to delete the tag from the server
       await deleteTag(tagId);
 
-      // If successful, update the local state to remove the deleted tag
       const updatedTags = originalTags.filter((t) => t._id !== tagId);
       setTags(updatedTags);
 
@@ -73,7 +70,7 @@ export default function useTags({ setSelectedTag }) {
       } else {
         toast.error("An error occurred while deleting the tag");
       }
-      // If the deletion fails, keep the original tags
+
       setTags(originalTags);
     }
   }

@@ -289,3 +289,126 @@
     font-size: 1.1rem;
   }
 }
+
+/* Sidebar Icon Styles - Colorful Version */
+
+.sidebar-item a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* padding: 8px 16px; */
+  transition: all 0.2s ease;
+}
+
+/* Icon wrapper styles */
+.icon-wrapper {
+  flex-shrink: 0;
+  /* width: 36px; */
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for icon wrapper */
+.sidebar-item a:hover .icon-wrapper {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Active state */
+.sidebar-item a.active .icon-wrapper {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Label styling */
+.sidebar-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #e0e0e0;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.sidebar-item a:hover .sidebar-label {
+  color: #ffffff;
+}
+
+.sidebar-item a.active .sidebar-label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Collapsed sidebar state */
+.sidebar.collapsed .sidebar-item a {
+  justify-content: center;
+  padding: 10px;
+}
+
+.sidebar.collapsed .sidebar-label {
+  display: none;
+}
+
+.sidebar.collapsed .icon-wrapper {
+  margin: 0;
+}
+
+/* Smooth transitions */
+.sidebar-item a {
+  /* border-radius: 8px; */
+  /* margin: 2px 8px; */
+}
+
+.sidebar-item a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-item a.active {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Optional: Add subtle pulse animation on active */
+@keyframes pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.sidebar-item a.active .icon-wrapper {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Dropdown menu styling to match */
+.dropdown {
+  margin-left: 56px;
+  padding: 4px 0;
+}
+
+.dropdown li a {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+}
+
+.dropdown li a:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown li a.active {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+}

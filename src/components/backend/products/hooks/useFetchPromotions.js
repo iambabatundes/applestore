@@ -6,8 +6,8 @@ const useFetchPromotions = () => {
 
   const fetchPromotions = useCallback(async () => {
     try {
-      const { data } = await getPromotions();
-      setPromotions(data);
+      const promotion = await getPromotions();
+      setPromotions(promotion || []);
     } catch (error) {
       console.error("Failed to fetch Promotions", error);
     }

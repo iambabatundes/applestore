@@ -31,7 +31,6 @@ export default function AdminSidebar({
 
   const sidebarRef = useRef(null);
 
-  // Close sidebar on outside click (for mobile only)
   useEffect(() => {
     function handleOutsideClick(event) {
       if (

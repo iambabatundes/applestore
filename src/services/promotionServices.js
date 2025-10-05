@@ -4,18 +4,22 @@ import {
   userHttpService,
 } from "./http/index.js";
 
-// Use relative path - let services handle their base URLs
 const promotionsPath = "/api/promotions";
 
 function promoUrl(id) {
   return `${promotionsPath}/${id}`;
 }
 
-// Public functions - viewing active promotions
+function clearPromotionsCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
+
 export async function getActivePromotions() {
   try {
-    const { data } = await publicHttpService.get(`${promotionsPath}/active`);
-    return data;
+    const response = await publicHttpService.get(`${promotionsPath}/active`);
+    clearPromotionsCache();
+    return response;
   } catch (err) {
     console.error("Failed to fetch active promotions:", err);
     throw err;
@@ -25,6 +29,7 @@ export async function getActivePromotions() {
 export async function getPromotion(promoId) {
   try {
     const { data } = await publicHttpService.get(promoUrl(promoId));
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch promotion:", err);
@@ -37,6 +42,7 @@ export async function getPromotionsByCategory(categoryId) {
     const { data } = await publicHttpService.get(
       `${promotionsPath}/category/${categoryId}`
     );
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch promotions by category:", err);
@@ -51,6 +57,7 @@ export async function applyPromotion(promoCode, cartItems = []) {
       code: promoCode,
       items: cartItems,
     });
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to apply promotion:", err);
@@ -64,6 +71,7 @@ export async function validatePromotion(promoCode, userId = null) {
       code: promoCode,
       userId,
     });
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to validate promotion:", err);
@@ -74,8 +82,9 @@ export async function validatePromotion(promoCode, userId = null) {
 // Admin functions - managing promotions
 export async function getPromotions() {
   try {
-    const { data } = await adminHttpService.get(promotionsPath);
-    return data;
+    const response = await adminHttpService.get(promotionsPath);
+    clearPromotionsCache();
+    return response.data;
   } catch (err) {
     console.error("Failed to fetch promotions:", err);
     throw err;
@@ -85,6 +94,7 @@ export async function getPromotions() {
 export async function savePromotion(promo) {
   try {
     const { data } = await adminHttpService.post(promotionsPath, promo);
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to save promotion:", err);
@@ -95,6 +105,7 @@ export async function savePromotion(promo) {
 export async function updatePromotion(promoId, promo) {
   try {
     const { data } = await adminHttpService.put(promoUrl(promoId), promo);
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to update promotion:", err);
@@ -105,6 +116,7 @@ export async function updatePromotion(promoId, promo) {
 export async function deletePromotion(promoId) {
   try {
     const { data } = await adminHttpService.delete(promoUrl(promoId));
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to delete promotion:", err);
@@ -117,6 +129,7 @@ export async function activatePromotion(promoId) {
     const { data } = await adminHttpService.post(
       `${promoUrl(promoId)}/activate`
     );
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to activate promotion:", err);
@@ -129,6 +142,7 @@ export async function deactivatePromotion(promoId) {
     const { data } = await adminHttpService.post(
       `${promoUrl(promoId)}/deactivate`
     );
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to deactivate promotion:", err);
@@ -139,6 +153,7 @@ export async function deactivatePromotion(promoId) {
 export async function getPromotionStats(promoId) {
   try {
     const { data } = await adminHttpService.get(`${promoUrl(promoId)}/stats`);
+    clearPromotionsCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch promotion stats:", err);

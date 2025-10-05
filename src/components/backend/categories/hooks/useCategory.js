@@ -19,10 +19,10 @@ export default function useCategory({ setSelectedCategory }) {
   const fetchCategory = async () => {
     setLoading(true);
     try {
-      const { data: fetchedCategory } = await getCategories();
+      const fetchedCategory = await getCategories();
       setCategory(fetchedCategory);
     } catch (error) {
-      setErrors(errors);
+      setErrors(error);
       console.error("Error fetching category:", error);
       toast.error("Error fetching category");
     } finally {
@@ -30,26 +30,30 @@ export default function useCategory({ setSelectedCategory }) {
     }
   };
 
-  const addCategory = async (newCategory) => {
+  const addCategory = async (formData, storageType = "local") => {
     try {
-      await saveCategory(newCategory);
+      // Pass formData directly (it's already a FormData object)
+      await saveCategory(formData, storageType);
       toast.success("Category added successfully!");
       fetchCategory();
     } catch (error) {
       setErrors("Error saving category");
-      toast.error("Error saving category");
+      toast.error(error.response?.data?.message || "Error saving category");
+      throw error;
     }
   };
 
-  const editCategory = async (categoryId, updatedCategory) => {
+  const editCategory = async (categoryId, formData, storageType = "local") => {
     try {
-      await updateCategory(categoryId, updatedCategory);
+      // Pass formData directly (it's already a FormData object)
+      await updateCategory(categoryId, formData, storageType);
       toast.success("Category updated successfully!");
       fetchCategory();
       setSelectedCategory(null);
     } catch (error) {
       console.log(error);
-      toast.error("Error updating category");
+      toast.error(error.response?.data?.message || "Error updating category");
+      throw error;
     }
   };
 
@@ -71,6 +75,10 @@ export default function useCategory({ setSelectedCategory }) {
     } catch (error) {
       if (error.response && error.response.status === 404) {
         toast.error("This category has already been deleted");
+      } else if (error.response && error.response.status === 400) {
+        toast.error(
+          error.response.data.message || "Cannot delete this category"
+        );
       } else {
         toast.error("An error occurred while deleting the category");
       }

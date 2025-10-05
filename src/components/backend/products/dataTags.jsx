@@ -5,7 +5,7 @@ export default function DataTags({
   isTagsVisible,
   selectedTags,
   setSelectedTags,
-  dataTags,
+  dataTags = [], // Default to empty array
   setDataTags,
   getDataTags,
   saveDataTag,
@@ -14,10 +14,11 @@ export default function DataTags({
 }) {
   const [newTag, setNewTag] = useState("");
   const [isAddingNewTag, setIsAddingNewTag] = useState(false);
-  const [filteredTags, setFilteredTags] = useState(dataTags);
+  // const [filtseredTags, setFilteredTags] = useState([]);
+  const [filteredTags, setFilteredTags] = useState(dataTags || []);
 
   useEffect(() => {
-    setFilteredTags(dataTags);
+    setFilteredTags(dataTags || []);
   }, [dataTags]);
 
   const handleAddNewTag = async () => {
@@ -29,7 +30,7 @@ export default function DataTags({
         } else {
           const savedTag = await saveDataTag({ name: newTag.trim() });
           setSelectedTags((prevTags) => [...prevTags, savedTag.name]);
-          setDataTags((prevTags) => [...prevTags, savedTag]);
+          setDataTags((prevTags) => [...(prevTags || []), savedTag]);
         }
         setNewTag("");
         setIsAddingNewTag(false);
@@ -46,12 +47,58 @@ export default function DataTags({
 
   const handleInputChange = (e) => {
     const input = e.target.value.toLowerCase();
-    const filtered = dataTags.filter((tag) =>
+    // Safely filter tags
+    const filtered = (dataTags || []).filter((tag) =>
       tag.name.toLowerCase().includes(input)
     );
     setFilteredTags(filtered);
     setNewTag(e.target.value);
   };
+
+  if (
+    isTagsVisible &&
+    (!dataTags || dataTags.length === 0) &&
+    !isAddingNewTag
+  ) {
+    return (
+      <section className="data-tags">
+        <p className="data-tags__no-tags">
+          No tags available. Click "Add New Tag" to create your first tag.
+        </p>
+        <button
+          onClick={() => setIsAddingNewTag(true)}
+          className="new-tag-button"
+        >
+          Add New Tag
+        </button>
+        {isAddingNewTag && (
+          <div className="tag-input-container">
+            <input
+              type="text"
+              placeholder="Enter new tag name..."
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              className="tag-input"
+            />
+            <div className="new-tag-actions">
+              <button onClick={handleAddNewTag} className="add-button">
+                Add
+              </button>
+              <button
+                onClick={() => {
+                  setIsAddingNewTag(false);
+                  setNewTag("");
+                }}
+                className="cancel-button"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  }
 
   return (
     <>
@@ -87,7 +134,10 @@ export default function DataTags({
                   Add
                 </button>
                 <button
-                  onClick={() => setIsAddingNewTag(false)}
+                  onClick={() => {
+                    setIsAddingNewTag(false);
+                    setNewTag("");
+                  }}
                   className="cancel-button"
                 >
                   Cancel
@@ -96,7 +146,7 @@ export default function DataTags({
             )}
           </div>
           <ul className="filtered-tags-list">
-            {filteredTags.map((tag) => (
+            {(filteredTags || []).map((tag) => (
               <li key={tag._id} className="tag-item">
                 <label>
                   <input

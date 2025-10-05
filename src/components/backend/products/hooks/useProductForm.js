@@ -191,7 +191,7 @@ const useProductForm = () => {
       setCapacity([]);
       setMaterials([]);
     }
-  }, [params.id, navigate, initialProductDetails]);
+  }, [params.id, navigate]);
 
   function validate() {
     const productDetailsWithEditorContent = {

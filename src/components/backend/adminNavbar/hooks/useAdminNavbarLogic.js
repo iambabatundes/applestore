@@ -31,7 +31,7 @@ export function useAdminNavbarLogic(user) {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  const userName = currentUser?.username || currentUser?.email || "Admin";
+  const firstName = currentUser?.firstName || currentUser?.email || "Admin";
   const userImage = currentUser?.profileImage?.filename
     ? `http://localhost:4000/uploads/${currentUser.profileImage.filename}`
     : defaultUserImage;
@@ -44,7 +44,7 @@ export function useAdminNavbarLogic(user) {
     notifications,
     isEditing,
     profileImage,
-    userName,
+    firstName,
     userImage,
     toggleDropdown,
     toggleModal,

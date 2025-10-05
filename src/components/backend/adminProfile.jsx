@@ -1,6 +1,7 @@
 import React from "react";
 import { FaEdit } from "react-icons/fa";
 import "../backend/common/styles/adminProfile.css";
+// import "../backend/common/styles/darkMode.css";
 import ProfileImage from "./profileImage";
 
 const AdminProfile = ({

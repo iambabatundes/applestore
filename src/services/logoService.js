@@ -1,12 +1,17 @@
 import { publicHttpService, adminHttpService } from "./http/index.js";
 
-const UPLOAD_LOGO_ENDPOINT = "/upload-logo";
+const UPLOAD_LOGO_ENDPOINT = "/api/upload-logo";
 
 function logoUrl(id) {
   return `${UPLOAD_LOGO_ENDPOINT}/${id}`;
 }
 
-function createFormData(upload, companyName, metadata = {}) {
+function clearLogoCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
+
+function createFormData(upload, companyName, storageType, metadata = {}) {
   const formData = new FormData();
 
   if (upload) {
@@ -49,6 +54,7 @@ export async function getUploads(params = {}) {
     const response = await publicHttpService.get(UPLOAD_LOGO_ENDPOINT, {
       params,
     });
+    clearLogoCache();
     return response.data;
   } catch (err) {
     console.error("Failed to fetch logos:", err);
@@ -66,63 +72,31 @@ export async function getLogo(logoId) {
   }
 }
 
-export async function saveUpload(upload, companyName, options = {}) {
+export async function saveUpload(
+  upload,
+  companyName,
+  storageType = "local",
+  options = {}
+) {
   try {
     if (import.meta.env.DEV) {
       console.log(
         "Saving logo:",
         upload?.name || upload,
         "CompanyName:",
-        companyName
+        companyName,
+        "Storage:",
+        storageType
       );
     }
 
     const { metadata = {}, onProgress } = options;
-    const formData = createFormData(upload, companyName, metadata);
+    const formData = createFormData(upload, companyName, storageType, metadata);
 
-    const response = await adminHttpService.post(
-      UPLOAD_LOGO_ENDPOINT,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          if (onProgress) {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            onProgress(percentCompleted, progressEvent);
-          }
-        },
-        timeout: options.timeout || 60000,
-        ...options.requestConfig,
-      }
-    );
+    // Add storage type as query parameter
+    const url = `${UPLOAD_LOGO_ENDPOINT}?storage=${storageType}`;
 
-    return response.data;
-  } catch (err) {
-    console.error("Failed to save logo:", err);
-    throw err;
-  }
-}
-
-export async function updateLogo(logoId, upload, companyName, options = {}) {
-  try {
-    if (import.meta.env.DEV) {
-      console.log(
-        "Updating logo:",
-        logoId,
-        upload?.name || upload,
-        "CompanyName:",
-        companyName
-      );
-    }
-
-    const { metadata = {}, onProgress } = options;
-    const formData = createFormData(upload, companyName, metadata);
-
-    const response = await adminHttpService.put(logoUrl(logoId), formData, {
+    const response = await adminHttpService.post(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -137,7 +111,56 @@ export async function updateLogo(logoId, upload, companyName, options = {}) {
       timeout: options.timeout || 60000,
       ...options.requestConfig,
     });
+    clearLogoCache();
+    return response.data;
+  } catch (err) {
+    console.error("Failed to save logo:", err);
+    throw err;
+  }
+}
 
+export async function updateLogo(
+  logoId,
+  upload,
+  companyName,
+  storageType = "local",
+  options = {}
+) {
+  try {
+    if (import.meta.env.DEV) {
+      console.log(
+        "Updating logo:",
+        logoId,
+        upload?.name || upload,
+        "CompanyName:",
+        companyName,
+        "Storage:",
+        storageType
+      );
+    }
+
+    const { metadata = {}, onProgress } = options;
+    const formData = createFormData(upload, companyName, storageType, metadata);
+
+    // Add storage type as query parameter
+    const url = `${logoUrl(logoId)}?storage=${storageType}`;
+
+    const response = await adminHttpService.put(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(percentCompleted, progressEvent);
+        }
+      },
+      timeout: options.timeout || 60000,
+      ...options.requestConfig,
+    });
+    clearLogoCache();
     return response.data;
   } catch (err) {
     console.error("Failed to update logo:", err);
@@ -152,6 +175,7 @@ export async function deleteLogo(id) {
     }
 
     const response = await adminHttpService.delete(logoUrl(id));
+    clearLogoCache();
     return response.data;
   } catch (err) {
     console.error("Failed to delete logo:", err);

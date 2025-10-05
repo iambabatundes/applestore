@@ -1,6 +1,7 @@
 import { publicHttpService, userHttpService } from "./http/index.js";
 
-const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/auth`;
+// const apiEndPoint = `${import.meta.env.VITE_API_URL}/api/auth`;
+const apiEndPoint = `/api/auth`;
 
 function authUrl(path) {
   return `${apiEndPoint}/${path}`;
@@ -52,8 +53,6 @@ export async function loginApi(email, password) {
 
 export async function refreshTokenApi() {
   try {
-    // This will be handled automatically by the service's token manager
-    // But if you need manual refresh:
     const refreshToken = userHttpService.tokenManager.getRefreshToken();
     if (!refreshToken) {
       throw new Error("No refresh token available");

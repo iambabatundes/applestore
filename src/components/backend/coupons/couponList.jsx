@@ -18,6 +18,11 @@ export default function CouponList({
   if (error) {
     return <span className="shipping__error">Error loading coupon list</span>;
   }
+
+  if (!coupons || coupons.length === 0) {
+    return <p className="couponList__available">No coupon list available</p>;
+  }
+
   return (
     <section className="couponList__container">
       {coupons.length > 0 ? (

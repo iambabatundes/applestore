@@ -13,7 +13,7 @@ import "./styles/coupon.css";
 
 export default function Coupon() {
   const [coupons, setCoupons] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [error, setError] = useState(null);
 
@@ -24,8 +24,8 @@ export default function Coupon() {
   const fetchCoupons = async () => {
     try {
       setLoading(true);
-      const { data: coupons } = await getCoupons();
-      setCoupons(coupons);
+      const { data: coupons } = await getCoupons(); // ✅ Destructure data
+      setCoupons(coupons || []);
     } catch (error) {
       setError(error);
       toast.error("Error fetching coupons");

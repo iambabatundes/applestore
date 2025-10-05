@@ -1,239 +1,489 @@
-/* adminProfile.css */
+/* Modern Admin Profile Modal - Apple-inspired Design */
+
+/* Modal Overlay - Fixed positioning with backdrop blur */
 .adminProfile__modal {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
+    padding: 1rem;
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
 }
 
+/* Modal Content Container */
 .adminProfileModal-content {
-    background: #fff;
-    padding: 25px;
-    border-radius: 10px;
-    width: 90%;
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
     max-width: 950px;
-    height: 600px;
-    /* Adjust max-width for mobile */
+    max-height: 85vh;
     position: relative;
-    animation: fadeIn 0.4s ease;
-    color: #000;
-    /* overflow: auto; */
-    /* Add overflow for smaller screens */
+    animation: modalBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 10px 20px -5px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
 }
 
+.dark-mode .adminProfileModal-content {
+    background: #1c1c1e;
+    color: #f5f5f7;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 10px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Close Button - Top right with hover effects */
 .adminProfile__close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    padding: 0px 8px;
-    font-size: 1.5rem;
-    color: red;
-    background: none;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(120, 120, 128, 0.16);
     border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: rgba(60, 60, 67, 0.6);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    padding: 0;
+    line-height: 1;
+    font-weight: 300;
 }
 
+.dark-mode .adminProfile__close {
+    background: rgba(142, 142, 147, 0.24);
+    color: rgba(235, 235, 245, 0.6);
+}
+
+.adminProfile__close:hover {
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
+    transform: scale(1.1) rotate(90deg);
+}
+
+.dark-mode .adminProfile__close:hover {
+    background: rgba(255, 69, 58, 0.25);
+    color: #ff453a;
+}
+
+.adminProfile__close:active {
+    transform: scale(0.95) rotate(90deg);
+}
+
+/* Header Section */
 .adminProfile__heading {
-    /* text-align: center; */
-    /* font-size: 1.5rem; */
-    margin: 24px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    padding: 2rem 2rem 0;
+    color: #1d1d1f;
 }
 
+.dark-mode .adminProfile__heading {
+    color: #f5f5f7;
+}
+
+/* Edit Icon Button */
 .adminProfile__icon {
     display: flex;
-    align-self: center;
     justify-content: flex-end;
-    margin-top: 1.3rem;
-    font-size: 20px;
-    color: #0056b3;
+    padding: 1rem 2rem 0;
 }
 
 .edit-icon {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     cursor: pointer;
-    color: #007bff;
+    color: #007aff;
+    padding: 0.625rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    background: transparent;
 }
 
-.adminProfile__heading {
-    margin-top: 0;
+.dark-mode .edit-icon {
+    color: #0a84ff;
 }
 
+.edit-icon:hover {
+    background: rgba(0, 122, 255, 0.12);
+    transform: scale(1.08);
+}
+
+.dark-mode .edit-icon:hover {
+    background: rgba(10, 132, 255, 0.18);
+}
+
+.edit-icon:active {
+    transform: scale(0.95);
+}
+
+/* Modal Body - Scrollable content area */
 .adminProfile__modal-body {
-    /* display: flex; */
-    flex-direction: column;
-    align-items: center;
-    padding: 15px 20px;
+    padding: 1.5rem 2rem 2rem;
+    overflow-y: auto;
+    flex: 1;
 }
 
+.adminProfile__modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.adminProfile__modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.adminProfile__modal-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+.adminProfile__modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.dark-mode .adminProfile__modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.dark-mode .adminProfile__modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Profile Details - View Mode Layout */
 .profile-details {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 2rem;
     align-items: center;
-}
-
-.adminProfile__form {
-    width: 50%;
 }
 
 .profile-image-container {
-    /* flex: 0 0 30%; */
-}
-
-.dropzone {
-    /* position: relative; */
-    /* width: 100%; */
-    /* max-width: 150px; */
-    /* height: 150px; */
-    /* border: 2px dashed #007bff; */
-    /* border-radius: 50%; */
-    /* overflow: hidden; */
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* justify-content: center; */
-    cursor: pointer;
-    transition: border 0.3s ease;
-}
-
-.dropzone:hover {
-    border: 2px dashed #0056b3;
-}
-
-.profile-label-image {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #007bff;
-}
-
-.modal-user-image {
-    width: 100%;
-    border-radius: 50%;
+    justify-content: center;
+    padding: 1rem 0;
 }
 
 .profile-info {
-    flex: 0 0 65%;
-}
-
-
-.profile-label input,
-.profile-label textarea {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
 }
 
-.profile-label input:focus,
-.profile-label textarea:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transition: box-shadow 0.3s ease;
-}
-
+/* Profile Field Cards */
 .profile-field {
-    margin-bottom: 10px;
-    padding: 15px 15px;
-    border: 1px solid #333;
-    border-radius: 10px;
-}
-
-.save-button {
-    width: 100%;
-    padding: 10px;
-    background: #007bff;
-    color: white;
+    padding: 1.125rem 1.5rem;
+    background: rgba(120, 120, 128, 0.08);
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    border-radius: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9375rem;
+    line-height: 1.5;
 }
 
-.save-button:hover {
-    background: #0056b3;
+.dark-mode .profile-field {
+    background: rgba(142, 142, 147, 0.12);
 }
 
+.profile-field:hover {
+    background: rgba(120, 120, 128, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .profile-field:hover {
+    background: rgba(142, 142, 147, 0.18);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.profile-field strong {
+    color: rgba(60, 60, 67, 0.6);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    display: block;
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.dark-mode .profile-field strong {
+    color: rgba(235, 235, 245, 0.6);
+}
+
+/* Form View - Edit Mode */
 .modal-body {
-    /* width: 100%; */
-    /* display: flex; */
+    padding: 1.5rem 2rem 2rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+.dark-mode .modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .adminProfile__formMain {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .adminProfile__image-container {
     display: flex;
     flex-direction: column;
-    width: 48%;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem 0;
 }
 
-.modal-userImage {
-    border-radius: 100%;
-    width: 50%;
-    object-fit: cover;
-}
-
-.profile-label {
-    display: block;
-    margin-bottom: 15px;
-    font-size: 0.8rem;
+.adminProfile__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
 }
 
 .profile__lable {
-    margin-top: 1rem;
+    margin-top: 0;
 }
 
+/* Form Labels */
+.profile-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: rgba(60, 60, 67, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.dark-mode .profile-label {
+    color: rgba(235, 235, 245, 0.6);
+}
+
+/* Form Inputs */
 .profile-label input,
 .profile-label textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 0.875rem 1rem;
+    border: 1px solid rgba(120, 120, 128, 0.2);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 400;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(120, 120, 128, 0.08);
+    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    box-sizing: border-box;
 }
 
+.dark-mode .profile-label input,
+.dark-mode .profile-label textarea {
+    background: rgba(142, 142, 147, 0.12);
+    border-color: rgba(142, 142, 147, 0.24);
+    color: #f5f5f7;
+}
+
+.profile-label input:focus,
+.profile-label textarea:focus {
+    outline: none;
+    border-color: #007aff;
+    background: rgba(0, 122, 255, 0.06);
+    transform: scale(1.005);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+}
+
+.dark-mode .profile-label input:focus,
+.dark-mode .profile-label textarea:focus {
+    border-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.18);
+}
+
+.profile-label input::placeholder,
+.profile-label textarea::placeholder {
+    color: rgba(60, 60, 67, 0.3);
+}
+
+.dark-mode .profile-label input::placeholder,
+.dark-mode .profile-label textarea::placeholder {
+    color: rgba(235, 235, 245, 0.3);
+}
+
+.profile-label input:disabled {
+    background: rgba(120, 120, 128, 0.08);
+    color: rgba(60, 60, 67, 0.3);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.dark-mode .profile-label input:disabled {
+    background: rgba(142, 142, 147, 0.08);
+    color: rgba(235, 235, 245, 0.3);
+}
+
+.profile-label textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+/* Save Button */
 .save-button {
     width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
+    padding: 0.9375rem 1.5rem;
+    background: linear-gradient(180deg, #007aff 0%, #0051d5 100%);
+    color: #ffffff;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
+    font-size: 1.0625rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.35);
+    letter-spacing: -0.01em;
+}
+
+.dark-mode .save-button {
+    background: linear-gradient(180deg, #0a84ff 0%, #0066cc 100%);
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.45);
 }
 
 .save-button:hover {
-    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 122, 255, 0.45);
 }
 
-.adminProfile__image-container .progress-bar {
-    width: 100%;
-    background-color: #f3f3f3;
-    border-radius: 5px;
+.dark-mode .save-button:hover {
+    box-shadow: 0 8px 20px rgba(10, 132, 255, 0.55);
+}
+
+.save-button:active {
+    transform: scale(0.98) translateY(0);
+}
+
+/* Dropzone for Image Upload */
+.dropzone {
+    width: 160px;
+    height: 160px;
+    border: 2.5px dashed rgba(0, 122, 255, 0.35);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 122, 255, 0.04);
+    position: relative;
     overflow: hidden;
-    margin-top: 10px;
 }
 
-.adminProfile__image-container .progress-bar-fill {
-    height: 8px;
-    background-color: #4caf50;
-    width: 0;
-    transition: width 0.4s ease-in-out;
+.dark-mode .dropzone {
+    border-color: rgba(10, 132, 255, 0.45);
+    background: rgba(10, 132, 255, 0.1);
 }
 
+.dropzone:hover {
+    border-color: #007aff;
+    background: rgba(0, 122, 255, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25);
+}
 
+.dark-mode .dropzone:hover {
+    border-color: #0a84ff;
+    background: rgba(10, 132, 255, 0.18);
+    box-shadow: 0 8px 20px rgba(10, 132, 255, 0.35);
+}
+
+.profile-label-image {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #007aff;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    letter-spacing: 0.01em;
+}
+
+.dark-mode .profile-label-image {
+    color: #0a84ff;
+}
+
+.modal-user-image,
+.modal-userImage {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Progress Bar */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(120, 120, 128, 0.12);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.dark-mode .progress-bar {
+    background-color: rgba(142, 142, 147, 0.18);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007aff 0%, #5ac8fa 100%);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 3px;
+}
+
+.dark-mode .progress-bar-fill {
+    background: linear-gradient(90deg, #0a84ff 0%, #64d2ff 100%);
+}
+
+/* Keyframe Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -244,12 +494,182 @@
     }
 }
 
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
+@keyframes modalBounce {
+    0% {
+        opacity: 0;
+        transform: scale(0.85) translateY(-30px);
     }
 
-    to {
-        transform: translateY(0);
+    50% {
+        transform: scale(1.02) translateY(5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Mobile Responsive Styles */
+
+/* Extra small phones (< 375px) */
+@media (max-width: 374px) {
+    .adminProfileModal-content {
+        border-radius: 20px;
+        max-height: 92vh;
+    }
+
+    .adminProfile__heading {
+        font-size: 1.5rem;
+        padding: 1.5rem 1.25rem 0;
+    }
+
+    .adminProfile__icon {
+        padding: 0.75rem 1.25rem 0;
+    }
+
+    .adminProfile__modal-body,
+    .modal-body {
+        padding: 1.25rem;
+    }
+
+    .dropzone {
+        width: 130px;
+        height: 130px;
+    }
+
+    .profile-field {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* Small tablets (640px+) */
+@media (min-width: 640px) {
+    .adminProfile__modal {
+        padding: 2rem;
+    }
+
+    .adminProfileModal-content {
+        border-radius: 24px;
+    }
+
+    .profile-details {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 2.5rem;
+    }
+
+    .profile-image-container {
+        flex: 0 0 auto;
+    }
+
+    .profile-info {
+        flex: 1;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .adminProfile__formMain {
+        flex-direction: row;
+        gap: 2.5rem;
+    }
+
+    .adminProfile__image-container {
+        flex: 0 0 38%;
+    }
+
+    .adminProfile__form {
+        flex: 1;
+    }
+
+    .dropzone {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+/* Medium screens (768px+) */
+@media (min-width: 768px) {
+    .adminProfile__heading {
+        font-size: 2.25rem;
+        padding: 2.25rem 2.5rem 0;
+    }
+
+    .adminProfile__icon {
+        padding: 1rem 2.5rem 0;
+    }
+
+    .adminProfile__modal-body,
+    .modal-body {
+        padding: 1.75rem 2.5rem 2.5rem;
+    }
+
+    .profile-field {
+        padding: 1.25rem 1.75rem;
+    }
+}
+
+/* Large screens (1024px+) */
+@media (min-width: 1024px) {
+    .adminProfileModal-content {
+        max-width: 950px;
+    }
+
+    .dropzone {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+/* Smooth scrolling behavior */
+.adminProfile__modal-body,
+.modal-body {
+    scroll-behavior: smooth;
+}
+
+/* Accessibility - Focus states */
+.adminProfile__close:focus-visible {
+    outline: 3px solid #007aff;
+    outline-offset: 3px;
+}
+
+.dark-mode .adminProfile__close:focus-visible {
+    outline-color: #0a84ff;
+}
+
+.edit-icon:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
+.dark-mode .edit-icon:focus-visible {
+    outline-color: #0a84ff;
+}
+
+.save-button:focus-visible {
+    outline: 3px solid #007aff;
+    outline-offset: 3px;
+}
+
+.dark-mode .save-button:focus-visible {
+    outline-color: #0a84ff;
+}
+
+.profile-label input:focus-visible,
+.profile-label textarea:focus-visible {
+    outline: none;
+}
+
+/* Print styles */
+@media print {
+    .adminProfile__modal {
+        background: white;
+    }
+
+    .adminProfile__close,
+    .adminProfile__icon,
+    .save-button {
+        display: none;
     }
 }

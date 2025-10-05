@@ -1,17 +1,20 @@
-import { adminHttpService, publicHttpService } from "./http/index.js"; // Fixed import path
+import { adminHttpService, publicHttpService } from "./http/index.js";
 
-// Use relative path - let services handle their base URLs
 const tagsPath = "/api/tags";
 
 function tagsUrl(id) {
   return `${tagsPath}/${id}`;
 }
 
-// Public functions - viewing tags (anyone can see available tags)
+function clearTagsCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
+
 export async function getTags() {
   try {
-    const { data } = await publicHttpService.get(tagsPath);
-    return data;
+    const response = await publicHttpService.get(tagsPath);
+    return response;
   } catch (err) {
     console.error("Failed to fetch tags:", err);
     throw err;
@@ -21,6 +24,7 @@ export async function getTags() {
 export async function getTag(tagId) {
   try {
     const { data } = await publicHttpService.get(tagsUrl(tagId));
+    // clearTagsCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch tag:", err);
@@ -62,10 +66,10 @@ export async function searchTags(query) {
   }
 }
 
-// Admin functions - managing tags
 export async function saveTag(tag) {
   try {
     const { data } = await adminHttpService.post(tagsPath, tag);
+    clearTagsCache();
     return data;
   } catch (err) {
     console.error("Failed to save tag:", err);
@@ -76,6 +80,7 @@ export async function saveTag(tag) {
 export async function updateTag(tagId, tag) {
   try {
     const { data } = await adminHttpService.put(tagsUrl(tagId), tag);
+    clearTagsCache();
     return data;
   } catch (err) {
     console.error("Failed to update tag:", err);
@@ -86,6 +91,7 @@ export async function updateTag(tagId, tag) {
 export async function deleteTag(tagId) {
   try {
     const { data } = await adminHttpService.delete(tagsUrl(tagId));
+    clearTagsCache();
     return data;
   } catch (err) {
     console.error("Failed to delete tag:", err);

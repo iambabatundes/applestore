@@ -4,7 +4,6 @@ import {
   userHttpService,
 } from "./http/index.js";
 
-// Use consistent base URL construction
 const getApiEndpoint = (path = "") => {
   const baseUrl = import.meta.env.VITE_API_URL;
   return path ? `${baseUrl}/api/users/${path}` : `${baseUrl}/api/users`;
@@ -70,7 +69,6 @@ export async function resendVerificationCode({ registrationToken, channel }) {
   }
 }
 
-// User Profile Management (aligned with UserHttpService)
 export async function getUserProfile() {
   try {
     // Use the built-in method from UserHttpService

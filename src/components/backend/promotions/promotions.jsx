@@ -23,8 +23,8 @@ export default function Promotions() {
   const fetchPromotions = async () => {
     try {
       setLoading(true);
-      const { data: promotion } = await getPromotions();
-      setPromotions(promotion);
+      const promotion = await getPromotions();
+      setPromotions(promotion || []);
     } catch (error) {
       setError(error);
       toast.error("Error fetching promotions");
@@ -58,7 +58,7 @@ export default function Promotions() {
   };
 
   const handleSelectPromotion = (promotion) => {
-    setSelectedPromotion(promotion); // Set promotion for editing
+    setSelectedPromotion(promotion);
   };
 
   const handleDelete = async (id) => {

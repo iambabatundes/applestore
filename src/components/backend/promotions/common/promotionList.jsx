@@ -10,10 +10,6 @@ export default function PromotionList({
   loading,
   error,
 }) {
-  if (promotions.length === 0) {
-    return <p>No promotions available</p>;
-  }
-
   if (loading) {
     return (
       <span className="shippingRate__loading">Loading coupon list...</span>
@@ -22,6 +18,10 @@ export default function PromotionList({
 
   if (error) {
     return <span className="shipping__error">Error loading coupon list</span>;
+  }
+
+  if (!promotions || promotions.length === 0) {
+    return <p>No promotions available</p>;
   }
 
   return (

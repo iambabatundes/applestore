@@ -18,14 +18,14 @@ export const useAdminNavStore = create(
         set({
           currentUser: user,
           profileDetails: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            username: user.username,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            dateOfBirth: user.dateOfBirth,
-            address: user.address,
-            profileImage: user.profileImage,
+            firstName: user?.firstName || "",
+            lastName: user?.lastName || "",
+            username: user?.username || "",
+            email: user?.email || "",
+            phoneNumber: user?.phoneNumber || "",
+            dateOfBirth: user?.dateOfBirth || "",
+            address: user?.address || {},
+            profileImage: user?.profileImage || null,
           },
         });
       },
@@ -48,10 +48,18 @@ export const useAdminNavStore = create(
 
       fetchNotifications: async () => {
         try {
-          const { data } = await getNotifications();
-          set({ notifications: data });
+          const response = await getNotifications();
+          // Ensure we always set an array
+          const notificationsData = response?.data || response || [];
+          set({
+            notifications: Array.isArray(notificationsData)
+              ? notificationsData
+              : [],
+          });
         } catch (error) {
           console.error("Failed to fetch notifications", error);
+          // Set empty array on error to prevent undefined
+          set({ notifications: [] });
         }
       },
 
@@ -90,6 +98,11 @@ export const useAdminNavStore = create(
       submitProfileUpdate: async () => {
         try {
           const { profileDetails, currentUser } = get();
+
+          if (!currentUser?._id) {
+            throw new Error("No current user found");
+          }
+
           const updatedUser = { ...profileDetails };
 
           if (profileDetails.profileImage && profileDetails.profileImage.file) {
@@ -98,14 +111,18 @@ export const useAdminNavStore = create(
             delete updatedUser.profileImage;
           }
 
-          const { data } = await updateUser(updatedUser, currentUser._id);
+          const response = await updateUser(updatedUser, currentUser._id);
+          const userData = response?.data || response;
+
           set({
-            currentUser: data,
-            profileDetails: data,
+            currentUser: userData,
+            profileDetails: userData,
             modalOpen: false,
+            isEditing: false,
           });
         } catch (error) {
           console.error("Failed to update user profile", error);
+          // Don't close modal on error so user can retry
         }
       },
     }),
@@ -114,6 +131,7 @@ export const useAdminNavStore = create(
       partialize: (state) => ({
         currentUser: state.currentUser,
         profileDetails: state.profileDetails,
+        notifications: state.notifications, // Persist notifications too
       }),
     }
   )

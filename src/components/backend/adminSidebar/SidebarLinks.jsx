@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "../../backend/styles/adminSidebar.css";
 
 export default function SidebarLinks({
   sidebarLinks,
@@ -11,45 +12,55 @@ export default function SidebarLinks({
 }) {
   return (
     <ul>
-      {sidebarLinks.map((link) => (
-        <li key={link.to} className="sidebar-item">
-          <Link
-            to={link.to}
-            onClick={() => {
-              setSelectedLink(link.to);
-              if (!link.dropdown) {
-                setIsMobileMenuOpen(false);
-              }
-            }}
-            className={selectedLink === link.to ? "active" : ""}
-            title={isCollapsed ? link.label : ""}
-          >
-            <i className={`fa ${link.icon}`} />
-            {!isCollapsed && link.label}
-          </Link>
+      {sidebarLinks.map((link) => {
+        // Extract the icon component
+        const IconComponent = link.icon;
 
-          {!isCollapsed && link.dropdown && selectedLink === link.to && (
-            <ul className="dropdown open">
-              {link.dropdown.map((submenu) => (
-                <li key={submenu.to}>
-                  <Link
-                    to={submenu.to}
-                    onClick={() => {
-                      setSelectedDropdownLink(submenu.to);
-                      setIsMobileMenuOpen(false); // Close sidebar on sublink click
-                    }}
-                    className={
-                      selectedDropdownLink === submenu.to ? "active" : ""
-                    }
-                  >
-                    {submenu.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
+        return (
+          <li key={link.to} className="sidebar-item">
+            <Link
+              to={link.to}
+              onClick={() => {
+                setSelectedLink(link.to);
+                if (!link.dropdown) {
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+              className={selectedLink === link.to ? "active" : ""}
+              title={isCollapsed ? link.label : ""}
+            >
+              {/* Render the icon as a React component */}
+              {IconComponent && (
+                <IconComponent size={20} className="sidebar-icon" />
+              )}
+              {!isCollapsed && (
+                <span className="sidebar-label">{link.label}</span>
+              )}
+            </Link>
+
+            {!isCollapsed && link.dropdown && selectedLink === link.to && (
+              <ul className="dropdown open">
+                {link.dropdown.map((submenu) => (
+                  <li key={submenu.to}>
+                    <Link
+                      to={submenu.to}
+                      onClick={() => {
+                        setSelectedDropdownLink(submenu.to);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={
+                        selectedDropdownLink === submenu.to ? "active" : ""
+                      }
+                    >
+                      {submenu.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

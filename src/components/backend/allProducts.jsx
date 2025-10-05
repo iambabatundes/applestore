@@ -17,13 +17,27 @@ export default function AllProduct() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(8);
   const [sortColumn, setSortColumn] = useState({ path: "", order: "asc" });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     async function getProduct() {
-      const { data: productData } = await getProducts();
-      setProductData(productData);
+      try {
+        setLoading(true);
+        const { data: productData } = await getProducts();
+        // Ensure productData is always an array
+        setProductData(Array.isArray(productData) ? productData : []);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Failed to load products");
+        setProductData([]);
+        toast.error("Failed to load products");
+      } finally {
+        setLoading(false);
+      }
     }
 
     getProduct();
@@ -50,22 +64,25 @@ export default function AllProduct() {
 
     try {
       await deleteProduct(product._id);
-      toast.success("Post deleted successfully");
+      toast.success("Product deleted successfully");
     } catch (error) {
       if (error.response && error.response.status === 404)
         toast.error("This product has already been deleted");
-      setProductData(updatedProducts);
+      else toast.error("Failed to delete product");
+      setProductData(originalProducts);
     }
   }
+
   function handlePreview() {}
 
   const handleEdit = (product) => {
     navigate(`/admin/add-product/${product._id}`);
   };
 
-  let filtered = productData;
+  // Ensure productData is always an array before filtering
+  let filtered = Array.isArray(productData) ? productData : [];
   if (searchQuery)
-    filtered = productData.filter((p) =>
+    filtered = filtered.filter((p) =>
       p.name.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
@@ -83,6 +100,17 @@ export default function AllProduct() {
     ? paginate(sorted, currentPage, pageSize)
     : sorted;
 
+  if (loading) {
+    return (
+      <section className="fade-in-up">
+        <ProductHeader />
+        <section className="padding" style={{ marginTop: 80 }}>
+          <p>Loading products...</p>
+        </section>
+      </section>
+    );
+  }
+
   return (
     <>
       <section className="fade-in-up">
@@ -94,21 +122,33 @@ export default function AllProduct() {
             Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
           </span>
 
-          <ProductTable
-            productData={allProductData}
-            onSort={handleSort}
-            sortColumn={sortColumn}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            onPreview={handlePreview}
-          />
+          {totalItems === 0 && !error ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p>No products available</p>
+            </div>
+          ) : error ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "red" }}>
+              <p>{error}</p>
+            </div>
+          ) : (
+            <>
+              <ProductTable
+                productData={allProductData}
+                onSort={handleSort}
+                sortColumn={sortColumn}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+                onPreview={handlePreview}
+              />
 
-          <Pagination
-            itemsCount={filtered.length}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
+              <Pagination
+                itemsCount={filtered.length}
+                pageSize={pageSize}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          )}
         </section>
       </section>
     </>
