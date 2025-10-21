@@ -2,21 +2,28 @@ import React, { useState, useRef, useEffect } from "react";
 import config from "../../config.json";
 import Icon from "../icon";
 import defaultUserImage from "./images/user.png";
+import { FaExclamationCircle } from "react-icons/fa";
 
 export default function ProfileImage({
   profileImage,
   setProfileImage,
   handleProfileImageChange,
+  disabled = false,
+  error = null,
 }) {
   const [progress, setProgress] = useState(0);
   const [dragging, setDragging] = useState(false);
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
   const fileInputRef = useRef(null);
+
+  // Allowed types matching backend
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragging(true);
+    if (!disabled) setDragging(true);
   };
 
   const handleDragLeave = (e) => {
@@ -30,6 +37,8 @@ export default function ProfileImage({
     e.stopPropagation();
     setDragging(false);
 
+    if (disabled) return;
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       validateAndAddFile(e.dataTransfer.files[0]);
       e.dataTransfer.clearData();
@@ -37,18 +46,21 @@ export default function ProfileImage({
   };
 
   const validateAndAddFile = (file) => {
-    if (!file.type.startsWith("image/")) {
-      setError("Only image files are allowed.");
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      const errorMsg = "Only JPEG, PNG, WebP, and GIF images are allowed";
+      setLocalError(errorMsg);
       return;
     }
 
-    const maxFileSize = 50 * 1024 * 1024; // 50 MB
-    if (file.size > maxFileSize) {
-      setError("File size should not exceed 50 MB.");
+    // Validate file size
+    if (file.size > MAX_SIZE) {
+      const errorMsg = "Image size must be less than 5MB";
+      setLocalError(errorMsg);
       return;
     }
 
-    setError("");
+    setLocalError("");
     const fileUrl = URL.createObjectURL(file);
     setProfileImage({ file, preview: fileUrl });
     handleProfileImageChange(file, fileUrl);
@@ -79,14 +91,15 @@ export default function ProfileImage({
     if (window.confirm("Are you sure you want to remove this image?")) {
       setProfileImage(null);
       handleProfileImageChange(null, null);
-      setProgress(0); // Reset progress when image is removed
+      setProgress(0);
+      setLocalError("");
     }
   };
 
   const handleImageClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (fileInputRef.current) {
+    if (!disabled && fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
@@ -100,14 +113,19 @@ export default function ProfileImage({
     };
   }, [profileImage]);
 
+  // Get image URL
   let imageUrl = "";
   if (profileImage) {
     if (profileImage.preview) {
       imageUrl = profileImage.preview;
+    } else if (profileImage.url) {
+      imageUrl = profileImage.url;
     } else if (profileImage.filename) {
       imageUrl = `${config.mediaUrl}/uploads/${profileImage.filename}`;
     }
   }
+
+  const displayError = error || localError;
 
   return (
     <section>
@@ -115,22 +133,28 @@ export default function ProfileImage({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`drop-zone ${dragging ? "dragging" : ""}`}
+        className={`drop-zone ${dragging ? "dragging" : ""} ${
+          disabled ? "disabled" : ""
+        }`}
       >
         {imageUrl ? (
           <div className="selected-image-container" onClick={handleImageClick}>
-            <img src={imageUrl} alt="Uploaded" className="selected-image" />
-            <Icon
-              onClick={handleRemoveImage}
-              cancel
-              width={12}
-              height={12}
-              fill={"#fff"}
-              className="productImage__cancel-icon"
-            />
-            <div className="productImage-instruction">
-              Click on the image to change or update
-            </div>
+            <img src={imageUrl} alt="Profile" className="selected-image" />
+            {!disabled && (
+              <Icon
+                onClick={handleRemoveImage}
+                cancel
+                width={12}
+                height={12}
+                fill={"#fff"}
+                className="productImage__cancel-icon"
+              />
+            )}
+            {!disabled && (
+              <div className="productImage-instruction">
+                Click on the image to change or update
+              </div>
+            )}
           </div>
         ) : (
           <div className="selected-image-container" onClick={handleImageClick}>
@@ -139,19 +163,22 @@ export default function ProfileImage({
               alt="Default"
               className="selected-image"
             />
-            <div className="productImage-instruction">
-              Click on the image to change or update
-            </div>
+            {!disabled && (
+              <div className="productImage-instruction">
+                Click on the image to change or update
+              </div>
+            )}
           </div>
         )}
         <input
-          accept="image/*"
+          accept={ALLOWED_TYPES.join(",")}
           type="file"
-          id="file-input-product-image"
+          id="file-input-profile-image"
           onChange={handleFileChange}
           className="file-input-product"
           ref={fileInputRef}
           style={{ display: "none" }}
+          disabled={disabled}
         />
 
         {progress > 0 && progress < 100 && (
@@ -163,7 +190,14 @@ export default function ProfileImage({
           </div>
         )}
       </section>
-      {error && <div className="productImage__error-message">{error}</div>}
+
+      {displayError && (
+        <div className="productImage__error-message">
+          <FaExclamationCircle /> {displayError}
+        </div>
+      )}
+
+      <div className="image-upload-hint">Max 5MB • JPEG, PNG, WebP, GIF</div>
     </section>
   );
 }

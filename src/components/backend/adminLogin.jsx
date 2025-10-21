@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useLocation, Navigate, useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import "./styles/adminLogin.css";
@@ -484,6 +484,11 @@ export default function AdminLogin() {
                   <span className="adminLogin__checkmark"></span>
                   Remember me for 30 days
                 </label>
+              </div>
+
+              {/* Forgot Password Link */}
+              <div className="adminLogin__forgot-password">
+                <Link to="/admin/password-reset">Forgot your password?</Link>
               </div>
             </>
           ) : (

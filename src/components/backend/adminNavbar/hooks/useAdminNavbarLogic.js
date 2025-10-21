@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import defaultUserImage from "../../images/user.png";
 import { useAdminNavStore } from "../../store/adminNavbarStore";
+import config from "../../../../config.json";
 
 export function useAdminNavbarLogic(user) {
   const {
@@ -11,7 +11,11 @@ export function useAdminNavbarLogic(user) {
     notifications,
     isEditing,
     profileImage,
+    isSubmitting,
+    errors,
+    successMessage,
     initializeUser,
+    fetchProfile, // NEW: Use this to fetch from backend
     toggleDropdown,
     toggleModal,
     fetchNotifications,
@@ -19,22 +23,46 @@ export function useAdminNavbarLogic(user) {
     handleInputChange,
     handleProfileImageChange,
     submitProfileUpdate,
-    isCollapsed,
-    isHidden,
   } = useAdminNavStore();
 
+  // Initialize or fetch profile on mount
   useEffect(() => {
-    if (user) initializeUser(user);
-  }, [user, initializeUser]);
+    if (user) {
+      // If user prop exists, initialize with it
+      initializeUser(user);
+    } else {
+      // If no user prop, fetch from backend
+      fetchProfile();
+    }
+  }, [user, initializeUser, fetchProfile]);
 
+  // Fetch notifications on mount
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
 
   const firstName = currentUser?.firstName || currentUser?.email || "Admin";
-  const userImage = currentUser?.profileImage?.filename
-    ? `http://localhost:4000/uploads/${currentUser.profileImage.filename}`
-    : defaultUserImage;
+
+  const getUserImageUrl = () => {
+    // Check for preview (new upload)
+    if (profileImage?.preview) {
+      return profileImage.preview;
+    }
+
+    // Check for URL from backend
+    if (currentUser?.adminProfileImage?.url) {
+      return currentUser.adminProfileImage.url;
+    }
+
+    // Check for filename
+    if (currentUser?.adminProfileImage?.filename) {
+      return `${config.mediaUrl}/uploads/${currentUser.adminProfileImage.filename}`;
+    }
+
+    return null;
+  };
+
+  const userImage = getUserImageUrl();
 
   return {
     currentUser,
@@ -44,6 +72,9 @@ export function useAdminNavbarLogic(user) {
     notifications,
     isEditing,
     profileImage,
+    isSubmitting,
+    errors,
+    successMessage,
     firstName,
     userImage,
     toggleDropdown,
@@ -52,7 +83,5 @@ export function useAdminNavbarLogic(user) {
     handleInputChange,
     handleProfileImageChange,
     submitProfileUpdate,
-    isCollapsed,
-    isHidden,
   };
 }

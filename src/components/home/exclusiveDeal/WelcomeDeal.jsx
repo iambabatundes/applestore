@@ -17,10 +17,16 @@ export default function WelcomeDeal({
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data } = await getProductsByPromotion("WelcomeDeal");
-        setProducts(data);
+        const response = await getProductsByPromotion("WelcomeDeal");
+        console.log("Promotion response:", response); // Debug log
+
+        // Handle different response structures
+        const productsArray =
+          response.data || response.products || response || [];
+        setProducts(Array.isArray(productsArray) ? productsArray : []);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setProducts([]);
       }
     }
     fetchProducts();

@@ -45,12 +45,15 @@ export default function AddProduct({ darkMode }) {
     handleProductImagesChange,
     attributes,
     handleAttributesChange,
-    handleColorChange,
+
     colors,
+    handleColorChange,
     handleAddColor,
     handleRemoveColor,
     toggleDefaultColor,
     handleColorImageUpload,
+    getColorImageUrl,
+
     handleAddSize,
     handleRemoveSize,
     handleSizeChange,
@@ -119,6 +122,7 @@ export default function AddProduct({ darkMode }) {
               handleRemoveColor={handleRemoveColor}
               toggleDefaultColor={toggleDefaultColor}
               handleColorImageUpload={handleColorImageUpload}
+              getColorImageUrl={getColorImageUrl}
               capacity={capacity}
               handleAddCap={handleAddCapacity}
               handleRemoveCap={handleRemoveCapacity}

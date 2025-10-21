@@ -13,6 +13,29 @@ function truncateContent(content, wordLimit) {
   return content;
 }
 
+// Utility function to get image URL from various possible sources
+function getImageUrl(imageRef) {
+  if (!imageRef) return null;
+
+  // If it's a populated Upload object with url
+  if (typeof imageRef === "object") {
+    if (imageRef.url) return imageRef.url;
+    if (imageRef.cloudUrl) return imageRef.cloudUrl;
+    if (imageRef.publicUrl) return imageRef.publicUrl;
+    if (imageRef.filename) {
+      return `${config.mediaUrl}/uploads/${imageRef.filename}`;
+    }
+  }
+
+  // If it's just an ID string (not populated)
+  if (typeof imageRef === "string") {
+    // Can't display unpopulated reference
+    return null;
+  }
+
+  return null;
+}
+
 export default function ProductTable({
   productData,
   onDelete,
@@ -37,32 +60,77 @@ export default function ProductTable({
       content: (product) => (
         <div
           dangerouslySetInnerHTML={{
-            __html: truncateContent(product.aboutProduct, 15),
+            __html: truncateContent(product.aboutProduct || "", 15),
           }}
         ></div>
       ),
     },
-
-    // { label: "Post By", path: "userId" },
     { label: "In Stock", path: "numberInStock" },
     { label: "Price", path: "price" },
     { label: "Sale Price", path: "salePrice" },
     { label: "%", path: "discountPercentage" },
-    { label: "Category", path: "category" },
-    { label: "Tags", path: "tags" },
-    { label: "Date", path: "createdAt" },
+    {
+      label: "Category",
+      path: "category",
+      content: (product) => {
+        if (!product.category) return "-";
+        if (Array.isArray(product.category)) {
+          return product.category
+            .map((cat) => (typeof cat === "object" ? cat.name : cat))
+            .join(", ");
+        }
+        return typeof product.category === "object"
+          ? product.category.name
+          : product.category;
+      },
+    },
+    {
+      label: "Tags",
+      path: "tags",
+      content: (product) => {
+        if (!product.tags || !Array.isArray(product.tags)) return "-";
+        return product.tags
+          .map((tag) => (typeof tag === "object" ? tag.name : tag))
+          .join(", ");
+      },
+    },
+    {
+      label: "Date",
+      path: "createdAt",
+      content: (product) => {
+        if (!product.createdAt) return "-";
+        return new Date(product.createdAt).toLocaleDateString();
+      },
+    },
     {
       label: "Thumbnail",
       path: "featureImage",
-      content: (product) => (
-        <img
-          className="productTable__img"
-          src={config.mediaUrl + `/uploads/${product.featureImage.filename}`} // Corrected image path
-          alt={product.name}
-        />
-      ),
-    },
+      content: (product) => {
+        const imageUrl = getImageUrl(product.featureImage);
 
+        if (!imageUrl) {
+          return (
+            <div className="productTable__img-placeholder">
+              <i className="fa fa-image" aria-hidden="true"></i>
+            </div>
+          );
+        }
+
+        return (
+          <img
+            className="productTable__img"
+            src={imageUrl}
+            alt={product.name}
+            onError={(e) => {
+              console.error("Image failed to load:", imageUrl);
+              e.target.style.display = "none";
+              e.target.parentElement.innerHTML =
+                '<div class="productTable__img-placeholder"><i class="fa fa-image"></i></div>';
+            }}
+          />
+        );
+      },
+    },
     {
       content: (product) => (
         <section className="product__icon">
@@ -70,23 +138,25 @@ export default function ProductTable({
             className="fa fa-edit"
             aria-hidden="true"
             onClick={() => onEdit(product)}
+            title="Edit"
           ></i>
           <i
             className="fa fa-eye"
             aria-hidden="true"
             onClick={() => onPreview(product)}
+            title="Preview"
           ></i>
           <i
             className="fa fa-trash"
             aria-hidden="true"
             onClick={() => onDelete(product)}
+            title="Delete"
           ></i>
         </section>
       ),
     },
-
-    // Add more headings as needed
   ];
+
   return (
     <Table
       className="ProductTable"

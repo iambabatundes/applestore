@@ -33,7 +33,7 @@ const useProductForm = () => {
       saleStartDate: null,
       saleEndDate: null,
       media: [],
-      featureImage: {},
+      featureImage: null,
       category: [],
       tags: [],
       promotion: [],
@@ -104,13 +104,76 @@ const useProductForm = () => {
     handleColorImageUpload,
     handleRemoveColor,
     toggleDefaultColor,
+    getColorImageUrl,
   } = useColors({ setErrors });
+
+  const getImageUrl = useCallback((uploadRef) => {
+    if (!uploadRef) return null;
+
+    // If it's already a populated Upload object with url
+    if (uploadRef.url) return uploadRef.url;
+
+    // If it has cloudUrl (Cloudinary)
+    if (uploadRef.cloudUrl) return uploadRef.cloudUrl;
+
+    // If it has publicUrl (local storage)
+    if (uploadRef.publicUrl) return uploadRef.publicUrl;
+
+    // Fallback to legacy filename-based URL
+    if (uploadRef.filename) {
+      return `${config.mediaUrl}/uploads/${uploadRef.filename}`;
+    }
+
+    return null;
+  }, []);
 
   useEffect(() => {
     const fetchProductDetails = async (productId) => {
       try {
         const { data: product } = await getProduct(productId);
         console.log("Fetched Product:", product);
+
+        // Populate feature image
+        const featureImageUrl = getImageUrl(product.featureImage);
+        const featureImageData = featureImageUrl
+          ? {
+              preview: featureImageUrl,
+              _id: product.featureImage?._id,
+              filename: product.featureImage?.filename,
+              url: featureImageUrl,
+            }
+          : null;
+
+        const mediaData = Array.isArray(product.media)
+          ? product.media.map((mediaItem) => ({
+              preview: getImageUrl(mediaItem),
+              _id: mediaItem?._id, // Keep the Upload document ID
+              filename: mediaItem?.filename,
+              mimeType: mediaItem?.mimeType,
+              type: mediaItem?.mimeType,
+              url: getImageUrl(mediaItem),
+              isNew: false, // Mark as existing media
+              cloudUrl: mediaItem?.cloudUrl,
+              publicUrl: mediaItem?.publicUrl,
+            }))
+          : [];
+
+        // Populate colors with image URLs
+        const colorsData = Array.isArray(product.colors)
+          ? product.colors.map((color) => ({
+              ...color,
+              colorImages: color.colorImageRef
+                ? {
+                    preview: getImageUrl(color.colorImageRef),
+                    _id: color.colorImageRef?._id,
+                    url: getImageUrl(color.colorImageRef),
+                  }
+                : null,
+              // Keep the ref for backend
+              colorImageRef: color.colorImageRef?._id || color.colorImageRef,
+            }))
+          : [];
+
         setProductDetails({
           ...product,
           salePrice: product.salePrice ? parseFloat(product.salePrice) : null,
@@ -120,15 +183,21 @@ const useProductForm = () => {
           saleEndDate: product.saleEndDate
             ? formatDate(product.saleEndDate)
             : "",
-          media: product.media || [],
-          featureImage: product.featureImage,
-          // salePrice: product.salePrice || null,
+          featureImage: featureImageData,
+          media: mediaData,
+          colors: colorsData,
         });
-        setSelectedTags(product.tags.map((tag) => tag.name));
+
+        setSelectedTags(product.tags?.map((tag) => tag.name) || []);
         setSelectedCategories(product.category || []);
-        setSelectedPromotions(product.promotion);
-        setFeatureImage(product.featureImage);
-        setMedia(product.media || []);
+        setSelectedPromotions(product.promotion || []);
+        setFeatureImage(featureImageData);
+        setMedia(mediaData);
+        setColor(colorsData);
+        setSizes(product.sizes || []);
+        setCapacity(product.capacity || []);
+        setMaterials(product.materials || []);
+
         setAttributes(
           product.attributes && Array.isArray(product.attributes)
             ? product.attributes.map((attr) => ({
@@ -137,22 +206,6 @@ const useProductForm = () => {
               }))
             : [{ key: "", value: "" }]
         );
-
-        setColor(
-          product.colors.map((color) => ({
-            ...color,
-            colorImages:
-              typeof color.colorImages === "string"
-                ? color.colorImages
-                : color.colorImages?.filename
-                ? `${config.mediaUrl}/uploads/${color.colorImages.filename}`
-                : color.colorImages || null,
-          }))
-        );
-
-        setSizes(product.sizes || []);
-        setCapacity(product.capacity || []);
-        setMaterials(product.materials || []);
 
         setEditorContent({
           aboutProduct: product.aboutProduct || "",
@@ -163,6 +216,9 @@ const useProductForm = () => {
       } catch (ex) {
         if (ex.response && ex.response.status === 404) {
           navigate("/not-found");
+        } else {
+          toast.error("Failed to load product details");
+          console.error("Error fetching product:", ex);
         }
       }
     };
@@ -185,13 +241,22 @@ const useProductForm = () => {
         productInformation: "",
         description: "",
       });
-      setAttributes([]);
+      setAttributes([{ key: "", value: "" }]);
       setColor([]);
       setSizes([]);
       setCapacity([]);
       setMaterials([]);
     }
-  }, [params.id, navigate]);
+  }, [
+    params.id,
+    navigate,
+    initialProductDetails,
+    getImageUrl,
+    setColor,
+    setSizes,
+    setCapacity,
+    setMaterials,
+  ]);
 
   function validate() {
     const productDetailsWithEditorContent = {
@@ -212,7 +277,8 @@ const useProductForm = () => {
     const capacityErrors = validateCapacity(capacity);
     const materialErrors = validateMaterials(materials);
 
-    if (!error) return null;
+    if (!error && !sizeErrors && !capacityErrors && !materialErrors)
+      return null;
 
     const validationErrors = {};
     if (error) {
@@ -220,18 +286,11 @@ const useProductForm = () => {
         validationErrors[item.path[0]] = item.message;
     }
 
-    validationErrors.sizes = sizeErrors;
-    validationErrors.capacity = capacityErrors;
-    validationErrors.materials = materialErrors;
-    // validationErrors.colors = colorErrors;
+    if (sizeErrors) validationErrors.sizes = sizeErrors;
+    if (capacityErrors) validationErrors.capacity = capacityErrors;
+    if (materialErrors) validationErrors.materials = materialErrors;
 
     return validationErrors;
-
-    // const validationErrors = {};
-    // for (let item of error.details)
-    //   validationErrors[item.path[0]] = item.message;
-
-    // return validationErrors;
   }
 
   const handleSubmit = async (e) => {
@@ -252,58 +311,64 @@ const useProductForm = () => {
     if (validationErrors) {
       console.log("Validation errors:", validationErrors);
       setErrors(validationErrors);
-
+      toast.error("Please fix validation errors before submitting");
       return;
     }
 
     setIsSubmitting(true);
 
-    const categoryNames = selectedCategories.map((category) => category.name);
-    const promotionNames = selectedPromotions.map(
-      (promo) => promo.name || promo
-    );
-
-    const user = getCurrentUser();
-    const userId = user
-      ? {
-          _id: user._id,
-          username: user.username,
-          profileImage: user.profileImage,
-        }
-      : null;
-
-    const requestBody = {
-      ...sanitizedProductDetails,
-      ...editorContent,
-      attributes: attributes.map((attr) => ({
-        key: attr.key,
-        value: attr.value,
-      })),
-      colors,
-      sizes,
-      capacity,
-      materials,
-      category: categoryNames,
-      tags: selectedTags,
-      promotion: promotionNames,
-      userId,
-    };
-
-    console.log("Request body:", requestBody);
-
     try {
+      const categoryNames = selectedCategories.map((category) => category.name);
+      const promotionNames = selectedPromotions.map(
+        (promo) => promo.name || promo
+      );
+
+      const user = getCurrentUser();
+      const userId = user
+        ? {
+            _id: user._id,
+            username: user.username,
+            profileImage: user.profileImage,
+          }
+        : null;
+
+      const requestBody = {
+        ...sanitizedProductDetails,
+        ...editorContent,
+        attributes: attributes
+          .filter((attr) => attr.key && attr.value)
+          .map((attr) => ({
+            key: attr.key,
+            value: attr.value,
+          })),
+        colors,
+        sizes,
+        capacity,
+        materials,
+        category: categoryNames,
+        tags: selectedTags,
+        promotion: promotionNames,
+        userId,
+      };
+
+      console.log("Request body:", requestBody);
+
       if (editingMode) {
         await updateProduct(productDetails._id, requestBody, userId);
         toast.success("Product updated successfully");
       } else {
         await saveProduct(requestBody);
-        toast.success("Product added successfully");
+        toast.success("Product created successfully");
       }
-      console.log("Response:", requestBody);
+
       navigate("/admin/all-products");
     } catch (error) {
-      toast.error("An error occurred while saving the product");
-      console.log("An error occurred while saving the product", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while saving the product";
+      toast.error(errorMessage);
+      console.error("Error saving product:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -323,7 +388,6 @@ const useProductForm = () => {
     if (errorMessage) newErrors[input.name] = errorMessage;
     else delete newErrors[input.name];
 
-    // Ensure `salePrice` validation against `price`
     if (input.name === "price" || input.name === "salePrice") {
       const salePrice =
         input.name === "salePrice" ? input.value : productDetails.salePrice;
@@ -336,7 +400,6 @@ const useProductForm = () => {
       }
     }
 
-    // Check for missing dates if salePrice is provided
     if (productDetails.salePrice) {
       if (!productDetails.saleStartDate) {
         newErrors.saleStartDate =
@@ -348,7 +411,6 @@ const useProductForm = () => {
       }
     }
 
-    // Revalidate saleEndDate if saleStartDate changes
     if (input.name === "saleStartDate" || input.name === "saleEndDate") {
       const saleStartDate =
         input.name === "saleStartDate"
@@ -422,7 +484,6 @@ const useProductForm = () => {
         else delete newErrors.featureImage;
 
         setErrors(newErrors);
-
         setFeatureImage(newFeatureImage);
         setProductDetails((prevState) => ({
           ...prevState,
@@ -442,9 +503,17 @@ const useProductForm = () => {
   const handleProductImagesChange = useCallback((e) => {
     const files = Array.from(e.target.files);
 
+    const newMediaItems = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      isNew: true,
+    }));
+
+    // setMedia((prevMedia) => [...prevMedia, ...newMediaItems]);
+
     setProductDetails((prevState) => ({
       ...prevState,
-      media: [...(prevState.media || []), ...files],
+      media: [...(prevState.media || []), ...newMediaItems],
     }));
   }, []);
 
@@ -454,12 +523,15 @@ const useProductForm = () => {
     setEditorContent,
     attributes,
     handleAttributesChange,
+
     colors,
     handleColorChange,
     handleRemoveColor,
     toggleDefaultColor,
     handleAddColor,
     handleColorImageUpload,
+    getColorImageUrl,
+
     errors,
     setErrors,
     selectedTags,
@@ -479,12 +551,14 @@ const useProductForm = () => {
     handleEditorChange,
     handleImageChange,
     handleProductImagesChange,
+
     handleAddSize,
     handleRemoveSize,
     handleSizeChange,
     toggleDefaultSize,
     sizes,
     setSizes,
+
     handleAddCapacity,
     handleCapacityChange,
     handleRemoveCapacity,

@@ -5,33 +5,54 @@ import SuperDeal from "./superDeal";
 
 const INITIAL_GROUP_COUNT = 1;
 
-const groupProducts = (products, chunkSize) => {
-  const groups = [];
-  for (let i = 0; i < products.length; i += chunkSize) {
-    groups.push(products.slice(i, i + chunkSize));
-  }
-  return groups;
-};
-
 export default function BuyFrom10k({ conversionRate, selectedCurrency }) {
   const [products, setProducts] = useState([]);
   const [displayedGroups, setDisplayedGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const groupProducts = (products, chunkSize) => {
+    const groups = [];
+    for (let i = 0; i < products.length; i += chunkSize) {
+      groups.push(products.slice(i, i + chunkSize));
+    }
+    return groups;
+  };
+
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data } = await getProductsByPromotion("Shipping");
-        // setProducts(data);
+        const response = await getProductsByPromotion("Shipping");
+        console.log("Shipping products response:", response);
 
-        const mergedProducts = [...data];
-        const groupedProducts = groupProducts(mergedProducts, 3);
+        const productsArray =
+          response.data || response.products || response || [];
 
+        // Ensure it's an array
+        if (!Array.isArray(productsArray)) {
+          console.error("Products is not an array:", productsArray);
+          setProducts([]);
+          setDisplayedGroups([]);
+          setError("Invalid data format");
+          return;
+        }
+
+        // Check if products exist
+        if (productsArray.length === 0) {
+          setProducts([]);
+          setDisplayedGroups([]);
+          return;
+        }
+
+        const groupedProducts = groupProducts(productsArray, 3);
         setProducts(groupedProducts);
         setDisplayedGroups(groupedProducts.slice(0, INITIAL_GROUP_COUNT));
+        setError(null);
       } catch (err) {
+        console.error("Error fetching shipping products:", err);
         setError("Failed to load products");
+        setProducts([]);
+        setDisplayedGroups([]);
       } finally {
         setLoading(false);
       }
@@ -42,6 +63,9 @@ export default function BuyFrom10k({ conversionRate, selectedCurrency }) {
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;
+  if (displayedGroups.length === 0) {
+    return <p>No products available for this promotion.</p>;
+  }
 
   return (
     <div className="buyFrom10k">

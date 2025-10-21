@@ -34,8 +34,8 @@ export default function CategoryOne({
   useEffect(() => {
     async function fetctProducts() {
       try {
-        const { data } = await getProductsByCategorys("Shoes");
-        setProducts(data);
+        const response = await getProductsByCategorys("Shoes");
+        setProducts(response);
       } catch (error) {
         console.error("Error fetching category products:", error);
       }

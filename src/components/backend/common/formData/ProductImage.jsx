@@ -40,19 +40,32 @@ export default function ProductImage({
 
   const validateAndAddFile = (file) => {
     if (!file.type.startsWith("image/")) {
-      setErrors("Only image files are allowed.");
+      setErrors((prev) => ({
+        ...prev,
+        featureImage: "Only image files are allowed.",
+      }));
       return;
     }
 
     const maxFileSize = 20 * 1024 * 1024; // 20 MB
     if (file.size > maxFileSize) {
-      setErrors("File size should not exceed 20 MB.");
+      setErrors((prev) => ({
+        ...prev,
+        featureImage: "File size should not exceed 20 MB.",
+      }));
       return;
     }
 
-    setErrors("");
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.featureImage;
+      return newErrors;
+    });
+
     const fileUrl = URL.createObjectURL(file);
-    setFeatureImage({ file, preview: fileUrl });
+    const newImage = { file, preview: fileUrl };
+
+    setFeatureImage(newImage);
     handleImageChange({ target: { files: [file] } });
     simulateUploadProgress();
   };
@@ -74,11 +87,24 @@ export default function ProductImage({
     if (e.target.files && e.target.files.length > 0) {
       validateAndAddFile(e.target.files[0]);
     }
-    fileInputRef.current.value = null;
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (window.confirm("Are you sure you want to remove this image?")) {
+      // Revoke object URL if it exists
+      if (
+        featureImage?.preview &&
+        !featureImage?.preview.includes("/uploads/")
+      ) {
+        URL.revokeObjectURL(featureImage.preview);
+      }
+
       setFeatureImage(null);
       handleImageChange({ target: { files: [] } });
       setProgress(0);
@@ -95,21 +121,46 @@ export default function ProductImage({
 
   useEffect(() => {
     return () => {
-      // Revoke object URLs to avoid memory leaks
-      if (featureImage && featureImage.preview) {
+      // Cleanup: Revoke object URLs to avoid memory leaks
+      if (
+        featureImage?.preview &&
+        !featureImage?.preview.includes("/uploads/")
+      ) {
         URL.revokeObjectURL(featureImage.preview);
       }
     };
   }, [featureImage]);
 
-  let imageUrl = "";
-  if (featureImage) {
-    if (featureImage.preview && featureImage) {
-      imageUrl = featureImage.preview;
-    } else if (featureImage.filename) {
-      imageUrl = `${config.mediaUrl}/uploads/${featureImage.filename}`;
+  /**
+   * Get the proper image URL from various possible sources
+   */
+  const getImageUrl = () => {
+    if (!featureImage) return "";
+
+    // New file upload (has File object)
+    if (featureImage.file && featureImage.preview) {
+      return featureImage.preview;
     }
-  }
+
+    // Existing image from backend (Upload model)
+    if (featureImage.url) return featureImage.url;
+    if (featureImage.cloudUrl) return featureImage.cloudUrl;
+    if (featureImage.publicUrl) return featureImage.publicUrl;
+
+    // Legacy filename-based URL
+    if (featureImage.filename) {
+      return `${config.mediaUrl}/uploads/${featureImage.filename}`;
+    }
+
+    // Direct preview URL (from editing mode)
+    if (featureImage.preview) {
+      return featureImage.preview;
+    }
+
+    return "";
+  };
+
+  const imageUrl = getImageUrl();
 
   return (
     <>
@@ -125,7 +176,15 @@ export default function ProductImage({
               className="selected-image-container"
               onClick={handleImageClick}
             >
-              <img src={imageUrl} alt="Uploaded" className="selected-image" />
+              <img
+                src={imageUrl}
+                alt="Feature"
+                className="selected-image"
+                onError={(e) => {
+                  console.error("Image failed to load:", imageUrl);
+                  e.target.src = "/placeholder-image.png"; // Fallback image
+                }}
+              />
               <Icon
                 onClick={handleRemoveImage}
                 cancel
@@ -151,7 +210,7 @@ export default function ProductImage({
                     : "Choose files to upload or drag and drop"}
                 </span>
                 <div className="upload-instruction">
-                  Maximum upload file size: 50 MB
+                  Maximum upload file size: 20 MB
                 </div>
               </label>
             </div>

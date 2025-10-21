@@ -26,15 +26,48 @@ export default function AllProduct() {
     async function getProduct() {
       try {
         setLoading(true);
-        const { data: productData } = await getProducts();
-        // Ensure productData is always an array
-        setProductData(Array.isArray(productData) ? productData : []);
         setError(null);
+
+        // Fix: getProducts() already returns data directly
+        const response = await getProducts();
+
+        console.log("API Response:", response); // Debug log
+
+        // Handle different response structures
+        let products = [];
+
+        if (Array.isArray(response)) {
+          // Direct array response
+          products = response;
+        } else if (response && Array.isArray(response.data)) {
+          // Nested in data property
+          products = response.data;
+        } else if (response && Array.isArray(response.products)) {
+          // Nested in products property
+          products = response.products;
+        } else {
+          console.warn("Unexpected response format:", response);
+          products = [];
+        }
+
+        console.log("Processed products:", products); // Debug log
+        setProductData(products);
+
+        if (products.length === 0) {
+          toast.info("No products found in the database");
+        }
       } catch (err) {
         console.error("Error fetching products:", err);
-        setError("Failed to load products");
+        console.error("Error details:", err.response?.data); // More detailed error
+
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to load products";
+
+        setError(errorMessage);
         setProductData([]);
-        toast.error("Failed to load products");
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -66,6 +99,7 @@ export default function AllProduct() {
       await deleteProduct(product._id);
       toast.success("Product deleted successfully");
     } catch (error) {
+      console.error("Delete error:", error);
       if (error.response && error.response.status === 404)
         toast.error("This product has already been deleted");
       else toast.error("Failed to delete product");
@@ -83,7 +117,7 @@ export default function AllProduct() {
   let filtered = Array.isArray(productData) ? productData : [];
   if (searchQuery)
     filtered = filtered.filter((p) =>
-      p.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+      p.name?.toLowerCase().startsWith(searchQuery.toLowerCase())
     );
 
   let sorted = filtered;
@@ -104,8 +138,10 @@ export default function AllProduct() {
     return (
       <section className="fade-in-up">
         <ProductHeader />
-        <section className="padding" style={{ marginTop: 80 }}>
-          <p>Loading products...</p>
+        <section className="padding" style={{ marginTop: 60 }}>
+          <div>
+            <p>Loading products...</p>
+          </div>
         </section>
       </section>
     );
@@ -116,19 +152,25 @@ export default function AllProduct() {
       <section className="fade-in-up">
         <ProductHeader />
 
-        <section className="padding" style={{ marginTop: 80 }}>
+        <section className="padding" style={{ marginTop: 60 }}>
           <span>
             <SearchBox onChange={handleSearch} value={searchQuery} />
             Showing {totalItems} item{totalItems !== 1 ? "s" : ""}{" "}
           </span>
 
           {totalItems === 0 && !error ? (
-            <div style={{ textAlign: "center", padding: "40px" }}>
-              <p>No products available</p>
+            <div>
+              <p>No products available. Click "Add Product" to create one.</p>
             </div>
           ) : error ? (
-            <div style={{ textAlign: "center", padding: "40px", color: "red" }}>
+            <div>
               <p>{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                style={{ marginTop: "10px", padding: "8px 16px" }}
+              >
+                Retry
+              </button>
             </div>
           ) : (
             <>

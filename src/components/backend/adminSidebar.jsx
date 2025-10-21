@@ -88,6 +88,21 @@ export default function AdminSidebar({
         />
       )}
 
+      {/* {!isCollapsed && (
+        <div className="admin-navbar__search">
+          <form className="admin-navbar__search">
+            <input
+              type="text"
+              className="adminSearch-input"
+              placeholder="Search..."
+            />
+            <button className="adminSearch-button">
+              <i className="fa fa-search"></i>
+            </button>
+          </form>
+        </div>
+      )} */}
+
       <SidebarLogout isCollapsed={isCollapsed} handleLogout={handleLogout} />
     </aside>
   );

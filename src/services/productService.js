@@ -9,10 +9,16 @@ const buildEndpoint = (path = "") => {
   return path ? `${baseUrl}/api/products${path}` : `${baseUrl}/api/products`;
 };
 
+function clearProductCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
+}
+
 // Public product operations
 export async function getProducts(params = {}) {
   try {
     const { data } = await publicHttpService.get(buildEndpoint(), { params });
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch products:", err);
@@ -25,6 +31,7 @@ export async function getProduct(productId) {
     const { data } = await publicHttpService.get(
       buildEndpoint(`/${productId}`)
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch product:", err);
@@ -38,6 +45,7 @@ export async function getProductsByCategorys(categoryId, params = {}) {
       buildEndpoint(`/category/${categoryId}`),
       { params }
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch products by category:", err);
@@ -51,6 +59,7 @@ export async function getProductsByTag(tagId, params = {}) {
       buildEndpoint(`/tag/${tagId}`),
       { params }
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch products by tag:", err);
@@ -64,6 +73,7 @@ export async function getProductsByPromotion(promotionName, params = {}) {
       buildEndpoint(`/promotions/${promotionName}`),
       { params }
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch products by promotion:", err);
@@ -80,6 +90,7 @@ export async function searchProducts(query, filters = {}) {
         ...filters,
       },
     });
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to search products:", err);
@@ -107,6 +118,7 @@ export async function getProductReviews(productId, params = {}) {
       buildEndpoint(`/${productId}/reviews`),
       { params }
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch product reviews:", err);
@@ -121,6 +133,7 @@ export async function getRelatedProducts(productId, limit = 6) {
       buildEndpoint(`/${productId}/related`),
       { params: { limit } }
     );
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch related products:", err);
@@ -128,12 +141,12 @@ export async function getRelatedProducts(productId, limit = 6) {
   }
 }
 
-// User-specific product operations
 export async function getUserProducts(params = {}) {
   try {
     const { data } = await userHttpService.get(buildEndpoint("/me"), {
       params,
     });
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to fetch user products:", err);
@@ -141,7 +154,6 @@ export async function getUserProducts(params = {}) {
   }
 }
 
-// Wishlist operations using UserHttpService built-in methods
 export async function addProductToWishlist(productId) {
   try {
     const { data } = await userHttpService.addToWishlist(productId);
@@ -155,6 +167,7 @@ export async function addProductToWishlist(productId) {
 export async function removeProductFromWishlist(productId) {
   try {
     const { data } = await userHttpService.removeFromWishlist(productId);
+    clearProductCache();
     return data;
   } catch (err) {
     console.error("Failed to remove product from wishlist:", err);
@@ -188,10 +201,15 @@ export async function createProductReview(productId, reviewData) {
   }
 }
 
-// Admin product operations
 export async function saveProduct(product) {
   try {
     const formData = createFormData(product);
+
+    // Log FormData for debugging
+    console.log("FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
 
     if (product._id) {
       const { data } = await adminHttpService.put(
@@ -201,6 +219,7 @@ export async function saveProduct(product) {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+      clearProductCache();
       return data;
     } else {
       const { data } = await adminHttpService.post(buildEndpoint(), formData, {
@@ -217,6 +236,12 @@ export async function saveProduct(product) {
 export async function updateProduct(productId, product) {
   try {
     const formData = createFormData(product);
+
+    console.log("Update FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
     const { data } = await adminHttpService.put(
       buildEndpoint(`/${productId}`),
       formData,
@@ -224,6 +249,7 @@ export async function updateProduct(productId, product) {
         headers: { "Content-Type": "multipart/form-data" },
       }
     );
+    clearProductCache();
     return data;
   } catch (error) {
     console.error("Failed to update product:", error);
@@ -236,6 +262,7 @@ export async function deleteProduct(productId) {
     const { data } = await adminHttpService.delete(
       buildEndpoint(`/${productId}`)
     );
+    clearProductCache();
     return data;
   } catch (error) {
     console.error("Failed to delete product:", error);
@@ -243,7 +270,6 @@ export async function deleteProduct(productId) {
   }
 }
 
-// Bulk admin operations
 export async function bulkDeleteProducts(productIds) {
   try {
     const { data } = await adminHttpService.post(
@@ -269,7 +295,6 @@ export async function bulkUpdateProducts(updates) {
   }
 }
 
-// Product status management
 export async function toggleProductStatus(productId) {
   try {
     const { data } = await adminHttpService.patch(
@@ -317,89 +342,192 @@ export async function getCachedProducts(params = {}, ttl = 5 * 60 * 1000) {
   }
 }
 
-// Utility function for creating FormData (enhanced)
 function createFormData(product) {
   const formData = new FormData();
 
-  // Skip these fields entirely
-  const skipFields = ["_id", "ratings", "createdAt", "updatedAt", "__v"];
+  // Fields to skip entirely
+  const skipFields = [
+    "_id",
+    "ratings",
+    "createdAt",
+    "updatedAt",
+    "__v",
+    "reviewCount",
+    "averageRating",
+    "viewCount",
+    "purchaseCount",
+    "reviews",
+  ];
 
-  // Handle optional sale fields - only include if they have valid values
   const optionalSaleFields = [
     "salePrice",
     "saleStartDate",
     "saleEndDate",
     "discountPercentage",
-    "colorSalePrice",
-    "colorSaleStartDate",
-    "colorSaleEndDate",
   ];
 
   Object.entries(product).forEach(([key, value]) => {
     if (skipFields.includes(key)) {
-      return; // Skip these fields
+      return;
     }
 
+    // Handle optional sale fields
     if (optionalSaleFields.includes(key)) {
       if (!value || (typeof value === "string" && value.trim() === "")) {
-        return; // Skip empty sale fields
+        return;
       }
     }
 
     switch (key) {
       case "featureImage":
-        if (value?.file) {
+        // Handle new upload (has File object)
+        if (value?.file instanceof File) {
           formData.append("featureImage", value.file);
-        } else if (typeof value === "string" && value) {
+        }
+        // Handle existing image - send the Upload ID if available
+        else if (value?._id) {
+          formData.append("featureImage", value._id);
+        }
+        // Handle direct Upload ID string
+        else if (typeof value === "string" && value) {
           formData.append("featureImage", value);
         }
         break;
 
       case "media":
-        if (Array.isArray(value)) {
-          value.forEach((file, index) => {
-            if (file instanceof File) {
-              formData.append("media", file);
-            } else if (typeof file === "string" && file) {
-              formData.append(`media[${index}]`, file);
+        if (Array.isArray(value) && value.length > 0) {
+          const newFiles = [];
+          const existingIds = [];
+
+          value.forEach((mediaItem) => {
+            // Check if it's a new upload (has isNew flag or File object)
+            if (mediaItem?.isNew && mediaItem?.file instanceof File) {
+              newFiles.push(mediaItem.file);
             }
+            // Direct File object (not wrapped)
+            else if (mediaItem instanceof File) {
+              newFiles.push(mediaItem);
+            }
+            // Existing media with _id (already uploaded)
+            else if (!mediaItem?.isNew && mediaItem?._id) {
+              // Validate it's a proper ObjectId
+              if (
+                typeof mediaItem._id === "string" &&
+                mediaItem._id.match(/^[0-9a-fA-F]{24}$/)
+              ) {
+                existingIds.push(mediaItem._id);
+              }
+            }
+            // Direct Upload ID string
+            else if (
+              typeof mediaItem === "string" &&
+              mediaItem.match(/^[0-9a-fA-F]{24}$/)
+            ) {
+              existingIds.push(mediaItem);
+            }
+          });
+
+          console.log("Media processing:", {
+            totalMedia: value.length,
+            newFiles: newFiles.length,
+            existingIds: existingIds.length,
+            existingIdsList: existingIds,
+          });
+
+          // Append new files for upload
+          newFiles.forEach((file) => {
+            formData.append("media", file);
+          });
+
+          // Append existing media IDs to preserve them
+          existingIds.forEach((id, index) => {
+            formData.append(`existingMedia[${index}]`, id);
           });
         }
         break;
 
       case "attributes":
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach((attr, index) => {
             if (attr && attr.key && attr.value) {
               formData.append(`attributes[${index}][key]`, attr.key);
-              formData.append(`attributes[${index}][value]`, attr.value);
+              formData.append(
+                `attributes[${index}][value]`,
+                typeof attr.value === "object"
+                  ? JSON.stringify(attr.value)
+                  : attr.value
+              );
             }
           });
         }
         break;
 
       case "colors":
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach((color, index) => {
             if (color && typeof color === "object") {
               Object.entries(color).forEach(([colorKey, colorValue]) => {
+                // Skip internal fields and image data
                 if (colorKey === "_id" || !colorValue) return;
 
+                // Handle color images - NEW FILE UPLOAD
                 if (colorKey === "colorImages") {
-                  if (colorValue instanceof File) {
+                  // Check if it's a new file upload (has file property)
+                  if (colorValue?.file instanceof File) {
+                    formData.append(`colorImages`, colorValue.file);
+                    // formData.append(`colors[${index}][hasNewImage]`, "true");
+                  }
+                  // Skip if it's existing image data (preview URLs, etc.)
+                  return;
+                }
+
+                // Handle color image reference (Upload ID) - EXISTING IMAGE
+                if (colorKey === "colorImageRef") {
+                  // Only send if it's a valid ObjectId string
+                  if (
+                    colorValue &&
+                    typeof colorValue === "string" &&
+                    colorValue.match(/^[0-9a-fA-F]{24}$/)
+                  ) {
                     formData.append(
-                      `colors[${index}][colorImages]`,
+                      `colors[${index}][colorImageRef]`,
                       colorValue
                     );
-                  } else if (typeof colorValue === "string" && colorValue) {
+                  } else if (
+                    colorValue &&
+                    typeof colorValue === "object" &&
+                    colorValue._id
+                  ) {
+                    // If it's a populated object, send just the ID
                     formData.append(
-                      `colors[${index}][colorImages]`,
-                      colorValue
+                      `colors[${index}][colorImageRef]`,
+                      colorValue._id
                     );
                   }
-                } else {
-                  formData.append(`colors[${index}][${colorKey}]`, colorValue);
+                  return;
                 }
+
+                // Handle sale price fields - skip if empty
+                if (
+                  (colorKey === "colorSalePrice" ||
+                    colorKey === "colorSaleStartDate" ||
+                    colorKey === "colorSaleEndDate") &&
+                  (!colorValue || colorValue === "")
+                ) {
+                  return;
+                }
+
+                // Handle boolean fields
+                if (colorKey === "isAvailable" || colorKey === "isDefault") {
+                  formData.append(
+                    `colors[${index}][${colorKey}]`,
+                    colorValue ? "true" : "false"
+                  );
+                  return;
+                }
+
+                // Handle all other fields
+                formData.append(`colors[${index}][${colorKey}]`, colorValue);
               });
             }
           });
@@ -407,17 +535,26 @@ function createFormData(product) {
         break;
 
       case "sizes":
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach((size, index) => {
             if (size && typeof size === "object") {
               Object.entries(size).forEach(([sizeKey, sizeValue]) => {
                 if (sizeKey === "_id") return;
 
-                // Handle optional size sale fields
+                // Skip empty sale fields
                 if (
                   sizeKey.includes("Sale") &&
                   (!sizeValue || sizeValue === "")
                 ) {
+                  return;
+                }
+
+                // Handle boolean fields
+                if (sizeKey === "isAvailable" || sizeKey === "isDefault") {
+                  formData.append(
+                    `sizes[${index}][${sizeKey}]`,
+                    sizeValue ? "true" : "false"
+                  );
                   return;
                 }
 
@@ -431,14 +568,23 @@ function createFormData(product) {
         break;
 
       case "capacity":
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach((cap, index) => {
             if (cap && typeof cap === "object") {
               Object.entries(cap).forEach(([capKey, capValue]) => {
                 if (capKey === "_id") return;
 
-                // Handle optional capacity sale fields
+                // Skip empty sale fields
                 if (capKey.includes("Sale") && (!capValue || capValue === "")) {
+                  return;
+                }
+
+                // Handle boolean fields
+                if (capKey === "isAvailable" || capKey === "isDefault") {
+                  formData.append(
+                    `capacity[${index}][${capKey}]`,
+                    capValue ? "true" : "false"
+                  );
                   return;
                 }
 
@@ -452,14 +598,23 @@ function createFormData(product) {
         break;
 
       case "materials":
-        if (Array.isArray(value)) {
+        if (Array.isArray(value) && value.length > 0) {
           value.forEach((mat, index) => {
             if (mat && typeof mat === "object") {
               Object.entries(mat).forEach(([matKey, matValue]) => {
                 if (matKey === "_id") return;
 
-                // Handle optional material sale fields
+                // Skip empty sale fields
                 if (matKey.includes("Sale") && (!matValue || matValue === "")) {
+                  return;
+                }
+
+                // Handle boolean fields
+                if (matKey === "isAvailable" || matKey === "isDefault") {
+                  formData.append(
+                    `materials[${index}][${matKey}]`,
+                    matValue ? "true" : "false"
+                  );
                   return;
                 }
 
@@ -473,18 +628,19 @@ function createFormData(product) {
         break;
 
       default:
-        if (value != null && value !== "") {
-          if (Array.isArray(value)) {
-            value.forEach((item, index) => {
-              if (typeof item === "object") {
-                formData.append(`${key}[${index}]`, JSON.stringify(item));
-              } else {
-                formData.append(`${key}[]`, item);
-              }
-            });
-          } else {
-            formData.append(key, value);
-          }
+        // Handle arrays
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            if (typeof item === "object" && item !== null) {
+              formData.append(`${key}[]`, JSON.stringify(item));
+            } else {
+              formData.append(`${key}[]`, item);
+            }
+          });
+        }
+        // Handle other values
+        else if (value != null && value !== "") {
+          formData.append(key, value);
         }
         break;
     }

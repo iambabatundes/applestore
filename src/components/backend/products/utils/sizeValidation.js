@@ -41,8 +41,12 @@ export function sizeVariations(sizes) {
       }
     }
 
-    errors[index] = error;
+    // Only add to errors array if there are actual errors
+    if (Object.keys(error).length > 0) {
+      errors[index] = error;
+    }
   });
 
-  return errors;
+  // Return null if no errors, otherwise return the errors array
+  return errors.length > 0 ? errors : null;
 }

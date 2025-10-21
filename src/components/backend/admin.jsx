@@ -121,7 +121,6 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
           }
         }
 
-        // Step 2: If setup is complete and we're not authenticated, try to fetch user
         if (
           actuallySetupComplete &&
           authInitialized &&
@@ -155,11 +154,9 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
       }
     };
 
-    // Only initialize if we have setup status
     if (setupStatus && !setupLoading) {
       performInitialization();
     } else if (!setupLoading && setupError) {
-      // If there's a setup error and we're not loading, stop initializing
       setIsInitializing(false);
     }
 
@@ -182,12 +179,9 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
     fetchAdminUser,
   ]);
 
-  // NAVIGATION EFFECT - Handle redirects after auth state changes
   useEffect(() => {
-    // Only handle navigation if we're done initializing
     if (isInitializing || setupLoading) return;
 
-    // If setup is complete and we should redirect to login
     if (
       actuallySetupComplete &&
       !setupFlowState.showSetupFlow &&
@@ -254,7 +248,6 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
 
-  // SECURITY: Prevent setup access when setup is complete
   useEffect(() => {
     if (
       actuallySetupComplete &&
@@ -300,8 +293,6 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
       setupFlowShow: setupFlowState.showSetupFlow,
     });
   }
-
-  // RENDER LOGIC WITH IMPROVED CONDITIONS
 
   // 1. SETUP LOADING
   if (setupLoading && !setupFlowState.setupInitialized) {
@@ -355,18 +346,14 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
     );
   }
 
-  // 5. INITIALIZATION LOADING
   if (isInitializing) {
     return <AdminSkeleton darkMode={darkMode} />;
   }
 
-  // 6. LOGIN SCREEN - Show if on login route OR if should redirect to login
   if (isLoginRoute || (actuallySetupComplete && shouldRedirectToLogin())) {
     return <AdminLogin setAuth={() => {}} />;
   }
 
-  // 7. MAIN ADMIN INTERFACE
-  // Only render if we're authenticated and setup is complete
   if (actuallySetupComplete && isAuthenticated && adminUser) {
     const notifications = () => {
       console.log("notification");
@@ -445,7 +432,6 @@ const Admin = ({ companyName, count, userName, logo: initialLogo }) => {
     );
   }
 
-  // 8. FALLBACK - Show skeleton while determining state
   return <AdminSkeleton darkMode={darkMode} />;
 };
 

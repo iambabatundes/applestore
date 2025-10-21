@@ -26,13 +26,38 @@ export default function FirstComers({
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const { data } = await getProductsByPromotion("Sale");
-        const mergedProducts = [...data];
-        const groupedProducts = groupProducts(mergedProducts, 2);
+        const response = await getProductsByPromotion("Sale");
+        console.log("Sale products response:", response); // Debug log
+
+        // Handle different response structures
+        const productsArray =
+          response.data || response.products || response || [];
+
+        // Ensure it's an array
+        if (!Array.isArray(productsArray)) {
+          console.error("Products is not an array:", productsArray);
+          setProducts([]);
+          setDisplayedGroups([]);
+          setError("Invalid data format");
+          return;
+        }
+
+        // Check if products exist
+        if (productsArray.length === 0) {
+          setProducts([]);
+          setDisplayedGroups([]);
+          return;
+        }
+
+        const groupedProducts = groupProducts(productsArray, 2);
         setProducts(groupedProducts);
         setDisplayedGroups(groupedProducts.slice(0, INITIAL_GROUP_COUNT));
+        setError(null);
       } catch (err) {
+        console.error("Error fetching sale products:", err);
         setError("Failed to load products");
+        setProducts([]);
+        setDisplayedGroups([]);
       } finally {
         setLoading(false);
       }
@@ -43,6 +68,9 @@ export default function FirstComers({
 
   if (loading) return <p>Loading products...</p>;
   if (error) return <p>{error}</p>;
+  if (displayedGroups.length === 0) {
+    return <p>No products available for First Comers.</p>;
+  }
 
   return (
     <div className="firstComers">

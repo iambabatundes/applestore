@@ -29,6 +29,15 @@ export const schema = Joi.object({
   purchaseCount: Joi.any(),
   featureImage: Joi.object().label("Feature Image").required(),
   media: Joi.array().min(2).label("Media File").optional().allow(null),
+  existingMedia: Joi.alternatives()
+    .try(
+      Joi.array().items(Joi.string().regex(/^[0-9a-fA-F]{24}$/)),
+      Joi.object().pattern(
+        Joi.string(),
+        Joi.string().regex(/^[0-9a-fA-F]{24}$/)
+      )
+    )
+    .optional(),
   tags: Joi.array().label("Tags").optional().allow(null),
   promotion: Joi.array().label("Promotions").optional().allow(null),
   category: Joi.array().required("Category is requied").label("Category"),
@@ -50,6 +59,13 @@ export const schema = Joi.object({
         _id: Joi.string(),
         colorName: Joi.string().required().label("Color Name").min(3).max(255),
         colorImages: Joi.object().label("Color Image"),
+        colorImageRef: Joi.alternatives()
+          .try(
+            Joi.string().regex(/^[0-9a-fA-F]{24}$/),
+            Joi.object(),
+            Joi.allow(null)
+          )
+          .optional(),
         colorPrice: Joi.number()
           .min(0)
           .required()

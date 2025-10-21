@@ -4,6 +4,7 @@ import {
   ERROR_TYPES,
   OPERATION_TYPES,
 } from "./admin/config";
+
 import { ENDPOINTS } from "./admin/endpoints";
 
 import { categorizeError, AdminServiceError } from "./admin/errors";
@@ -11,6 +12,11 @@ import { categorizeError, AdminServiceError } from "./admin/errors";
 function buildUrl(endpoint, id = null) {
   const fullPath = `${ADMIN_SERVICE_CONFIG.BASE_ENDPOINT}${endpoint}`;
   return id ? `${fullPath}/${id}` : fullPath;
+}
+
+function clearAdminCache() {
+  adminHttpService.clearCache();
+  publicHttpService.clearCache();
 }
 
 function validateInput(data, schema) {
@@ -53,9 +59,7 @@ async function executeOperation(
     .substr(2, 5)}`;
 
   try {
-    // Log operation start if audit is enabled
-    if (ADMIN_SERVICE_CONFIG.AUDIT_ENABLED) {
-    }
+    console.log(`[AdminService] Starting operation: ${operationName}`);
 
     // Input validation if schema provided
     if (options.validationSchema && options.data) {
@@ -71,30 +75,58 @@ async function executeOperation(
     }
 
     // Execute the API call
-    const { data } = await apiCall();
+    const response = await apiCall();
 
-    // Log successful operation
+    console.log(
+      `[AdminService] Operation ${operationName} completed successfully`
+    );
+
+    // CRITICAL: Check what we got back
+    const data = response?.data || response;
+
     const duration = Date.now() - startTime;
-    if (ADMIN_SERVICE_CONFIG.AUDIT_ENABLED) {
-    }
+    console.log(`[AdminService] ${operationName} took ${duration}ms`);
 
     return data;
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorType = categorizeError(error);
 
-    // Create enhanced error with suggestions
+    // ENHANCED ERROR LOGGING
+    console.error(`[AdminService] Operation ${operationName} failed:`, {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      responseData: error.response?.data,
+      duration: `${duration}ms`,
+      stack: error.stack,
+    });
+
+    // Extract the actual error details from the response
+    const responseError = error.response?.data?.error || error.response?.data;
+    const errorMessage =
+      responseError?.message || error.message || `Failed to ${operationName}`;
+    const errorCode = responseError?.code || error.code;
+    const errorDetails = responseError?.details || [];
+
+    const errorType = categorizeError(error);
     const suggestions = getSuggestions(errorType, operationName);
-    throw new AdminServiceError(`Failed to ${operationName}`, {
+
+    // Create enhanced error with ALL available information
+    throw new AdminServiceError(errorMessage, {
       type: errorType,
       operation: operationName,
       originalError: error,
       context: {
         status: error.response?.status,
+        statusText: error.response?.statusText,
+        code: errorCode,
+        details: errorDetails,
         duration: `${duration}ms`,
         ...options.context,
       },
       suggestions,
+      // PASS THROUGH the response data for debugging
+      responseData: error.response?.data,
     });
   }
 }
@@ -167,22 +199,81 @@ export async function validateInviteToken(token) {
 }
 
 export async function completeRegistration(registrationData) {
+  console.log("[AdminService] completeRegistration called with:", {
+    hasToken: !!registrationData?.registrationToken,
+    hasPassword: !!registrationData?.password,
+    hasFirstName: !!registrationData?.firstName,
+    hasLastName: !!registrationData?.lastName,
+  });
+
   return executeOperation(
     "completeRegistration",
     OPERATION_TYPES.CREATE,
-    () =>
-      adminHttpService.post(
-        buildUrl(ENDPOINTS.SETUP.REGISTER),
-        registrationData
-      ),
+    async () => {
+      console.log(
+        "[AdminService] Making POST request to:",
+        buildUrl(ENDPOINTS.SETUP.REGISTER)
+      );
+
+      try {
+        const response = await adminHttpService.post(
+          buildUrl(ENDPOINTS.SETUP.REGISTER),
+          registrationData
+        );
+
+        console.log("[AdminService] Registration response received:", {
+          status: response?.status,
+          hasData: !!response?.data,
+          data: response?.data,
+        });
+
+        return response;
+      } catch (error) {
+        console.error("[AdminService] Registration request failed:", {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.response?.headers,
+        });
+        throw error;
+      }
+    },
     {
       data: registrationData,
       validationSchema: {
-        token: { required: true, type: "string" },
+        registrationToken: { required: true, type: "string" },
         password: { required: true, type: "string", minLength: 8 },
+        firstName: { required: true, type: "string" },
+        lastName: { required: true, type: "string" },
       },
       context: { sensitive: true },
     }
+  );
+}
+
+export async function verifyRegistrationEmail(verificationData) {
+  return executeOperation(
+    "verifyRegistrationEmail",
+    OPERATION_TYPES.SECURITY,
+    () =>
+      adminHttpService.post(
+        buildUrl("/verify-email-registration"), // New endpoint
+        verificationData
+      ),
+    { data: verificationData, context: { sensitive: true } }
+  );
+}
+
+export async function completeRegistration2FA(twoFAData) {
+  return executeOperation(
+    "completeRegistration2FA",
+    OPERATION_TYPES.SECURITY,
+    () =>
+      adminHttpService.post(
+        buildUrl("/complete-registration-2fa"), // New endpoint
+        twoFAData
+      ),
+    { data: twoFAData, context: { sensitive: true } }
   );
 }
 
@@ -259,19 +350,27 @@ export async function resendVerificationCode(tokenData) {
 }
 
 export async function createAdminInvite(inviteData) {
-  return executeOperation(
-    "createAdminInvite",
-    OPERATION_TYPES.CREATE,
-    () => adminHttpService.post(buildUrl(ENDPOINTS.SETUP.INVITE), inviteData),
-    {
-      data: inviteData,
-      validationSchema: {
-        email: { required: true, type: "string" },
-        role: { required: true, type: "string" },
-      },
-      context: { inviteEmail: inviteData?.email },
-    }
-  );
+  try {
+    const data = await executeOperation(
+      "createAdminInvite",
+      OPERATION_TYPES.CREATE,
+      () => adminHttpService.post(buildUrl(ENDPOINTS.SETUP.INVITE), inviteData),
+      {
+        data: inviteData,
+        validationSchema: {
+          email: { required: true, type: "string" },
+          role: { required: true, type: "string" },
+        },
+        context: { inviteEmail: inviteData?.email },
+      }
+    );
+
+    clearAdminCache();
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getInvites(params = {}) {
@@ -284,16 +383,24 @@ export async function getInvites(params = {}) {
 }
 
 export async function cancelInvite(inviteId) {
-  return executeOperation(
-    "cancelInvite",
-    OPERATION_TYPES.DELETE,
-    () => adminHttpService.delete(buildUrl(ENDPOINTS.SETUP.INVITE, inviteId)),
-    {
-      validationSchema: { inviteId: { required: true, type: "string" } },
-      data: { inviteId },
-      context: { inviteId },
-    }
-  );
+  try {
+    const data = await executeOperation(
+      "cancelInvite",
+      OPERATION_TYPES.DELETE,
+      () => adminHttpService.delete(buildUrl(ENDPOINTS.SETUP.INVITE, inviteId)),
+      {
+        validationSchema: { inviteId: { required: true, type: "string" } },
+        data: { inviteId },
+        context: { inviteId },
+      }
+    );
+
+    clearAdminCache();
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getAdminStats() {
@@ -580,6 +687,8 @@ export const AdminService = {
   validateInviteToken,
   completeRegistration,
   verifyEmail,
+  verifyRegistrationEmail,
+  completeRegistration2FA,
   complete2FA,
   resendVerificationCode,
 

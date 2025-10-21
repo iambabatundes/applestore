@@ -20,12 +20,15 @@ export default function ProductForm({
   onColorChange,
   editorContent,
   handleSubmit,
+
   colors,
-  toggleDefaultColor,
   handleAddColor,
   handleRemoveColor,
+  toggleDefaultColor,
   handleColorChange,
   handleColorImageUpload,
+  getColorImageUrl,
+
   handleAddSize,
   handleRemoveSize,
   handleSizeChange,
@@ -205,8 +208,10 @@ export default function ProductForm({
             handleAddColor={handleAddColor}
             handleRemoveColor={handleRemoveColor}
             handleColorChange={handleColorChange}
-            toggleDefault={toggleDefaultColor}
+            // toggleDefault={toggleDefaultColor}
+            toggleDefaultColor={toggleDefaultColor}
             handleColorImageUpload={handleColorImageUpload}
+            getColorImageUrl={getColorImageUrl}
           />
 
           <SizeForm

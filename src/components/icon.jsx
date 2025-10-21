@@ -572,7 +572,7 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
             aria-hidden="true"
             focusable="false"
           >
-            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <rect width="48" height="48" rx="4" fill="#004da3"></rect>
             <path
               fillRule="evenodd"
               clipRule="evenodd"
@@ -594,7 +594,7 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
             aria-hidden="true"
             focusable="false"
           >
-            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <rect width="48" height="48" rx="4" fill="#004da3"></rect>
             <path
               fillRule="evenodd"
               clipRule="evenodd"
@@ -616,7 +616,7 @@ m2120 0 c45 -23 80 -80 80 -130 0 -76 -74 -150 -150 -150 -76 0 -150 74 -150
             aria-hidden="true"
             focusable="false"
           >
-            <rect width="48" height="48" rx="4" fill="#1E1E1E"></rect>
+            <rect width="48" height="48" rx="4" fill="#004da3"></rect>
             <path
               fillRule="evenodd"
               clipRule="evenodd"

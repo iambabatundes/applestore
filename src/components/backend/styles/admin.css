@@ -39,12 +39,13 @@
     }
 
     .sidebar-collapsed .admin-main-content {
-        margin-left: 55px;
+        /* margin-left: 55px; */
+        margin-left: 44px;
         transition: all 0.3s ease;
     }
 
     .admin-main-content.sidebar-closed {
-        margin-left: 0;
+        margin-left: -16px;
 
     }
 
@@ -53,6 +54,7 @@
 @media (min-width: 1200px) {
     .admin-main-content {
         margin-left: 160px;
+        margin-left: 144px;
         /* padding: 3rem; */
         transition: all 0.3s ease;
     }

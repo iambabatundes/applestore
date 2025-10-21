@@ -10,11 +10,14 @@ import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
 
 // Lazy load components for better performance
-const AppRoutes = lazy(() => import("./routes/AppRoutes"));
+const AppRoutes = lazy(() => import("./routes/AppRoutes.js"));
 const CheckoutNavbar = lazy(() => import("./components/checkoutNavbar"));
-const Admin = lazy(() => import("./components/backend/admin"));
+// const Admin = lazy(() => import("./components/backend/admin.jsx"));
+const AdminRoutes = lazy(() =>
+  import("./components/backend/routes/AdminRoutes.js")
+);
 const Navbar = lazy(() => import("./components/home/navbar"));
-const Footer = lazy(() => import("./components/footer/footer"));
+const Footer = lazy(() => import("./components/footer/footer.jsx"));
 
 // Import components and utilities
 import AppSkeleton from "./appSkeleton/appSkeleton";
@@ -41,6 +44,7 @@ import {
   DEFAULTS,
 } from "./config/constants";
 import AdminSkeleton from "./components/backend/skeleton/adminSkeleton";
+// import { AdminRoutes } from "routes/AdminRoutes";
 
 function App() {
   const { user, isAuthReady, accessToken, isAuthenticated } =
@@ -349,7 +353,8 @@ function App() {
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense>
-          <Admin count={5} logo={logoImage} />
+          {/* <Admin count={5} logo={logoImage} /> */}
+          <AdminRoutes count={5} logo={logoImage} />
         </Suspense>
         <ToastContainer {...TOAST_CONFIG} />
       </ErrorBoundary>
@@ -390,14 +395,15 @@ function App() {
 
       {location.pathname.includes("/admin") ? (
         <Suspense>
-          <Admin count={5} logo={logoImage} />
+          {/* <Admin count={5} logo={logoImage} /> */}
+          <AdminRoutes count={5} logo={logoImage} />
         </Suspense>
       ) : (
         <>
           {renderNavbar()}
           <main className="main">
             <Suspense
-              fallback={<AppSkeleton message={LOADING_MESSAGES.APPLICATION} />}
+            // fallback={<AppSkeleton message={LOADING_MESSAGES.APPLICATION} />}
             >
               <AppRoutes
                 addToCart={addToCart}

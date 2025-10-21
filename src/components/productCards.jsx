@@ -36,7 +36,7 @@ export default function ProductCards({
   };
 
   function formatPermalink(name) {
-    return name.toLowerCase().replaceAll(" ", "-");
+    return product.name.toLowerCase().replace(/\s+/g, "-");
   }
 
   return (

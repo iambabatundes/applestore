@@ -1,6 +1,25 @@
-/* Modern Admin Navbar - Apple-inspired Design with Perfect Mobile Support */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
-/* Base Navbar Styles */
+.dark-mode .admin-navbar__left .MuiIconButton-root {
+    color: #f5f5f7;
+}
+
+.dark-mode .adminSearch-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f5f5f7;
+}
+
+.dark-mode .adminSearch-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.dark-mode .adminSearch-button {
+    color: rgba(255, 255, 255, 0.6);
+}
+
 .admin-navbar {
     background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
     backdrop-filter: blur(20px);
@@ -20,7 +39,6 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Main Container - Mobile First */
 .adminNavbar__main {
     display: flex;
     flex-direction: row;
@@ -32,7 +50,6 @@
     gap: 0.5rem;
 }
 
-/* Left Section - Menu & Logo */
 .admin-navbar__left {
     display: flex;
     align-items: center;
@@ -70,7 +87,6 @@
     color: #ffffff;
 }
 
-/* Center Section - Search (Hidden on mobile, shows on larger screens) */
 .admin-navbar__center {
     display: none;
     align-items: center;
@@ -128,7 +144,13 @@
     color: rgba(255, 255, 255, 0.95);
 }
 
-/* Notification Badges - Hidden on mobile */
+.adminSearch-input:focus-visible,
+.admin-navbar__notifications:focus-visible,
+.admin-navbar__comments:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
 .admin-navbar__notifications,
 .admin-navbar__comments {
     position: relative;
@@ -167,7 +189,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Right Section - User Info & Controls */
 .admin-navbar__right {
     display: flex;
     align-items: center;
@@ -200,7 +221,6 @@
     color: #ffffff;
 }
 
-/* Dark Mode Toggle - Hidden on smallest mobile */
 .admin-navbar__dark-mode-toggle {
     display: none;
     align-items: center;
@@ -228,9 +248,6 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Responsive Breakpoints - Mobile First Approach */
-
-/* Small phones (375px+) - Show dark mode toggle */
 @media (min-width: 375px) {
     .adminNavbar__main {
         padding: 0.5rem 1rem;
@@ -246,7 +263,6 @@
     }
 }
 
-/* Larger phones (480px+) - Better spacing */
 @media (min-width: 480px) {
     .adminNavbar__main {
         padding: 0.625rem 1rem;
@@ -261,7 +277,6 @@
     }
 }
 
-/* Small tablets (640px+) - Show search and notifications */
 @media (min-width: 640px) {
     .adminNavbar__main {
         padding: 0.75rem 1.5rem;
@@ -291,7 +306,6 @@
     }
 }
 
-/* Medium tablets (768px+) - Show welcome message */
 @media (min-width: 768px) {
     .adminNavbar__main {
         padding: 0.75rem 2rem;
@@ -310,7 +324,6 @@
     }
 }
 
-/* Large tablets/small desktops (1024px+) - Full layout */
 @media (min-width: 1024px) {
     .adminNavbar__main {
         padding: 0.4rem 0.8rem;
@@ -391,38 +404,6 @@
     }
 }
 
-/* Smooth rendering */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Accessibility - Focus states */
-.adminSearch-input:focus-visible,
-.admin-navbar__notifications:focus-visible,
-.admin-navbar__comments:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.5);
-    outline-offset: 2px;
-}
-
-/* Dark mode adjustments for text visibility */
-.dark-mode .admin-navbar__left .MuiIconButton-root {
-    color: #f5f5f7;
-}
-
-.dark-mode .adminSearch-input {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #f5f5f7;
-}
-
-.dark-mode .adminSearch-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.dark-mode .adminSearch-button {
-    color: rgba(255, 255, 255, 0.6);
-}
-
 /* Ensure proper overflow handling on mobile */
 @media (max-width: 374px) {
     .adminNavbar__main {
@@ -441,4 +422,213 @@
     .admin-navbar__right {
         gap: 0.375rem;
     }
+}
+
+/* to do */
+
+/* Enhanced Admin Navbar Greeting Styles */
+
+.admin-navbar__welcome {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+    transition: all 0.3s ease;
+    position: relative;
+    min-width: 200px;
+}
+
+.admin-navbar__welcome:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 51, 234, 0.08) 100%);
+    transform: translateY(-1px);
+}
+
+.greeting-primary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.greeting-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: #374151;
+    margin: 0;
+    white-space: nowrap;
+    animation: fadeInSlide 0.5s ease-out;
+}
+
+.admin__userName {
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6 0%, #9333ea 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInSlide 0.5s ease-out 0.1s backwards;
+}
+
+.greeting-context {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+    animation: fadeInSlide 0.5s ease-out 0.2s backwards;
+    line-height: 1.4;
+}
+
+.greeting-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 18px;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Dark mode styles */
+.dark-mode .admin-navbar__welcome {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+}
+
+.dark-mode .admin-navbar__welcome:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
+}
+
+.dark-mode .greeting-text {
+    color: #e5e7eb;
+}
+
+.dark-mode .greeting-context {
+    color: #9ca3af;
+}
+
+.dark-mode .admin__userName {
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Animations */
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Badge notification styles */
+.admin-navbar__notifications,
+.admin-navbar__comments {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.admin-navbar__notifications:hover,
+.admin-navbar__comments:hover {
+    transform: scale(1.05);
+}
+
+.admin-navbar__notifications .badge,
+.admin-navbar__comments .badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 2px 12px rgba(239, 68, 68, 0.6);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .admin-navbar__welcome {
+        min-width: 160px;
+        padding: 6px 12px;
+    }
+
+    .greeting-text {
+        font-size: 14px;
+    }
+
+    .admin__userName {
+        font-size: 15px;
+    }
+
+    .greeting-context {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-navbar__welcome {
+        display: none;
+        /* Hide on mobile to save space */
+    }
+
+    /* Show simplified version */
+    .admin-navbar__right::before {
+        content: attr(data-greeting);
+        font-size: 14px;
+        color: #6b7280;
+        margin-right: 12px;
+    }
+}
+
+/* Accessibility */
+.admin-navbar__welcome:focus-within {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Smooth transitions for theme switching */
+.admin-navbar__welcome,
+.greeting-text,
+.greeting-context,
+.admin__userName {
+    transition: color 0.3s ease, background 0.3s ease;
 }

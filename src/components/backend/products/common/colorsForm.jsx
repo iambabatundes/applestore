@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import "../styles/colorForm.css";
 import VariablesInput from "./variablesInput";
@@ -11,38 +11,49 @@ export default function ColorsForm({
   handleAddColor,
   handleRemoveColor,
   handleColorChange,
-  toggleDefault,
+  toggleDefaultColor,
   handleColorImageUpload,
+  getColorImageUrl,
 }) {
+  // Track blob URLs that need cleanup
+  const blobUrlsRef = useRef(new Set());
+
+  // Cleanup only when component unmounts
   useEffect(() => {
     return () => {
-      colors.forEach((color) => {
-        if (color.colorImages instanceof File && color.colorImages.preview) {
-          URL.revokeObjectURL(color.colorImages.preview);
+      // Only revoke blob URLs when component is fully unmounted
+      blobUrlsRef.current.forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+          console.log("Cleaned up blob URL:", url);
+        } catch (err) {
+          console.warn("Failed to revoke blob URL:", url, err);
         }
       });
+      blobUrlsRef.current.clear();
     };
-  }, [colors]);
+  }, []); // Empty dependency array = only runs on unmount
 
-  const handleDrop = useCallback(
-    (e, index) => {
-      e.preventDefault();
-      const file = e.dataTransfer.files?.[0];
-      if (file instanceof File) {
-        handleColorChange(index, { ...colors[index], colorImages: file });
-      } else {
-        console.error("Invalid file dropped:", file);
+  // Track new blob URLs
+  useEffect(() => {
+    colors.forEach((color) => {
+      if (
+        color.colorImages?.preview &&
+        color.colorImages.preview.startsWith("blob:") &&
+        !color.colorImages.preview.includes("/uploads/")
+      ) {
+        blobUrlsRef.current.add(color.colorImages.preview);
       }
-    },
-    [colors, handleColorChange]
-  );
+    });
+  }, [colors]);
 
   return (
     <section className={`productColors ${darkMode ? "dark-mode" : ""}`}>
       <h1 className={`color__title ${darkMode ? "dark-mode" : ""}`}>Color</h1>
+
       {colors.map((color, index) => (
-        <>
-          <div key={index} className="productForm__color">
+        <div key={index} className="color-wrapper">
+          <div className="productForm__color">
             <div>
               <VariablesInput
                 type="text"
@@ -53,10 +64,7 @@ export default function ColorsForm({
                 aria-label="Color Name"
                 errors={errors?.[index]?.colorName}
                 onChange={(e) =>
-                  handleColorChange(index, {
-                    ...color,
-                    colorName: e.target.value,
-                  })
+                  handleColorChange(index, "colorName", e.target.value)
                 }
               />
             </div>
@@ -70,13 +78,11 @@ export default function ColorsForm({
                 aria-label="Color Price"
                 errors={errors?.[index]?.colorPrice}
                 onChange={(e) =>
-                  handleColorChange(index, {
-                    ...color,
-                    colorPrice: e.target.value,
-                  })
+                  handleColorChange(index, "colorPrice", e.target.value)
                 }
               />
             </div>
+
             <div>
               <VariablesInput
                 type="number"
@@ -86,7 +92,7 @@ export default function ColorsForm({
                 aria-label="Quantity"
                 errors={errors?.[index]?.stock}
                 onChange={(e) =>
-                  handleColorChange(index, { ...color, stock: e.target.value })
+                  handleColorChange(index, "stock", e.target.value)
                 }
               />
             </div>
@@ -96,14 +102,11 @@ export default function ColorsForm({
                 type="number"
                 name="colorSalePrice"
                 placeholder="Color Sale Price"
-                value={color.colorSalePrice}
+                value={color.colorSalePrice || ""}
                 aria-label="Color Sale Price"
                 errors={errors?.[index]?.colorSalePrice}
                 onChange={(e) =>
-                  handleColorChange(index, {
-                    ...color,
-                    colorSalePrice: e.target.value,
-                  })
+                  handleColorChange(index, "colorSalePrice", e.target.value)
                 }
               />
             </div>
@@ -124,10 +127,11 @@ export default function ColorsForm({
                   }
                   aria-label="Color Sale Start Date"
                   onChange={(e) =>
-                    handleColorChange(index, {
-                      ...color,
-                      colorSaleStartDate: e.target.value,
-                    })
+                    handleColorChange(
+                      index,
+                      "colorSaleStartDate",
+                      e.target.value
+                    )
                   }
                 />
 
@@ -145,10 +149,7 @@ export default function ColorsForm({
                   aria-label="Color Sale End Date"
                   errors={errors?.[index]?.colorSaleEndDate}
                   onChange={(e) =>
-                    handleColorChange(index, {
-                      ...color,
-                      colorSaleEndDate: e.target.value,
-                    })
+                    handleColorChange(index, "colorSaleEndDate", e.target.value)
                   }
                 />
               </>
@@ -158,8 +159,8 @@ export default function ColorsForm({
               handleImageUpload={handleColorImageUpload}
               handleColorChange={handleColorChange}
               color={color}
-              handleDrop={handleDrop}
               index={index}
+              getColorImageUrl={getColorImageUrl}
             />
             {errors?.[index]?.colorImages && (
               <p className="error-message">{errors[index].colorImages}</p>
@@ -167,16 +168,12 @@ export default function ColorsForm({
 
             <div>
               <label>Is Available</label>
-
               <VariablesInput
                 type="checkbox"
                 checked={color.isAvailable}
                 aria-label="Is Available"
                 onChange={(e) =>
-                  handleColorChange(index, {
-                    ...color,
-                    isAvailable: e.target.checked,
-                  })
+                  handleColorChange(index, "isAvailable", e.target.checked)
                 }
               />
 
@@ -185,22 +182,30 @@ export default function ColorsForm({
                 type="checkbox"
                 checked={color.isDefault}
                 aria-label="Default Color"
-                onChange={() => toggleDefault(index)}
+                onChange={() => toggleDefaultColor(index)}
               />
             </div>
           </div>
+
           <hr className="color__indicationLine" />
+
           <span
             className="color__btn-remove"
             onClick={(e) => {
               e.preventDefault();
+              // Remove blob URL from tracking before removing color
+              const colorToRemove = colors[index];
+              if (colorToRemove?.colorImages?.preview?.startsWith("blob:")) {
+                blobUrlsRef.current.delete(colorToRemove.colorImages.preview);
+                URL.revokeObjectURL(colorToRemove.colorImages.preview);
+              }
               handleRemoveColor(index);
             }}
-            aria-label="Color"
+            aria-label="Remove Color"
           >
             <FaTrash /> Remove
           </span>
-        </>
+        </div>
       ))}
 
       <button
@@ -209,6 +214,7 @@ export default function ColorsForm({
           handleAddColor();
         }}
         className="color__btn"
+        type="button"
       >
         <FaPlus /> Add Color
       </button>

@@ -28,26 +28,67 @@ const useProductStore = create(
         }));
 
         try {
-          const { data } = await getProductsByCategorys(categoryName);
+          const response = await getProductsByCategorys(categoryName);
+          console.log("Category products response:", response);
+
+          // Handle different response structures
+          const productsArray =
+            response.data || response.products || response || [];
+
           set((state) => ({
             productsByCategory: {
               ...state.productsByCategory,
-              [categoryName]: { data, timestamp: now },
+              [categoryName]: {
+                data: Array.isArray(productsArray) ? productsArray : [],
+                timestamp: now,
+              },
             },
             loadingCategories: {
               ...state.loadingCategories,
               [categoryName]: false,
             },
+            errors: { ...state.errors, [categoryName]: null },
           }));
         } catch (error) {
           console.error("Fetch error:", error);
-          set((state) => ({
-            errors: { ...state.errors, [categoryName]: error },
-            loadingCategories: {
-              ...state.loadingCategories,
-              [categoryName]: false,
-            },
-          }));
+          console.error("Error status:", error.response?.status);
+
+          // If 404, treat as empty results (not an error)
+          if (error.response?.status === 404) {
+            set((state) => ({
+              productsByCategory: {
+                ...state.productsByCategory,
+                [categoryName]: {
+                  data: [],
+                  timestamp: now,
+                },
+              },
+              loadingCategories: {
+                ...state.loadingCategories,
+                [categoryName]: false,
+              },
+              errors: { ...state.errors, [categoryName]: null },
+            }));
+          } else {
+            // Real error (network, 500, etc.)
+            set((state) => ({
+              errors: {
+                ...state.errors,
+                [categoryName]: "Failed to load products",
+              },
+              loadingCategories: {
+                ...state.loadingCategories,
+                [categoryName]: false,
+              },
+              productsByCategory: {
+                ...state.productsByCategory,
+                [categoryName]: {
+                  data: [],
+                  timestamp: now,
+                },
+              },
+            }));
+          }
         }
       },
 

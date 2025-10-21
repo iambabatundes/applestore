@@ -28,22 +28,31 @@ export default function MoreToLove({
     <div className="moreToLove">
       <h2>More to love</h2>
       <div className="moreToLove__main">
-        {loading
-          ? [...Array(8)].map((_, i) => <ProductSkeletonCard key={i} />)
-          : products.map((product) => (
-              <ProductCard
-                key={product._id}
-                addToCart={addToCart}
-                item={product}
-                handleRatingChange={handleRatingChange}
-                cartItems={cartItems}
-                productName={product}
-                conversionRate={conversionRate}
-                selectedCurrency={selectedCurrency}
-              />
-            ))}
+        {loading &&
+          [...Array(8)].map((_, i) => <ProductSkeletonCard key={i} />)}
+
+        {!loading && error && <p className="error-message">{error}</p>}
+
+        {!loading && !error && products.length === 0 && (
+          <p className="no-products">No products available yet</p>
+        )}
+
+        {!loading &&
+          !error &&
+          products.length > 0 &&
+          products.map((product) => (
+            <ProductCard
+              key={product._id}
+              addToCart={addToCart}
+              item={product}
+              handleRatingChange={handleRatingChange}
+              cartItems={cartItems}
+              productName={product}
+              conversionRate={conversionRate}
+              selectedCurrency={selectedCurrency}
+            />
+          ))}
       </div>
-      {error && <p>{error}</p>}
     </div>
   );
 }

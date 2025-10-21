@@ -13,10 +13,25 @@ export const useProductStore = create(
       fetchProducts: async () => {
         set({ loading: true, error: null });
         try {
-          const { data } = await getProducts();
-          set({ products: shuffleArray(data) });
+          const response = await getProducts();
+
+          // Log to see the actual structure
+          console.log("API Response:", response);
+
+          // Extract products array from response
+          // Adjust based on your actual API response structure
+          const productsArray =
+            response.data || response.products || response || [];
+
+          if (!Array.isArray(productsArray)) {
+            console.error("Products is not an array:", productsArray);
+            set({ error: "Invalid data format", products: [] });
+            return;
+          }
+
+          set({ products: shuffleArray(productsArray), error: null });
         } catch (err) {
-          set({ error: "Failed to load products" });
+          set({ error: "Failed to load products", products: [] });
           console.error("Error fetching products:", err);
         } finally {
           set({ loading: false });
@@ -24,8 +39,8 @@ export const useProductStore = create(
       },
     }),
     {
-      name: "product-store", // localStorage key
-      partialize: (state) => ({ products: state.products }), // only persist products
+      name: "product-store",
+      partialize: (state) => ({ products: state.products }),
     }
   )
 );

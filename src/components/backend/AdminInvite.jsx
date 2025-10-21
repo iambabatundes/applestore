@@ -22,29 +22,133 @@ const AdminInvite = ({ darkMode = false }) => {
       value: "admin",
       label: "Admin",
       permissions: [
-        "users",
-        "products",
-        "orders",
-        "promotion",
-        "coupon",
-        "taxs",
-        "shipping",
+        // Users
+        "users.create",
+        "users.read",
+        "users.update",
+        "users.delete",
+        "users.export",
+        // Products
+        "products.create",
+        "products.read",
+        "products.update",
+        "products.delete",
+        "products.export",
+        // Orders
+        "orders.create",
+        "orders.read",
+        "orders.update",
+        "orders.cancel",
+        "orders.export",
+        // Promotions & Coupons
+        "promotions.read",
+        "promotions.update",
+        "coupons.read",
+        "coupons.update",
+        // Shipping & Taxes
+        "shipping.zones",
+        "shipping.rates",
+        "taxes.rates",
+        "taxes.rules",
+        // Analytics
+        "analytics.basic",
+        "analytics.advanced",
+        // Content
+        "content.create",
+        "content.read",
+        "content.update",
+        "content.moderate",
+        // Settings
+        "settings.general",
       ],
     },
     {
       value: "moderator",
       label: "Moderator",
-      permissions: ["users", "products"],
+      permissions: [
+        "users.read",
+        "users.update",
+        "products.read",
+        "products.update",
+        "orders.read",
+        "content.read",
+        "content.moderate",
+        "reviews.moderate",
+      ],
     },
-    { value: "editor", label: "Editor", permissions: ["products"] },
+    {
+      value: "editor",
+      label: "Editor",
+      permissions: [
+        "products.create",
+        "products.read",
+        "products.update",
+        "content.create",
+        "content.read",
+        "content.update",
+      ],
+    },
   ];
 
   const availablePermissions = [
-    "users",
-    "products",
-    "orders",
-    "analytics",
-    "settings",
+    // Users
+    "users.create",
+    "users.read",
+    "users.update",
+    "users.delete",
+    "users.export",
+    "users.suspend",
+    // Products
+    "products.create",
+    "products.read",
+    "products.update",
+    "products.delete",
+    "products.import",
+    "products.export",
+    // Orders
+    "orders.create",
+    "orders.read",
+    "orders.update",
+    "orders.cancel",
+    "orders.refund",
+    "orders.export",
+    // Promotions
+    "promotions.create",
+    "promotions.read",
+    "promotions.update",
+    "promotions.delete",
+    // Coupons
+    "coupons.create",
+    "coupons.read",
+    "coupons.update",
+    "coupons.delete",
+    // Inventory
+    "inventory.read",
+    "inventory.update",
+    "inventory.alerts",
+    // Shipping
+    "shipping.zones",
+    "shipping.rates",
+    "shipping.methods",
+    // Taxes
+    "taxes.rates",
+    "taxes.rules",
+    "taxes.reports",
+    // Analytics
+    "analytics.basic",
+    "analytics.advanced",
+    "analytics.export",
+    // Content
+    "content.create",
+    "content.read",
+    "content.update",
+    "content.delete",
+    "content.moderate",
+    // Reviews
+    "reviews.moderate",
+    // Settings
+    "settings.general",
+    "settings.security",
   ];
 
   useEffect(() => {
@@ -270,7 +374,7 @@ const AdminInvite = ({ darkMode = false }) => {
                     {invite.role}
                   </span>
                 </div>
-                <div className="table-cell">{invite.invitedBy}</div>
+                <div className="table-cell">{invite.invitedBy.email}</div>
                 <div className="table-cell">
                   {new Date(invite.expiresAt).toLocaleDateString()}
                 </div>
