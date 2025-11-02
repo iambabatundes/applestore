@@ -1,3 +1,5 @@
+// services/paymentService.js
+
 import {
   adminHttpService,
   userHttpService,
@@ -110,7 +112,6 @@ export const getPaymentConfig = async () => {
 };
 
 //  Get configuration for a specific provider
-
 export const getProviderConfig = async (provider) => {
   try {
     const response = await adminHttpService.get(`${configPath}/${provider}`);
@@ -330,11 +331,7 @@ export const generatePaymentReport = async (reportConfig) => {
   }
 };
 
-/**
- * Get webhook logs
- * @param {Object} filters - Filter parameters
- * @returns {Promise<Object>} Webhook logs
- */
+// Get webhook logs
 export const getWebhookLogs = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams(filters);
@@ -347,11 +344,7 @@ export const getWebhookLogs = async (filters = {}) => {
   }
 };
 
-/**
- * Retry a failed webhook
- * @param {string} webhookId - Webhook log ID
- * @returns {Promise<Object>} Retry response
- */
+// Retry a failed webhook
 export const retryWebhook = async (webhookId) => {
   try {
     const response = await adminHttpService.post(
@@ -363,15 +356,7 @@ export const retryWebhook = async (webhookId) => {
   }
 };
 
-// ============================================
-// SUBSCRIPTIONS & RECURRING PAYMENTS
-// ============================================
-
-/**
- * Create a subscription
- * @param {Object} subscriptionData - Subscription details
- * @returns {Promise<Object>} Subscription response
- */
+// Create a subscription
 export const createSubscription = async (subscriptionData) => {
   try {
     const response = await adminHttpService.post(
@@ -384,11 +369,7 @@ export const createSubscription = async (subscriptionData) => {
   }
 };
 
-/**
- * Get all subscriptions
- * @param {Object} filters - Filter parameters
- * @returns {Promise<Object>} Subscriptions
- */
+// Get all subscriptions
 export const getSubscriptions = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams(filters);
@@ -401,12 +382,7 @@ export const getSubscriptions = async (filters = {}) => {
   }
 };
 
-/**
- * Cancel a subscription
- * @param {string} subscriptionId - Subscription ID
- * @param {Object} cancellationData - Cancellation details
- * @returns {Promise<Object>} Cancellation response
- */
+// Cancel a subscription
 export const cancelSubscription = async (subscriptionId, cancellationData) => {
   try {
     const response = await adminHttpService.post(
@@ -419,15 +395,7 @@ export const cancelSubscription = async (subscriptionId, cancellationData) => {
   }
 };
 
-// ============================================
-// DISPUTE MANAGEMENT
-// ============================================
-
-/**
- * Get all disputes/chargebacks
- * @param {Object} filters - Filter parameters
- * @returns {Promise<Object>} Disputes
- */
+// Get all disputes/chargebacks
 export const getDisputes = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams(filters);
@@ -440,12 +408,7 @@ export const getDisputes = async (filters = {}) => {
   }
 };
 
-/**
- * Respond to a dispute
- * @param {string} disputeId - Dispute ID
- * @param {Object} responseData - Dispute response data
- * @returns {Promise<Object>} Response result
- */
+// Respond to a dispute
 export const respondToDispute = async (disputeId, responseData) => {
   try {
     const response = await adminHttpService.post(
@@ -458,14 +421,7 @@ export const respondToDispute = async (disputeId, responseData) => {
   }
 };
 
-// ============================================
-// FRAUD DETECTION
-// ============================================
-
-/**
- * Get fraud detection settings
- * @returns {Promise<Object>} Fraud settings
- */
+// Get fraud detection settings
 export const getFraudSettings = async () => {
   try {
     const response = await adminHttpService.get(
@@ -477,11 +433,8 @@ export const getFraudSettings = async () => {
   }
 };
 
-/**
- * Update fraud detection rules
- * @param {Object} rules - Fraud rules
- * @returns {Promise<Object>} Update response
- */
+// Update fraud detection rules
+
 export const updateFraudRules = async (rules) => {
   try {
     const response = await adminHttpService.put(
@@ -494,11 +447,7 @@ export const updateFraudRules = async (rules) => {
   }
 };
 
-/**
- * Get flagged transactions
- * @param {Object} filters - Filter parameters
- * @returns {Promise<Object>} Flagged transactions
- */
+// Get flagged transactions
 export const getFlaggedTransactions = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams(filters);
@@ -511,12 +460,7 @@ export const getFlaggedTransactions = async (filters = {}) => {
   }
 };
 
-/**
- * Review a flagged transaction
- * @param {string} transactionId - Transaction ID
- * @param {Object} reviewData - Review decision
- * @returns {Promise<Object>} Review response
- */
+// Review a flagged transaction
 export const reviewFlaggedTransaction = async (transactionId, reviewData) => {
   try {
     const response = await adminHttpService.post(
@@ -529,15 +473,7 @@ export const reviewFlaggedTransaction = async (transactionId, reviewData) => {
   }
 };
 
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
-
-/**
- * Download file from blob
- * @param {Blob} blob - File blob
- * @param {string} filename - File name
- */
+// Download file from blob
 export const downloadFile = (blob, filename) => {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -581,7 +517,6 @@ export const formatCurrency = (amount, currency = "USD") => {
 };
 
 // Validate payment data before submission
-
 export const validatePaymentData = (paymentData) => {
   const errors = {};
 

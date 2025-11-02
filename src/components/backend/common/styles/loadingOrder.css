@@ -1,0 +1,258 @@
+/* LoadingOrdersState.css */
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem;
+    min-height: 400px;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Loading Icon Animation */
+.loading-icon-group {
+    position: relative;
+    width: 10rem;
+    height: 10rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-pulse-circle {
+    position: absolute;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    opacity: 0;
+    animation: pulse-wave 2s ease-out infinite;
+}
+
+.loading-pulse-1 {
+    width: 6rem;
+    height: 6rem;
+    animation-delay: 0s;
+}
+
+.loading-pulse-2 {
+    width: 8rem;
+    height: 8rem;
+    animation-delay: 0.5s;
+}
+
+.loading-pulse-3 {
+    width: 10rem;
+    height: 10rem;
+    animation-delay: 1s;
+}
+
+@keyframes pulse-wave {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+.loading-main-circle {
+    position: relative;
+    z-index: 10;
+    width: 5rem;
+    height: 5rem;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.loading-package-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #2563eb;
+    animation: icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.loading-spinner-wrapper {
+    position: absolute;
+    z-index: 5;
+    width: 7rem;
+    height: 7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner {
+    width: 7rem;
+    height: 7rem;
+    color: #3b82f6;
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loading Text */
+.loading-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    animation: fade-in 0.5s ease-in;
+}
+
+.loading-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    animation: fade-in 0.5s ease-in 0.2s backwards;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.loading-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: #3b82f6;
+    border-radius: 9999px;
+    animation: dot-bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dot-1 {
+    animation-delay: 0s;
+}
+
+.loading-dot-2 {
+    animation-delay: 0.2s;
+}
+
+.loading-dot-3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes dot-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.7;
+    }
+
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .loading-icon-group {
+        width: 8rem;
+        height: 8rem;
+    }
+
+    .loading-pulse-1 {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .loading-pulse-2 {
+        width: 6.5rem;
+        height: 6.5rem;
+    }
+
+    .loading-pulse-3 {
+        width: 8rem;
+        height: 8rem;
+    }
+
+    .loading-main-circle {
+        width: 4rem;
+        height: 4rem;
+    }
+
+    .loading-package-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .loading-spinner-wrapper {
+        width: 6rem;
+        height: 6rem;
+    }
+
+    .loading-spinner {
+        width: 6rem;
+        height: 6rem;
+    }
+
+    .loading-title {
+        font-size: 1.25rem;
+    }
+}

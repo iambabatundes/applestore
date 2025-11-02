@@ -17,10 +17,13 @@ const AdminInvite = ({ darkMode = false }) => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
+  // SYNCHRONIZED WITH BACKEND ROLE_TEMPLATES
   const roles = [
     {
       value: "admin",
-      label: "Admin",
+      label: "Administrator",
+      description:
+        "Full business operations access (cannot manage other admins)",
       permissions: [
         // Users
         "users.create",
@@ -28,68 +31,156 @@ const AdminInvite = ({ darkMode = false }) => {
         "users.update",
         "users.delete",
         "users.export",
+        "users.suspend",
         // Products
         "products.create",
         "products.read",
         "products.update",
         "products.delete",
+        "products.import",
         "products.export",
+        "products.bulk_edit",
         // Orders
         "orders.create",
         "orders.read",
         "orders.update",
         "orders.cancel",
+        "orders.refund",
         "orders.export",
-        // Promotions & Coupons
+        "orders.bulk_process",
+        // Marketing
+        "promotions.create",
         "promotions.read",
         "promotions.update",
+        "promotions.delete",
+        "coupons.create",
         "coupons.read",
         "coupons.update",
-        // Shipping & Taxes
+        "coupons.delete",
+        "coupons.bulk_generate",
+        // Inventory
+        "inventory.read",
+        "inventory.update",
+        "inventory.alerts",
+        "inventory.reports",
+        "inventory.bulk_update",
+        // Shipping
         "shipping.zones",
         "shipping.rates",
+        "shipping.methods",
+        "shipping.tracking",
+        "shipping.labels",
+        "shipping.reports",
+        // Taxes
         "taxes.rates",
         "taxes.rules",
+        "taxes.reports",
+        "taxes.settings",
         // Analytics
         "analytics.basic",
         "analytics.advanced",
+        "analytics.export",
+        "analytics.realtime",
+        "reports.sales",
+        "reports.customers",
+        "reports.products",
         // Content
         "content.create",
         "content.read",
         "content.update",
+        "content.delete",
+        "content.publish",
         "content.moderate",
+        // Financial
+        "payments.read",
+        "payments.process",
+        "payments.refund",
+        "billing.read",
+        "billing.update",
+        "revenue.reports",
+        // Support
+        "tickets.create",
+        "tickets.read",
+        "tickets.update",
+        "tickets.close",
+        "chat.access",
+        "reviews.moderate",
         // Settings
+        "admins.read",
         "settings.general",
+        "settings.security",
+      ],
+    },
+    {
+      value: "manager",
+      label: "Manager",
+      description: "Operational management access",
+      permissions: [
+        "users.read",
+        "users.update",
+        "users.export",
+        "products.create",
+        "products.read",
+        "products.update",
+        "products.delete",
+        "products.import",
+        "products.export",
+        "products.bulk_edit",
+        "orders.create",
+        "orders.read",
+        "orders.update",
+        "orders.cancel",
+        "orders.refund",
+        "orders.export",
+        "orders.bulk_process",
+        "inventory.read",
+        "inventory.update",
+        "inventory.alerts",
+        "inventory.reports",
+        "inventory.bulk_update",
+        "analytics.basic",
+        "reports.sales",
+        "reports.products",
       ],
     },
     {
       value: "moderator",
       label: "Moderator",
+      description: "Content and user moderation",
       permissions: [
         "users.read",
-        "users.update",
-        "products.read",
-        "products.update",
-        "orders.read",
-        "content.read",
-        "content.moderate",
-        "reviews.moderate",
-      ],
-    },
-    {
-      value: "editor",
-      label: "Editor",
-      permissions: [
-        "products.create",
-        "products.read",
-        "products.update",
+        "users.suspend",
         "content.create",
         "content.read",
         "content.update",
+        "content.delete",
+        "content.publish",
+        "content.moderate",
+        "reviews.moderate",
+        "tickets.read",
+        "tickets.update",
+      ],
+    },
+    {
+      value: "support",
+      label: "Support Agent",
+      description: "Customer support access",
+      permissions: [
+        "users.read",
+        "orders.read",
+        "orders.update",
+        "tickets.create",
+        "tickets.read",
+        "tickets.update",
+        "tickets.close",
+        "chat.access",
+        "reviews.moderate",
+        "analytics.basic",
       ],
     },
   ];
 
+  // Complete list of ALL available permissions (from backend)
   const availablePermissions = [
     // Users
     "users.create",
@@ -105,6 +196,7 @@ const AdminInvite = ({ darkMode = false }) => {
     "products.delete",
     "products.import",
     "products.export",
+    "products.bulk_edit",
     // Orders
     "orders.create",
     "orders.read",
@@ -112,43 +204,75 @@ const AdminInvite = ({ darkMode = false }) => {
     "orders.cancel",
     "orders.refund",
     "orders.export",
-    // Promotions
+    "orders.bulk_process",
+    // Marketing
     "promotions.create",
     "promotions.read",
     "promotions.update",
     "promotions.delete",
-    // Coupons
     "coupons.create",
     "coupons.read",
     "coupons.update",
     "coupons.delete",
+    "coupons.bulk_generate",
     // Inventory
     "inventory.read",
     "inventory.update",
     "inventory.alerts",
+    "inventory.reports",
+    "inventory.bulk_update",
     // Shipping
     "shipping.zones",
     "shipping.rates",
     "shipping.methods",
+    "shipping.tracking",
+    "shipping.labels",
+    "shipping.reports",
     // Taxes
     "taxes.rates",
     "taxes.rules",
     "taxes.reports",
+    "taxes.settings",
     // Analytics
     "analytics.basic",
     "analytics.advanced",
     "analytics.export",
+    "analytics.realtime",
+    "reports.sales",
+    "reports.customers",
+    "reports.products",
     // Content
     "content.create",
     "content.read",
     "content.update",
     "content.delete",
+    "content.publish",
     "content.moderate",
-    // Reviews
+    // Financial
+    "payments.read",
+    "payments.process",
+    "payments.refund",
+    "billing.read",
+    "billing.update",
+    "revenue.reports",
+    // Support
+    "tickets.create",
+    "tickets.read",
+    "tickets.update",
+    "tickets.close",
+    "chat.access",
     "reviews.moderate",
-    // Settings
+    // System (only for display, super_admin can assign)
+    "admins.create",
+    "admins.read",
+    "admins.update",
+    "admins.delete",
     "settings.general",
     "settings.security",
+    "settings.integrations",
+    "system.maintenance",
+    "system.logs",
+    "system.backups",
   ];
 
   useEffect(() => {
@@ -203,12 +327,22 @@ const AdminInvite = ({ darkMode = false }) => {
 
     try {
       setSubmitting(true);
-      await AdminService.createAdminInvite({
+
+      console.log("Submitting invite with data:", {
+        email: inviteForm.email,
+        role: inviteForm.role,
+        permissionCount: inviteForm.permissions.length,
+        permissions: inviteForm.permissions,
+      });
+
+      const response = await AdminService.createAdminInvite({
         email: inviteForm.email,
         role: inviteForm.role,
         permissions: inviteForm.permissions,
         notes: inviteForm.notes,
       });
+
+      console.log("Invite response:", response);
 
       setMessage({ text: "Admin invite sent successfully!", type: "success" });
       setInviteForm({ email: "", role: "admin", permissions: [], notes: "" });
@@ -216,8 +350,18 @@ const AdminInvite = ({ darkMode = false }) => {
       await loadInvites();
     } catch (error) {
       console.error("Failed to send invite:", error);
+
+      // Enhanced error display
+      let errorMessage = "Failed to send invite";
+
+      if (error.context?.details) {
+        errorMessage = error.context.details.join(", ");
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       setMessage({
-        text: error.message || "Failed to send invite",
+        text: errorMessage,
         type: "error",
       });
     } finally {
@@ -302,10 +446,17 @@ const AdminInvite = ({ darkMode = false }) => {
                   </option>
                 ))}
               </select>
+              {roles.find((r) => r.value === inviteForm.role)?.description && (
+                <small className="form-text">
+                  {roles.find((r) => r.value === inviteForm.role).description}
+                </small>
+              )}
             </div>
 
             <div className="form-group">
-              <label>Permissions</label>
+              <label>
+                Permissions ({inviteForm.permissions.length} selected)
+              </label>
               <div className="permissions-grid">
                 {availablePermissions.map((permission) => (
                   <label key={permission} className="checkbox-label">

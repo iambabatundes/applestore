@@ -24,6 +24,8 @@ import Profile from "../profile";
 import GeneralSettings from "../generalSettings";
 import AppearanceSettings from "../appearanceSettings";
 import AdminInvite from "../AdminInvite";
+import PaymentAdminDashboard from "../payments";
+
 import { Icons } from "../common/modernIcons";
 
 export const sidebarLinks = (darkMode, adminUser) => {
@@ -122,6 +124,14 @@ export const sidebarLinks = (darkMode, adminUser) => {
           content: <NewMedia />,
         },
       ],
+    },
+
+    {
+      label: "Payments",
+      to: "/admin/payments",
+      content: <PaymentAdminDashboard />,
+      icon: Icons.Media,
+      dropdown: [],
     },
     {
       label: "Orders",
