@@ -1,49 +1,731 @@
+/* Main Container */
 .taxRate {
-    overflow-y: auto;
-    height: 500px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
-.taxRate::-webkit-scrollbar {
-    display: none;
-}
-
-.taxRate__main {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-    max-width: 1200px;
-    /* margin: 0 auto; */
+.taxRate__header {
+    margin-bottom: 2rem;
 }
 
 .taxRate__heading {
-    text-align: left;
-    font-size: 1.8rem;
-    /* margin-bottom: 20px; */
-    color: #2c3e50;
-    padding: 15px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
 }
 
-.taxRate__taxList {
-    /* flex: 4; */
-    overflow-x: auto;
+.taxRate__subtitle {
+    color: #718096;
+    font-size: 1rem;
 }
 
-@media (min-width: 768px) {
+.taxRate__main {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+/* Form Sections */
+.taxForm {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+}
+
+.taxForm__heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.taxForm__section {
+    margin-bottom: 2rem;
+}
+
+.taxForm__section-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.taxForm__help-text {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 1rem;
+}
+
+/* Form Inputs */
+.taxForm__container {
+    margin-bottom: 1rem;
+}
+
+.taxForm__label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.taxForm__input,
+.taxForm__select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+}
+
+.taxForm__input:focus,
+.taxForm__select:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+.taxForm__textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.taxForm__error {
+    color: #e53e3e;
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+}
+
+.taxForm__group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Checkboxes */
+.taxForm__checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.taxForm__container-isGlobal,
+.taxForm__isActive {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.taxForm__isGlobal,
+.taxForm__isActive-input {
+    width: auto;
+    cursor: pointer;
+}
+
+.taxForm__isGlobal-label,
+.taxForm__isActive-label {
+    font-size: 0.9375rem;
+    color: #2d3748;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Product Categories */
+.taxForm__category-group {
+    margin-bottom: 1.5rem;
+}
+
+.taxForm__category-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.taxForm__category-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.taxForm__category-btn:hover {
+    background-color: #3182ce;
+}
+
+.taxForm__category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.taxForm__category-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #edf2f7;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.taxForm__category-remove {
+    background: none;
+    border: none;
+    color: #e53e3e;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.taxForm__category-remove:hover {
+    color: #c53030;
+}
+
+/* Tiered Rates */
+.tieredRate__form {
+    background-color: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.tieredRate__Addbtn {
+    padding: 0.75rem 1.5rem;
+    background-color: #48bb78;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 1rem;
+}
+
+.tieredRate__Addbtn:hover {
+    background-color: #38a169;
+}
+
+.tieredRates__lists {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.tieredRate__list {
+    background-color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tieredRate__btn {
+    background-color: #fc8181;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.tieredRate__btn:hover {
+    background-color: #f56565;
+}
+
+/* Form Buttons */
+.taxForm__btn {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+}
+
+.taxForm__btn:hover:not(:disabled) {
+    background-color: #2c5aa0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.taxForm__btn:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+.taxForm__cancel-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #e2e8f0;
+    color: #2d3748;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.taxForm__cancel-btn:hover {
+    background-color: #cbd5e0;
+}
+
+/* Tax List */
+.taxRate__list {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.taxRate__list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.taxRate__list-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.taxRate__list-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.taxRate__action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #edf2f7;
+    color: #2d3748;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.taxRate__action-btn:hover {
+    background-color: #e2e8f0;
+}
+
+/* Filters */
+.taxRate__filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.taxRate__filter-group {
+    position: relative;
+}
+
+.taxRate__filter-input,
+.taxRate__filter-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.taxRate__filter-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+}
+
+.taxRate__filter-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.taxRate__filter-apply,
+.taxRate__filter-clear {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.taxRate__filter-apply {
+    background-color: #3182ce;
+    color: white;
+}
+
+.taxRate__filter-apply:hover {
+    background-color: #2c5aa0;
+}
+
+.taxRate__filter-clear {
+    background-color: #e2e8f0;
+    color: #2d3748;
+}
+
+.taxRate__filter-clear:hover {
+    background-color: #cbd5e0;
+}
+
+/* Tax Rate Cards */
+.taxRate__cards {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.taxRate__card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.2s;
+}
+
+.taxRate__card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.taxRate__card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.taxRate__card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.taxRate__card-badges {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.taxRate__badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.taxRate__badge--active {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
+
+.taxRate__badge--inactive {
+    background-color: #fed7d7;
+    color: #742a2a;
+}
+
+.taxRate__badge--type {
+    background-color: #bee3f8;
+    color: #2c5282;
+}
+
+.taxRate__badge--global {
+    background-color: #fefcbf;
+    color: #744210;
+}
+
+.taxRate__badge--compound {
+    background-color: #e9d8fd;
+    color: #44337a;
+}
+
+.taxRate__card-body {
+    margin-bottom: 1rem;
+}
+
+.taxRate__details {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.9375rem;
+}
+
+.taxRate__details--full {
+    flex-direction: column;
+}
+
+.taxRate__label {
+    color: #718096;
+    font-weight: 500;
+}
+
+.taxRate__value {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.taxRate__value--rate {
+    color: #3182ce;
+    font-size: 1.125rem;
+}
+
+.taxRate__description {
+    color: #4a5568;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+/* Tiered Rates Display */
+.taxRate__tieredRates {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f7fafc;
+    border-radius: 6px;
+}
+
+.taxRate__tieredRates h4 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.taxRate__tieredRates ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.taxRate__tieredRates li {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+/* Categories Display */
+.taxRate__categories {
+    margin-top: 1rem;
+}
+
+.taxRate__category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.taxRate__category-tag {
+    padding: 0.25rem 0.75rem;
+    background-color: #edf2f7;
+    border-radius: 12px;
+    font-size: 0.8125rem;
+    color: #2d3748;
+}
+
+.taxRate__category-tag--excluded {
+    background-color: #fed7d7;
+    color: #742a2a;
+}
+
+/* Card Actions */
+.taxRate__actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.taxRate__edit-btn,
+.taxRate__delete-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.taxRate__edit-btn {
+    background-color: #4299e1;
+    color: white;
+}
+
+.taxRate__edit-btn:hover {
+    background-color: #3182ce;
+    transform: translateY(-1px);
+}
+
+.taxRate__delete-btn {
+    background-color: #fc8181;
+    color: white;
+}
+
+.taxRate__delete-btn:hover {
+    background-color: #f56565;
+    transform: translateY(-1px);
+}
+
+/* Pagination */
+.taxRate__pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.taxRate__pagination-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.taxRate__pagination-btn:hover:not(:disabled) {
+    background-color: #2c5aa0;
+}
+
+.taxRate__pagination-btn:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+.taxRate__pagination-info {
+    font-size: 0.9375rem;
+    color: #4a5568;
+}
+
+.taxRate__pagination-total {
+    margin-left: 0.5rem;
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+/* Empty State */
+.taxRate__empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.taxRate__vat-no {
+    font-size: 1.25rem;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+.taxRate__vat-subtitle {
+    color: #718096;
+}
+
+/* Loading and Error States */
+.taxRate__loading-container,
+.taxRate__error-container {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.taxRate__loading,
+.tax__error {
+    font-size: 1.125rem;
+    color: #718096;
+}
+
+.tax__error {
+    color: #e53e3e;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
     .taxRate__main {
-        flex-direction: row;
-        /* justify-content: space-between; */
+        grid-template-columns: 1fr;
     }
 
-    .taxRate__taxForm {
-        flex: 1.5;
+    .taxForm {
+        position: static;
+    }
+}
 
+@media (max-width: 768px) {
+    .taxRate {
+        padding: 1rem;
     }
 
-    .taxRate__taxList {
-        flex: 4;
+    .taxForm__group {
+        grid-template-columns: 1fr;
+    }
 
+    .taxRate__list-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .taxRate__filters {
+        grid-template-columns: 1fr;
+    }
+
+    .taxRate__pagination {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .taxRate__actions {
+        flex-direction: column;
     }
 }

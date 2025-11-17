@@ -14,6 +14,9 @@ import AddTags from "../tags/addTags";
 import Upload from "../upload";
 import NewMedia from "../newMedia";
 import Orders from "../orders";
+// import OrderAnalytics from "../orders/OrderAnalytics";
+// import OrderSettings from "../orders/OrderSettings";
+// import Inventory from "../orders/Inventory";
 import AllPages from "../allPages";
 import NewPage from "../newPage";
 import Promotion from "../promotion";
@@ -27,6 +30,9 @@ import AdminInvite from "../AdminInvite";
 import PaymentAdminDashboard from "../payments";
 
 import { Icons } from "../common/modernIcons";
+import OrderAnalytics from "../orders/orderAnalytics";
+import OrderStatsDashboard from "../orders/orderStatsDashboard";
+import CouponStatsPage from "../coupons/couponStatsPage";
 
 export const sidebarLinks = (darkMode, adminUser) => {
   const baseLinks = [
@@ -36,9 +42,21 @@ export const sidebarLinks = (darkMode, adminUser) => {
       content: <Dashboard darkMode={darkMode} />,
       icon: Icons.Dashboard,
       dropdown: [
-        { label: "Home", to: "/admin/home", content: <Dashboard /> },
-        { label: "Updates", to: "/admin/updates", content: <Updates /> },
-        { label: "SEO", to: "/admin/seo", content: <SEO /> },
+        {
+          label: "Home",
+          to: "/admin/home",
+          content: <Dashboard darkMode={darkMode} />,
+        },
+        {
+          label: "Updates",
+          to: "/admin/updates",
+          content: <Updates />,
+        },
+        {
+          label: "SEO",
+          to: "/admin/seo",
+          content: <SEO />,
+        },
         {
           label: "Shipping Rate",
           to: "/admin/shipping",
@@ -60,7 +78,7 @@ export const sidebarLinks = (darkMode, adminUser) => {
         {
           label: "All Posts",
           to: "/admin/posts",
-          content: <AllPosts />,
+          content: <AllPosts darkMode={darkMode} />,
         },
         {
           label: "Create Post",
@@ -82,18 +100,23 @@ export const sidebarLinks = (darkMode, adminUser) => {
     {
       label: "Products",
       to: "/admin/all-products",
-      content: <AllProduct />,
+      content: <AllProduct darkMode={darkMode} />,
       icon: Icons.Products,
       dropdown: [
         {
           label: "All Products",
           to: "/admin/all-products",
-          content: <AllProduct />,
+          content: <AllProduct darkMode={darkMode} />,
         },
         {
           label: "Add Product",
           to: "/admin/add-product",
           content: <AddProduct darkMode={darkMode} user={adminUser} />,
+        },
+        {
+          label: "Product Inventoy",
+          to: "/admin/inventory",
+          // content: <Inventory darkMode={darkMode} />,
         },
         {
           label: "Categories",
@@ -125,55 +148,79 @@ export const sidebarLinks = (darkMode, adminUser) => {
         },
       ],
     },
-
     {
       label: "Payments",
       to: "/admin/payments",
       content: <PaymentAdminDashboard />,
-      icon: Icons.Media,
-      dropdown: [],
+      icon: Icons.Payments, // Use appropriate icon
+      dropdown: [
+        {
+          label: "Dashboard",
+          to: "/admin/payments",
+          content: <PaymentAdminDashboard />,
+        },
+        {
+          label: "All Payments",
+          to: "/admin/all-payments",
+          // content: <AllPayments />, // Create this component
+        },
+        {
+          label: "Configuration",
+          to: "/admin/payments-configuration",
+          // content: <PaymentConfiguration />, // Create this component
+        },
+        {
+          label: "Subscriptions",
+          to: "/admin/subscriptions",
+          // content: <Subscriptions />, // Create this component
+        },
+      ],
     },
     {
       label: "Orders",
       to: "/admin/orders",
       icon: Icons.Orders,
-      content: <Orders />,
+      content: <Orders darkMode={darkMode} />,
       dropdown: [
         {
-          label: "All Order",
+          label: "All Orders",
           to: "/admin/orders",
-          content: <Orders />,
+          content: <Orders darkMode={darkMode} />,
         },
         {
-          label: "All Pages",
-          to: "/admin/all-pages",
-          content: <AllPages />,
+          label: "Analytics",
+          to: "/admin/orders/analytics",
+          content: <OrderAnalytics darkMode={darkMode} />,
+        },
+        {
+          label: "Order Stats",
+          to: "/admin/orders/stats",
+          content: <OrderStatsDashboard darkMode={darkMode} />,
+        },
+        {
+          label: "Settings",
+          to: "/admin/orders/settings",
+          // content: <OrderSettings darkMode={darkMode} />,
         },
       ],
     },
     {
       label: "Promotion",
-      to: "/admin/promotions",
+      to: "/admin/create-promotion",
       icon: Icons.Promotion,
-      content: <Promotion />,
-      dropdown: [
-        {
-          label: "Create",
-          to: "/admin/create-promotions",
-          content: <Promotions />,
-        },
-      ],
+      content: <Promotions />,
+      dropdown: [],
     },
     {
-      label: "Coupon",
+      label: "Coupons",
       to: "/admin/coupons",
       icon: Icons.Coupon,
-      content: <Coupon />,
+      content: <Coupon darkMode={darkMode} />,
       dropdown: [
         {
-          label: "Create",
-          to: "/admin/create-promotions",
-          content: <Promotions />,
+          label: "Coupon Stats",
+          to: "/admin/coupon/coupon-stats",
+          content: <CouponStatsPage darkMode={darkMode} />,
         },
       ],
     },
@@ -181,12 +228,12 @@ export const sidebarLinks = (darkMode, adminUser) => {
       label: "Pages",
       to: "/admin/all-pages",
       icon: Icons.Pages,
-      content: <AllPages />,
+      content: <AllPages darkMode={darkMode} />,
       dropdown: [
         {
           label: "All Pages",
           to: "/admin/all-pages",
-          content: <AllPages />,
+          content: <AllPages darkMode={darkMode} />,
         },
         {
           label: "Add New",
@@ -199,17 +246,17 @@ export const sidebarLinks = (darkMode, adminUser) => {
       label: "Users",
       to: "/admin/all-users",
       icon: Icons.Users,
-      content: <AllUsers />,
+      content: <AllUsers darkMode={darkMode} />,
       dropdown: [
         {
           label: "All Users",
           to: "/admin/all-users",
-          content: <AllUsers />,
+          content: <AllUsers darkMode={darkMode} />,
         },
         {
-          label: "Add New",
+          label: "Add New User",
           to: "/admin/new-user",
-          content: <NewPage />,
+          // content: <AddUser />, // Create this component
         },
         {
           label: "Profile",
@@ -222,22 +269,23 @@ export const sidebarLinks = (darkMode, adminUser) => {
       label: "Settings",
       to: "/admin/general",
       icon: Icons.Settings,
-      content: <GeneralSettings />,
+      content: <GeneralSettings darkMode={darkMode} />,
       dropdown: [
         {
-          label: "General Settings",
+          label: "General",
           to: "/admin/general",
-          content: <GeneralSettings />,
+          content: <GeneralSettings darkMode={darkMode} />,
         },
         {
           label: "Appearance",
           to: "/admin/appearance",
-          content: <AppearanceSettings />,
+          content: <AppearanceSettings darkMode={darkMode} />,
         },
       ],
     },
   ];
 
+  // Add Admin Management for super_admin
   if (
     adminUser &&
     (adminUser.role === "super_admin" || adminUser.hasPermission?.("admins"))
@@ -252,4 +300,59 @@ export const sidebarLinks = (darkMode, adminUser) => {
   }
 
   return baseLinks;
+};
+
+// Export permission-based route visibility helper
+export const canAccessRoute = (route, user) => {
+  // Super admin can access everything
+  if (user?.role === "super_admin") {
+    return true;
+  }
+
+  // Define route permissions
+  const routePermissions = {
+    "/admin/orders": ["admin", "super_admin"],
+    "/admin/orders/analytics": ["admin", "super_admin"],
+    "/admin/orders/settings": ["super_admin"],
+    "/admin/payments": ["admin", "super_admin"],
+    "/admin/manage-admins": ["super_admin"],
+    "/admin/shipping": ["admin", "super_admin"],
+    "/admin/tax-rate": ["admin", "super_admin"],
+  };
+
+  const requiredRoles = routePermissions[route];
+
+  if (!requiredRoles) {
+    // No specific permission required
+    return true;
+  }
+
+  return requiredRoles.includes(user?.role);
+};
+
+// Export route configuration for easier management
+export const routeConfig = {
+  orders: {
+    base: "/admin/orders",
+    analytics: "/admin/orders/analytics",
+    inventory: "/admin/orders/inventory",
+    settings: "/admin/orders/settings",
+  },
+  payments: {
+    base: "/admin/payments",
+    all: "/admin/all-payments",
+    configuration: "/admin/payments-configuration",
+    subscriptions: "/admin/subscriptions",
+  },
+  products: {
+    base: "/admin/all-products",
+    add: "/admin/add-product",
+    categories: "/admin/add-categories",
+    tags: "/admin/add-tags",
+  },
+  users: {
+    base: "/admin/all-users",
+    add: "/admin/new-user",
+    profile: "/admin/profile",
+  },
 };

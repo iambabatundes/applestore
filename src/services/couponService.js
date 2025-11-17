@@ -15,22 +15,37 @@ function clearCouponCache() {
   publicHttpService.clearCache();
 }
 
-export async function getCoupons() {
+export async function getCoupons(params = {}) {
   try {
-    const response = await adminHttpService.get(couponsPath);
+    const response = await adminHttpService.get(couponsPath, { params });
     clearCouponCache();
-    return response;
+
+    return {
+      data: response.data.data || [],
+      pagination: response.data.pagination || null,
+    };
   } catch (err) {
     console.error("Failed to fetch coupons:", err);
     throw err;
   }
 }
 
+export async function getActiveCoupons() {
+  try {
+    const response = await adminHttpService.get(`${couponsPath}/active`);
+    clearCouponCache();
+    return response.data.data || [];
+  } catch (err) {
+    console.error("Failed to fetch active coupons:", err);
+    throw err;
+  }
+}
+
 export async function getCoupon(couponId) {
   try {
-    const { data } = await adminHttpService.get(couponUrl(couponId));
+    const response = await adminHttpService.get(couponUrl(couponId));
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
     console.error("Failed to fetch coupon:", err);
     throw err;
@@ -39,9 +54,9 @@ export async function getCoupon(couponId) {
 
 export async function saveCoupon(coupon) {
   try {
-    const { data } = await adminHttpService.post(couponsPath, coupon);
+    const response = await adminHttpService.post(couponsPath, coupon);
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
     console.error("Failed to create coupon:", err);
     throw err;
@@ -50,9 +65,9 @@ export async function saveCoupon(coupon) {
 
 export async function updateCoupon(couponId, coupon) {
   try {
-    const { data } = await adminHttpService.put(couponUrl(couponId), coupon);
+    const response = await adminHttpService.put(couponUrl(couponId), coupon);
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
     console.error("Failed to update coupon:", err);
     throw err;
@@ -61,51 +76,89 @@ export async function updateCoupon(couponId, coupon) {
 
 export async function deleteCoupon(couponId) {
   try {
-    const { data } = await adminHttpService.delete(couponUrl(couponId));
+    const response = await adminHttpService.delete(couponUrl(couponId));
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
     console.error("Failed to delete coupon:", err);
     throw err;
   }
 }
 
-// User functions - applying and validating coupons
-export async function applyCoupon(couponCode) {
+export async function activateCoupon(couponId) {
   try {
-    const { data } = await userHttpService.post(`${couponsPath}/apply`, {
-      code: couponCode,
-    });
+    const response = await adminHttpService.patch(
+      `${couponUrl(couponId)}/activate`
+    );
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
-    console.error("Failed to apply coupon:", err);
+    console.error("Failed to activate coupon:", err);
     throw err;
   }
 }
 
-export async function validateCoupon(couponCode, cartTotal = null) {
+export async function getCouponStats() {
   try {
-    const { data } = await userHttpService.post(`${couponsPath}/validate`, {
-      code: couponCode,
-      cartTotal,
+    const response = await adminHttpService.get(`${couponsPath}/admin/stats`);
+    return response.data.data;
+  } catch (err) {
+    console.error("Failed to fetch coupon stats:", err);
+    throw err;
+  }
+}
+
+export async function validateCoupon(code, subtotal, items = []) {
+  try {
+    const response = await userHttpService.post(`${couponsPath}/validate`, {
+      code,
+      subtotal,
+      items,
     });
-    // clearCouponCache()
-    return data;
+    return response.data.data;
   } catch (err) {
     console.error("Failed to validate coupon:", err);
     throw err;
   }
 }
 
-// Public functions - get active/public coupons
-export async function getPublicCoupons() {
+export async function applyCoupon(code, orderId, subtotal, items = []) {
   try {
-    const { data } = await publicHttpService.get(`${couponsPath}/public`);
+    const response = await userHttpService.post(`${couponsPath}/apply`, {
+      code,
+      orderId,
+      subtotal,
+      items,
+    });
     clearCouponCache();
-    return data;
+    return response.data.data;
   } catch (err) {
-    console.error("Failed to fetch public coupons:", err);
+    console.error("Failed to apply coupon:", err);
+    throw err;
+  }
+}
+
+export async function rollbackCoupon(code, orderId, reason) {
+  try {
+    const response = await userHttpService.post(`${couponsPath}/rollback`, {
+      code,
+      orderId,
+      reason,
+    });
+    clearCouponCache();
+    return response.data;
+  } catch (err) {
+    console.error("Failed to rollback coupon:", err);
+    throw err;
+  }
+}
+
+export async function getUserAvailableCoupons() {
+  try {
+    const response = await userHttpService.get(`${couponsPath}/user/available`);
+    return response.data.data || [];
+  } catch (err) {
+    console.error("Failed to fetch available coupons:", err);
     throw err;
   }
 }

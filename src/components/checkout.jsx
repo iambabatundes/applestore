@@ -9,13 +9,13 @@ import { validateCoupon } from "../services/couponService";
 
 export default function Checkout() {
   const [addresses, setAddresses] = useState([]);
-  const [step, setStep] = useState(1); // Initialize with step 1
+  const [step, setStep] = useState(1);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [autofillError, setAutofillError] = useState(null);
   const [defaultAddress, setDefaultAddress] = useState(
     JSON.parse(localStorage.getItem("defaultAddress")) || null
-  ); // Initialize with the default address from localStorage
+  );
   const [formattedAddress, setFormattedAddress] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -130,7 +130,7 @@ export default function Checkout() {
 
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
-    setStep(3); // Move to step 3 after selecting payment method
+    setStep(3);
   };
 
   const handleAddressChange = (address) => {

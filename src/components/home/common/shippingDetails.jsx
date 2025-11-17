@@ -3,15 +3,6 @@ import "../styles/shippingDetails.css";
 import Details from "./details";
 
 export default function ShippingDetails() {
-  // Mock data
-  const shippingCost = "$51.94";
-  const deliveryDateRange = "September 23 - October 4";
-  const fastestDeliveryDate = "Monday, September 16";
-  const location = "Nigeria";
-  const stockStatus = "In Stock";
-  const price = "$39.99";
-  const listPrice = "$59.99";
-
   // Mock available quantity for the product
   const availableQuantity = 5;
 

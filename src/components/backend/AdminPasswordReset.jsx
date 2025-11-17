@@ -753,7 +753,7 @@ export default function AdminPasswordReset() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        background: "linear-gradient(135deg, #f5f7fa, #c3cfe2);",
         padding: "20px",
       }}
     >
