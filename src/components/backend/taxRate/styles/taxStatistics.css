@@ -1,0 +1,387 @@
+/* components/admin/tax/styles/taxStatisticsPage.css */
+.taxStats__page {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.taxStats__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.taxStats__header-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.taxStats__back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.taxStats__back-btn:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.taxStats__title-section {
+    flex: 1;
+}
+
+.taxStats__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.taxStats__subtitle {
+    color: #6c757d;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.taxStats__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.taxStats__time-select {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+}
+
+.taxStats__action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.taxStats__action-btn--primary {
+    background: #007bff;
+    color: white;
+}
+
+.taxStats__action-btn--primary:hover {
+    background: #0056b3;
+}
+
+.taxStats__action-btn--secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.taxStats__action-btn--secondary:hover {
+    background: #545b62;
+}
+
+.taxStats__action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.taxStats__spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Metrics Grid */
+.taxStats__metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.taxStatsCard {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.taxStatsCard:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.taxStatsCard--alert {
+    border-left: 4px solid #ffc107;
+}
+
+.taxStatsCard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.taxStatsCard__icon {
+    font-size: 2rem;
+}
+
+.taxStatsCard__alert-badge {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.taxStatsCard__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.taxStatsCard__value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+}
+
+.taxStatsCard__description {
+    color: #6c757d;
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+}
+
+.taxStatsCard__change {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.taxStatsCard__change--positive {
+    color: #28a745;
+}
+
+.taxStatsCard__change--negative {
+    color: #dc3545;
+}
+
+.taxStatsCard__change--neutral {
+    color: #6c757d;
+}
+
+.taxStatsCard__change-value {
+    font-weight: 600;
+}
+
+.taxStatsCard__change-label {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+/* Charts Section */
+.taxStats__charts-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.taxStats__chart-container {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.taxStats__chart-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 1.5rem 0;
+}
+
+.taxStats__chart-placeholder {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
+/* Activity Section */
+.taxStats__activity-section {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.taxStats__activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.taxStats__activity-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.taxStats__activity-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Health Section */
+.taxStats__health-section {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.taxStats__health-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 1.5rem 0;
+}
+
+.taxStats__health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.taxStats__health-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e1e5e9;
+}
+
+.taxStats__health-item--good {
+    border-left: 4px solid #28a745;
+}
+
+.taxStats__health-item--warning {
+    border-left: 4px solid #ffc107;
+}
+
+.taxStats__health-icon {
+    font-size: 1.5rem;
+}
+
+.taxStats__health-content {
+    flex: 1;
+}
+
+.taxStats__health-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6c757d;
+    margin: 0 0 0.25rem 0;
+}
+
+.taxStats__health-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+/* Loading States */
+.taxStats__loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    gap: 1rem;
+}
+
+.taxStats__loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.taxStats__loading {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .taxStats__page {
+        padding: 1rem;
+    }
+
+    .taxStats__header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .taxStats__header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .taxStats__charts-section {
+        grid-template-columns: 1fr;
+    }
+
+    .taxStats__metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}

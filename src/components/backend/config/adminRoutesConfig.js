@@ -19,7 +19,6 @@ import Orders from "../orders";
 // import Inventory from "../orders/Inventory";
 import AllPages from "../allPages";
 import NewPage from "../newPage";
-import Promotion from "../promotion";
 import Promotions from "../promotions/promotions";
 import Coupon from "../coupon";
 import AllUsers from "../allUsers";
@@ -27,12 +26,20 @@ import Profile from "../profile";
 import GeneralSettings from "../generalSettings";
 import AppearanceSettings from "../appearanceSettings";
 import AdminInvite from "../AdminInvite";
-import PaymentAdminDashboard from "../payments";
+// import PaymentAdminDashboard from "../payments";
 
 import { Icons } from "../common/modernIcons";
 import OrderAnalytics from "../orders/orderAnalytics";
 import OrderStatsDashboard from "../orders/orderStatsDashboard";
 import CouponStatsPage from "../coupons/couponStatsPage";
+import TaxStatistics from "../taxRate/taxStatistics";
+import TaxConfiguration from "../taxRate/TaxConfiguration";
+import PaymentAdminDashboard from "../payments/paymentAdminDashboard";
+import AllPayments from "../payments/allPayments";
+import PaymentConfiguration from "../payments/paymentConfiguration";
+import PaymentStats from "../payments/paymentStats";
+import SubscriptionManagement from "../payments/subscriptionManagement";
+import SubscriptionPlansManagement from "../payments/subscriptionPlansManagement";
 
 export const sidebarLinks = (darkMode, adminUser) => {
   const baseLinks = [
@@ -61,11 +68,6 @@ export const sidebarLinks = (darkMode, adminUser) => {
           label: "Shipping Rate",
           to: "/admin/shipping",
           content: <ShippingRate />,
-        },
-        {
-          label: "Tax Rate",
-          to: "/admin/tax-rate",
-          content: <TaxRate />,
         },
       ],
     },
@@ -152,7 +154,7 @@ export const sidebarLinks = (darkMode, adminUser) => {
       label: "Payments",
       to: "/admin/payments",
       content: <PaymentAdminDashboard />,
-      icon: Icons.Payments, // Use appropriate icon
+      icon: Icons.Payments,
       dropdown: [
         {
           label: "Dashboard",
@@ -162,17 +164,33 @@ export const sidebarLinks = (darkMode, adminUser) => {
         {
           label: "All Payments",
           to: "/admin/all-payments",
-          // content: <AllPayments />, // Create this component
+          content: <AllPayments />,
+        },
+
+        {
+          label: "Subscriptions",
+          to: "/admin/subscriptions",
+          content: <SubscriptionManagement />,
+        },
+        {
+          label: "Subscriptions Plan",
+          to: "/admin/create-subscriptions",
+          content: <SubscriptionPlansManagement />,
+        },
+        {
+          label: "Stats",
+          to: "/admin/payment-stats",
+          content: <PaymentStats />,
+        },
+        {
+          label: "Stats",
+          to: "/admin/analytics",
+          // content: <Analytics />,
         },
         {
           label: "Configuration",
           to: "/admin/payments-configuration",
-          // content: <PaymentConfiguration />, // Create this component
-        },
-        {
-          label: "Subscriptions",
-          to: "/admin/subscriptions",
-          // content: <Subscriptions />, // Create this component
+          content: <PaymentConfiguration />,
         },
       ],
     },
@@ -212,6 +230,29 @@ export const sidebarLinks = (darkMode, adminUser) => {
       dropdown: [],
     },
     {
+      label: "Shipping",
+      to: "/admin/shipping",
+      icon: Icons.Shipping,
+      content: <ShippingRate />,
+      dropdown: [
+        {
+          label: "Shipping Rate",
+          to: "/admin/shipping",
+          content: <ShippingRate />,
+        },
+        {
+          label: "Statistic Shipping",
+          to: "/admin/statistics",
+          // content: <Statistic />,
+        },
+        {
+          label: "Stats Shipping",
+          to: "/admin/stats",
+          // content: <Stats />,
+        },
+      ],
+    },
+    {
       label: "Coupons",
       to: "/admin/coupons",
       icon: Icons.Coupon,
@@ -221,6 +262,29 @@ export const sidebarLinks = (darkMode, adminUser) => {
           label: "Coupon Stats",
           to: "/admin/coupon/coupon-stats",
           content: <CouponStatsPage darkMode={darkMode} />,
+        },
+      ],
+    },
+    {
+      label: "Taxs",
+      to: "/admin/tax-rate",
+      icon: Icons.Pages,
+      content: <TaxRate />,
+      dropdown: [
+        {
+          label: "Tax Rate",
+          to: "/admin/tax-rate",
+          content: <TaxRate />,
+        },
+        {
+          label: "Tax Statistics",
+          to: "/admin/tax-statistics",
+          content: <TaxStatistics />,
+        },
+        {
+          label: "Tax Configuration",
+          to: "/admin/tax-config",
+          content: <TaxConfiguration />,
         },
       ],
     },

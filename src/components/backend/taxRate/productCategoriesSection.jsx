@@ -1,19 +1,23 @@
-// ProductCategoriesSection.jsx
+// components/admin/tax/common/ProductCategoriesSection.jsx
 import React from "react";
-import "../styles/taxForm.css";
+import "./styles/taxForm.css";
 
 export function ProductCategoriesSection({
   categoryInput,
   setCategoryInput,
   addProductCategory,
-  productCategories,
+  productCategories = [], // Default to empty array
   removeProductCategory,
   excludedCategoryInput,
   setExcludedCategoryInput,
   addExcludedCategory,
-  excludedCategories,
+  excludedCategories = [], // Default to empty array
   removeExcludedCategory,
 }) {
+  // Safe array access with default values
+  const safeProductCategories = productCategories || [];
+  const safeExcludedCategories = excludedCategories || [];
+
   return (
     <div className="taxForm__section">
       <h3 className="taxForm__section-heading">Product Categories</h3>
@@ -28,12 +32,12 @@ export function ProductCategoriesSection({
         <div className="taxForm__category-input-group">
           <input
             type="text"
-            value={categoryInput}
+            value={categoryInput || ""}
             onChange={(e) => setCategoryInput(e.target.value)}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                addProductCategory();
+                addProductCategory?.(); // Safe function call
               }
             }}
             placeholder="e.g., Electronics, Clothing"
@@ -43,19 +47,20 @@ export function ProductCategoriesSection({
             type="button"
             onClick={addProductCategory}
             className="taxForm__category-btn"
+            disabled={!categoryInput?.trim()} // Disable if no input
           >
             Add
           </button>
         </div>
 
-        {productCategories.length > 0 && (
+        {safeProductCategories.length > 0 && (
           <ul className="taxForm__category-list">
-            {productCategories.map((category, index) => (
+            {safeProductCategories.map((category, index) => (
               <li key={index} className="taxForm__category-item">
                 <span>{category}</span>
                 <button
                   type="button"
-                  onClick={() => removeProductCategory(index)}
+                  onClick={() => removeProductCategory?.(index)}
                   className="taxForm__category-remove"
                   aria-label="Remove category"
                 >
@@ -73,12 +78,12 @@ export function ProductCategoriesSection({
         <div className="taxForm__category-input-group">
           <input
             type="text"
-            value={excludedCategoryInput}
+            value={excludedCategoryInput || ""}
             onChange={(e) => setExcludedCategoryInput(e.target.value)}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                addExcludedCategory();
+                addExcludedCategory?.(); // Safe function call
               }
             }}
             placeholder="e.g., Food, Medicine"
@@ -88,19 +93,20 @@ export function ProductCategoriesSection({
             type="button"
             onClick={addExcludedCategory}
             className="taxForm__category-btn"
+            disabled={!excludedCategoryInput?.trim()} // Disable if no input
           >
             Add
           </button>
         </div>
 
-        {excludedCategories.length > 0 && (
+        {safeExcludedCategories.length > 0 && (
           <ul className="taxForm__category-list">
-            {excludedCategories.map((category, index) => (
+            {safeExcludedCategories.map((category, index) => (
               <li key={index} className="taxForm__category-item">
                 <span>{category}</span>
                 <button
                   type="button"
-                  onClick={() => removeExcludedCategory(index)}
+                  onClick={() => removeExcludedCategory?.(index)}
                   className="taxForm__category-remove"
                   aria-label="Remove excluded category"
                 >

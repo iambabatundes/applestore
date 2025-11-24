@@ -1,3 +1,76 @@
+/* Enhanced table styles */
+.taxRate__table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.taxRate__table th,
+.taxRate__table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.taxRate__table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.taxRate__table-row:hover {
+    background: #f8f9fa;
+}
+
+.taxRate__table-row--inactive {
+    opacity: 0.6;
+}
+
+.taxRate__table-row--expiring {
+    border-left: 3px solid #ffc107;
+}
+
+/* Enhanced status badges */
+.taxRate__status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.taxRate__status--active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.taxRate__status--inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Section styling */
+.taxForm__section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.taxForm__section-heading {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    border-bottom: 1px solid #e1e5e9;
+    padding-bottom: 8px;
+}
+
+
+
+
 .taxRate__list {
     /* padding: 1rem; */
     max-width: 100%;

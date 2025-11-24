@@ -124,14 +124,61 @@ export async function calculateTax(items, location, shippingFee = 0) {
   }
 }
 
-export async function getTaxStatistics() {
+export async function getTaxStatistics(params = {}) {
   try {
-    const response = await adminHttpService.get(
-      `${TAX_RATES_ENDPOINT}/stats/summary`
-    );
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(key, value);
+      }
+    });
+
+    const url = queryParams.toString()
+      ? `${TAX_RATES_ENDPOINT}/stats/summary?${queryParams.toString()}`
+      : `${TAX_RATES_ENDPOINT}/stats/summary`;
+
+    const response = await adminHttpService.get(url);
     return response.data;
   } catch (err) {
     console.error("Failed to fetch tax statistics:", err);
+    throw err;
+  }
+}
+
+export async function getTaxStatisticsChartData(timeRange = "30d") {
+  try {
+    const response = await adminHttpService.get(
+      `${TAX_RATES_ENDPOINT}/stats/charts?timeRange=${timeRange}`
+    );
+    return response.data;
+  } catch (err) {
+    console.error("Failed to fetch tax chart data:", err);
+    throw err;
+  }
+}
+
+export async function exportTaxStatistics(format = "csv") {
+  try {
+    const response = await adminHttpService.get(
+      `${TAX_RATES_ENDPOINT}/stats/export?format=${format}`
+    );
+
+    const blob = new Blob([response.data], {
+      type: format === "csv" ? "text/csv" : "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `tax-statistics-${Date.now()}.${format}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    return true;
+  } catch (err) {
+    console.error("Failed to export tax statistics:", err);
     throw err;
   }
 }

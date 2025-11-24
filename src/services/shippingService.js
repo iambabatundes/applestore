@@ -652,6 +652,59 @@ export function formatShippingCost(cost, currency = "USD") {
   }
 }
 
+export async function getShippingStatistics() {
+  try {
+    // Get stats from various endpoints
+    const [rates, zones, cacheStats] = await Promise.all([
+      getAllShippingRates({ limit: 1000 }),
+      getAllShippingZones(),
+      getShippingCacheStats().catch(() => ({ data: null })),
+    ]);
+
+    const activeRates = rates.data?.filter((r) => r.isActive) || [];
+    const inactiveRates = rates.data?.filter((r) => !r.isActive) || [];
+
+    // Calculate carrier distribution
+    const carrierDistribution = {};
+    rates.data?.forEach((rate) => {
+      carrierDistribution[rate.carrier] =
+        (carrierDistribution[rate.carrier] || 0) + 1;
+    });
+
+    // Calculate pricing type distribution
+    const pricingTypeDistribution = {};
+    rates.data?.forEach((rate) => {
+      pricingTypeDistribution[rate.pricingType] =
+        (pricingTypeDistribution[rate.pricingType] || 0) + 1;
+    });
+
+    return {
+      success: true,
+      data: {
+        rates: {
+          total: rates.data?.length || 0,
+          active: activeRates.length,
+          inactive: inactiveRates.length,
+          byCarrier: carrierDistribution,
+          byPricingType: pricingTypeDistribution,
+        },
+        zones: {
+          total: zones.data?.length || 0,
+          active: zones.data?.filter((z) => z.isActive).length || 0,
+          inactive: zones.data?.filter((z) => !z.isActive).length || 0,
+          byType: zones.data?.reduce((acc, zone) => {
+            acc[zone.type] = (acc[zone.type] || 0) + 1;
+            return acc;
+          }, {}),
+        },
+        cache: cacheStats.data || null,
+      },
+    };
+  } catch (err) {
+    throw handleError(err, "Failed to get shipping statistics");
+  }
+}
+
 export function calculateTotalWeight(items) {
   return items.reduce((total, item) => {
     const itemWeight = item.weight || 0;
@@ -859,7 +912,7 @@ export function calculateEstimatedDeliveryDate(
   shipDate = new Date()
 ) {
   const earliest = new Date(shipDate);
-  earliest.setDate(earliest.getDate() + estimatedDays);
+  earliest.setDate(earliest.getDate() + estimatedDays.min || estimatedDays);
 
   const latest = new Date(shipDate);
   latest.setDate(latest.getDate() + estimatedDays + 1);

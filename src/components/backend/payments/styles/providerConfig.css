@@ -1,0 +1,295 @@
+/* components/admin/payments/styles/ProviderConfig.css */
+.provider-config {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.provider-config::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4299e1, #667eea);
+    transition: all 0.3s ease;
+}
+
+.provider-config.enabled::before {
+    background: linear-gradient(90deg, #48bb78, #38a169);
+}
+
+.provider-config.disabled::before {
+    background: linear-gradient(90deg, #a0aec0, #718096);
+}
+
+.provider-config.enabled {
+    border-color: #c6f6d5;
+    background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+}
+
+.provider-config.disabled {
+    border-color: #e2e8f0;
+    background: #f7fafc;
+    opacity: 0.8;
+}
+
+.config-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.provider-info h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.provider-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-indicator {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-indicator.enabled {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-indicator.disabled {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.config-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.toggle-btn,
+.test-btn,
+.save-btn,
+.cancel-btn {
+    padding: 0.75rem 1.25rem;
+    border: 1px solid;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.toggle-btn.enabled {
+    background: #fed7d7;
+    color: #c53030;
+    border-color: #feb2b2;
+}
+
+.toggle-btn.enabled:hover:not(:disabled) {
+    background: #feb2b2;
+    border-color: #fc8181;
+    transform: translateY(-1px);
+}
+
+.toggle-btn.disabled {
+    background: #c6f6d5;
+    color: #22543d;
+    border-color: #9ae6b4;
+}
+
+.toggle-btn.disabled:hover:not(:disabled) {
+    background: #9ae6b4;
+    border-color: #68d391;
+    transform: translateY(-1px);
+}
+
+.toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.test-btn {
+    background: #bee3f8;
+    color: #2b6cb0;
+    border-color: #90cdf4;
+}
+
+.test-btn:hover:not(:disabled) {
+    background: #90cdf4;
+    border-color: #63b3ed;
+    transform: translateY(-1px);
+}
+
+.save-btn {
+    background: #48bb78;
+    color: white;
+    border-color: #48bb78;
+}
+
+.save-btn:hover:not(:disabled) {
+    background: #38a169;
+    border-color: #38a169;
+    transform: translateY(-1px);
+}
+
+.save-btn:disabled {
+    background: #a0aec0;
+    border-color: #a0aec0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.cancel-btn {
+    background: white;
+    color: #718096;
+    border-color: #cbd5e0;
+}
+
+.cancel-btn:hover:not(:disabled) {
+    background: #f7fafc;
+    border-color: #a0aec0;
+    transform: translateY(-1px);
+}
+
+.config-fields {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.config-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.config-field label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.required {
+    color: #e53e3e;
+    margin-left: 0.25rem;
+}
+
+.config-field input,
+.config-field select {
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.config-field input:focus,
+.config-field select:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.config-field input:disabled,
+.config-field select:disabled {
+    background: #f7fafc;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.credentials-toggle {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #edf2f7;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.credentials-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.credentials-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #cbd5e0;
+    cursor: pointer;
+}
+
+.credentials-toggle input[type="checkbox"]:checked {
+    background: #4299e1;
+    border-color: #4299e1;
+}
+
+.config-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .config-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .config-actions {
+        justify-content: stretch;
+    }
+
+    .toggle-btn,
+    .test-btn,
+    .save-btn,
+    .cancel-btn {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .config-footer {
+        flex-direction: column;
+    }
+}

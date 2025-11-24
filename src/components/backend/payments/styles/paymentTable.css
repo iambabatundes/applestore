@@ -1,0 +1,400 @@
+/* components/admin/payments/common/paymentTable.css */
+
+/* CSS Custom Properties for theming */
+:root {
+    --pad-primary: #4f46e5;
+    --pad-primary-hover: #4338ca;
+    --pad-success: #10b981;
+    --pad-warning: #f59e0b;
+    --pad-danger: #ef4444;
+    --pad-info: #3b82f6;
+
+    --pad-bg-primary: #ffffff;
+    --pad-bg-secondary: #f9fafb;
+    --pad-bg-tertiary: #f3f4f6;
+
+    --pad-text-primary: #111827;
+    --pad-text-secondary: #6b7280;
+    --pad-text-muted: #9ca3af;
+
+    --pad-border: #e5e7eb;
+    --pad-border-focus: #4f46e5;
+
+    --pad-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --pad-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --pad-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --pad-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    --pad-radius-sm: 0.375rem;
+    --pad-radius: 0.5rem;
+    --pad-radius-lg: 0.75rem;
+
+    --pad-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --pad-bg-primary: #1f2937;
+        --pad-bg-secondary: #111827;
+        --pad-bg-tertiary: #374151;
+        --pad-text-primary: #f9fafb;
+        --pad-text-secondary: #d1d5db;
+        --pad-text-muted: #9ca3af;
+        --pad-border: #374151;
+    }
+}
+
+.payment-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Bulk Actions */
+.bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--pad-primary);
+    color: white;
+}
+
+.bulk-actions__count {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.bulk-actions__btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: var(--pad-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--pad-transition);
+}
+
+.bulk-actions__btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Table */
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.payment-table thead {
+    background-color: var(--pad-bg-secondary);
+    border-bottom: 2px solid var(--pad-border);
+}
+
+.payment-table th {
+    padding: 0.875rem 1rem;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--pad-text-secondary);
+    text-align: left;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.payment-table td {
+    padding: 0.875rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--pad-border);
+}
+
+/* Sortable Headers */
+.sortable {
+    cursor: pointer;
+    transition: color var(--pad-transition);
+}
+
+.sortable:hover {
+    color: var(--pad-text-primary);
+}
+
+.sortable.sorted {
+    color: var(--pad-primary);
+}
+
+.sort-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.sort-icon {
+    font-size: 0.625rem;
+    opacity: 0.5;
+}
+
+.sorted .sort-icon {
+    opacity: 1;
+}
+
+/* Checkbox Cell */
+.checkbox-cell {
+    width: 40px;
+    text-align: center;
+}
+
+.checkbox-cell input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: var(--pad-primary);
+}
+
+/* Row Styles */
+.payment-row {
+    cursor: pointer;
+    transition: background-color var(--pad-transition);
+}
+
+.payment-row:hover {
+    background-color: var(--pad-bg-secondary);
+}
+
+.payment-row:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--pad-primary);
+}
+
+.payment-row.selected {
+    background-color: rgb(79 70 229 / 0.05);
+}
+
+.payment-row.selected:hover {
+    background-color: rgb(79 70 229 / 0.1);
+}
+
+/* Transaction Cell */
+.transaction-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.transaction-id {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--pad-text-primary);
+}
+
+.fraud-flag {
+    font-size: 0.875rem;
+    cursor: help;
+}
+
+/* Customer Cell */
+.customer-email {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--pad-text-secondary);
+}
+
+/* Amount Cell */
+.amount-cell .amount {
+    font-weight: 600;
+    color: var(--pad-text-primary);
+}
+
+/* Provider Cell */
+.provider-name {
+    text-transform: capitalize;
+    color: var(--pad-text-secondary);
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-badge--success {
+    color: #059669;
+    background-color: #d1fae5;
+}
+
+.status-badge--warning {
+    color: #d97706;
+    background-color: #fef3c7;
+}
+
+.status-badge--info {
+    color: #2563eb;
+    background-color: #dbeafe;
+}
+
+.status-badge--danger {
+    color: #dc2626;
+    background-color: #fee2e2;
+}
+
+.status-badge--muted {
+    color: #6b7280;
+    background-color: #f3f4f6;
+}
+
+.status-badge--refund {
+    color: #7c3aed;
+    background-color: #ede9fe;
+}
+
+/* Date Cell */
+.date-cell .date {
+    font-size: 0.8125rem;
+    color: var(--pad-text-muted);
+    white-space: nowrap;
+}
+
+/* Actions Cell */
+.actions-cell {
+    width: 50px;
+    text-align: center;
+}
+
+/* Action Menu */
+.action-menu {
+    position: relative;
+}
+
+.action-menu__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.25rem;
+    color: var(--pad-text-muted);
+    background: none;
+    border: none;
+    border-radius: var(--pad-radius-sm);
+    cursor: pointer;
+    transition: background-color var(--pad-transition), color var(--pad-transition);
+}
+
+.action-menu__trigger:hover {
+    background-color: var(--pad-bg-tertiary);
+    color: var(--pad-text-primary);
+}
+
+.action-menu__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+}
+
+.action-menu__dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: 20;
+    min-width: 150px;
+    background-color: var(--pad-bg-primary);
+    border: 1px solid var(--pad-border);
+    border-radius: var(--pad-radius);
+    box-shadow: var(--pad-shadow-lg);
+    overflow: hidden;
+    animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--pad-text-secondary);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--pad-transition), color var(--pad-transition);
+}
+
+.action-menu__item:hover {
+    background-color: var(--pad-bg-secondary);
+    color: var(--pad-text-primary);
+}
+
+.action-menu__item--refund:hover {
+    color: #7c3aed;
+}
+
+.action-menu__item--cancel:hover {
+    color: #dc2626;
+}
+
+.action-icon {
+    font-size: 0.875rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+
+    .payment-table th:nth-child(5),
+    .payment-table td:nth-child(5) {
+        display: none;
+        /* Hide provider on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+
+    .payment-table th:nth-child(7),
+    .payment-table td:nth-child(7) {
+        display: none;
+        /* Hide date on small screens */
+    }
+
+    .payment-table th,
+    .payment-table td {
+        padding: 0.625rem 0.5rem;
+    }
+
+    .customer-email {
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkbox-cell {
+        display: none;
+    }
+
+    .transaction-id {
+        font-size: 0.75rem;
+    }
+}

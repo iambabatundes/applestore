@@ -6,38 +6,45 @@ import {
   publicHttpService,
 } from "./http/index.js";
 
-const paymentsPath = "/api/payments";
-const configPath = "/api/payment-config";
-const webhooksPath = "/api/webhooks";
-const analyticsPath = "/api/payment-analytics";
+const basePath = "/api/payments";
 
+// Create payment (requires user auth)
 export const createPayment = async (paymentData) => {
   try {
-    const response = await publicHttpService.post(paymentsPath, paymentData);
+    const response = await userHttpService.post(basePath, paymentData);
     return response.data;
   } catch (error) {
     throw handlePaymentError(error);
   }
 };
 
-export const getTransactions = async (filters = {}) => {
+// Get user's transactions
+export const getUserTransactions = async (filters = {}) => {
   try {
-    const queryParams = new URLSearchParams({
-      page: filters.page || 1,
-      limit: filters.limit || 20,
-      ...(filters.status && { status: filters.status }),
-      ...(filters.provider && { provider: filters.provider }),
-      ...(filters.search && { search: filters.search }),
-      ...(filters.dateFrom && { dateFrom: filters.dateFrom }),
-      ...(filters.dateTo && { dateTo: filters.dateTo }),
-      ...(filters.userId && { userId: filters.userId }),
-      ...(filters.minAmount && { minAmount: filters.minAmount }),
-      ...(filters.maxAmount && { maxAmount: filters.maxAmount }),
-      ...(filters.currency && { currency: filters.currency }),
-    });
+    const queryParams = buildQueryParams(filters);
+    const response = await userHttpService.get(`${basePath}?${queryParams}`);
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
 
-    const response = await adminHttpService.get(
-      `${paymentsPath}?${queryParams}`
+// Get single transaction status (user)
+export const getPaymentStatus = async (transactionId) => {
+  try {
+    const response = await userHttpService.get(`${basePath}/${transactionId}`);
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// Retry payment (user)
+export const retryPayment = async (transactionId, options = {}) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/${transactionId}/retry`,
+      options
     );
     return response.data;
   } catch (error) {
@@ -45,44 +52,11 @@ export const getTransactions = async (filters = {}) => {
   }
 };
 
-export const getTransaction = async (transactionId) => {
-  try {
-    const response = await adminHttpService.get(
-      `${paymentsPath}/${transactionId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-export const capturePayment = async (transactionId) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/${transactionId}/capture`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-export const refundPayment = async (transactionId, refundData) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/${transactionId}/refund`,
-      refundData
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
+// Cancel payment (user)
 export const cancelPayment = async (transactionId, reason) => {
   try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/${transactionId}/cancel`,
+    const response = await userHttpService.post(
+      `${basePath}/${transactionId}/cancel`,
       { reason }
     );
     return response.data;
@@ -91,10 +65,12 @@ export const cancelPayment = async (transactionId, reason) => {
   }
 };
 
-export const retryPayment = async (transactionId) => {
+// Get user payment stats
+export const getUserPaymentStats = async (params = {}) => {
   try {
-    const response = await userHttpService.post(
-      `${paymentsPath}/${transactionId}/retry`
+    const queryParams = buildQueryParams(params);
+    const response = await userHttpService.get(
+      `${basePath}/stats/user?${queryParams}`
     );
     return response.data;
   } catch (error) {
@@ -102,32 +78,11 @@ export const retryPayment = async (transactionId) => {
   }
 };
 
-export const getPaymentConfig = async () => {
+// Get user revenue analytics
+export const getUserRevenueAnalytics = async (period = "monthly") => {
   try {
-    const response = await adminHttpService.get(configPath);
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-//  Get configuration for a specific provider
-export const getProviderConfig = async (provider) => {
-  try {
-    const response = await adminHttpService.get(`${configPath}/${provider}`);
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Update payment gateway configuration
-
-export const updatePaymentConfig = async (provider, config) => {
-  try {
-    const response = await adminHttpService.put(
-      `${configPath}/${provider}`,
-      config
+    const response = await userHttpService.get(
+      `${basePath}/analytics/revenue?period=${period}`
     );
     return response.data;
   } catch (error) {
@@ -135,49 +90,11 @@ export const updatePaymentConfig = async (provider, config) => {
   }
 };
 
-// Test payment gateway connection
-
-export const testProviderConnection = async (provider) => {
-  try {
-    const response = await adminHttpService.post(
-      `${configPath}/${provider}/test`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Enable/disable a payment provider
-
-export const toggleProvider = async (provider, enabled) => {
-  try {
-    const response = await adminHttpService.patch(
-      `${configPath}/${provider}/toggle`,
-      { enabled }
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-//  Get available payment providers
-export const getAvailableProviders = async () => {
-  try {
-    const response = await userHttpService.get(`${paymentsPath}/providers`);
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Create a customer in payment gateway
-
+// Create customer in payment gateway
 export const createCustomer = async (customerData) => {
   try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/customers`,
+    const response = await userHttpService.post(
+      `${basePath}/customers`,
       customerData
     );
     return response.data;
@@ -186,11 +103,34 @@ export const createCustomer = async (customerData) => {
   }
 };
 
-// Get customer payment methods
-export const getCustomerPaymentMethods = async (customerId) => {
+// Get available providers (public)
+export const getAvailableProviders = async () => {
   try {
-    const response = await adminHttpService.get(
-      `${paymentsPath}/customers/${customerId}/payment-methods`
+    const response = await publicHttpService.get(`${basePath}/providers`);
+    const data = response.data;
+
+    let providers = [];
+    if (data?.data?.providers) {
+      providers = data.data.providers;
+    } else if (data?.providers) {
+      providers = data.providers;
+    } else if (Array.isArray(data)) {
+      providers = data;
+    }
+
+    return providers.map((p) => (typeof p === "string" ? p : p.name));
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ SUBSCRIPTION OPERATIONS (USER) ============
+
+export const createSubscription = async (subscriptionData) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions`,
+      subscriptionData
     );
     return response.data;
   } catch (error) {
@@ -198,11 +138,78 @@ export const getCustomerPaymentMethods = async (customerId) => {
   }
 };
 
-//  Save payment method for future use
-export const savePaymentMethod = async (customerId, paymentMethodData) => {
+export const getUserSubscriptions = async () => {
   try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/customers/${customerId}/payment-methods`,
+    const response = await userHttpService.get(`${basePath}/subscriptions`);
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getSubscriptionDetails = async (subscriptionId) => {
+  try {
+    const response = await userHttpService.get(
+      `${basePath}/subscriptions/${subscriptionId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const cancelSubscription = async (subscriptionId) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions/${subscriptionId}/cancel`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const pauseSubscription = async (subscriptionId) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions/${subscriptionId}/pause`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const resumeSubscription = async (subscriptionId) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions/${subscriptionId}/resume`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const changeSubscriptionPlan = async (subscriptionId, planData) => {
+  try {
+    const response = await userHttpService.put(
+      `${basePath}/subscriptions/${subscriptionId}/plan`,
+      planData
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const updatePaymentMethod = async (
+  subscriptionId,
+  paymentMethodData
+) => {
+  try {
+    const response = await userHttpService.put(
+      `${basePath}/subscriptions/${subscriptionId}/payment-method`,
       paymentMethodData
     );
     return response.data;
@@ -211,11 +218,11 @@ export const savePaymentMethod = async (customerId, paymentMethodData) => {
   }
 };
 
-// Delete a saved payment method
-export const deletePaymentMethod = async (customerId, paymentMethodId) => {
+export const recordUsage = async (subscriptionId, usageData) => {
   try {
-    const response = await adminHttpService.delete(
-      `${paymentsPath}/customers/${customerId}/payment-methods/${paymentMethodId}`
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions/${subscriptionId}/usage`,
+      usageData
     );
     return response.data;
   } catch (error) {
@@ -223,17 +230,184 @@ export const deletePaymentMethod = async (customerId, paymentMethodId) => {
   }
 };
 
-//  Get payment dashboard statistics
+export const getUsageStats = async (subscriptionId) => {
+  try {
+    const response = await userHttpService.get(
+      `${basePath}/subscriptions/${subscriptionId}/usage`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const applyCoupon = async (subscriptionId, couponCode) => {
+  try {
+    const response = await userHttpService.post(
+      `${basePath}/subscriptions/${subscriptionId}/coupon`,
+      { couponCode }
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ PUBLIC ENDPOINTS ============
+
+export const getSubscriptionPlans = async () => {
+  try {
+    const response = await publicHttpService.get(
+      `${basePath}/subscriptions/plans`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getPlanDetails = async (planId) => {
+  try {
+    const response = await publicHttpService.get(
+      `${basePath}/subscriptions/plans/${planId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ ADMIN OPERATIONS ============
+
+// Admin: Get all transactions
+export const adminGetTransactions = async (filters = {}) => {
+  try {
+    const queryParams = buildQueryParams(filters);
+    const response = await adminHttpService.get(
+      `${basePath}/admin/payments?${queryParams}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// Admin: Get transaction details
+export const adminGetTransaction = async (transactionId) => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/${transactionId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// Admin: Capture payment (super_admin only)
+export const adminCapturePayment = async (transactionId, amount) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/admin/${transactionId}/capture`,
+      { amount }
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// Admin: Refund payment
+export const adminRefundPayment = async (transactionId, refundData) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/admin/${transactionId}/refund`,
+      refundData
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// Admin: Cancel payment
+export const adminCancelPayment = async (transactionId, reason) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/admin/${transactionId}/cancel`,
+      { reason }
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ ADMIN CONFIG ============
+
+export const getPaymentConfig = async () => {
+  try {
+    const response = await adminHttpService.get(`${basePath}/payment-config`);
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getProviderConfig = async (provider) => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/payment-config/${provider}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const updatePaymentConfig = async (provider, config) => {
+  try {
+    const response = await adminHttpService.put(
+      `${basePath}/payment-config/${provider}`,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const testProviderConnection = async (provider) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/payment-config/${provider}/test`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const toggleProvider = async (provider) => {
+  try {
+    const response = await adminHttpService.patch(
+      `${basePath}/payment-config/${provider}/toggle`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getProviderStatus = () => {};
+
+// ============ ADMIN ANALYTICS ============
+
 export const getPaymentStats = async (params = {}) => {
   try {
-    const queryParams = new URLSearchParams({
-      ...(params.dateFrom && { dateFrom: params.dateFrom }),
-      ...(params.dateTo && { dateTo: params.dateTo }),
-      ...(params.provider && { provider: params.provider }),
-    });
-
+    const queryParams = buildQueryParams(params);
     const response = await adminHttpService.get(
-      `${analyticsPath}/stats?${queryParams}`
+      `${basePath}/payment-analytics/stats?${queryParams}`
     );
     return response.data;
   } catch (error) {
@@ -244,7 +418,7 @@ export const getPaymentStats = async (params = {}) => {
 export const getRevenueAnalytics = async (period = "monthly") => {
   try {
     const response = await adminHttpService.get(
-      `${analyticsPath}/revenue?period=${period}`
+      `${basePath}/payment-analytics/revenue?period=${period}`
     );
     return response.data;
   } catch (error) {
@@ -254,35 +428,31 @@ export const getRevenueAnalytics = async (period = "monthly") => {
 
 export const getSuccessRateAnalytics = async (params = {}) => {
   try {
-    const queryParams = new URLSearchParams(params);
+    const queryParams = buildQueryParams(params);
     const response = await adminHttpService.get(
-      `${analyticsPath}/success-rate?${queryParams}`
+      `${basePath}/payment-analytics/success-rate?${queryParams}`
     );
     return response.data;
   } catch (error) {
     throw handlePaymentError(error);
   }
 };
-
-// Get top customers by transaction volume
 
 export const getTopCustomers = async (limit = 10) => {
   try {
     const response = await adminHttpService.get(
-      `${analyticsPath}/top-customers?limit=${limit}`
+      `${basePath}/payment-analytics/top-customers?limit=${limit}`
     );
     return response.data;
   } catch (error) {
     throw handlePaymentError(error);
   }
 };
-
-// Get payment trends by provider
 
 export const getProviderTrends = async () => {
   try {
     const response = await adminHttpService.get(
-      `${analyticsPath}/provider-trends`
+      `${basePath}/payment-analytics/provider-trends`
     );
     return response.data;
   } catch (error) {
@@ -290,13 +460,13 @@ export const getProviderTrends = async () => {
   }
 };
 
-// Export transactions to CSV
-export const exportTransactionsCSV = async (filters = {}) => {
+// ============ ADMIN SUBSCRIPTIONS ============
+
+export const adminGetSubscriptions = async (filters = {}) => {
   try {
-    const queryParams = new URLSearchParams(filters);
+    const queryParams = buildQueryParams(filters);
     const response = await adminHttpService.get(
-      `${paymentsPath}/export/csv?${queryParams}`,
-      { responseType: "blob" }
+      `${basePath}/admin/subscriptions?${queryParams}`
     );
     return response.data;
   } catch (error) {
@@ -304,13 +474,10 @@ export const exportTransactionsCSV = async (filters = {}) => {
   }
 };
 
-//  Export transactions to Excel
-export const exportTransactionsExcel = async (filters = {}) => {
+export const adminGetSubscription = async (subscriptionId) => {
   try {
-    const queryParams = new URLSearchParams(filters);
     const response = await adminHttpService.get(
-      `${paymentsPath}/export/excel?${queryParams}`,
-      { responseType: "blob" }
+      `${basePath}/admin/subscriptions/${subscriptionId}`
     );
     return response.data;
   } catch (error) {
@@ -318,11 +485,204 @@ export const exportTransactionsExcel = async (filters = {}) => {
   }
 };
 
-// Generate payment report
-export const generatePaymentReport = async (reportConfig) => {
+export const adminForceCancelSubscription = async (subscriptionId) => {
   try {
     const response = await adminHttpService.post(
-      `${analyticsPath}/reports`,
+      `${basePath}/admin/subscriptions/${subscriptionId}/force-cancel`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ ADMIN SUBSCRIPTION PLANS ============
+
+export const createPlan = async (planData) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/admin/plans`,
+      planData
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const updatePlan = async (planId, planData) => {
+  try {
+    const response = await adminHttpService.put(
+      `${basePath}/admin/plans/${planId}`,
+      planData
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const deletePlan = async (planId) => {
+  try {
+    const response = await adminHttpService.delete(
+      `${basePath}/admin/plans/${planId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const togglePlanStatus = async (planId) => {
+  try {
+    const response = await adminHttpService.patch(
+      `${basePath}/admin/plans/${planId}/toggle`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getPlanStatistics = async (planId) => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/plans/${planId}/statistics`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ ADMIN SUBSCRIPTION ANALYTICS ============
+
+export const getSubscriptionAnalytics = async () => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/subscriptions/analytics/overview`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getSubscriptionRevenue = async () => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/subscriptions/analytics/revenue`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getChurnRate = async () => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/subscriptions/analytics/churn`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getMRRAnalytics = async () => {
+  try {
+    const response = await adminHttpService.get(
+      `${basePath}/admin/subscriptions/analytics/mrr`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ EXPORTS ============
+
+export const exportTransactionsCSV = async (filters = {}) => {
+  try {
+    const queryParams = buildQueryParams(filters);
+    const response = await adminHttpService.get(
+      `${basePath}/export/csv?${queryParams}`,
+      { responseType: "blob" }
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const exportSubscriptionsCSV = async (filters = {}) => {
+  try {
+    const queryParams = buildQueryParams(filters);
+    const response = await adminHttpService.get(
+      `${basePath}/admin/subscriptions/export/csv?${queryParams}`,
+      { responseType: "blob" }
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ WEBHOOKS ============
+
+export const getWebhookLogs = async (filters = {}) => {
+  try {
+    const queryParams = buildQueryParams(filters);
+    const response = await adminHttpService.get(
+      `${basePath}/webhooks/logs?${queryParams}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const retryWebhook = async (webhookId) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/webhooks/${webhookId}/retry`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ FRAUD ============
+
+export const getFraudSettings = async () => {
+  try {
+    const response = await adminHttpService.get(`${basePath}/fraud/settings`);
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+export const getFlaggedTransactions = async (filters = {}) => {
+  try {
+    const queryParams = buildQueryParams(filters);
+    const response = await adminHttpService.get(
+      `${basePath}/fraud/flagged?${queryParams}`
+    );
+    return response.data;
+  } catch (error) {
+    throw handlePaymentError(error);
+  }
+};
+
+// ============ REPORTS ============
+
+export const generateReport = async (reportConfig) => {
+  try {
+    const response = await adminHttpService.post(
+      `${basePath}/reports/generate`,
       reportConfig
     );
     return response.data;
@@ -331,101 +691,10 @@ export const generatePaymentReport = async (reportConfig) => {
   }
 };
 
-// Get webhook logs
-export const getWebhookLogs = async (filters = {}) => {
-  try {
-    const queryParams = new URLSearchParams(filters);
-    const response = await adminHttpService.get(
-      `${webhooksPath}/logs?${queryParams}`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Retry a failed webhook
-export const retryWebhook = async (webhookId) => {
-  try {
-    const response = await adminHttpService.post(
-      `${webhooksPath}/${webhookId}/retry`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Create a subscription
-export const createSubscription = async (subscriptionData) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/subscriptions`,
-      subscriptionData
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Get all subscriptions
-export const getSubscriptions = async (filters = {}) => {
-  try {
-    const queryParams = new URLSearchParams(filters);
-    const response = await adminHttpService.get(
-      `${paymentsPath}/subscriptions?${queryParams}`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Cancel a subscription
-export const cancelSubscription = async (subscriptionId, cancellationData) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/subscriptions/${subscriptionId}/cancel`,
-      cancellationData
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Get all disputes/chargebacks
-export const getDisputes = async (filters = {}) => {
-  try {
-    const queryParams = new URLSearchParams(filters);
-    const response = await adminHttpService.get(
-      `${paymentsPath}/disputes?${queryParams}`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Respond to a dispute
-export const respondToDispute = async (disputeId, responseData) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/disputes/${disputeId}/respond`,
-      responseData
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
-};
-
-// Get fraud detection settings
-export const getFraudSettings = async () => {
+export const getReport = async (reportId) => {
   try {
     const response = await adminHttpService.get(
-      `${paymentsPath}/fraud/settings`
+      `${basePath}/reports/${reportId}`
     );
     return response.data;
   } catch (error) {
@@ -433,47 +702,40 @@ export const getFraudSettings = async () => {
   }
 };
 
-// Update fraud detection rules
+// ============ UTILITIES ============
 
-export const updateFraudRules = async (rules) => {
-  try {
-    const response = await adminHttpService.put(
-      `${paymentsPath}/fraud/rules`,
-      rules
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
+const buildQueryParams = (filters) => {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      params.append(key, value);
+    }
+  });
+  return params.toString();
 };
 
-// Get flagged transactions
-export const getFlaggedTransactions = async (filters = {}) => {
-  try {
-    const queryParams = new URLSearchParams(filters);
-    const response = await adminHttpService.get(
-      `${paymentsPath}/fraud/flagged?${queryParams}`
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
+const handlePaymentError = (error) => {
+  if (error.response) {
+    const { status, data } = error.response;
+    const message = data.message || data.error || "Payment operation failed";
+    const customError = new Error(message);
+    customError.status = status;
+    customError.code = data.code;
+    customError.data = data;
+    return customError;
+  } else if (error.request) {
+    return new Error("No response from server. Check your connection.");
   }
+  return new Error(error.message || "An unexpected error occurred");
 };
 
-// Review a flagged transaction
-export const reviewFlaggedTransaction = async (transactionId, reviewData) => {
-  try {
-    const response = await adminHttpService.post(
-      `${paymentsPath}/fraud/${transactionId}/review`,
-      reviewData
-    );
-    return response.data;
-  } catch (error) {
-    throw handlePaymentError(error);
-  }
+export const formatCurrency = (amount, currency = "USD") => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+  }).format(amount);
 };
 
-// Download file from blob
 export const downloadFile = (blob, filename) => {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -485,124 +747,12 @@ export const downloadFile = (blob, filename) => {
   window.URL.revokeObjectURL(url);
 };
 
-// Handle payment service errors
-const handlePaymentError = (error) => {
-  if (error.response) {
-    // Server responded with error
-    const { status, data } = error.response;
-    const message = data.message || data.error || "Payment operation failed";
-
-    const customError = new Error(message);
-    customError.status = status;
-    customError.data = data;
-
-    return customError;
-  } else if (error.request) {
-    // Request made but no response
-    return new Error(
-      "No response from payment server. Please check your connection."
-    );
-  } else {
-    // Other errors
-    return new Error(error.message || "An unexpected error occurred");
-  }
-};
-
-// Format currency amount
-export const formatCurrency = (amount, currency = "USD") => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency,
-  }).format(amount);
-};
-
-// Validate payment data before submission
-export const validatePaymentData = (paymentData) => {
+export const validatePaymentData = (data) => {
   const errors = {};
-
-  if (!paymentData.provider) {
-    errors.provider = "Payment provider is required";
+  if (!data.amount || data.amount <= 0) errors.amount = "Invalid amount";
+  if (!data.currency) errors.currency = "Currency required";
+  if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    errors.email = "Valid email required";
   }
-
-  if (!paymentData.amount || paymentData.amount <= 0) {
-    errors.amount = "Amount must be greater than 0";
-  }
-
-  if (!paymentData.currency) {
-    errors.currency = "Currency is required";
-  }
-
-  if (
-    !paymentData.email ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(paymentData.email)
-  ) {
-    errors.email = "Valid email is required";
-  }
-
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors,
-  };
-};
-
-// Export all functions as default object
-export default {
-  // Transactions
-  createPayment,
-  getTransactions,
-  getTransaction,
-  capturePayment,
-  refundPayment,
-  cancelPayment,
-  retryPayment,
-
-  // Configuration
-  getPaymentConfig,
-  getProviderConfig,
-  updatePaymentConfig,
-  testProviderConnection,
-  toggleProvider,
-  getAvailableProviders,
-
-  // Customers
-  createCustomer,
-  getCustomerPaymentMethods,
-  savePaymentMethod,
-  deletePaymentMethod,
-
-  // Analytics
-  getPaymentStats,
-  getRevenueAnalytics,
-  getSuccessRateAnalytics,
-  getTopCustomers,
-  getProviderTrends,
-
-  // Exports
-  exportTransactionsCSV,
-  exportTransactionsExcel,
-  generatePaymentReport,
-
-  // Webhooks
-  getWebhookLogs,
-  retryWebhook,
-
-  // Subscriptions
-  createSubscription,
-  getSubscriptions,
-  cancelSubscription,
-
-  // Disputes
-  getDisputes,
-  respondToDispute,
-
-  // Fraud
-  getFraudSettings,
-  updateFraudRules,
-  getFlaggedTransactions,
-  reviewFlaggedTransaction,
-
-  // Utilities
-  downloadFile,
-  formatCurrency,
-  validatePaymentData,
+  return { isValid: Object.keys(errors).length === 0, errors };
 };

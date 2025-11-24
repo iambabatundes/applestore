@@ -1,9 +1,10 @@
 // components/admin/tax/hook/useTaxForm.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import {
   saveTaxRate,
   updateTaxRate,
+  calculateTax,
 } from "../../../../services/taxRateService";
 import {
   validateTaxRate,
@@ -48,6 +49,7 @@ export function useTaxForm(currentTax, onSaveComplete) {
   const [excludedCategoryInput, setExcludedCategoryInput] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [calculationPreview, setCalculationPreview] = useState(null);
 
   const resetForm = () => {
     setFormData({
@@ -317,6 +319,57 @@ export function useTaxForm(currentTax, onSaveComplete) {
     }
   };
 
+  const testCalculation = useCallback(
+    async (testAmount = 100) => {
+      if (!formData.country || !formData.taxRate) {
+        toast.error("Please provide country and tax rate for calculation test");
+        return;
+      }
+
+      try {
+        const testItems = [
+          {
+            productId: "test",
+            productName: "Test Product",
+            price: testAmount,
+            quantity: 1,
+            category: formData.productCategories[0] || "general",
+          },
+        ];
+
+        const location = {
+          country: formData.country,
+          region: formData.region,
+          city: formData.city,
+        };
+
+        const result = await calculateTax(testItems, location, 0);
+        setCalculationPreview(result);
+      } catch (error) {
+        console.error("Calculation test failed:", error);
+        toast.error("Failed to test calculation");
+      }
+    },
+    [formData]
+  );
+
+  useEffect(() => {
+    if (formData.country && formData.taxRate && !currentTax) {
+      const timeoutId = setTimeout(() => {
+        testCalculation(100);
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    formData.country,
+    formData.taxRate,
+    formData.region,
+    formData.city,
+    testCalculation,
+    currentTax,
+  ]);
+
   return {
     formData,
     errors,
@@ -335,5 +388,7 @@ export function useTaxForm(currentTax, onSaveComplete) {
     setExcludedCategoryInput,
     addExcludedCategory,
     removeExcludedCategory,
+    calculationPreview,
+    testCalculation,
   };
 }
