@@ -1,99 +1,271 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "react-toastify";
 import {
-  deleteCategory,
-  saveCategory,
   getCategories,
+  saveCategory,
   updateCategory,
+  deleteCategory,
 } from "../../../../services/categoryService";
 
 export default function useCategory({ setSelectedCategory }) {
   const [category, setCategory] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    fetchCategory();
+  const isFetchingRef = useRef(false);
+  const abortRef = useRef(null);
+
+  const handleError = useCallback((error, type = "unknown") => {
+    console.log("Error details:", {
+      response: error.response,
+      message: error.message,
+      originalError: error.originalError,
+    });
+
+    let userFriendlyMessage = "An unexpected error occurred";
+
+    if (error.isDuplicate) {
+      userFriendlyMessage = error.message;
+    }
+    // Handle different error types from response
+    else if (error.response?.status === 409) {
+      userFriendlyMessage =
+        error.response.data?.message ||
+        "A category with this name already exists. Please choose a different name.";
+    } else if (error.response?.status === 400) {
+      userFriendlyMessage =
+        error.response.data?.message ||
+        "Please check your input and try again.";
+    } else if (error.response?.status === 404) {
+      userFriendlyMessage =
+        error.response.data?.message || "The requested resource was not found.";
+    } else if (error.response?.status === 500) {
+      userFriendlyMessage =
+        error.response.data?.message || "Server error. Please try again later.";
+    } else if (error.message) {
+      if (error.message.includes("Network Error")) {
+        userFriendlyMessage =
+          "Network error. Please check your connection and try again.";
+      } else {
+        userFriendlyMessage = error.message;
+      }
+    }
+
+    setErrors({
+      message: userFriendlyMessage,
+      type,
+      originalError: error,
+    });
+
+    if (type === "add" || type === "edit") {
+      toast.error(userFriendlyMessage, { autoClose: 5000 });
+    } else {
+      toast.error(userFriendlyMessage);
+    }
+
+    return userFriendlyMessage;
   }, []);
 
-  const fetchCategory = async () => {
-    setLoading(true);
-    try {
-      const fetchedCategory = await getCategories();
-      setCategory(fetchedCategory);
-    } catch (error) {
-      setErrors(error);
-      console.error("Error fetching category:", error);
-      toast.error("Error fetching category");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchCategories = useCallback(
+    async (showLoading = true) => {
+      if (isFetchingRef.current) return;
 
-  const addCategory = async (formData, storageType = "local") => {
-    try {
-      // Pass formData directly (it's already a FormData object)
-      await saveCategory(formData, storageType);
-      toast.success("Category added successfully!");
-      fetchCategory();
-    } catch (error) {
-      setErrors("Error saving category");
-      toast.error(error.response?.data?.message || "Error saving category");
-      throw error;
-    }
-  };
+      if (abortRef.current) abortRef.current.abort();
+      abortRef.current = new AbortController();
 
-  const editCategory = async (categoryId, formData, storageType = "local") => {
-    try {
-      // Pass formData directly (it's already a FormData object)
-      await updateCategory(categoryId, formData, storageType);
-      toast.success("Category updated successfully!");
-      fetchCategory();
-      setSelectedCategory(null);
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || "Error updating category");
-      throw error;
-    }
-  };
+      try {
+        isFetchingRef.current = true;
+        if (showLoading) setLoading(true);
+        setErrors(null);
 
-  async function deleteCategorys(categoryId) {
-    if (!window.confirm("Are you sure you want to delete this category?"))
-      return;
+        const data = await getCategories({ signal: abortRef.current.signal });
+        setCategory(data || []);
+        setIsInitialized(true);
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          handleError(error, "fetch");
+        }
+      } finally {
+        isFetchingRef.current = false;
+        if (showLoading) setLoading(false);
+      }
+    },
+    [handleError]
+  );
 
-    const originalCategory = [...category];
+  const addCategory = useCallback(
+    async (formData, storageType = "local") => {
+      try {
+        setErrors(null);
 
-    try {
-      await deleteCategory(categoryId);
+        const tempId = `temp-${Date.now()}`;
+        const temp = {
+          _id: tempId,
+          name: formData.get("name"),
+          slug: formData.get("slug"),
+          description: formData.get("description"),
+          parent: formData.get("parent") || null,
+          productCount: 0,
+          depth: 0,
+          isTemporary: true,
+          categoryImage: { storageType },
+        };
 
-      const updatedCategory = originalCategory.filter(
-        (c) => c._id !== categoryId
-      );
-      setCategory(updatedCategory);
+        setCategory((prev) => [...prev, temp]);
 
-      toast.success("Category deleted successfully");
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        toast.error("This category has already been deleted");
-      } else if (error.response && error.response.status === 400) {
-        toast.error(
-          error.response.data.message || "Cannot delete this category"
-        );
-      } else {
-        toast.error("An error occurred while deleting the category");
+        const data = await saveCategory(formData, storageType);
+
+        setCategory((prev) => prev.map((c) => (c._id === tempId ? data : c)));
+
+        setSelectedCategory?.(null);
+        toast.success(`Category "${data.name}" created successfully!`);
+
+        return { success: true, data };
+      } catch (error) {
+        console.error("Add category error in hook:", error);
+
+        setCategory((prev) => prev.filter((c) => !c.isTemporary));
+
+        // Pass the ENTIRE error object to handleError, not just the message
+        const errorMessage = handleError(error, "add");
+
+        // Return the ENHANCED error with all properties for the form
+        throw {
+          message: errorMessage,
+          isDuplicate: error.isDuplicate || error?.response?.status === 409,
+          field: error.field || error?.response?.data?.field || "name",
+          response: error.response, // Pass the entire response
+          originalError: error, // Pass the original error
+        };
+      }
+    },
+    [handleError, setSelectedCategory]
+  );
+
+  const editCategory = useCallback(
+    async (categoryId, formData, storageType = "local") => {
+      const original = category.find((cat) => cat._id === categoryId);
+      if (!original) {
+        handleError(new Error("Category not found"), "edit");
+        return;
       }
 
-      setCategory(originalCategory);
-    }
-  }
+      try {
+        setErrors(null);
+
+        const optimistic = {
+          name: formData.get("name"),
+          slug: formData.get("slug"),
+          description: formData.get("description"),
+          parent: formData.get("parent") || null,
+        };
+
+        setCategory((prev) =>
+          prev.map((c) =>
+            c._id === categoryId ? { ...c, ...optimistic, isUpdating: true } : c
+          )
+        );
+
+        const data = await updateCategory(categoryId, formData, storageType);
+
+        setCategory((prev) =>
+          prev.map((c) =>
+            c._id === categoryId ? { ...data, isUpdating: false } : c
+          )
+        );
+
+        setSelectedCategory?.(null);
+        toast.success(`Category "${data.name}" updated successfully!`);
+
+        return { success: true, data };
+      } catch (error) {
+        setCategory((prev) =>
+          prev.map((c) =>
+            c._id === categoryId ? { ...original, isUpdating: false } : c
+          )
+        );
+
+        // Enhanced error handling
+        const errorMessage = handleError(error, "edit");
+
+        throw {
+          message: errorMessage,
+          isDuplicate: error?.response?.status === 409,
+          field: error?.response?.data?.field || "name",
+        };
+      }
+    },
+    [category, handleError, setSelectedCategory]
+  );
+
+  // ... rest of your useCategory hook remains the same
+  const deleteCategorys = useCallback(
+    async (categoryId) => {
+      const toDelete = category.find((cat) => cat._id === categoryId);
+      if (!toDelete) {
+        handleError(new Error("Category not found"), "delete");
+        return;
+      }
+
+      try {
+        setErrors(null);
+
+        setCategory((prev) =>
+          prev.map((c) =>
+            c._id === categoryId ? { ...c, isDeleting: true } : c
+          )
+        );
+
+        await deleteCategory(categoryId);
+
+        setCategory((prev) => prev.filter((c) => c._id !== categoryId));
+
+        setSelectedCategory?.((prev) =>
+          prev?._id === categoryId ? null : prev
+        );
+
+        toast.success(`Category "${toDelete.name}" deleted successfully!`);
+
+        return { success: true };
+      } catch (error) {
+        setCategory((prev) =>
+          prev.map((c) =>
+            c._id === categoryId ? { ...toDelete, isDeleting: false } : c
+          )
+        );
+
+        handleError(error, "delete");
+        throw error;
+      }
+    },
+    [category, handleError, setSelectedCategory]
+  );
+
+  const refreshCategories = useCallback(
+    () => fetchCategories(true),
+    [fetchCategories]
+  );
+
+  const clearErrors = useCallback(() => setErrors(null), []);
+
+  useEffect(() => {
+    fetchCategories();
+
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, [fetchCategories]);
 
   return {
     category,
     loading,
     errors,
+    isInitialized,
     addCategory,
     editCategory,
     deleteCategorys,
-    fetchCategory,
+    refreshCategories,
+    clearErrors,
   };
 }

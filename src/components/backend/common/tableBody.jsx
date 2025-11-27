@@ -25,8 +25,14 @@ function renderCell(item, column) {
   return _.get(item, column.path);
 }
 
-function createKey(item, column) {
-  return item._id + (column.path || column.key);
+// function createKey(item, column) {
+//   return item._id + (column.path || column.key);
+
+// }
+
+function createKey(item, column, columnIndex) {
+  // Use path, key, or fallback to index
+  return `${item._id}-${column.path || column.key || columnIndex}`;
 }
 
 function TableBody({ data, columns, tbody, tbodyTr, td }) {
@@ -34,8 +40,8 @@ function TableBody({ data, columns, tbody, tbodyTr, td }) {
     <tbody className={`${tbody}`}>
       {data.map((item) => (
         <tr key={item._id} className={`${tbodyTr}`}>
-          {columns.map((column) => (
-            <td className={`${td}`} key={createKey(item, column)}>
+          {columns.map((column, columnIndex) => (
+            <td className={`${td}`} key={createKey(item, column, columnIndex)}>
               {renderCell(item, column)}
             </td>
           ))}

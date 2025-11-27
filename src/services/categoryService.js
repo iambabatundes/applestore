@@ -49,6 +49,19 @@ export async function getCategoriesWithProducts(params = {}) {
   }
 }
 
+export async function getProductsByCategory(categoryId) {
+  try {
+    const baseUrl = import.meta.env.VITE_API_URL;
+    const url = `${baseUrl}/products/category/${categoryId}`;
+
+    const { data } = await publicHttpService.get(url);
+    return data;
+  } catch (err) {
+    console.error(`Failed to fetch products for category ${categoryId}:`, err);
+    throw err;
+  }
+}
+
 // Get category by slug (SEO-friendly)
 export async function getCategoryBySlug(slug) {
   try {
@@ -62,7 +75,6 @@ export async function getCategoryBySlug(slug) {
   }
 }
 
-// Admin operations (authentication required)
 export async function saveCategory(formData, storageType = "local") {
   try {
     // Build URL with storage query parameter
@@ -77,11 +89,25 @@ export async function saveCategory(formData, storageType = "local") {
     clearCategoriesCache();
     return data;
   } catch (err) {
-    console.error("Failed to save category:", err);
-    throw err;
+    console.error("Save category error:", err.response?.data || err.message);
+
+    // Extract the actual error message from the response
+    const errorMessage =
+      err.response?.data?.message || "Failed to save category";
+
+    // Create a new error with the actual backend message
+    const error = new Error(errorMessage);
+    error.response = err.response;
+    error.status = err.response?.status;
+    error.isDuplicate = err.response?.status === 409;
+    error.field = "name"; // Since it's a duplicate name error
+
+    console.log("Enhanced error object:", error);
+    throw error;
   }
 }
 
+// Do the same for updateCategory
 export async function updateCategory(
   categoryId,
   formData,
@@ -100,8 +126,11 @@ export async function updateCategory(
     clearCategoriesCache();
     return data;
   } catch (err) {
-    console.error("Failed to update category:", err);
-    throw err;
+    const error = new Error(
+      err.response?.data?.message || "Failed to update category"
+    );
+    error.response = err.response;
+    throw error;
   }
 }
 

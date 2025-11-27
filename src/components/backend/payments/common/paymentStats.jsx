@@ -102,7 +102,7 @@ const PaymentStats = ({ stats, loading = false, currency = "USD" }) => {
     },
     {
       id: "transactions",
-      title: "Total Transactions",
+      title: "Total Trans.",
       value: processedStats?.totalTransactions?.toLocaleString() || "0",
       icon: "📊",
       variant: "default",
@@ -123,7 +123,7 @@ const PaymentStats = ({ stats, loading = false, currency = "USD" }) => {
     },
     {
       id: "avg-transaction",
-      title: "Avg. Transaction",
+      title: "Avg. Trans.",
       value: processedStats
         ? formatCurrency(processedStats.avgTransaction, currency)
         : "-",

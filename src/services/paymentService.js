@@ -665,6 +665,15 @@ export const getFraudSettings = async () => {
   }
 };
 
+// export const getDisputes = async () => {
+//   try {
+//     const response = await adminHttpService.get(`${basePath}/disputes`);
+//     return response.data;
+//   } catch (error) {
+//     throw handlePaymentError(error);
+//   }
+// };
+
 export const getFlaggedTransactions = async (filters = {}) => {
   try {
     const queryParams = buildQueryParams(filters);

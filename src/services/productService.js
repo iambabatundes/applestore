@@ -42,7 +42,7 @@ export async function getProduct(productId) {
 export async function getProductsByCategorys(categoryId, params = {}) {
   try {
     const { data } = await publicHttpService.get(
-      buildEndpoint(`/category/${categoryId}`),
+      buildEndpoint(`/categories/${categoryId}`),
       { params }
     );
     clearProductCache();

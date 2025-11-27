@@ -40,6 +40,10 @@ import PaymentConfiguration from "../payments/paymentConfiguration";
 import PaymentStats from "../payments/paymentStats";
 import SubscriptionManagement from "../payments/subscriptionManagement";
 import SubscriptionPlansManagement from "../payments/subscriptionPlansManagement";
+import ReportsGeneration from "../payments/reportsGeneration";
+// import DisputeManagement from "../payments/DisputeManagement";
+import FraudDetectionDashboard from "../payments/fraudDetectionDashboard";
+import WebhookLogsViewer from "../payments/webhookLogsViewer";
 
 export const sidebarLinks = (darkMode, adminUser) => {
   const baseLinks = [
@@ -177,20 +181,26 @@ export const sidebarLinks = (darkMode, adminUser) => {
           to: "/admin/create-subscriptions",
           content: <SubscriptionPlansManagement />,
         },
+
         {
-          label: "Stats",
-          to: "/admin/payment-stats",
-          content: <PaymentStats />,
-        },
-        {
-          label: "Stats",
-          to: "/admin/analytics",
-          // content: <Analytics />,
-        },
-        {
-          label: "Configuration",
+          label: "Payment Configuration",
           to: "/admin/payments-configuration",
           content: <PaymentConfiguration />,
+        },
+        {
+          label: "Payment Report",
+          to: "/admin/payments-report",
+          content: <ReportsGeneration />,
+        },
+        {
+          label: "Payment Fraud",
+          to: "/admin/payments-fraud",
+          content: <FraudDetectionDashboard />,
+        },
+        {
+          label: "Webhook Logs",
+          to: "/admin/payments-webhook",
+          content: <WebhookLogsViewer />,
         },
       ],
     },

@@ -435,6 +435,11 @@
 }
 
 /* Modal Specific */
+
+.plan-modal {
+    background: #2563eb;
+}
+
 .subscription-modal .modal__content {
     padding: 1.5rem;
 }

@@ -1,0 +1,517 @@
+/* disputeManagement.css */
+
+/* CSS Custom Properties for theming */
+:root {
+    --pad-primary: #4f46e5;
+    --pad-primary-hover: #4338ca;
+    --pad-success: #10b981;
+    --pad-warning: #f59e0b;
+    --pad-danger: #ef4444;
+    --pad-info: #3b82f6;
+
+    --pad-bg-primary: #ffffff;
+    --pad-bg-secondary: #f9fafb;
+    --pad-bg-tertiary: #f3f4f6;
+
+    --pad-text-primary: #111827;
+    --pad-text-secondary: #6b7280;
+    --pad-text-muted: #9ca3af;
+
+    --pad-border: #e5e7eb;
+    --pad-border-focus: #4f46e5;
+
+    --pad-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --pad-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --pad-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --pad-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    --pad-radius-sm: 0.375rem;
+    --pad-radius: 0.5rem;
+    --pad-radius-lg: 0.75rem;
+
+    --pad-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --pad-bg-primary: #1f2937;
+        --pad-bg-secondary: #111827;
+        --pad-bg-tertiary: #374151;
+        --pad-text-primary: #f9fafb;
+        --pad-text-secondary: #d1d5db;
+        --pad-text-muted: #9ca3af;
+        --pad-border: #374151;
+    }
+}
+
+.dispute-mgmt {
+    min-height: 100vh;
+    background-color: var(--pad-bg-secondary);
+    padding: 1.5rem;
+}
+
+.dispute-mgmt--loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Header */
+.dispute-mgmt__header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dispute-mgmt__title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.dispute-mgmt__title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--pad-text-primary);
+}
+
+.dispute-mgmt__subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--pad-text-muted);
+}
+
+/* Stats */
+.dispute-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--pad-bg-primary);
+    border-radius: var(--pad-radius-lg);
+    box-shadow: var(--pad-shadow);
+}
+
+.dispute-stat {
+    flex: 1;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    text-align: center;
+    border-right: 1px solid var(--pad-border);
+}
+
+.dispute-stat:last-child {
+    border-right: none;
+}
+
+.dispute-stat__value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--pad-text-primary);
+}
+
+.dispute-stat--warning .dispute-stat__value {
+    color: var(--pad-warning);
+}
+
+.dispute-stat--info .dispute-stat__value {
+    color: var(--pad-info);
+}
+
+.dispute-stat--success .dispute-stat__value {
+    color: var(--pad-success);
+}
+
+.dispute-stat--danger .dispute-stat__value {
+    color: var(--pad-danger);
+}
+
+.dispute-stat__label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--pad-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Filters */
+.dispute-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--pad-bg-primary);
+    border-radius: var(--pad-radius-lg);
+    box-shadow: var(--pad-shadow);
+}
+
+/* Content */
+.dispute-mgmt__content {
+    background-color: var(--pad-bg-primary);
+    border-radius: var(--pad-radius-lg);
+    box-shadow: var(--pad-shadow);
+    padding: 1.5rem;
+}
+
+/* Disputes Grid */
+.disputes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Dispute Card */
+.dispute-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border: 1px solid var(--pad-border);
+    border-radius: var(--pad-radius-lg);
+    background-color: var(--pad-bg-primary);
+    transition: box-shadow var(--pad-transition);
+}
+
+.dispute-card:hover {
+    box-shadow: var(--pad-shadow-md);
+}
+
+.dispute-card--urgent {
+    border-color: var(--pad-danger);
+    border-width: 2px;
+}
+
+.dispute-card__urgent-flag {
+    position: absolute;
+    top: -0.625rem;
+    right: 1rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    background-color: var(--pad-danger);
+    border-radius: 9999px;
+    text-transform: uppercase;
+}
+
+.dispute-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--pad-border);
+}
+
+.dispute-card__info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.dispute-card__icon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.dispute-card__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.dispute-card__id {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: monospace;
+    color: var(--pad-text-primary);
+}
+
+.dispute-card__reason {
+    font-size: 0.8125rem;
+    color: var(--pad-text-secondary);
+}
+
+.dispute-card__body {
+    flex: 1;
+    margin-bottom: 1rem;
+}
+
+.dispute-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.dispute-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.dispute-info-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--pad-text-muted);
+    text-transform: uppercase;
+}
+
+.dispute-info-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--pad-text-primary);
+}
+
+.dispute-info-value.mono {
+    font-family: monospace;
+    font-size: 0.8125rem;
+}
+
+.text-danger {
+    color: var(--pad-danger) !important;
+}
+
+.days-left {
+    font-weight: 600;
+}
+
+.dispute-customer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0.625rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--pad-bg-secondary);
+    border-radius: var(--pad-radius-sm);
+    font-size: 0.8125rem;
+}
+
+.dispute-customer__label {
+    font-weight: 500;
+    color: var(--pad-text-muted);
+}
+
+.dispute-customer__value {
+    color: var(--pad-text-primary);
+}
+
+.dispute-message {
+    padding: 0.75rem;
+    background-color: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    border-radius: var(--pad-radius-sm);
+}
+
+.dispute-message__label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #92400e;
+    text-transform: uppercase;
+}
+
+.dispute-message__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #78350f;
+    line-height: 1.4;
+}
+
+.dispute-card__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding-top: 1rem;
+    border-top: 1px solid var(--pad-border);
+}
+
+.dispute-card__actions .btn--sm {
+    flex: 1;
+    min-width: 120px;
+}
+
+/* Modal Specific */
+.dispute-modal .modal__content {
+    padding: 1.5rem;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.dispute-summary {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--pad-bg-secondary);
+    border-radius: var(--pad-radius);
+}
+
+.dispute-summary h3 {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--pad-text-primary);
+}
+
+.dispute-summary__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.summary-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--pad-text-muted);
+    text-transform: uppercase;
+}
+
+.summary-value {
+    font-size: 0.875rem;
+    color: var(--pad-text-primary);
+}
+
+.evidence-form h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--pad-text-primary);
+}
+
+.evidence-form__hint {
+    margin: 0 0 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--pad-text-secondary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.form-group--full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--pad-text-secondary);
+}
+
+.form-input,
+.form-textarea {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--pad-border);
+    border-radius: var(--pad-radius);
+    background-color: var(--pad-bg-primary);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--pad-primary);
+    box-shadow: 0 0 0 3px rgb(79 70 229 / 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-state__icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin: 0 0 0.5rem;
+    color: var(--pad-text-primary);
+}
+
+.empty-state p {
+    margin: 0;
+    color: var(--pad-text-muted);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .dispute-mgmt {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .dispute-mgmt {
+        padding: 1rem;
+    }
+
+    .dispute-stats {
+        flex-direction: column;
+    }
+
+    .dispute-stat {
+        border-right: none;
+        border-bottom: 1px solid var(--pad-border);
+    }
+
+    .dispute-stat:last-child {
+        border-bottom: none;
+    }
+
+    .disputes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dispute-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dispute-card__actions {
+        flex-direction: column;
+    }
+
+    .dispute-card__actions .btn--sm {
+        width: 100%;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

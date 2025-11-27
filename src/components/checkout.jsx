@@ -324,7 +324,7 @@ export default function Checkout() {
       <article>
         <h2>This is the price page</h2>
         <Coupon
-          // applyCoupon={applyCoupon}
+          applyCoupon={applyCoupon}
           setCouponCode={setCouponCode}
           couponCode={couponCode}
         />
