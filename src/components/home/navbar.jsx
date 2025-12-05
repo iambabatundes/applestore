@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import "./styles/navbar.css";
 import UserSection from "./UserSection";
 import CategoriesSection from "./categoriesSection";
-import Logo from "./common/logo";
 import { useCategories } from "./hooks/useCategories";
 import { useGeoLocation } from "./hooks/useGeoLocation";
 import { useCurrency } from "./hooks/useCurrency";

@@ -9,14 +9,15 @@ import "./fonts/MacanPanWeb-Medium.ttf";
 import "@fontsource/poppins";
 import "@fontsource/poppins/500.css";
 
-// Lazy load components for better performance
 const AppRoutes = lazy(() => import("./routes/AppRoutes.js"));
-const CheckoutNavbar = lazy(() => import("./components/checkoutNavbar"));
-// const Admin = lazy(() => import("./components/backend/admin.jsx"));
+const CheckoutNavbar = lazy(() =>
+  import("./components/home/checkout/checkoutNavbar.jsx")
+);
+
 const AdminRoutes = lazy(() =>
   import("./components/backend/routes/AdminRoutes.js")
 );
-const Navbar = lazy(() => import("./components/home/navbar"));
+const Navbar = lazy(() => import("./components/home/navbar.jsx"));
 const Footer = lazy(() => import("./components/footer/footer.jsx"));
 
 // Import components and utilities
@@ -44,7 +45,6 @@ import {
   DEFAULTS,
 } from "./config/constants";
 import AdminSkeleton from "./components/backend/skeleton/adminSkeleton";
-// import { AdminRoutes } from "routes/AdminRoutes";
 
 function App() {
   const { user, isAuthReady, accessToken, isAuthenticated } =
@@ -53,15 +53,18 @@ function App() {
   const [authInitialized, setAuthInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState(null);
 
+  // Enhanced cart store - using new methods from enhanced implementation
   const {
     cartItems,
     addToCart,
     selectedQuantities,
-    setSelectedQuantities,
     quantityTenPlus,
-    setQuantityTenPlus,
-    handleDelete,
+    removeItem,
+    updateQuantity,
+    updateCustomQuantity,
     setCartItems,
+    clearError,
+    error: cartError,
   } = useCartStore();
 
   const [logoImage, setLogoImage] = useState("");
@@ -87,19 +90,18 @@ function App() {
 
   const isAdminRoute = location.pathname.startsWith("/admin");
 
-  // to be deleted
+  // Logo refresh functionality
   const refreshLogo = useCallback(async () => {
     try {
-      console.log("Refreshing logo...");
+      logger.debug("Refreshing logo...");
       await fetchLogo(setLogoImage);
     } catch (error) {
-      console.error("Failed to refresh logo:", error);
+      logger.error("Failed to refresh logo:", error);
     }
   }, []);
 
   useEffect(() => {
     window.refreshAppLogo = refreshLogo;
-
     return () => {
       delete window.refreshAppLogo;
     };
@@ -107,17 +109,17 @@ function App() {
 
   useEffect(() => {
     const handleLogoUpdate = async (event) => {
-      console.log("Logo update event received:", event.detail);
+      logger.debug("Logo update event received:", event.detail);
       await refreshLogo();
     };
 
     window.addEventListener("logoUpdated", handleLogoUpdate);
-
     return () => {
       window.removeEventListener("logoUpdated", handleLogoUpdate);
     };
   }, [refreshLogo]);
 
+  // Initialize app
   useEffect(() => {
     let isInitialized = false;
     let timeoutId;
@@ -223,74 +225,82 @@ function App() {
 
     initializeApp();
 
-    // Cleanup function
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
     };
   }, []);
-  // to be this ends
 
   // Enhanced currency change handler
-  const handleCurrencyChange = (currency) => {
-    try {
-      const rate = currencyRates[currency] || DEFAULTS.CURRENCY_RATE;
-      setConversionRate(rate);
-      setSelectedCurrency(currency, rate);
-      localStorage.setItem("selectedCurrency", currency);
-      logger.info(`Currency changed to ${currency} with rate ${rate}`);
-    } catch (error) {
-      logger.error(ERROR_MESSAGES.CURRENCY_CHANGE_FAILED, error);
-    }
-  };
-
-  // Enhanced cart submit handler
-  const handleSubmit = (e, itemId) => {
-    e.preventDefault();
-
-    try {
-      const input = e.target.querySelector('input[name="quantity"]');
-      const inputValue = input ? input.value.trim() : String(DEFAULTS.QUANTITY);
-
-      let quantity = parseInt(inputValue, 10);
-      if (isNaN(quantity) || quantity < 1) {
-        quantity = DEFAULTS.QUANTITY;
+  const handleCurrencyChange = useCallback(
+    (currency) => {
+      try {
+        const rate = currencyRates[currency] || DEFAULTS.CURRENCY_RATE;
+        setConversionRate(rate);
+        setSelectedCurrency(currency, rate);
+        localStorage.setItem("selectedCurrency", currency);
+        logger.info(`Currency changed to ${currency} with rate ${rate}`);
+      } catch (error) {
+        logger.error(ERROR_MESSAGES.CURRENCY_CHANGE_FAILED, error);
       }
+    },
+    [currencyRates, setConversionRate, setSelectedCurrency]
+  );
 
-      useCartStore.setState((state) => ({
-        selectedQuantities: {
-          ...state.selectedQuantities,
-          [itemId]: quantity,
-        },
-        quantityTenPlus: {
-          ...state.quantityTenPlus,
-          [itemId]: quantity > 9 ? quantity : undefined,
-        },
-        cartItems: state.cartItems.map((item) =>
-          item._id === itemId
-            ? { ...item, quantity, total: item.price * quantity }
-            : item
-        ),
-      }));
+  // Enhanced cart submit handler - aligned with new store
+  const handleSubmit = useCallback(
+    (e, itemId) => {
+      e.preventDefault();
 
-      logger.debug(`Cart quantity updated for item ${itemId}: ${quantity}`);
-    } catch (error) {
-      logger.error(ERROR_MESSAGES.CART_UPDATE_FAILED, error);
-    }
-  };
+      try {
+        const input = e.target.querySelector('input[name="quantity"]');
+        const inputValue = input
+          ? input.value.trim()
+          : String(DEFAULTS.QUANTITY);
+
+        let quantity = parseInt(inputValue, 10);
+        if (isNaN(quantity) || quantity < 1) {
+          quantity = DEFAULTS.QUANTITY;
+        }
+
+        // Use the enhanced updateCustomQuantity method from the store
+        if (quantity >= 10) {
+          updateCustomQuantity(itemId, quantity);
+        } else {
+          updateQuantity(itemId, quantity);
+        }
+
+        logger.debug(`Cart quantity updated for item ${itemId}: ${quantity}`);
+      } catch (error) {
+        logger.error(ERROR_MESSAGES.CART_UPDATE_FAILED, error);
+        // Error is already handled by the store and will show in notifications
+      }
+    },
+    [updateQuantity, updateCustomQuantity]
+  );
+
+  // Enhanced cart delete handler - using new removeItem method
+  const handleDelete = useCallback(
+    async (itemId) => {
+      try {
+        removeItem(itemId);
+        logger.debug(`Item ${itemId} removed from cart`);
+      } catch (error) {
+        logger.error("Failed to remove item from cart:", error);
+      }
+    },
+    [removeItem]
+  );
 
   // Calculate cart item count with error handling
   const cartItemCount = (() => {
     try {
-      return (
-        Object.values(selectedQuantities).reduce((total, quantity) => {
-          if (quantity === "10+") {
-            return total + 1;
-          }
-          return total + parseInt(quantity || 0);
-        }, 0) + (selectedQuantities["Quantity 10+"] || 0)
-      );
+      return cartItems.reduce((total, item) => {
+        const quantity =
+          quantityTenPlus[item._id] ?? selectedQuantities[item._id] ?? 1;
+        return total + (typeof quantity === "number" ? quantity : 1);
+      }, 0);
     } catch (error) {
       logger.error(ERROR_MESSAGES.CART_COUNT_CALCULATION_FAILED, error);
       return DEFAULTS.CART_COUNT;
@@ -298,7 +308,7 @@ function App() {
   })();
 
   // Enhanced navbar renderer
-  const renderNavbar = () => {
+  const renderNavbar = useCallback(() => {
     if (location.pathname === "/checkout") {
       return (
         <Suspense fallback={<div className="navbar-skeleton" />}>
@@ -325,7 +335,19 @@ function App() {
         />
       </Suspense>
     );
-  };
+  }, [
+    location.pathname,
+    cartItemCount,
+    logoImage,
+    isAdminRoute,
+    needsSetup,
+    user,
+    selectedCurrency,
+    currencyRates,
+    handleCurrencyChange,
+    appInitialized,
+    geoLocation,
+  ]);
 
   // Handle initialization errors
   if (initializationError) {
@@ -352,8 +374,7 @@ function App() {
   if (isAdminRoute && needsSetup) {
     return (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense>
-          {/* <Admin count={5} logo={logoImage} /> */}
+        <Suspense fallback={<AdminSkeleton />}>
           <AdminRoutes count={5} logo={logoImage} />
         </Suspense>
         <ToastContainer {...TOAST_CONFIG} />
@@ -385,6 +406,8 @@ function App() {
       isAdminRoute,
       needsSetup,
       setupLoading,
+      cartItemsCount: cartItems.length,
+      cartError: !!cartError,
     });
   }
 
@@ -394,29 +417,26 @@ function App() {
       <ToastContainer {...TOAST_CONFIG} />
 
       {location.pathname.includes("/admin") ? (
-        <Suspense>
-          {/* <Admin count={5} logo={logoImage} /> */}
+        <Suspense fallback={<AdminSkeleton />}>
           <AdminRoutes count={5} logo={logoImage} />
         </Suspense>
       ) : (
         <>
           {renderNavbar()}
           <main className="main">
-            <Suspense
-            // fallback={<AppSkeleton message={LOADING_MESSAGES.APPLICATION} />}
-            >
+            <Suspense>
               <AppRoutes
                 addToCart={addToCart}
                 cartItems={cartItems}
                 selectedQuantities={selectedQuantities}
-                setSelectedQuantities={setSelectedQuantities}
                 quantityTenPlus={quantityTenPlus}
-                setQuantityTenPlus={setQuantityTenPlus}
                 handleSubmit={handleSubmit}
                 setCartItems={setCartItems}
                 handleDelete={handleDelete}
                 selectedCurrency={selectedCurrency}
                 conversionRate={conversionRate}
+                isAuthenticated={isAuthenticated}
+                user={user}
               />
             </Suspense>
           </main>

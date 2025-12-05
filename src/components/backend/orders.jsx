@@ -338,15 +338,15 @@ export default function Orders() {
     );
   }
 
-  // if (orderData.length === 0 && !hasActiveFilters) {
-  //   return (
-  //     <section>
-  //       <section className="padding">
-  //         <EmptyOrders />
-  //       </section>
-  //     </section>
-  //   );
-  // }
+  if (orderData.length === 0 && !hasActiveFilters) {
+    return (
+      <section>
+        <section className="padding">
+          <EmptyOrders />
+        </section>
+      </section>
+    );
+  }
 
   if (displayedOrders.length === 0 && hasActiveFilters) {
     return (

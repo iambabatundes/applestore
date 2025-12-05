@@ -1,4 +1,4 @@
-// Register.jsx - Improved version with better error handling
+// Register.jsx
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import {

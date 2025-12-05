@@ -8,8 +8,9 @@ import Login from "./components/home/login";
 import Logout from "./components/home/logout";
 import UserProfile from "./components/home/userProfile";
 import RequireAuth from "./components/home/common/requireAuth";
-import Checkout from "./components/checkout";
-import Cart from "./components/cart";
+// import Checkout from "./components/checkout";
+import Checkout from "../components/home/checkout/checkout";
+import Cart from "../components/cart";
 import NotFound from "./components/home/notFound";
 
 const AppRoutes = ({

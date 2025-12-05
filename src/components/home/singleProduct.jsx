@@ -245,7 +245,7 @@ export default function SingleProduct({ selectedCurrency, conversionRate }) {
         {/* <SingleProductTab /> */}
       </div>
       <div className="singleProduct__shippingDetail">
-        <ShippingDetails />
+        {/* <ShippingDetails  /> */}
       </div>
     </section>
   );

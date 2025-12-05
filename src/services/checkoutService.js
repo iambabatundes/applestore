@@ -4,6 +4,15 @@ import {
   userHttpService,
   publicHttpService,
 } from "./http/index.js";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 
 const ENDPOINTS = {
   CHECKOUT: "/checkout",
@@ -19,6 +28,8 @@ class CheckoutService {
     this.httpService = userHttpService;
     this.retryAttempts = 3;
     this.retryDelay = 1000;
+    this.stripe = null;
+    this.stripePromise = null;
   }
 
   async createCheckout(checkoutData) {
@@ -241,6 +252,166 @@ class CheckoutService {
       console.error("Add payment method error:", error);
       throw this.handleError(error);
     }
+  }
+
+  async deletePaymentMethod(methodId) {
+    try {
+      const response = await this.httpService.delete(
+        `ENDPOINTS.PAYMENT_METHODS/${methodId}`,
+        paymentData
+      );
+
+      if (!response.data?.success) {
+        throw new Error(
+          response.data?.message || "Failed to Delete payment method"
+        );
+      }
+
+      return {
+        success: true,
+        data: response.data.paymentMethod,
+      };
+    } catch (error) {
+      console.error("Delete payment method error:", error);
+      throw this.handleError(error);
+    }
+  }
+
+  async setDefaultPaymentMethod(methodId) {
+    try {
+      const response = await this.httpService.delete(
+        `ENDPOINTS.PAYMENT_METHODS/${methodId}/default`,
+        paymentData
+      );
+
+      if (!response.data?.success) {
+        throw new Error(
+          response.data?.message || "Failed to set default payment method"
+        );
+      }
+
+      return {
+        success: true,
+        data: response.data.paymentMethod,
+      };
+    } catch (error) {
+      console.error("default payment method error:", error);
+      throw this.handleError(error);
+    }
+  }
+
+  async initializeStripeElements(options = {}) {
+    try {
+      if (!this.stripePromise) {
+        this.stripePromise = loadStripe(
+          process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY
+        );
+      }
+
+      this.stripe = await this.stripePromise;
+
+      if (!this.stripe) {
+        throw new Error("Failed to initialize Stripe");
+      }
+
+      const elements = this.stripe.elements({
+        ...options,
+        fonts: [
+          {
+            cssSrc:
+              "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+          },
+        ],
+      });
+
+      const cardElement = elements.create("card", {
+        style: {
+          base: {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "16px",
+            color: "#1a1a1a",
+            "::placeholder": {
+              color: "#a0a0a0",
+            },
+          },
+        },
+        hidePostalCode: true,
+      });
+
+      return { elements, cardElement };
+    } catch (error) {
+      console.error("Stripe initialization error:", error);
+      throw error;
+    }
+  }
+
+  async tokenizeWithStripe(paymentMethodData) {
+    try {
+      if (!this.stripe) {
+        await this.initializeStripeElements();
+      }
+
+      const { error, paymentMethod } = await this.stripe.createPaymentMethod(
+        paymentMethodData
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return paymentMethod;
+    } catch (error) {
+      console.error("Stripe tokenization error:", error);
+      throw error;
+    }
+  }
+
+  async tokenizeWithPaystack(paymentData) {
+    try {
+      // Paystack tokenization implementation
+      const response = await fetch("/api/payments/paystack/tokenize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Paystack tokenization failed");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Paystack tokenization error:", error);
+      throw error;
+    }
+  }
+
+  async processPaymentWith3DS(paymentIntentId) {
+    try {
+      if (!this.stripe) {
+        await this.initializeStripeElements();
+      }
+
+      const { error, paymentIntent } = await this.stripe.confirmCardPayment(
+        paymentIntentId
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return paymentIntent;
+    } catch (error) {
+      console.error("3DS authentication error:", error);
+      throw error;
+    }
+  }
+
+  // Generate idempotency key for duplicate payment prevention
+  generateIdempotencyKey() {
+    return `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   async getOrder(orderId) {

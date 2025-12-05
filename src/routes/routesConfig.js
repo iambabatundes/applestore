@@ -8,30 +8,30 @@ import Logout from "../components/home/logout";
 import UserProfile from "../components/home/userProfile";
 import RequireAuth from "../components/home/common/requireAuth";
 import Cart from "../components/cart";
-import Checkout from "../components/checkout";
+import Checkout from "../components/home/checkout/checkout";
 import NotFound from "../components/home/notFound";
 
 const routesConfig = (props) => [
   { path: "/", element: <Home {...props} /> },
-
   { path: "/product", element: <Product {...props} /> },
-  { path: "/blog/:title", element: <SinglePost /> },
-  { path: "/:name", element: <SingleProducts {...props} /> },
-  { path: "/register", element: <Register user={props.user} /> },
-  { path: "/login", element: <Login /> },
-  { path: "/logout", element: <Logout /> },
+  { path: "/blog/:title", element: <SinglePost {...props} /> },
+  { path: "/register", element: <Register {...props} /> },
+  { path: "/login", element: <Login {...props} /> },
+  { path: "/logout", element: <Logout {...props} /> },
   {
-    path: "users/*",
+    path: "/users/*",
     element: (
       <RequireAuth>
-        <UserProfile />
+        <UserProfile {...props} />
       </RequireAuth>
     ),
   },
-  { path: "/checkout", element: <Checkout cartItems={props.cartItems} /> },
   { path: "/cart", element: <Cart {...props} /> },
-  { path: "/not-found", element: <NotFound /> },
-  { path: "*", element: <NotFound /> },
+  { path: "/checkout", element: <Checkout {...props} /> },
+  { path: "/not-found", element: <NotFound {...props} /> },
+  // Dynamic route should come LAST to avoid conflicts
+  { path: "/:name", element: <SingleProducts {...props} /> },
+  { path: "*", element: <NotFound {...props} /> },
 ];
 
 export default routesConfig;

@@ -17,6 +17,7 @@
     display: none;
     flex-direction: column;
     gap: 1.5rem;
+    margin-top: 7rem;
 }
 
 .singleProduct__productMedia {
