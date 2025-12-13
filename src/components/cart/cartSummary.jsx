@@ -1,32 +1,82 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCartStore } from "../store/cartStore";
+// import { useCartStore } from "../../store/cartStore";
 import PriceDisplay from "../utils/priceDisplay";
 import "./styles/cartSummary.css";
+import { useCartStore } from "../store/cartStore";
 
 export default function CartSummary({
-  totalItem,
-  price,
+  totals,
   selectedCurrency,
   isCartValid = true,
+  conversionRate = 1,
 }) {
   const navigate = useNavigate();
+  const { validateCartForCheckout } = useCartStore();
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
 
-  const { cartItems, validateCartForCheckout } = useCartStore();
+  const {
+    itemCount,
+    subtotal,
+    discount,
+    tax,
+    shippingFee,
+    total,
+    totalSavings,
+  } = totals;
 
-  const handleCheckout = () => {
+  const hasFreeShipping = shippingFee === 0;
+  const amountToFreeShipping = subtotal < 100 ? 100 - subtotal : 0;
+
+  const handleCheckout = async () => {
     if (!isCartValid) {
       alert("Please fix cart issues before proceeding to checkout");
       return;
     }
 
-    const validation = validateCartForCheckout();
-    if (!validation.isValid) {
-      alert(validation.warnings);
+    try {
+      const validation = await validateCartForCheckout();
+      if (!validation.isValid) {
+        alert(validation.errors[0] || "Cart validation failed");
+        return;
+      }
+
+      navigate("/checkout");
+    } catch (error) {
+      alert("Unable to proceed to checkout: " + error.message);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError("Please enter a coupon code");
       return;
     }
 
-    navigate("/checkout");
+    setIsApplyingCoupon(true);
+    setCouponError("");
+
+    try {
+      const { applyCoupon } = useCartStore.getState();
+      await applyCoupon(couponCode.toUpperCase());
+      setCouponCode("");
+      setCouponError("");
+    } catch (error) {
+      setCouponError(error.message);
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = async () => {
+    try {
+      const { removeCoupon } = useCartStore.getState();
+      await removeCoupon();
+    } catch (error) {
+      console.error("Failed to remove coupon:", error);
+    }
   };
 
   return (
@@ -36,28 +86,30 @@ export default function CartSummary({
       aria-label="Order summary"
     >
       {/* Free Shipping Banner */}
-      {!pricingBreakdown.hasFreeShipping &&
-        pricingBreakdown.amountToFreeShipping > 0 && (
-          <div className="cart-summary-banner">
-            <svg
-              className="cart-summary-banner-icon"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M18 18.5a1.5 1.5 0 0 1-1 1.5 1.5 1.5 0 1 1-1-1.5m1.5-9l1.96 2.5L17 13.5V12m-11 6.5A1.5 1.5 0 0 1 4.5 20 1.5 1.5 0 0 1 3 18.5 1.5 1.5 0 0 1 4.5 17c.39 0 .74.15 1 .39V13H2v-2h4V9.5h2.1l2 2H15V13H8.5v2.5h2.02c.26-.24.61-.39 1-.39a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5c-.39 0-.74-.15-1-.39h-4c-.26.24-.61.39-1 .39z" />
-            </svg>
-            <div className="cart-summary-banner-text">
-              Add{" "}
-              <strong>
-                {selectedCurrency}
-                {pricingBreakdown.amountToFreeShipping}
-              </strong>{" "}
-              more to qualify for <strong>FREE Shipping</strong>
-            </div>
+      {!hasFreeShipping && amountToFreeShipping > 0 && (
+        <div className="cart-summary-banner">
+          <svg
+            className="cart-summary-banner-icon"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M18 18.5a1.5 1.5 0 0 1-1 1.5 1.5 1.5 0 1 1-1-1.5m1.5-9l1.96 2.5L17 13.5V12m-11 6.5A1.5 1.5 0 0 1 4.5 20 1.5 1.5 0 0 1 3 18.5 1.5 1.5 0 0 1 4.5 17c.39 0 .74.15 1 .39V13H2v-2h4V9.5h2.1l2 2H15V13H8.5v2.5h2.02c.26-.24.61-.39 1-.39a1.5 1.5 0 0 1 1.5 1.5 1.5 1.5 0 0 1-1.5 1.5c-.39 0-.74-.15-1-.39h-4c-.26.24-.61.39-1 .39z" />
+          </svg>
+          <div className="cart-summary-banner-text">
+            Add{" "}
+            <strong>
+              <PriceDisplay
+                price={amountToFreeShipping}
+                currency={selectedCurrency}
+                conversionRate={conversionRate}
+              />
+            </strong>{" "}
+            more to qualify for <strong>FREE Shipping</strong>
           </div>
-        )}
+        </div>
+      )}
 
-      {pricingBreakdown.hasFreeShipping && (
+      {hasFreeShipping && shippingFee === 0 && (
         <div className="cart-summary-banner success">
           <svg
             className="cart-summary-banner-icon"
@@ -67,35 +119,135 @@ export default function CartSummary({
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
           </svg>
           <div className="cart-summary-banner-text">
-            <strong>Congratulations!</strong> You've qualified for FREE Shipping
+            <strong>FREE Shipping</strong> applied to your order
           </div>
         </div>
       )}
 
+      {/* Coupon Section */}
+      <div className="cart-summary-coupon">
+        <h3 className="cart-summary-coupon-title">Have a coupon?</h3>
+        <div className="cart-summary-coupon-input-group">
+          <input
+            type="text"
+            className="cart-summary-coupon-input"
+            placeholder="Enter coupon code"
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+            disabled={isApplyingCoupon}
+          />
+          <button
+            className="cart-summary-coupon-btn"
+            onClick={handleApplyCoupon}
+            disabled={isApplyingCoupon || !couponCode.trim()}
+          >
+            {isApplyingCoupon ? "Applying..." : "Apply"}
+          </button>
+        </div>
+        {couponError && (
+          <div className="cart-summary-coupon-error">{couponError}</div>
+        )}
+      </div>
+
       {/* Main Summary Card */}
       <div className="cart-summary-card">
-        {/* Subtotal */}
         <div className="cart-summary-section">
-          <div className="cart-summary-row main">
+          {/* Subtotal */}
+          <div className="cart-summary-row">
             <span className="cart-summary-label">
-              Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}):
+              Subtotal ({itemCount} {itemCount === 1 ? "item" : "items"}):
             </span>
             <span className="cart-summary-value">
               <PriceDisplay
-                price={pricingBreakdown.subtotal}
+                price={subtotal}
                 currency={selectedCurrency}
-                conversionRate={1}
+                conversionRate={conversionRate}
               />
             </span>
           </div>
 
+          {/* Discount */}
+          {discount > 0 && (
+            <div className="cart-summary-row discount">
+              <span className="cart-summary-label">Discount:</span>
+              <span className="cart-summary-value negative">
+                -
+                <PriceDisplay
+                  price={discount}
+                  currency={selectedCurrency}
+                  conversionRate={conversionRate}
+                />
+              </span>
+            </div>
+          )}
+
+          {/* Shipping */}
+          <div className="cart-summary-row">
+            <span className="cart-summary-label">Shipping:</span>
+            <span className="cart-summary-value">
+              {shippingFee === 0 ? (
+                <span className="free-shipping">FREE</span>
+              ) : (
+                <PriceDisplay
+                  price={shippingFee}
+                  currency={selectedCurrency}
+                  conversionRate={conversionRate}
+                />
+              )}
+            </span>
+          </div>
+
+          {/* Tax */}
+          {tax > 0 && (
+            <div className="cart-summary-row">
+              <span className="cart-summary-label">Estimated Tax:</span>
+              <span className="cart-summary-value">
+                <PriceDisplay
+                  price={tax}
+                  currency={selectedCurrency}
+                  conversionRate={conversionRate}
+                />
+              </span>
+            </div>
+          )}
+
+          {/* Total Savings */}
+          {totalSavings > 0 && (
+            <div className="cart-summary-row savings">
+              <span className="cart-summary-label">Total Savings:</span>
+              <span className="cart-summary-value positive">
+                <PriceDisplay
+                  price={totalSavings}
+                  currency={selectedCurrency}
+                  conversionRate={conversionRate}
+                />
+              </span>
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="cart-summary-divider"></div>
+
+          {/* Order Total */}
+          <div className="cart-summary-row main">
+            <span className="cart-summary-label">Order Total:</span>
+            <span className="cart-summary-value total">
+              <PriceDisplay
+                price={total}
+                currency={selectedCurrency}
+                conversionRate={conversionRate}
+              />
+            </span>
+          </div>
+
+          {/* Checkout Button */}
           <div className="cart-checkout-button">
             <button
               className={`cart-summary-checkout-btn ${
                 !isCartValid ? "disabled" : ""
               }`}
               onClick={handleCheckout}
-              disabled={!isCartValid}
+              disabled={!isCartValid || itemCount === 0}
             >
               {isCartValid ? (
                 <>
@@ -157,10 +309,18 @@ export default function CartSummary({
         <div className="cart-summary-payment-methods">
           <span className="cart-summary-payment-label">We accept:</span>
           <div className="cart-summary-payment-icons">
-            <div className="cart-summary-payment-icon">💳</div>
-            <div className="cart-summary-payment-icon">🏦</div>
-            <div className="cart-summary-payment-icon">📱</div>
-            <div className="cart-summary-payment-icon">💰</div>
+            <div className="cart-summary-payment-icon" title="Visa">
+              💳
+            </div>
+            <div className="cart-summary-payment-icon" title="MasterCard">
+              🏦
+            </div>
+            <div className="cart-summary-payment-icon" title="Apple Pay">
+              📱
+            </div>
+            <div className="cart-summary-payment-icon" title="PayPal">
+              💰
+            </div>
           </div>
         </div>
       </div>

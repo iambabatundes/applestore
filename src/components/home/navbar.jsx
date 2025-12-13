@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./styles/navbar.css";
-import UserSection from "./UserSection";
+import UserSection from "./userSection";
 import CategoriesSection from "./categoriesSection";
 import { useCategories } from "./hooks/useCategories";
 import { useGeoLocation } from "./hooks/useGeoLocation";
@@ -9,8 +9,8 @@ import SearchBar from "./common/searchBar";
 import Cart from "./common/cart";
 import Currency from "./common/currency";
 import UserAddress from "./common/userAddress";
-import NavbarTop from "./navbar/NavbarTop";
-import NavbarMenu from "./navbar/NavbarMenu";
+import NavbarTop from "./navbar/navbarTop";
+import NavbarMenu from "./navbar/navbarMenu";
 
 export default function Navbar({
   user,

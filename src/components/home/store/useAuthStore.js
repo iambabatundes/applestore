@@ -2,11 +2,36 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "react-toastify";
 
-// === Utility functions ===
+// ==================== CONFIGURATION ====================
+const AUTH_CONFIG = {
+  // Token management
+  TOKEN_REFRESH_BUFFER: 2 * 60 * 1000, // Refresh 2 minutes before expiry
+  TOKEN_CHECK_INTERVAL: 30 * 1000, // Check token every 30 seconds
+
+  // Activity tracking
+  IDLE_TIMEOUT: 30 * 60 * 1000, // 30 minutes of inactivity
+  ACTIVITY_THROTTLE: 5 * 1000, // Throttle activity updates to every 5 seconds
+  ACTIVITY_EVENTS: [
+    "mousedown",
+    "keydown",
+    "scroll",
+    "touchstart",
+    "mousemove",
+  ],
+
+  // Session management
+  SESSION_WARNING_TIME: 5 * 60 * 1000, // Warn 5 minutes before idle timeout
+  AUTO_EXTEND_SESSION: true, // Auto-extend on activity
+
+  // Retry logic
+  MAX_REFRESH_RETRIES: 3,
+  REFRESH_RETRY_DELAY: 1000, // Start with 1 second
+};
+
+// ==================== UTILITY FUNCTIONS ====================
 const calculateExpiryDate = (expiresInSeconds) =>
   Date.now() + expiresInSeconds * 1000;
 
-// JWT validation function
 const isValidJwt = (token) => {
   if (!token || typeof token !== "string") return false;
   const parts = token.split(".");
@@ -15,7 +40,7 @@ const isValidJwt = (token) => {
   return parts.every((part) => base64UrlRegex.test(part));
 };
 
-// === Secure localStorage wrapper ===
+// ==================== SECURE STORAGE ====================
 const secureStorage = {
   getItem: (name) => {
     try {
@@ -51,68 +76,148 @@ const secureStorage = {
   },
 };
 
-// === Timers ===
-let logoutTimer = null;
-let refreshTimer = null;
-
-const clearLogoutTimer = () => {
-  if (logoutTimer) {
-    clearTimeout(logoutTimer);
-    logoutTimer = null;
+// ==================== ACTIVITY TRACKER ====================
+class ActivityTracker {
+  constructor(config) {
+    this.config = config;
+    this.lastActivity = Date.now();
+    this.lastUpdateSent = Date.now();
+    this.listeners = new Set();
+    this.boundHandleActivity = this.handleActivity.bind(this);
+    this.warningShown = false;
+    this.warningTimeoutId = null;
   }
-};
 
-const clearRefreshTimer = () => {
-  if (refreshTimer) {
-    clearTimeout(refreshTimer);
-    refreshTimer = null;
+  start() {
+    this.config.ACTIVITY_EVENTS.forEach((event) => {
+      window.addEventListener(event, this.boundHandleActivity, {
+        passive: true,
+      });
+    });
+    console.log("Activity tracking started");
   }
-};
 
-const scheduleAutoLogout = (expiresInSeconds, logout) => {
-  clearLogoutTimer();
-  if (expiresInSeconds <= 0) {
-    logout();
-    return;
+  stop() {
+    this.config.ACTIVITY_EVENTS.forEach((event) => {
+      window.removeEventListener(event, this.boundHandleActivity);
+    });
+    this.clearWarning();
+    console.log("Activity tracking stopped");
   }
-  logoutTimer = setTimeout(() => {
-    toast.info("Your session has expired. You've been logged out.");
-    logout();
-    window.location.href = "/login";
-  }, expiresInSeconds * 1000);
-};
 
-const scheduleAutoRefresh = (expiresInSeconds, refreshFn) => {
-  clearRefreshTimer();
-  if (expiresInSeconds <= 120) {
-    // Refresh immediately if less than 2 minutes left
-    refreshFn().catch(console.error);
-    return;
+  handleActivity() {
+    const now = Date.now();
+    this.lastActivity = now;
+    this.warningShown = false;
+    this.clearWarning();
+
+    // Throttle activity updates
+    if (now - this.lastUpdateSent >= this.config.ACTIVITY_THROTTLE) {
+      this.lastUpdateSent = now;
+      this.notifyListeners();
+    }
   }
-  refreshTimer = setTimeout(() => {
-    refreshFn().catch(console.error);
-  }, (expiresInSeconds - 120) * 1000); // Refresh 2 minutes before expiry
-};
 
-// === Auth Store ===
+  getTimeSinceLastActivity() {
+    return Date.now() - this.lastActivity;
+  }
+
+  isIdle() {
+    return this.getTimeSinceLastActivity() >= this.config.IDLE_TIMEOUT;
+  }
+
+  shouldShowWarning() {
+    const timeUntilIdle =
+      this.config.IDLE_TIMEOUT - this.getTimeSinceLastActivity();
+    return (
+      timeUntilIdle <= this.config.SESSION_WARNING_TIME && timeUntilIdle > 0
+    );
+  }
+
+  clearWarning() {
+    if (this.warningTimeoutId) {
+      clearTimeout(this.warningTimeoutId);
+      this.warningTimeoutId = null;
+    }
+  }
+
+  subscribe(listener) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  notifyListeners() {
+    this.listeners.forEach((listener) =>
+      listener({
+        lastActivity: this.lastActivity,
+        isIdle: this.isIdle(),
+        timeSinceLastActivity: this.getTimeSinceLastActivity(),
+      })
+    );
+  }
+
+  reset() {
+    this.lastActivity = Date.now();
+    this.lastUpdateSent = Date.now();
+    this.warningShown = false;
+    this.clearWarning();
+  }
+}
+
+// ==================== TIMER MANAGER ====================
+class TimerManager {
+  constructor() {
+    this.timers = new Map();
+  }
+
+  set(name, callback, delay) {
+    this.clear(name);
+    const id = setTimeout(() => {
+      this.timers.delete(name);
+      callback();
+    }, delay);
+    this.timers.set(name, id);
+    return id;
+  }
+
+  clear(name) {
+    const id = this.timers.get(name);
+    if (id) {
+      clearTimeout(id);
+      this.timers.delete(name);
+    }
+  }
+
+  clearAll() {
+    this.timers.forEach((id) => clearTimeout(id));
+    this.timers.clear();
+  }
+}
+
+// ==================== AUTH STORE ====================
 export const createAuthStore = ({
   loginApi,
   refreshTokenApi,
   logoutApi,
   getUserApi,
   userHttpService,
-}) =>
-  create(
+}) => {
+  const activityTracker = new ActivityTracker(AUTH_CONFIG);
+  const timerManager = new TimerManager();
+
+  return create(
     persist(
       (set, get) => {
-        const userRefreshAccessToken = async () => {
+        // ==================== TOKEN REFRESH LOGIC ====================
+        const refreshAccessToken = async (retryCount = 0) => {
           const currentState = get();
+
           if (currentState.isRefreshing) {
-            console.log("Refresh already in progress, skipping...");
+            console.log("Refresh already in progress, waiting...");
             return currentState.refreshPromise;
           }
 
-          console.log("Starting token refresh...");
+          console.log(`Token refresh attempt ${retryCount + 1}`);
 
           const refreshPromise = (async () => {
             set({ isRefreshing: true });
@@ -128,7 +233,6 @@ export const createAuthStore = ({
                 throw new Error("Invalid access token received from refresh");
               }
 
-              // Use the service instance's token management
               userHttpService.setTokens({
                 accessToken,
                 refreshToken,
@@ -137,24 +241,21 @@ export const createAuthStore = ({
 
               const newExpiryDate = calculateExpiryDate(expiresIn);
 
+              // Fetch fresh user data if not in response
               if (!user) {
                 try {
-                  console.log(
-                    "Fetching fresh user data during token refresh..."
-                  );
                   user = await getUserApi();
                 } catch (getUserError) {
                   console.warn(
                     "Failed to fetch user during refresh:",
                     getUserError
                   );
-                  // Keep existing user if fetch fails
                   user = currentState.user;
                 }
               }
 
-              scheduleAutoLogout(expiresIn, get().logout);
-              scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
+              // Schedule next refresh
+              scheduleTokenRefresh(expiresIn);
 
               set({
                 user,
@@ -163,24 +264,41 @@ export const createAuthStore = ({
                 isRefreshing: false,
                 refreshPromise: null,
                 isAuthenticated: true,
+                lastTokenRefresh: Date.now(),
               });
 
-              console.log("Token refreshed successfully with user data");
+              console.log("Token refreshed successfully");
               return { accessToken, expiresIn };
             } catch (error) {
-              console.error("Token refresh failed:", error);
+              console.error(
+                `Token refresh failed (attempt ${retryCount + 1}):`,
+                error
+              );
               set({ isRefreshing: false, refreshPromise: null });
 
+              // Retry logic with exponential backoff
+              if (retryCount < AUTH_CONFIG.MAX_REFRESH_RETRIES) {
+                const delay =
+                  AUTH_CONFIG.REFRESH_RETRY_DELAY * Math.pow(2, retryCount);
+                console.log(`Retrying token refresh in ${delay}ms...`);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                return refreshAccessToken(retryCount + 1);
+              }
+
+              // If all retries failed
               if (
                 error.response?.status === 401 ||
                 error.response?.status === 403
               ) {
                 console.log("Auth error during refresh, logging out");
-                toast.error("Session expired. Please log in again.");
+                toast.error("Your session has expired. Please log in again.");
                 get().logout();
               } else {
-                console.warn("Network error during token refresh");
+                toast.warning(
+                  "Connection issue. Your session may expire soon."
+                );
               }
+
               throw error;
             }
           })();
@@ -189,7 +307,95 @@ export const createAuthStore = ({
           return refreshPromise;
         };
 
+        // ==================== TIMER SCHEDULING ====================
+        const scheduleTokenRefresh = (expiresInSeconds) => {
+          timerManager.clear("tokenRefresh");
+
+          const refreshTime =
+            expiresInSeconds * 1000 - AUTH_CONFIG.TOKEN_REFRESH_BUFFER;
+
+          if (refreshTime > 0) {
+            timerManager.set(
+              "tokenRefresh",
+              () => {
+                console.log("Scheduled token refresh triggered");
+                refreshAccessToken().catch(console.error);
+              },
+              refreshTime
+            );
+
+            console.log(
+              `Token refresh scheduled in ${refreshTime / 1000} seconds`
+            );
+          } else {
+            console.log("Token expiring soon, refreshing immediately");
+            refreshAccessToken().catch(console.error);
+          }
+        };
+
+        const scheduleIdleCheck = () => {
+          timerManager.clear("idleCheck");
+
+          if (!AUTH_CONFIG.AUTO_EXTEND_SESSION) return;
+
+          timerManager.set(
+            "idleCheck",
+            () => {
+              const state = get();
+              if (!state.isAuthenticated) return;
+
+              if (activityTracker.isIdle()) {
+                console.log("User is idle, logging out...");
+                toast.info("You've been logged out due to inactivity.");
+                get().logout();
+              } else if (
+                activityTracker.shouldShowWarning() &&
+                !activityTracker.warningShown
+              ) {
+                activityTracker.warningShown = true;
+                const minutesLeft = Math.ceil(
+                  (AUTH_CONFIG.IDLE_TIMEOUT -
+                    activityTracker.getTimeSinceLastActivity()) /
+                    60000
+                );
+                toast.warning(
+                  `You'll be logged out in ${minutesLeft} minute${
+                    minutesLeft !== 1 ? "s" : ""
+                  } due to inactivity.`,
+                  { autoClose: 10000 }
+                );
+              }
+
+              scheduleIdleCheck();
+            },
+            AUTH_CONFIG.TOKEN_CHECK_INTERVAL
+          );
+        };
+
+        // ==================== ACTIVITY HANDLING ====================
+        const handleUserActivity = () => {
+          const state = get();
+          if (!state.isAuthenticated) return;
+
+          // Check if token needs refresh
+          if (state.expiryDate) {
+            const timeUntilExpiry = state.expiryDate - Date.now();
+            if (
+              timeUntilExpiry < AUTH_CONFIG.TOKEN_REFRESH_BUFFER &&
+              timeUntilExpiry > 0
+            ) {
+              console.log("User active, refreshing token proactively");
+              refreshAccessToken().catch(console.error);
+            }
+          }
+        };
+
+        // Subscribe to activity tracker
+        activityTracker.subscribe(handleUserActivity);
+
+        // ==================== STORE STATE & METHODS ====================
         return {
+          // State
           user: null,
           accessToken: null,
           isAuthenticated: false,
@@ -198,14 +404,14 @@ export const createAuthStore = ({
           isLoading: false,
           isRefreshing: false,
           refreshPromise: null,
+          lastActivity: Date.now(),
+          lastTokenRefresh: null,
 
+          // ==================== INITIALIZE ====================
           initialize: async () => {
             console.log("Initializing auth store...");
 
             try {
-              const currentState = get();
-
-              // Check if we have a valid session first
               const storedToken =
                 userHttpService.tokenManager?.getAccessToken();
               const hasValidStoredToken =
@@ -214,7 +420,7 @@ export const createAuthStore = ({
                 isValidJwt(storedToken);
 
               if (hasValidStoredToken) {
-                console.log("Valid token found, checking user data...");
+                console.log("Valid token found, restoring session...");
 
                 try {
                   const payload = JSON.parse(atob(storedToken.split(".")[1]));
@@ -226,34 +432,36 @@ export const createAuthStore = ({
 
                     let userData = null;
                     try {
-                      console.log(
-                        "Fetching fresh user data during initialization..."
-                      );
                       userData = await getUserApi();
                     } catch (error) {
                       console.warn(
                         "Failed to fetch user during initialization:",
                         error
                       );
-
-                      // If user fetch fails but we have valid token, try to use stored user
+                      const currentState = get();
                       if (currentState.user) {
-                        console.log("Using cached user data as fallback");
                         userData = currentState.user;
                       }
                     }
 
-                    set({
-                      user: userData,
-                      accessToken: storedToken,
-                      expiryDate: expiryTimestamp,
-                      isAuthenticated: !!userData, // Only authenticated if we have user data
-                    });
-
                     if (userData) {
-                      scheduleAutoLogout(expiresIn, get().logout);
-                      scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
+                      set({
+                        user: userData,
+                        accessToken: storedToken,
+                        expiryDate: expiryTimestamp,
+                        isAuthenticated: true,
+                        lastActivity: Date.now(),
+                      });
+
+                      scheduleTokenRefresh(expiresIn);
+                      scheduleIdleCheck();
+                      activityTracker.start();
+
+                      console.log("Session restored successfully");
                     }
+                  } else {
+                    console.log("Token expired, clearing session");
+                    get().logout();
                   }
                 } catch (tokenError) {
                   console.error("Failed to process stored token:", tokenError);
@@ -261,8 +469,7 @@ export const createAuthStore = ({
                   get().logout();
                 }
               } else {
-                console.log("No valid token found, user needs to login");
-                // Clear any stale data
+                console.log("No valid session found");
                 set({
                   user: null,
                   accessToken: null,
@@ -278,8 +485,10 @@ export const createAuthStore = ({
             }
           },
 
-          login: async (email, password) => {
+          // ==================== LOGIN ====================
+          login: async (email, password, rememberMe = false) => {
             set({ isLoading: true });
+
             try {
               console.log("Starting login process...");
               const response = await loginApi(email, password);
@@ -292,7 +501,6 @@ export const createAuthStore = ({
                 throw new Error("Invalid access token received");
               }
 
-              // Use the service instance's token management
               userHttpService.setTokens({
                 accessToken,
                 refreshToken,
@@ -301,9 +509,6 @@ export const createAuthStore = ({
 
               if (!user) {
                 try {
-                  console.log(
-                    "No user in login response, fetching user data..."
-                  );
                   user = await getUserApi();
                 } catch (getUserError) {
                   console.warn(
@@ -318,8 +523,10 @@ export const createAuthStore = ({
 
               const expiryDate = calculateExpiryDate(expiresIn);
 
-              scheduleAutoLogout(expiresIn, get().logout);
-              scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
+              scheduleTokenRefresh(expiresIn);
+              scheduleIdleCheck();
+              activityTracker.reset();
+              activityTracker.start();
 
               set({
                 user,
@@ -328,9 +535,12 @@ export const createAuthStore = ({
                 expiryDate,
                 isLoading: false,
                 isAuthReady: true,
+                lastActivity: Date.now(),
+                lastTokenRefresh: Date.now(),
               });
 
-              console.log("Login successful with user data:", user);
+              toast.success("Welcome back!");
+              console.log("Login successful");
               return user;
             } catch (error) {
               console.error("Login failed:", error);
@@ -345,8 +555,10 @@ export const createAuthStore = ({
             }
           },
 
+          // ==================== LOGIN WITH TOKEN ====================
           loginWithToken: async (jwt, expiresIn = 900) => {
             set({ isLoading: true });
+
             try {
               console.log("Starting login with token...");
               if (!isValidJwt(jwt)) throw new Error("Invalid JWT token format");
@@ -358,32 +570,33 @@ export const createAuthStore = ({
 
               const expiryDate = calculateExpiryDate(expiresIn);
 
-              scheduleAutoLogout(expiresIn, get().logout);
-              scheduleAutoRefresh(expiresIn, userRefreshAccessToken);
-
               let user = null;
               try {
-                console.log("Fetching fresh user data for token login...");
                 user = await getUserApi();
               } catch (getUserError) {
                 console.warn(
                   "Failed to get user data during token login:",
                   getUserError
                 );
-
-                // For registration flow, don't fail if user fetch fails
                 if (getUserError.code !== "ECONNABORTED") {
                   throw getUserError;
                 }
               }
 
+              scheduleTokenRefresh(expiresIn);
+              scheduleIdleCheck();
+              activityTracker.reset();
+              activityTracker.start();
+
               set({
                 user,
                 accessToken: jwt,
-                isAuthenticated: !!user, // Only authenticated if we have user data
+                isAuthenticated: !!user,
                 expiryDate,
                 isLoading: false,
                 isAuthReady: true,
+                lastActivity: Date.now(),
+                lastTokenRefresh: Date.now(),
               });
 
               console.log("Login with token successful");
@@ -392,7 +605,6 @@ export const createAuthStore = ({
               console.error("Login with token failed:", error);
               set({ isLoading: false, isAuthReady: true });
 
-              // Don't show error toast for timeout during registration
               if (!error.code?.includes("ECONNABORTED")) {
                 toast.error("Authentication failed. Please log in again.");
               }
@@ -400,10 +612,13 @@ export const createAuthStore = ({
             }
           },
 
-          logout: async () => {
+          // ==================== LOGOUT ====================
+          logout: async (showMessage = true) => {
             console.log("Starting logout...");
-            clearLogoutTimer();
-            clearRefreshTimer();
+
+            timerManager.clearAll();
+            activityTracker.stop();
+            activityTracker.reset();
 
             secureStorage.setItem("auth-logout", Date.now().toString());
 
@@ -424,18 +639,27 @@ export const createAuthStore = ({
               isAuthReady: true,
               isRefreshing: false,
               refreshPromise: null,
+              lastActivity: Date.now(),
+              lastTokenRefresh: null,
             });
+
+            if (showMessage) {
+              toast.info("You've been logged out.");
+            }
 
             console.log("Logout completed");
           },
 
-          refreshAccessToken: userRefreshAccessToken,
+          // ==================== REFRESH TOKEN ====================
+          refreshAccessToken,
 
+          // ==================== SET USER ====================
           setUser: (user) => {
             console.log("Setting user data:", user);
             set({ user });
           },
 
+          // ==================== GET USER ====================
           getUser: async () => {
             const currentState = get();
             if (currentState.isLoading) return currentState.user;
@@ -456,20 +680,48 @@ export const createAuthStore = ({
             }
           },
 
+          // ==================== CHECK TOKEN EXPIRY ====================
           checkTokenExpiry: () => {
             const { expiryDate, isAuthenticated } = get();
             if (!isAuthenticated || !expiryDate) return false;
 
             const timeToExpiry = expiryDate - Date.now();
-            const shouldRefresh = timeToExpiry < 120000;
 
-            if (shouldRefresh && timeToExpiry > 0) {
-              console.log("Token expiring soon, refreshing...");
-              userRefreshAccessToken().catch(console.error);
+            if (timeToExpiry <= 0) {
+              console.log("Token expired");
+              get().logout();
+              return false;
             }
 
-            return timeToExpiry > 0;
+            if (timeToExpiry < AUTH_CONFIG.TOKEN_REFRESH_BUFFER) {
+              console.log("Token expiring soon, refreshing...");
+              refreshAccessToken().catch(console.error);
+            }
+
+            return true;
           },
+
+          // ==================== EXTEND SESSION ====================
+          extendSession: () => {
+            activityTracker.reset();
+            const state = get();
+
+            if (state.isAuthenticated && state.expiryDate) {
+              const timeUntilExpiry = state.expiryDate - Date.now();
+              if (timeUntilExpiry < AUTH_CONFIG.TOKEN_REFRESH_BUFFER * 2) {
+                console.log("Extending session with token refresh");
+                refreshAccessToken().catch(console.error);
+              }
+            }
+          },
+
+          // ==================== GET ACTIVITY INFO ====================
+          getActivityInfo: () => ({
+            lastActivity: activityTracker.lastActivity,
+            timeSinceLastActivity: activityTracker.getTimeSinceLastActivity(),
+            isIdle: activityTracker.isIdle(),
+            idleTimeout: AUTH_CONFIG.IDLE_TIMEOUT,
+          }),
         };
       },
       {
@@ -479,6 +731,9 @@ export const createAuthStore = ({
           accessToken: state.accessToken,
           isAuthenticated: state.isAuthenticated,
           expiryDate: state.expiryDate,
+          user: state.user,
+          lastActivity: state.lastActivity,
+          lastTokenRefresh: state.lastTokenRefresh,
         }),
         onRehydrateStorage: () => (state, error) => {
           console.log("Rehydrating auth store...");
@@ -510,3 +765,7 @@ export const createAuthStore = ({
       }
     )
   );
+};
+
+// Export configuration for external use
+export { AUTH_CONFIG };

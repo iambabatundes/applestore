@@ -5,7 +5,7 @@ import Newsletter from "./Newsletter";
 import FooterContact from "./footerContact";
 import UsefulLink from "./usefulLink";
 import OpenTime from "./OpenTime";
-import FooterFooter from "./FooterFooter";
+import FooterFooter from "./footerfooter";
 import Logo from "../home/common/logo";
 
 export default function Footer({ logoImage }) {

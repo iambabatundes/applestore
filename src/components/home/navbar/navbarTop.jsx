@@ -1,6 +1,6 @@
 import React from "react";
 import Logo from "../common/logo";
-import UserSection from "../UserSection";
+import UserSection from "../userSection";
 import Cart from "../common/cart";
 
 export default function NavbarTop({

@@ -1,5 +1,5 @@
 import React from "react";
-import UserSection from "../UserSection";
+import UserSection from "../userSection";
 import UserAddress from "../common/userAddress";
 
 export default function NavbarActions({

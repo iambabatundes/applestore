@@ -9,7 +9,7 @@ export default defineConfig({
     {
       name: "treat-js-files-as-jsx",
       transform(code, id) {
-        if (!id.match(/src\/.*\.js$/)) return null; // Only apply to JS files in src
+        if (!id.match(/src\/.*\.js$/)) return null;
 
         return transformWithEsbuild(code, id, {
           loader: "jsx",
@@ -32,8 +32,8 @@ export default defineConfig({
     },
   },
   server: {
-    open: true, // Open browser automatically
-    port: 3000, // Default CRA port
+    open: true,
+    port: 3000,
   },
   resolve: {
     alias: {
@@ -44,10 +44,10 @@ export default defineConfig({
     outDir: "build",
   },
   optimizeDeps: {
-    force: true, // Force optimize dependencies
+    force: true,
     esbuildOptions: {
       loader: {
-        ".js": "jsx", // Ensure JSX support in JS files
+        ".js": "jsx",
       },
     },
   },

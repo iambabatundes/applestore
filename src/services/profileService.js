@@ -60,6 +60,22 @@ export async function updateUser(user) {
   }
 }
 
+export async function uploadProfileImage(file) {
+  try {
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    const response = await userHttpService.put(profilePath, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("Failed to upload profile image:", err);
+    throw err;
+  }
+}
+
 export async function sendVerificationCode(contactType) {
   try {
     const { data } = await userHttpService.post(
@@ -91,7 +107,7 @@ export async function verifyContactUpdate(contactType, code) {
   }
 }
 
-export async function getUserProfileWithContactStatus() {
+export async function getUserProfile() {
   try {
     const { data } = await userHttpService.get(`${profilePath}/contact-status`);
     return data;

@@ -1,36 +1,39 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { calculateTotalPrice } from "./utils/utils";
-import CartSummary from "./cart/CartSummary";
+
 import EmptyCart from "./cart/emptyCart";
 import NotLoginCart from "./cart/notLoginCart";
-import SavedForLater from "../components/cart/savedForLater";
+import SavedForLater from "./cart/savedForLater";
 import config from "../config.json";
-import { useCartStore } from "../components/store/cartStore";
-import "./styles/cart.css";
 import PriceDisplay from "./utils/priceDisplay";
+import "./styles/cart.css";
+import { useCartStore } from "./store/cartStore";
+import CartSummary from "./cart/cartSummary";
 
 export default function Cart({
   isLoggedIn = false,
-  handleDelete,
-  conversionRate,
-  selectedCurrency,
+  conversionRate = 1,
+  selectedCurrency = "USD",
+  companyName = "Our Store",
 }) {
   const {
     cartItems,
+    savedItems,
+    isLoading,
+    error,
+    syncCart,
     updateQuantity,
     updateCustomQuantity,
     removeItem,
     saveForLater,
-    savedForLater,
-    selectedQuantities,
-    quantityTenPlus,
-    error,
-    clearError,
+    moveToCart,
+    removeFromSaved,
     validateCartForCheckout,
     checkStockAvailability,
     autoFixStockIssues,
     validateQuantity: storeValidateQuantity,
+    clearError,
+    getCartTotals,
   } = useCartStore();
 
   const [localError, setLocalError] = useState(null);
@@ -41,8 +44,20 @@ export default function Cart({
   const [localCustomQuantity, setLocalCustomQuantity] = useState({});
   const [expandedItems, setExpandedItems] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
+  const [cartValidation, setCartValidation] = useState({
+    isValid: true,
+    errors: [],
+    warnings: [],
+  });
 
   const timeoutRefs = useRef({});
+
+  // Sync cart on component mount if logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      syncCart();
+    }
+  }, [isLoggedIn, syncCart]);
 
   // Auto-dismiss messages
   useEffect(() => {
@@ -62,16 +77,36 @@ export default function Cart({
     }
   }, [successMessage]);
 
+  // Validate cart on changes
+  useEffect(() => {
+    const validate = async () => {
+      try {
+        const validation = await validateCartForCheckout();
+        setCartValidation(validation);
+      } catch (err) {
+        setCartValidation({
+          isValid: false,
+          errors: [err.message],
+          warnings: [],
+        });
+      }
+    };
+
+    if (isLoggedIn) {
+      validate();
+    }
+  }, [cartItems, isLoggedIn, validateCartForCheckout]);
+
   // Real-time validation
   const getRealTimeValidation = useCallback(
     (quantity, item, isCustom = false) => {
       try {
         const parsedQuantity = storeValidateQuantity(quantity, isCustom);
-        const stock = item?.numberInStock ?? item?.inStock;
+        const stock = item?.numberInStock || 0;
         const errors = [];
         const warnings = [];
 
-        if (stock !== undefined && parsedQuantity > stock) {
+        if (stock > 0 && parsedQuantity > stock) {
           if (isCustom) {
             errors.push(`Only ${stock} items available in stock`);
           } else {
@@ -99,17 +134,27 @@ export default function Cart({
 
   // Handle quantity change
   const handleQuantityChange = useCallback(
-    async (itemId, quantity) => {
+    async (itemId, quantity, product) => {
       try {
         setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
         setLocalError(null);
         setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
 
-        await updateQuantity(itemId, quantity);
-
-        if (quantity !== "10+") {
-          setSuccessMessage("Quantity updated successfully");
+        if (quantity === "10+") {
+          setExpandedItems((prev) => ({ ...prev, [itemId]: true }));
+          return;
         }
+
+        const parsedQuantity = parseInt(quantity, 10);
+
+        // Validate stock
+        const stock = product?.numberInStock || 0;
+        if (stock > 0 && parsedQuantity > stock) {
+          throw new Error(`Only ${stock} items available in stock`);
+        }
+
+        await updateQuantity(itemId, parsedQuantity);
+        setSuccessMessage("Quantity updated successfully");
       } catch (err) {
         setLocalError(err.message || "Failed to update quantity");
         setValidationErrors((prev) => ({ ...prev, [itemId]: err.message }));
@@ -121,72 +166,28 @@ export default function Cart({
   );
 
   // Handle custom quantity input
-  const handleQuantityTenPlusChange = useCallback(
-    (e, itemId, item) => {
-      const inputValue = e.target.value;
-
-      if (timeoutRefs.current[itemId]) {
-        clearTimeout(timeoutRefs.current[itemId]);
-      }
-
-      if (inputValue === "") {
-        setLocalCustomQuantity((prev) => ({ ...prev, [itemId]: "" }));
-        setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
-        setFieldWarnings((prev) => ({ ...prev, [itemId]: null }));
-        return;
-      }
-
-      const parsedValue = parseInt(inputValue, 10);
-      if (!isNaN(parsedValue) && parsedValue >= 1) {
-        setLocalCustomQuantity((prev) => ({ ...prev, [itemId]: parsedValue }));
-
-        const validation = getRealTimeValidation(parsedValue, item, true);
-
-        if (!validation.isValid) {
-          setValidationErrors((prev) => ({
-            ...prev,
-            [itemId]: validation.errors[0],
-          }));
-          setFieldWarnings((prev) => ({
-            ...prev,
-            [itemId]: validation.warning,
-          }));
-          return;
-        }
-
-        setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
-        setFieldWarnings((prev) => ({ ...prev, [itemId]: validation.warning }));
-
-        if (validation.canAutoUpdate) {
-          timeoutRefs.current[itemId] = setTimeout(() => {
-            handleQuantityUpdate(itemId, parsedValue);
-          }, 800);
-        }
-      }
-    },
-    [getRealTimeValidation]
-  );
-
-  // Update quantity
-  const handleQuantityUpdate = useCallback(
-    async (itemId, quantity) => {
+  const handleCustomQuantity = useCallback(
+    async (itemId, quantity, product) => {
       try {
         setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
         setLocalError(null);
         setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
 
-        if (quantity < 10) {
-          await updateQuantity(itemId, quantity);
-        } else {
-          await updateCustomQuantity(itemId, quantity);
+        const parsedQuantity = parseInt(quantity, 10);
+
+        if (parsedQuantity < 10) {
+          throw new Error("Custom quantity must be 10 or more");
         }
 
+        // Validate stock
+        const stock = product?.numberInStock || 0;
+        if (stock > 0 && parsedQuantity > stock) {
+          throw new Error(`Only ${stock} items available in stock`);
+        }
+
+        await updateCustomQuantity(itemId, parsedQuantity);
         setSuccessMessage("Quantity updated successfully");
-        setLocalCustomQuantity((prev) => {
-          const newState = { ...prev };
-          delete newState[itemId];
-          return newState;
-        });
+        setExpandedItems((prev) => ({ ...prev, [itemId]: false }));
       } catch (err) {
         setLocalError(err.message || "Failed to update quantity");
         setValidationErrors((prev) => ({ ...prev, [itemId]: err.message }));
@@ -194,39 +195,19 @@ export default function Cart({
         setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
       }
     },
-    [updateQuantity, updateCustomQuantity]
+    [updateCustomQuantity]
   );
 
-  // Handle quantity submit
-  const handleQuantitySubmit = useCallback(
-    async (e, itemId) => {
-      e.preventDefault();
-      const currentValue =
-        localCustomQuantity[itemId] ?? quantityTenPlus[itemId];
-      if (!currentValue) {
-        setLocalError("Please enter a quantity");
-        return;
-      }
-      await handleQuantityUpdate(itemId, currentValue);
-    },
-    [localCustomQuantity, quantityTenPlus, handleQuantityUpdate]
-  );
-
-  // Handle item deletion
+  // Handle item deletion from cart
   const handleDeleteItem = useCallback(
-    async (itemId) => {
-      if (!window.confirm("Are you sure you want to remove this item?")) {
+    async (itemId, productName) => {
+      if (!window.confirm(`Remove "${productName}" from cart?`)) {
         return;
       }
 
       try {
         setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
         await removeItem(itemId);
-
-        if (handleDelete) {
-          await handleDelete(itemId);
-        }
-
         setSuccessMessage("Item removed from cart");
       } catch (err) {
         setLocalError(err.message || "Failed to remove item");
@@ -234,16 +215,16 @@ export default function Cart({
         setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
       }
     },
-    [removeItem, handleDelete]
+    [removeItem]
   );
 
   // Handle save for later
   const handleSaveForLater = useCallback(
-    async (itemId) => {
+    async (itemId, productName) => {
       try {
         setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
-        await saveForLater(itemId);
-        setSuccessMessage("Item saved for later");
+        saveForLater(itemId);
+        setSuccessMessage(`"${productName}" saved for later`);
       } catch (err) {
         setLocalError(err.message || "Failed to save item");
       } finally {
@@ -253,36 +234,50 @@ export default function Cart({
     [saveForLater]
   );
 
-  // Calculate totals
-  const totalItem = cartItems.reduce((total, item) => {
-    const itemQuantity =
-      quantityTenPlus[item._id] ?? selectedQuantities[item._id] ?? 1;
-    return total + itemQuantity;
-  }, 0);
+  // Handle move to cart from saved
+  const handleMoveToCart = useCallback(
+    async (itemId, productName) => {
+      try {
+        setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
+        await moveToCart(itemId);
+        setSuccessMessage(`"${productName}" moved to cart`);
+      } catch (err) {
+        setLocalError(err.message || "Failed to move item to cart");
+      } finally {
+        setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
+      }
+    },
+    [moveToCart]
+  );
 
-  const price = calculateTotalPrice(
-    cartItems,
-    selectedQuantities,
-    quantityTenPlus,
-    conversionRate
+  // Handle remove from saved
+  const handleRemoveFromSaved = useCallback(
+    async (itemId, productName) => {
+      if (!window.confirm(`Remove "${productName}" from saved items?`)) {
+        return;
+      }
+
+      try {
+        setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
+        removeFromSaved(itemId);
+        setSuccessMessage("Item removed from saved items");
+      } catch (err) {
+        setLocalError(err.message || "Failed to remove item");
+      } finally {
+        setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
+      }
+    },
+    [removeFromSaved]
   );
 
   // Format product permalink
   const formatPermalink = useCallback((name) => {
-    return name.toLowerCase().replaceAll(" ", "-");
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   }, []);
 
-  // Select all items
-  const handleSelectAll = useCallback(() => {
-    const allSelected = cartItems.every((item) => selectedItems[item._id]);
-    const newSelected = {};
-    if (!allSelected) {
-      cartItems.forEach((item) => {
-        newSelected[item._id] = true;
-      });
-    }
-    setSelectedItems(newSelected);
-  }, [cartItems, selectedItems]);
+  // Get cart totals
+  const cartTotals = getCartTotals();
+  const { itemCount, subtotal, discount, tax, shippingFee, total } = cartTotals;
 
   // Cleanup timeouts
   useEffect(() => {
@@ -293,19 +288,27 @@ export default function Cart({
     };
   }, []);
 
-  if (
-    cartItems.length === 0 &&
-    (!savedForLater || savedForLater.length === 0)
-  ) {
-    return isLoggedIn ? <EmptyCart /> : <NotLoginCart />;
+  const isCartEmpty = cartItems.length === 0;
+  const hasSavedItems = savedItems.length > 0;
+
+  if (!isLoggedIn && isCartEmpty && !hasSavedItems) {
+    return <NotLoginCart companyName={companyName} />;
   }
 
-  const cartValidity = validateCartForCheckout();
+  if (isLoggedIn && isCartEmpty && !hasSavedItems) {
+    return (
+      <EmptyCart
+        companyName={companyName}
+        conversionRate={conversionRate}
+        selectedCurrency={selectedCurrency}
+      />
+    );
+  }
 
   return (
     <div className="cart-container">
-      {/* Top Banner */}
-      {!cartValidity.isValid && (
+      {/* Stock Validation Banner */}
+      {!cartValidation.isValid && (
         <div className="cart-alert-banner">
           <div className="cart-alert-content">
             <svg
@@ -315,13 +318,11 @@ export default function Cart({
             >
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
-            <span>
-              Some items exceed available stock. Please adjust quantities.
-            </span>
+            <span>{cartValidation.errors[0] || "Cart validation failed"}</span>
             <button
               className="cart-alert-fix-btn"
-              onClick={() => {
-                const results = autoFixStockIssues();
+              onClick={async () => {
+                const results = await autoFixStockIssues();
                 setSuccessMessage(`Fixed ${results.length} stock issues`);
               }}
             >
@@ -383,10 +384,11 @@ export default function Cart({
           <div className="cart-section-header">
             <div className="cart-header-top">
               <h1 className="cart-title">Shopping Cart</h1>
-              <button className="cart-deselect-link" onClick={handleSelectAll}>
-                {cartItems.every((item) => selectedItems[item._id])
-                  ? "Deselect all items"
-                  : "Select all items"}
+              <button
+                className="cart-deselect-link"
+                onClick={() => setSelectedItems({})}
+              >
+                Deselect all items
               </button>
             </div>
             <div className="cart-header-price-label">Price</div>
@@ -397,13 +399,11 @@ export default function Cart({
           {/* Cart Items List */}
           <div className="cart-items-list">
             {cartItems.map((item) => {
-              const selectedQuantity = selectedQuantities[item._id] || 1;
-              const isQuantityTenPlus = quantityTenPlus[item._id] !== undefined;
               const isLoading = loadingItems[item._id];
-              const currentQuantity =
-                quantityTenPlus[item._id] || selectedQuantity;
-              const itemTotalPrice = item.price * currentQuantity;
+              const isExpanded = expandedItems[item._id];
               const stockInfo = checkStockAvailability(item._id);
+              const itemTotalPrice =
+                (item.unitPrice || item.price) * (item.quantity || 1);
 
               return (
                 <article
@@ -426,12 +426,15 @@ export default function Cart({
                       }
                       aria-label={`Select ${item.name}`}
                     />
-                    <Link to={`/${formatPermalink(item.name)}`}>
+                    <Link
+                      to={`/product/${item._id}/${formatPermalink(item.name)}`}
+                    >
                       <img
                         src={
                           item.featureImage?.filename
                             ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
-                            : "/default-image.jpg"
+                            : item.snapshot?.featureImage ||
+                              "/default-image.jpg"
                         }
                         alt={item.name}
                         className="cart-item-image"
@@ -444,98 +447,86 @@ export default function Cart({
                   <div className="cart-item-details">
                     <div className="cart-item-info">
                       <Link
-                        to={`/${formatPermalink(item.name)}`}
+                        to={`/product/${item._id}/${formatPermalink(
+                          item.name
+                        )}`}
                         className="cart-item-title"
                       >
                         {item.name}
                       </Link>
 
                       {/* Stock Status */}
-                      {item.numberInStock > 0 ? (
+                      {stockInfo.isAvailable ? (
                         <div className="cart-item-stock-status in-stock">
                           <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                           </svg>
                           <span>In Stock</span>
-                          {!stockInfo.isAvailable && (
+                        </div>
+                      ) : (
+                        <div className="cart-item-stock-status out-of-stock">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                          </svg>
+                          <span>Out of Stock</span>
+                          {stockInfo.availableStock > 0 && (
                             <span className="cart-stock-warning-inline">
                               - Only {stockInfo.availableStock} available
                             </span>
                           )}
                         </div>
-                      ) : (
-                        <div className="cart-item-stock-status out-of-stock">
-                          Out of Stock
-                        </div>
+                      )}
+
+                      {/* SKU */}
+                      {item.sku && (
+                        <div className="cart-item-sku">SKU: {item.sku}</div>
                       )}
 
                       {/* Action Buttons */}
                       <div className="cart-item-actions">
                         {/* Quantity Selector */}
-                        {isQuantityTenPlus ? (
-                          <form
-                            className="cart-quantity-form"
-                            onSubmit={(e) => handleQuantitySubmit(e, item._id)}
-                          >
-                            <div className="cart-quantity-input-wrapper">
-                              <input
-                                type="number"
-                                className={`cart-quantity-input ${
-                                  validationErrors[item._id] ? "error" : ""
-                                } ${fieldWarnings[item._id] ? "warning" : ""}`}
-                                min="1"
-                                max={item.numberInStock || 999}
-                                value={
-                                  localCustomQuantity[item._id] ??
-                                  quantityTenPlus[item._id] ??
-                                  10
-                                }
-                                onChange={(e) =>
-                                  handleQuantityTenPlusChange(e, item._id, item)
-                                }
-                                onBlur={() => {
-                                  const currentValue =
-                                    localCustomQuantity[item._id] ??
-                                    quantityTenPlus[item._id];
-                                  if (currentValue) {
-                                    handleQuantityUpdate(
-                                      item._id,
-                                      currentValue
-                                    );
-                                  }
-                                }}
-                                disabled={isLoading}
-                              />
-                              {validationErrors[item._id] && (
-                                <div className="cart-quantity-error">
-                                  {validationErrors[item._id]}
-                                </div>
-                              )}
-                              {fieldWarnings[item._id] &&
-                                !validationErrors[item._id] && (
-                                  <div className="cart-quantity-warning">
-                                    {fieldWarnings[item._id]}
-                                  </div>
-                                )}
-                            </div>
+                        {isExpanded ? (
+                          <div className="cart-quantity-expanded">
+                            <input
+                              type="number"
+                              className="cart-quantity-input"
+                              min="10"
+                              max={item.numberInStock || 1000}
+                              defaultValue={item.quantity || 10}
+                              onBlur={(e) =>
+                                handleCustomQuantity(
+                                  item._id,
+                                  e.target.value,
+                                  item
+                                )
+                              }
+                              disabled={isLoading}
+                              placeholder="Enter quantity (10+)"
+                            />
                             <button
-                              type="submit"
-                              className="cart-quantity-update-btn"
-                              disabled={
-                                isLoading || !!validationErrors[item._id]
+                              className="cart-quantity-cancel"
+                              onClick={() =>
+                                setExpandedItems((prev) => ({
+                                  ...prev,
+                                  [item._id]: false,
+                                }))
                               }
                             >
-                              Update
+                              Cancel
                             </button>
-                          </form>
+                          </div>
                         ) : (
                           <select
                             className="cart-quantity-select"
-                            value={selectedQuantity}
+                            value={item.quantity || 1}
                             onChange={(e) =>
-                              handleQuantityChange(item._id, e.target.value)
+                              handleQuantityChange(
+                                item._id,
+                                e.target.value,
+                                item
+                              )
                             }
-                            disabled={isLoading || !item.numberInStock}
+                            disabled={isLoading || !stockInfo.isAvailable}
                           >
                             {Array.from({ length: 9 }, (_, i) => (
                               <option key={i + 1} value={i + 1}>
@@ -550,7 +541,7 @@ export default function Cart({
 
                         <button
                           className="cart-action-btn"
-                          onClick={() => handleDeleteItem(item._id)}
+                          onClick={() => handleDeleteItem(item._id, item.name)}
                           disabled={isLoading}
                         >
                           Delete
@@ -560,49 +551,26 @@ export default function Cart({
 
                         <button
                           className="cart-action-btn"
-                          onClick={() => handleSaveForLater(item._id)}
+                          onClick={() =>
+                            handleSaveForLater(item._id, item.name)
+                          }
                           disabled={isLoading}
                         >
                           Save for later
                         </button>
-
-                        <div className="cart-action-divider"></div>
-
-                        <button
-                          className="cart-action-btn"
-                          onClick={() => {
-                            if (navigator.share) {
-                              navigator.share({
-                                title: item.name,
-                                url: `${
-                                  window.location.origin
-                                }/${formatPermalink(item.name)}`,
-                              });
-                            } else {
-                              navigator.clipboard.writeText(
-                                `${window.location.origin}/${formatPermalink(
-                                  item.name
-                                )}`
-                              );
-                              setSuccessMessage("Link copied to clipboard");
-                            }
-                          }}
-                        >
-                          Share
-                        </button>
                       </div>
                     </div>
 
-                    {/* Item Price - UPDATED WITH PROPER FORMATTING */}
+                    {/* Item Price */}
                     <div className="cart-item-price-container">
                       <div className="cart-item-price">
                         <PriceDisplay
-                          price={item.price}
+                          price={item.unitPrice || item.price}
                           currency={selectedCurrency}
                           conversionRate={conversionRate}
                         />
                       </div>
-                      {(selectedQuantity > 1 || isQuantityTenPlus) && (
+                      {(item.quantity || 1) > 1 && (
                         <div className="cart-item-subtotal">
                           Subtotal:{" "}
                           <PriceDisplay
@@ -619,15 +587,15 @@ export default function Cart({
             })}
           </div>
 
-          {/* Subtotal Footer - UPDATED WITH PROPER FORMATTING */}
+          {/* Subtotal Footer */}
           <div className="cart-subtotal-section">
             <div className="cart-subtotal-content">
-              Subtotal ({totalItem} {totalItem === 1 ? "item" : "items"}):
+              Subtotal ({itemCount} {itemCount === 1 ? "item" : "items"}):
               <span className="cart-subtotal-price">
                 <PriceDisplay
-                  price={price}
+                  price={subtotal}
                   currency={selectedCurrency}
-                  conversionRate={1}
+                  conversionRate={conversionRate}
                 />
               </span>
             </div>
@@ -637,22 +605,24 @@ export default function Cart({
         {/* Right Section - Cart Summary */}
         <aside className="cart-summary-section">
           <CartSummary
-            totalItem={totalItem}
-            price={price}
+            totals={cartTotals}
             selectedCurrency={selectedCurrency}
-            isCartValid={cartValidity.isValid}
+            isCartValid={cartValidation.isValid}
             conversionRate={conversionRate}
           />
         </aside>
       </div>
 
       {/* Saved For Later Section */}
-      {savedForLater && savedForLater.length > 0 && (
+      {hasSavedItems && (
         <SavedForLater
-          savedItems={savedForLater}
+          savedItems={savedItems}
           conversionRate={conversionRate}
           selectedCurrency={selectedCurrency}
           formatPermalink={formatPermalink}
+          onMoveToCart={handleMoveToCart}
+          onRemoveFromSaved={handleRemoveFromSaved}
+          loadingItems={loadingItems}
         />
       )}
     </div>

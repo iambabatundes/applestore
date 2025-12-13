@@ -1,10 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+// components/CartStatus.jsx
+import React, { Link } from "react-router-dom";
 import "../styles/cartStatus.css";
 import CartIcon from "./cartIcon";
 
-function CartStatus({ added, handleAddToCart, cartItems, item }) {
+function CartStatus({
+  added,
+  handleAddToCart,
+  cartItems,
+  item,
+  isAdding,
+  isPending,
+}) {
+  // Show loading state while adding
+  const showLoading = isAdding || isPending;
+
   return (
     <>
       {added ? (
@@ -16,31 +25,36 @@ function CartStatus({ added, handleAddToCart, cartItems, item }) {
           </article>
         </div>
       ) : (
-        <CartIcon
-          className="productCard__cartIconProduct"
-          onClick={handleAddToCart}
-        />
-      )}
-
-      {added && cartItems.some((cartItem) => cartItem._id === item._id) && (
-        <div className="productCard__cartBtn">
-          <Link to="/cart" className="gotoCartBtn productCart__gotoCartBtn">
-            <i className="fa fa-shopping-cart"></i> Go to Cart
-          </Link>
-          <Link to="/checkout" className="productCart__proceedCheckoutBtn">
-            Proceed to Checkout
-          </Link>
+        <div className="cart-icon-wrapper">
+          {showLoading ? (
+            <div className="cart-icon-loading">
+              <i className="fa fa-spinner fa-spin"></i>
+            </div>
+          ) : (
+            <CartIcon
+              className="productCard__cartIconProduct"
+              onClick={handleAddToCart}
+            />
+          )}
         </div>
       )}
+
+      {added &&
+        cartItems.some(
+          (cartItem) =>
+            (cartItem._id || cartItem.product?._id) === (item._id || item.id)
+        ) && (
+          <div className="productCard__cartBtn">
+            <Link to="/cart" className="gotoCartBtn productCart__gotoCartBtn">
+              <i className="fa fa-shopping-cart"></i> Go to Cart
+            </Link>
+            <Link to="/checkout" className="productCart__proceedCheckoutBtn">
+              Proceed to Checkout
+            </Link>
+          </div>
+        )}
     </>
   );
 }
-
-CartStatus.propTypes = {
-  added: PropTypes.bool.isRequired,
-  handleAddToCart: PropTypes.func.isRequired,
-  cartItems: PropTypes.array.isRequired,
-  item: PropTypes.object.isRequired,
-};
 
 export default React.memo(CartStatus);

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useStore } from "zustand";
 
 import "./styles/userProfile.css";
 import MyProfile from "./users/myProfile";
 import MyOrder from "./users/myOrder";
+import MyPayment from "./users/myPayment";
 import MyMessages from "./users/myMessages";
 import MyAddress from "./users/myAddress";
 import MyDashboard from "./users/myDashboard";
@@ -40,68 +41,124 @@ export default function UserProfile() {
   } = useUserProfile();
 
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsLeftSidebarOpen(false);
+        setIsRightSidebarOpen(false);
+      } else {
+        setIsRightSidebarOpen(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Close sidebars when route changes on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsLeftSidebarOpen(false);
+    }
+  }, [location, isMobile]);
 
   const toggleLeftSidebar = () => {
     setIsLeftSidebarOpen(!isLeftSidebarOpen);
   };
 
+  const toggleRightSidebar = () => {
+    setIsRightSidebarOpen(!isRightSidebarOpen);
+  };
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <section className="userProfile">
+      {/* Overlay for mobile */}
+      {isMobile && isLeftSidebarOpen && (
+        <div className="sidebar-overlay" onClick={toggleLeftSidebar} />
+      )}
+
       <div
-        className={`user-profile ${
+        className={`user-profile-container ${
           isLeftSidebarOpen ? "left-sidebar-open" : ""
-        }`}
+        } ${isRightSidebarOpen ? "right-sidebar-open" : ""}`}
       >
         <SidebarLeft
           isOpen={isLeftSidebarOpen}
           toggleSidebar={toggleLeftSidebar}
           user={user}
+          isMobile={isMobile}
         />
-        <main className="main-content">
-          <TopNavbar greeting={greeting} user={user} />
 
-          <Routes location={location}>
-            <Route
-              index
-              path="/my-dashboard"
-              element={
-                <MyDashboard
-                  user={user}
-                  cartItems={cartItems}
-                  addToCart={addToCart}
-                />
-              }
-            />
-            <Route
-              path="/my-profile"
-              element={
-                <MyProfile
-                  user={user}
-                  handleSubmit={handleSubmit}
-                  profileImage={profileImage}
-                  setProfileImage={setProfileImage}
-                  userData={userData}
-                  setUserData={setUserData}
-                  loading={loading}
-                  isEditing={isEditing}
-                  setIsEditing={setIsEditing}
-                  handleProfileImageChange={handleProfileImageChange}
-                  contactInfo={contactInfo}
-                  pendingVerifications={pendingVerifications}
-                  handleSendVerification={handleSendVerification}
-                  handleVerifyContact={handleVerifyContact}
-                  verificationLoading={verificationLoading}
-                />
-              }
-            />
-            <Route path="/my-orders" element={<MyOrder />} />
-            <Route path="/my-messages" element={<MyMessages />} />
-            <Route path="/my-address" element={<MyAddress />} />
-            <Route path="/my-settings" element={<MySettings />} />
-          </Routes>
+        <main className="main-content">
+          <TopNavbar
+            greeting={greeting}
+            user={user}
+            toggleLeftSidebar={toggleLeftSidebar}
+            toggleRightSidebar={toggleRightSidebar}
+            isRightSidebarOpen={isRightSidebarOpen}
+          />
+
+          <div className="content-wrapper">
+            <Routes location={location}>
+              <Route index element={<Navigate to="my-dashboard" replace />} />
+              <Route
+                path="my-dashboard"
+                element={
+                  <MyDashboard
+                    user={user}
+                    cartItems={cartItems}
+                    addToCart={addToCart}
+                  />
+                }
+              />
+              <Route
+                path="my-profile"
+                element={
+                  <MyProfile
+                    user={user}
+                    handleSubmit={handleSubmit}
+                    profileImage={profileImage}
+                    setProfileImage={setProfileImage}
+                    userData={userData}
+                    setUserData={setUserData}
+                    loading={loading}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    handleProfileImageChange={handleProfileImageChange}
+                    contactInfo={contactInfo}
+                    pendingVerifications={pendingVerifications}
+                    handleSendVerification={handleSendVerification}
+                    handleVerifyContact={handleVerifyContact}
+                    verificationLoading={verificationLoading}
+                  />
+                }
+              />
+              <Route path="my-orders" element={<MyOrder user={user} />} />
+              <Route path="my-payments" element={<MyPayment user={user} />} />
+              <Route path="my-messages" element={<MyMessages user={user} />} />
+              <Route path="my-address" element={<MyAddress user={user} />} />
+              <Route path="my-settings" element={<MySettings user={user} />} />
+            </Routes>
+          </div>
         </main>
-        <SidebarRight />
+
+        {/* <SidebarRight
+          isOpen={isRightSidebarOpen}
+          toggleSidebar={toggleRightSidebar}
+          isMobile={isMobile}
+        /> */}
       </div>
     </section>
   );

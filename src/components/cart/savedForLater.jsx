@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useCartStore } from "../store/cartStore";
 import config from "../../config.json";
+import PriceDisplay from "../utils/priceDisplay";
 import "./styles/saveForLater.css";
 
 export default function SavedForLater({
@@ -9,45 +9,36 @@ export default function SavedForLater({
   conversionRate,
   selectedCurrency,
   formatPermalink,
+  onMoveToCart,
+  onRemoveFromSaved,
+  loadingItems = {},
 }) {
-  const { moveToCart, removeFromSaved } = useCartStore();
-  const [loadingItems, setLoadingItems] = useState({});
   const [successMessage, setSuccessMessage] = useState(null);
 
   const handleMoveToCart = useCallback(
-    async (itemId) => {
+    async (itemId, itemName) => {
       try {
-        setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
-        moveToCart(itemId);
-        setSuccessMessage("Item moved to cart");
+        await onMoveToCart(itemId, itemName);
+        setSuccessMessage(`"${itemName}" moved to cart`);
         setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
         console.error("Failed to move item to cart:", err);
-      } finally {
-        setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
       }
     },
-    [moveToCart]
+    [onMoveToCart]
   );
 
   const handleRemove = useCallback(
-    async (itemId) => {
-      if (!window.confirm("Are you sure you want to remove this item?")) {
-        return;
-      }
-
+    async (itemId, itemName) => {
       try {
-        setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
-        removeFromSaved(itemId);
-        setSuccessMessage("Item removed");
+        await onRemoveFromSaved(itemId, itemName);
+        setSuccessMessage(`"${itemName}" removed from saved items`);
         setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
         console.error("Failed to remove item:", err);
-      } finally {
-        setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
       }
     },
-    [removeFromSaved]
+    [onRemoveFromSaved]
   );
 
   if (!savedItems || savedItems.length === 0) {
@@ -73,37 +64,43 @@ export default function SavedForLater({
       <div className="saved-for-later__grid">
         {savedItems.map((item) => {
           const isLoading = loadingItems[item._id];
-          const convertedPrice = (item.price * conversionRate).toFixed(2);
+          const itemName = item.name || "Unknown Product";
 
           return (
             <article
               key={item._id}
               className={`saved-item ${isLoading ? "saved-item--loading" : ""}`}
-              aria-label={`${item.name} saved for later`}
+              aria-label={`${itemName} saved for later`}
             >
               <div className="saved-item__image-wrapper">
-                <img
-                  src={
-                    item.featureImage && item.featureImage.filename
-                      ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
-                      : "/default-image.jpg"
-                  }
-                  alt={item.name}
-                  className="saved-item__image"
-                  loading="lazy"
-                />
+                <Link to={`/product/${item._id}/${formatPermalink(itemName)}`}>
+                  <img
+                    src={
+                      item.featureImage?.filename
+                        ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
+                        : item.snapshot?.featureImage || "/default-image.jpg"
+                    }
+                    alt={itemName}
+                    className="saved-item__image"
+                    loading="lazy"
+                  />
+                </Link>
               </div>
 
               <div className="saved-item__content">
                 <Link
-                  to={`/${formatPermalink(item.name)}`}
+                  to={`/product/${item._id}/${formatPermalink(itemName)}`}
                   className="saved-item__title-link"
                 >
-                  <h3 className="saved-item__title">{item.name}</h3>
+                  <h3 className="saved-item__title">{itemName}</h3>
                 </Link>
 
                 <p className="saved-item__price">
-                  {selectedCurrency} {convertedPrice}
+                  <PriceDisplay
+                    price={item.price || item.unitPrice || 0}
+                    currency={selectedCurrency}
+                    conversionRate={conversionRate}
+                  />
                 </p>
 
                 <p className="saved-item__stock">
@@ -119,17 +116,17 @@ export default function SavedForLater({
                 <div className="saved-item__actions">
                   <button
                     className="saved-item__button saved-item__button--primary"
-                    onClick={() => handleMoveToCart(item._id)}
+                    onClick={() => handleMoveToCart(item._id, itemName)}
                     disabled={isLoading || !item.numberInStock}
-                    aria-label={`Move ${item.name} to cart`}
+                    aria-label={`Move ${itemName} to cart`}
                   >
                     {isLoading ? "Moving..." : "Move to Cart"}
                   </button>
                   <button
                     className="saved-item__button saved-item__button--secondary"
-                    onClick={() => handleRemove(item._id)}
+                    onClick={() => handleRemove(item._id, itemName)}
                     disabled={isLoading}
-                    aria-label={`Remove ${item.name} from saved items`}
+                    aria-label={`Remove ${itemName} from saved items`}
                   >
                     Remove
                   </button>

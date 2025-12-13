@@ -26,7 +26,11 @@ const fetchLogo = async (setLogoImage) => {
       if (setLogoImage) {
         setLogoImage(logoUrl);
       }
-      return logoUrl;
+      // return logoUrl;
+      return {
+        logoUrl,
+        companyName: logoData.companyName || "AppleStore", // Default fallback
+      };
     } else {
       console.log("Logo data exists but no valid URL found");
       return null;
@@ -37,7 +41,8 @@ const fetchLogo = async (setLogoImage) => {
     } else {
       console.error("Error fetching logo:", error);
     }
-    return null;
+    // return null;
+    return { logoUrl: null, companyName: "AppleStore" };
   }
 };
 

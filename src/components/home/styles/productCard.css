@@ -87,3 +87,48 @@
 .productCard__image-wrapper.loaded .productCard__productImage--blurred {
     opacity: 0;
 }
+
+/* Add to your productCard.css */
+.cart-status__error {
+    color: #d32f2f;
+    font-size: 0.875rem;
+    margin-bottom: 8px;
+    padding: 8px;
+    background-color: #ffebee;
+    border-radius: 4px;
+}
+
+.cart-status__add-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cart-status__spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+}
+
+.cart-status__added {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2e7d32;
+    font-weight: 500;
+}
+
+.cart-status__check-icon {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -22,7 +22,11 @@ export const createPayment = async (paymentData) => {
 export const getUserTransactions = async (filters = {}) => {
   try {
     const queryParams = buildQueryParams(filters);
-    const response = await userHttpService.get(`${basePath}?${queryParams}`);
+    // Remove trailing ? if no params
+    const url = queryParams
+      ? `${basePath}/transaction?${queryParams}`
+      : `${basePath}/transaction`;
+    const response = await userHttpService.get(url);
     return response.data;
   } catch (error) {
     throw handlePaymentError(error);

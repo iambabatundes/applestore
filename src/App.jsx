@@ -53,9 +53,9 @@ function App() {
   const [authInitialized, setAuthInitialized] = useState(false);
   const [initializationError, setInitializationError] = useState(null);
 
-  // Enhanced cart store - using new methods from enhanced implementation
   const {
     cartItems,
+    savedItems,
     addToCart,
     selectedQuantities,
     quantityTenPlus,
@@ -65,9 +65,13 @@ function App() {
     setCartItems,
     clearError,
     error: cartError,
+    saveForLater,
+    moveToCart,
+    removeFromSaved,
   } = useCartStore();
 
   const [logoImage, setLogoImage] = useState("");
+  const [companyName, setCompanyName] = useState("AppleStore");
   const location = useLocation();
 
   const {
@@ -94,7 +98,10 @@ function App() {
   const refreshLogo = useCallback(async () => {
     try {
       logger.debug("Refreshing logo...");
-      await fetchLogo(setLogoImage);
+      const result = await fetchLogo(setLogoImage);
+      if (result && result.companyName) {
+        setCompanyName(result.companyName);
+      }
     } catch (error) {
       logger.error("Failed to refresh logo:", error);
     }
@@ -248,7 +255,6 @@ function App() {
     [currencyRates, setConversionRate, setSelectedCurrency]
   );
 
-  // Enhanced cart submit handler - aligned with new store
   const handleSubmit = useCallback(
     (e, itemId) => {
       e.preventDefault();
@@ -280,7 +286,6 @@ function App() {
     [updateQuantity, updateCustomQuantity]
   );
 
-  // Enhanced cart delete handler - using new removeItem method
   const handleDelete = useCallback(
     async (itemId) => {
       try {
@@ -293,7 +298,6 @@ function App() {
     [removeItem]
   );
 
-  // Calculate cart item count with error handling
   const cartItemCount = (() => {
     try {
       return cartItems.reduce((total, item) => {
@@ -437,6 +441,8 @@ function App() {
                 conversionRate={conversionRate}
                 isAuthenticated={isAuthenticated}
                 user={user}
+                isLoggedIn={user}
+                companyName={companyName}
               />
             </Suspense>
           </main>

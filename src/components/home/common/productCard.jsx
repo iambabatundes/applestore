@@ -1,3 +1,4 @@
+// components/ProductCard.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/productCard.css";
@@ -7,22 +8,25 @@ import ProductLabels from "./ProductLabels";
 import ProductRating from "./ProductRating";
 import ProductPrice from "./productPrice";
 import CartStatus from "./CartStatus";
-import { useCart } from "./hooks/useCart";
 import config from "../../../config.json";
+import useCart from "./hooks/useCart";
 
 export default function ProductCard({
   item,
-  addToCart,
-  handleRatingChange,
   cartItems,
   conversionRate,
   productName,
   selectedCurrency,
 }) {
-  const { added, handleAddToCart } = useCart(item, cartItems, addToCart);
+  // Use the optimized hook - it now returns instantly
+  const { added, handleAddToCart, isAdding, isPending } = useCart(item);
 
   return (
-    <div className={`productCard ${added ? "expanded" : ""}`}>
+    <div
+      className={`productCard ${added ? "expanded" : ""} ${
+        isAdding ? "adding" : ""
+      }`}
+    >
       <ProductImage
         src={
           item.featureImage && item.featureImage.filename
@@ -40,9 +44,6 @@ export default function ProductCard({
           purchaseCount={item.purchaseCount}
           reviews={item.reviewCount}
           rating={item.ratings}
-          // numberOfSales={item.numberOfSales}
-          // onRatingChange={handleRatingChange}
-          // reviews={item.reviews}
         />
         <ProductPrice
           conversionRate={conversionRate}
@@ -57,6 +58,8 @@ export default function ProductCard({
           cartItems={cartItems}
           handleAddToCart={handleAddToCart}
           item={item}
+          isAdding={isAdding}
+          isPending={isPending}
         />
       </article>
     </div>

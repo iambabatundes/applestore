@@ -8,7 +8,11 @@ import { authStore, login } from "../../services/authService";
 import LoginSkeleton from "./login/loginSkeleton";
 
 export default function Login({ companyName }) {
-  const [data, setData] = useState({ email: "", password: "" });
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false, // Add remember me to state
+  });
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +29,20 @@ export default function Login({ companyName }) {
 
   const voteIntent = getVoteIntent();
 
+  // Load remember me preference from localStorage
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const rememberMe = localStorage.getItem("rememberMe") === "true";
+
+    if (savedEmail && rememberMe) {
+      setData((prev) => ({
+        ...prev,
+        email: savedEmail,
+        rememberMe: true,
+      }));
+    }
+  }, []);
+
   // Clear errors when component mounts or auth state changes
   useEffect(() => {
     if (errors) {
@@ -33,10 +51,10 @@ export default function Login({ companyName }) {
   }, [isAuthenticated, user]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
     // Clear errors when user starts typing
     if (errors) setErrors("");
@@ -64,7 +82,21 @@ export default function Login({ companyName }) {
     setErrors("");
 
     try {
-      const loggedInUser = await login(data.email, data.password);
+      // Pass rememberMe to login function
+      const loggedInUser = await login(
+        data.email,
+        data.password,
+        data.rememberMe
+      );
+
+      // Save email if remember me is checked
+      if (data.rememberMe) {
+        localStorage.setItem("rememberedEmail", data.email);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberMe");
+      }
 
       // Show success message with user's name if available
       const welcomeMessage = loggedInUser?.firstName
@@ -93,6 +125,12 @@ export default function Login({ companyName }) {
         setErrors(
           "Invalid email or password. Please check your credentials and try again."
         );
+      } else if (ex.response?.status === 423) {
+        // Account locked
+        const lockMessage =
+          ex.response?.data?.error ||
+          "Account temporarily locked due to too many failed attempts.";
+        setErrors(lockMessage);
       } else if (ex.response?.status === 429) {
         setErrors(
           "Too many login attempts. Please wait a few minutes before trying again."
@@ -181,6 +219,23 @@ export default function Login({ companyName }) {
             aria-describedby={errors ? "error-message" : undefined}
           />
 
+          {/* Remember Me Checkbox */}
+          <div className="remember-me-container">
+            <label className="remember-me-label">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                checked={data.rememberMe}
+                onChange={handleInputChange}
+                disabled={loading || authLoading}
+                className="remember-me-checkbox"
+              />
+              <span className="remember-me-text">
+                Keep me signed in for 90 days
+              </span>
+            </label>
+          </div>
+
           <button
             type="submit"
             className="login__btn"
@@ -231,26 +286,6 @@ export default function Login({ companyName }) {
             Forgot your password?
           </Link>
         </div>
-
-        {/* Debug info in development */}
-        {process.env.NODE_ENV === "development" && (
-          <div
-            className="debug-info"
-            style={{
-              marginTop: "20px",
-              padding: "10px",
-              backgroundColor: "#f0f0f0",
-              fontSize: "12px",
-              border: "1px solid #ccc",
-            }}
-          >
-            <p>Debug Info:</p>
-            <p>isAuthReady: {isAuthReady.toString()}</p>
-            <p>isAuthenticated: {isAuthenticated.toString()}</p>
-            <p>hasUser: {(!!user).toString()}</p>
-            <p>authLoading: {authLoading.toString()}</p>
-          </div>
-        )}
       </div>
     </section>
   );
