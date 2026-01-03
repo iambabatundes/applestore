@@ -77,7 +77,9 @@ export default function SavedForLater({
                   <img
                     src={
                       item.featureImage?.filename
-                        ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
+                        ? `${import.meta.env.VITE_API_URL}/uploads/${
+                            item.featureImage.filename
+                          }`
                         : item.snapshot?.featureImage || "/default-image.jpg"
                     }
                     alt={itemName}

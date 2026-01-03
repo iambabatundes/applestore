@@ -30,7 +30,9 @@ export default function ProductCard({
       <ProductImage
         src={
           item.featureImage && item.featureImage.filename
-            ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
+            ? `${import.meta.env.VITE_API_URL}/uploads/${
+                item.featureImage.filename
+              }`
             : "/default-image.jpg"
         }
         alt={item.name}

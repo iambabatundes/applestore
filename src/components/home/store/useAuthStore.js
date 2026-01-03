@@ -767,5 +767,4 @@ export const createAuthStore = ({
   );
 };
 
-// Export configuration for external use
 export { AUTH_CONFIG };

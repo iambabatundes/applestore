@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense, lazy, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { ErrorBoundary } from "react-error-boundary";
 import "react-toastify/dist/ReactToastify.css";
@@ -125,6 +125,23 @@ function App() {
       window.removeEventListener("logoUpdated", handleLogoUpdate);
     };
   }, [refreshLogo]);
+
+  // In App.jsx, add this useEffect
+  useEffect(() => {
+    const initializeCart = async () => {
+      if (isAuthenticated && appInitialized) {
+        try {
+          logger.info("Syncing cart for authenticated user...");
+          await useCartStore.getState().syncCart({ force: true });
+          logger.info("Cart synced successfully");
+        } catch (error) {
+          logger.error("Failed to sync cart:", error);
+        }
+      }
+    };
+
+    initializeCart();
+  }, [isAuthenticated, appInitialized]);
 
   // Initialize app
   useEffect(() => {
@@ -313,6 +330,10 @@ function App() {
 
   // Enhanced navbar renderer
   const renderNavbar = useCallback(() => {
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      return null;
+    }
+
     if (location.pathname === "/checkout") {
       return (
         <Suspense fallback={<div className="navbar-skeleton" />}>
@@ -446,9 +467,13 @@ function App() {
               />
             </Suspense>
           </main>
-          <Suspense fallback={<div className="footer-skeleton" />}>
-            <Footer logoImage={logoImage} />
-          </Suspense>
+
+          {location.pathname !== "/login" &&
+            location.pathname !== "/register" && (
+              <Suspense fallback={<div className="footer-skeleton" />}>
+                <Footer logoImage={logoImage} />
+              </Suspense>
+            )}
         </>
       )}
     </ErrorBoundary>

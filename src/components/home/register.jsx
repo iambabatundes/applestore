@@ -503,7 +503,7 @@ export default function Register() {
 
               {contactFormik.touched.contact &&
                 contactFormik.errors.contact && (
-                  <div className="error-message">
+                  <div className="error-message-register">
                     {contactFormik.errors.contact}
                   </div>
                 )}
@@ -520,7 +520,7 @@ export default function Register() {
                   : "Continue"}
               </button>
 
-              {error && <p className="error-message">{error}</p>}
+              {error && <p className="error-message-register">{error}</p>}
 
               <div className="terms-text">
                 By continuing, you agree to our Conditions of Use and Privacy
@@ -585,7 +585,7 @@ export default function Register() {
                 )}
               </div>
 
-              {error && <p className="error-message">{error}</p>}
+              {error && <p className="error-message-register">{error}</p>}
             </form>
 
             <button
@@ -618,7 +618,7 @@ export default function Register() {
               />
               {profileFormik.touched.firstName &&
                 profileFormik.errors.firstName && (
-                  <div className="error-message">
+                  <div className="error-message-register">
                     {profileFormik.errors.firstName}
                   </div>
                 )}
@@ -632,7 +632,7 @@ export default function Register() {
               />
               {profileFormik.touched.username &&
                 profileFormik.errors.username && (
-                  <div className="error-message">
+                  <div className="error-message-register">
                     {profileFormik.errors.username}
                   </div>
                 )}
@@ -646,7 +646,7 @@ export default function Register() {
               />
               {profileFormik.touched.password &&
                 profileFormik.errors.password && (
-                  <div className="error-message">
+                  <div className="error-message-register">
                     {profileFormik.errors.password}
                   </div>
                 )}
@@ -665,7 +665,7 @@ export default function Register() {
               />
               {profileFormik.touched.additionalContact &&
                 profileFormik.errors.additionalContact && (
-                  <div className="error-message">
+                  <div className="error-message-register">
                     {profileFormik.errors.additionalContact}
                   </div>
                 )}
@@ -678,7 +678,7 @@ export default function Register() {
                 {loading ? "Creating account..." : "Create account"}
               </button>
 
-              {error && <p className="error-message">{error}</p>}
+              {error && <p className="error-message-register">{error}</p>}
             </form>
           </div>
         )}

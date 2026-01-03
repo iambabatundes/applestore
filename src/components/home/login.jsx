@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "zustand";
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Link, Navigate, useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import "./styles/login.css";
 import { getVoteIntent } from "./ProductReviews/hooks/useVoteIntent";

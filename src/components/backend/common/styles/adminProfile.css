@@ -295,10 +295,6 @@
     border-color: rgba(255, 69, 58, 0.4);
 }
 
-/* =========================================
-   MODAL BODY - SCROLLABLE CONTENT
-   ========================================= */
-
 .adminProfile__modal-body,
 .modal-body {
     padding: 1.5rem 2.5rem 2.5rem;

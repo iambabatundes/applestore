@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import EmptyCart from "./cart/emptyCart";
 import NotLoginCart from "./cart/notLoginCart";
 import SavedForLater from "./cart/savedForLater";
-import config from "../config.json";
 import PriceDisplay from "./utils/priceDisplay";
 import "./styles/cart.css";
 import { useCartStore } from "./store/cartStore";
@@ -13,8 +12,8 @@ import CartSummary from "./cart/cartSummary";
 export default function Cart({
   isLoggedIn = false,
   conversionRate = 1,
-  selectedCurrency = "USD",
-  companyName = "Our Store",
+  selectedCurrency,
+  companyName,
 }) {
   const {
     cartItems,
@@ -31,7 +30,6 @@ export default function Cart({
     validateCartForCheckout,
     checkStockAvailability,
     autoFixStockIssues,
-    validateQuantity: storeValidateQuantity,
     clearError,
     getCartTotals,
   } = useCartStore();
@@ -52,14 +50,12 @@ export default function Cart({
 
   const timeoutRefs = useRef({});
 
-  // Sync cart on component mount if logged in
   useEffect(() => {
     if (isLoggedIn) {
       syncCart();
     }
   }, [isLoggedIn, syncCart]);
 
-  // Auto-dismiss messages
   useEffect(() => {
     if (error || localError) {
       const timer = setTimeout(() => {
@@ -77,7 +73,6 @@ export default function Cart({
     }
   }, [successMessage]);
 
-  // Validate cart on changes
   useEffect(() => {
     const validate = async () => {
       try {
@@ -92,47 +87,11 @@ export default function Cart({
       }
     };
 
-    if (isLoggedIn) {
+    if (isLoggedIn && cartItems.length > 0) {
       validate();
     }
   }, [cartItems, isLoggedIn, validateCartForCheckout]);
 
-  // Real-time validation
-  const getRealTimeValidation = useCallback(
-    (quantity, item, isCustom = false) => {
-      try {
-        const parsedQuantity = storeValidateQuantity(quantity, isCustom);
-        const stock = item?.numberInStock || 0;
-        const errors = [];
-        const warnings = [];
-
-        if (stock > 0 && parsedQuantity > stock) {
-          if (isCustom) {
-            errors.push(`Only ${stock} items available in stock`);
-          } else {
-            warnings.push(`Only ${stock} items available`);
-          }
-        }
-
-        return {
-          isValid: errors.length === 0,
-          errors,
-          warning: warnings.length > 0 ? warnings[0] : null,
-          canAutoUpdate: errors.length === 0,
-        };
-      } catch (error) {
-        return {
-          isValid: false,
-          errors: [error.message],
-          warning: null,
-          canAutoUpdate: false,
-        };
-      }
-    },
-    [storeValidateQuantity]
-  );
-
-  // Handle quantity change
   const handleQuantityChange = useCallback(
     async (itemId, quantity, product) => {
       try {
@@ -140,23 +99,36 @@ export default function Cart({
         setLocalError(null);
         setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
 
+        // Handle 10+ selection - just expand the input WITHOUT updating
         if (quantity === "10+") {
+          const currentQty = product?.quantity || 1;
           setExpandedItems((prev) => ({ ...prev, [itemId]: true }));
+          setLocalCustomQuantity((prev) => ({
+            ...prev,
+            [itemId]: currentQty >= 10 ? currentQty : 10,
+          }));
+          setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
           return;
         }
 
         const parsedQuantity = parseInt(quantity, 10);
 
-        // Validate stock
         const stock = product?.numberInStock || 0;
         if (stock > 0 && parsedQuantity > stock) {
-          throw new Error(`Only ${stock} items available in stock`);
+          throw new Error("Out of Stock");
         }
 
+        // For 1-9: Update immediately (optimistic)
         await updateQuantity(itemId, parsedQuantity);
         setSuccessMessage("Quantity updated successfully");
       } catch (err) {
-        setLocalError(err.message || "Failed to update quantity");
+        const errorMsg =
+          err.message.includes("stock") || err.message.includes("Stock")
+            ? "Out of Stock"
+            : err.message || "Failed to update quantity";
+
+        setLocalError(errorMsg);
+        // setLocalError(err.message || "Failed to update quantity");
         setValidationErrors((prev) => ({ ...prev, [itemId]: err.message }));
       } finally {
         setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
@@ -165,37 +137,159 @@ export default function Cart({
     [updateQuantity]
   );
 
-  // Handle custom quantity input
-  const handleCustomQuantity = useCallback(
-    async (itemId, quantity, product) => {
+  const handleCustomQuantityChange = useCallback(
+    (e, itemId, product) => {
+      const inputValue = e.target.value;
+
+      // Clear any pending timeout
+      if (timeoutRefs.current[itemId]) {
+        clearTimeout(timeoutRefs.current[itemId]);
+      }
+
+      // Allow empty input temporarily
+      if (inputValue === "") {
+        setLocalCustomQuantity((prev) => ({ ...prev, [itemId]: "" }));
+        setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
+        setFieldWarnings((prev) => ({ ...prev, [itemId]: null }));
+        return;
+      }
+
+      const parsedValue = parseInt(inputValue, 10);
+
+      // Basic validation
+      if (isNaN(parsedValue) || parsedValue < 1) {
+        setLocalCustomQuantity((prev) => ({ ...prev, [itemId]: inputValue }));
+        setValidationErrors((prev) => ({
+          ...prev,
+          [itemId]: "Quantity must be at least 1",
+        }));
+        return;
+      }
+
+      // Update local state
+      setLocalCustomQuantity((prev) => ({ ...prev, [itemId]: parsedValue }));
+
+      // If user types 1-9, switch back to dropdown automatically
+      if (parsedValue >= 1 && parsedValue <= 9) {
+        // Auto-switch to dropdown after a short delay
+        timeoutRefs.current[itemId] = setTimeout(async () => {
+          try {
+            setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
+
+            // Check stock before updating
+            const stock = product?.numberInStock || 0;
+            if (stock > 0 && parsedValue > stock) {
+              throw new Error("Out of Stock");
+            }
+
+            await updateQuantity(itemId, parsedValue);
+            setExpandedItems((prev) => ({ ...prev, [itemId]: false }));
+            setLocalCustomQuantity((prev) => {
+              const newState = { ...prev };
+              delete newState[itemId];
+              return newState;
+            });
+            setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
+            setFieldWarnings((prev) => ({ ...prev, [itemId]: null }));
+            setSuccessMessage("Quantity updated successfully");
+          } catch (error) {
+            const errorMsg = error.message.includes("stock")
+              ? "Out of Stock"
+              : error.message;
+            setLocalError(errorMsg);
+            setValidationErrors((prev) => ({ ...prev, [itemId]: errorMsg }));
+          } finally {
+            setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
+          }
+        }, 800); // Wait 800ms after typing stops
+        return;
+      }
+
+      // For 10+: Just validate, don't update yet
+      if (parsedValue >= 10) {
+        // Clear any errors
+        setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
+
+        // Check stock and show warning (not error)
+        const stock = product?.numberInStock || 0;
+        if (stock === 0) {
+          setFieldWarnings((prev) => ({
+            ...prev,
+            [itemId]: `Out of Stock`,
+          }));
+        } else if (parsedValue > stock) {
+          setFieldWarnings((prev) => ({
+            ...prev,
+            [itemId]: `Only ${stock} items available in stock`,
+          }));
+        } else {
+          setFieldWarnings((prev) => ({ ...prev, [itemId]: null }));
+        }
+      }
+    },
+    [updateQuantity]
+  );
+
+  const handleCustomQuantitySubmit = useCallback(
+    async (itemId) => {
+      const quantity = localCustomQuantity[itemId];
+
+      if (!quantity || quantity === "") {
+        setValidationErrors((prev) => ({
+          ...prev,
+          [itemId]: "Please enter a quantity",
+        }));
+        return;
+      }
+
+      const parsedQuantity = parseInt(quantity, 10);
+
+      if (parsedQuantity < 10) {
+        setValidationErrors((prev) => ({
+          ...prev,
+          [itemId]: "Custom quantity must be 10 or more. Use dropdown for 1-9.",
+        }));
+        return;
+      }
+
       try {
         setLoadingItems((prev) => ({ ...prev, [itemId]: true }));
         setLocalError(null);
         setValidationErrors((prev) => ({ ...prev, [itemId]: null }));
 
-        const parsedQuantity = parseInt(quantity, 10);
+        // Check stock locally before making API call
+        const item = cartItems.find((item) => item._id === itemId);
+        const stock = item?.numberInStock || 0;
 
-        if (parsedQuantity < 10) {
-          throw new Error("Custom quantity must be 10 or more");
-        }
-
-        // Validate stock
-        const stock = product?.numberInStock || 0;
         if (stock > 0 && parsedQuantity > stock) {
-          throw new Error(`Only ${stock} items available in stock`);
+          throw new Error("Out of Stock");
         }
 
+        // NOW we update the cart - this will check stock on backend
         await updateCustomQuantity(itemId, parsedQuantity);
+
         setSuccessMessage("Quantity updated successfully");
-        setExpandedItems((prev) => ({ ...prev, [itemId]: false }));
+
+        // Keep the input expanded since quantity is 10+
+        // Just clear any warnings
+        setFieldWarnings((prev) => ({ ...prev, [itemId]: null }));
       } catch (err) {
-        setLocalError(err.message || "Failed to update quantity");
-        setValidationErrors((prev) => ({ ...prev, [itemId]: err.message }));
+        // Check if it's a stock error from backend
+        const errorMsg =
+          err.message.includes("stock") ||
+          err.message.includes("Stock") ||
+          err.type === "STOCK_ERROR" ||
+          err.statusCode === 422
+            ? "Out of Stock"
+            : err.message || "Failed to update quantity";
+
+        setLocalError(errorMsg);
+        setValidationErrors((prev) => ({ ...prev, [itemId]: errorMsg }));
       } finally {
         setLoadingItems((prev) => ({ ...prev, [itemId]: false }));
       }
     },
-    [updateCustomQuantity]
+    [localCustomQuantity, updateCustomQuantity, cartItems]
   );
 
   // Handle item deletion from cart
@@ -274,6 +368,44 @@ export default function Cart({
   const formatPermalink = useCallback((name) => {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   }, []);
+
+  // Handle share functionality
+  const handleShare = useCallback(
+    (item) => {
+      const url = `${window.location.origin}/${formatPermalink(item.name)}`;
+
+      if (navigator.share) {
+        navigator
+          .share({
+            title: item.name,
+            url: url,
+          })
+          .catch((err) => console.log("Share cancelled:", err));
+      } else {
+        navigator.clipboard
+          .writeText(url)
+          .then(() => {
+            setSuccessMessage("Link copied to clipboard");
+          })
+          .catch(() => {
+            setLocalError("Failed to copy link");
+          });
+      }
+    },
+    [formatPermalink]
+  );
+
+  // Select all items
+  const handleSelectAll = useCallback(() => {
+    const allSelected = cartItems.every((item) => selectedItems[item._id]);
+    const newSelected = {};
+    if (!allSelected) {
+      cartItems.forEach((item) => {
+        newSelected[item._id] = true;
+      });
+    }
+    setSelectedItems(newSelected);
+  }, [cartItems, selectedItems]);
 
   // Get cart totals
   const cartTotals = getCartTotals();
@@ -384,11 +516,10 @@ export default function Cart({
           <div className="cart-section-header">
             <div className="cart-header-top">
               <h1 className="cart-title">Shopping Cart</h1>
-              <button
-                className="cart-deselect-link"
-                onClick={() => setSelectedItems({})}
-              >
-                Deselect all items
+              <button className="cart-deselect-link" onClick={handleSelectAll}>
+                {cartItems.every((item) => selectedItems[item._id])
+                  ? "Deselect all items"
+                  : "Select all items"}
               </button>
             </div>
             <div className="cart-header-price-label">Price</div>
@@ -402,8 +533,9 @@ export default function Cart({
               const isLoading = loadingItems[item._id];
               const isExpanded = expandedItems[item._id];
               const stockInfo = checkStockAvailability(item._id);
+              const currentQuantity = item.quantity || 1;
               const itemTotalPrice =
-                (item.unitPrice || item.price) * (item.quantity || 1);
+                (item.unitPrice || item.price) * currentQuantity;
 
               return (
                 <article
@@ -426,15 +558,14 @@ export default function Cart({
                       }
                       aria-label={`Select ${item.name}`}
                     />
-                    <Link
-                      to={`/product/${item._id}/${formatPermalink(item.name)}`}
-                    >
+                    <Link to={`/${formatPermalink(item.name)}`}>
                       <img
                         src={
                           item.featureImage?.filename
-                            ? `${config.mediaUrl}/uploads/${item.featureImage.filename}`
-                            : item.snapshot?.featureImage ||
-                              "/default-image.jpg"
+                            ? `${import.meta.env.VITE_API_URL}/uploads/${
+                                item.featureImage.filename
+                              }`
+                            : item.featureImage || "/default-image.jpg"
                         }
                         alt={item.name}
                         className="cart-item-image"
@@ -447,16 +578,33 @@ export default function Cart({
                   <div className="cart-item-details">
                     <div className="cart-item-info">
                       <Link
-                        to={`/product/${item._id}/${formatPermalink(
-                          item.name
-                        )}`}
+                        to={`/${formatPermalink(item.name)}`}
                         className="cart-item-title"
                       >
                         {item.name}
                       </Link>
 
-                      {/* Stock Status */}
-                      {stockInfo.isAvailable ? (
+                      {/* Stock Status Display */}
+                      {stockInfo.status === "pending" ? (
+                        <div className="cart-item-stock-status pending">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                          </svg>
+                          <span>Updating...</span>
+                        </div>
+                      ) : stockInfo.status === "exceeds_stock" ? (
+                        <div className="cart-item-stock-status out-of-stock">
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                          </svg>
+                          <span>Out of Stock</span>
+                          {stockInfo.availableStock > 0 && (
+                            <span className="cart-stock-warning-inline">
+                              - Only {stockInfo.availableStock} available
+                            </span>
+                          )}
+                        </div>
+                      ) : stockInfo.isAvailable ? (
                         <div className="cart-item-stock-status in-stock">
                           <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -469,11 +617,6 @@ export default function Cart({
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                           </svg>
                           <span>Out of Stock</span>
-                          {stockInfo.availableStock > 0 && (
-                            <span className="cart-stock-warning-inline">
-                              - Only {stockInfo.availableStock} available
-                            </span>
-                          )}
                         </div>
                       )}
 
@@ -487,38 +630,70 @@ export default function Cart({
                         {/* Quantity Selector */}
                         {isExpanded ? (
                           <div className="cart-quantity-expanded">
-                            <input
-                              type="number"
-                              className="cart-quantity-input"
-                              min="10"
-                              max={item.numberInStock || 1000}
-                              defaultValue={item.quantity || 10}
-                              onBlur={(e) =>
-                                handleCustomQuantity(
-                                  item._id,
-                                  e.target.value,
-                                  item
-                                )
-                              }
-                              disabled={isLoading}
-                              placeholder="Enter quantity (10+)"
-                            />
+                            <div className="cart-quantity-input-wrapper">
+                              <input
+                                type="number"
+                                className={`cart-quantity-input ${
+                                  validationErrors[item._id] ? "error" : ""
+                                } ${fieldWarnings[item._id] ? "warning" : ""}`}
+                                min="1"
+                                max={item.numberInStock || 9999}
+                                value={localCustomQuantity[item._id] ?? ""}
+                                onChange={(e) =>
+                                  handleCustomQuantityChange(e, item._id, item)
+                                }
+                                disabled={isLoading}
+                                placeholder="Enter quantity"
+                              />
+                              {validationErrors[item._id] && (
+                                <div className="cart-quantity-error">
+                                  {validationErrors[item._id]}
+                                </div>
+                              )}
+                              {fieldWarnings[item._id] &&
+                                !validationErrors[item._id] && (
+                                  <div className="cart-quantity-warning">
+                                    {fieldWarnings[item._id]}
+                                  </div>
+                                )}
+                            </div>
                             <button
-                              className="cart-quantity-cancel"
+                              className="cart-quantity-update-btn"
                               onClick={() =>
-                                setExpandedItems((prev) => ({
-                                  ...prev,
-                                  [item._id]: false,
-                                }))
+                                handleCustomQuantitySubmit(item._id)
+                              }
+                              disabled={
+                                isLoading ||
+                                !!validationErrors[item._id] ||
+                                !localCustomQuantity[item._id] ||
+                                localCustomQuantity[item._id] === item.quantity
                               }
                             >
-                              Cancel
+                              {isLoading ? "Updating..." : "Update"}
                             </button>
                           </div>
+                        ) : currentQuantity >= 10 ? (
+                          <button
+                            className="cart-quantity-display-btn"
+                            onClick={() => {
+                              setExpandedItems((prev) => ({
+                                ...prev,
+                                [item._id]: true,
+                              }));
+                              setLocalCustomQuantity((prev) => ({
+                                ...prev,
+                                [item._id]: currentQuantity,
+                              }));
+                            }}
+                            disabled={isLoading}
+                          >
+                            Qty: {currentQuantity}
+                          </button>
                         ) : (
+                          // Show dropdown for 1-9
                           <select
                             className="cart-quantity-select"
-                            value={item.quantity || 1}
+                            value={currentQuantity}
                             onChange={(e) =>
                               handleQuantityChange(
                                 item._id,
@@ -526,7 +701,7 @@ export default function Cart({
                                 item
                               )
                             }
-                            disabled={isLoading || !stockInfo.isAvailable}
+                            disabled={isLoading}
                           >
                             {Array.from({ length: 9 }, (_, i) => (
                               <option key={i + 1} value={i + 1}>
@@ -558,6 +733,15 @@ export default function Cart({
                         >
                           Save for later
                         </button>
+
+                        <div className="cart-action-divider"></div>
+
+                        <button
+                          className="cart-action-btn"
+                          onClick={() => handleShare(item)}
+                        >
+                          Share
+                        </button>
                       </div>
                     </div>
 
@@ -570,7 +754,7 @@ export default function Cart({
                           conversionRate={conversionRate}
                         />
                       </div>
-                      {(item.quantity || 1) > 1 && (
+                      {currentQuantity > 1 && (
                         <div className="cart-item-subtotal">
                           Subtotal:{" "}
                           <PriceDisplay
